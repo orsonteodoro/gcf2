@@ -11,11 +11,11 @@ There are currently generally levels of optimizations (ranked most optimized to 
 * none - used for binary packages, code that doesn't need to be compiled, or just scripts.
 
 There are two classes of code:
-* FPU code - used for packages that are suspected of using floating point units
+* FPU code - used for packages that are suspected of using floating point units.
 Software that may use FPU code: audio codecs, lossy color image compression libraries, 3D libraries
 
-* ALU code - code that relies on just logic but not much floating point unit
-Lossless compression libraries, cryptography libraries
+* ALU code - code that relies on just logic but not much floating point unit.
+Software that may rely just on ALU: Lossless compression libraries, cryptography libraries, integer based libraries
 
 Reasons to apply specific optimizations:
 * maximize-fpu and maximize-alu apply auto-vectorization whenever possible.  This takes advantage of the multicore processor.
