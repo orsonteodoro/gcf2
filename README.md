@@ -15,7 +15,7 @@ There are two classes of code:
 Software that may use FPU code: audio codecs, lossy color image compression libraries, 3D libraries
 
 * ALU code - code that relies on just logic but not much floating point unit.
-Software that may rely just on ALU: Lossless compression libraries, cryptography libraries, integer based libraries
+Software that may rely just on ALU: Lossless compression libraries, cryptography libraries, integer based libraries, data structure libraries
 
 Reasons to apply specific optimizations:
 * maximize-fpu and maximize-alu apply auto-parallelization whenever possible.  This takes advantage of the multicore processor.
@@ -27,6 +27,7 @@ Reasons to apply specific optimizations:
 * Unpopular or infrequently used software get Os.
 * Packages that are IO bound or may use hard drive a lot get Os.
 * Most parser packages and non IO bounded searching get O2.
+* Data structure libraries get O2 minimum.
 * IO bounded searching like databases gets Os.
 * Programming languages will generally get O2.  Programming languages packages will get O3 when it carries its own crypto libraries.
 * Build development tools generally get O2.
@@ -34,8 +35,8 @@ Reasons to apply specific optimizations:
 * LTO is used to reduce code size.
 
 Reasons to remove optimizations:
-* Optimizatoins that causes memory leaks or runtime errors will be disabled.
-* 
+* Optimizations that causes memory leaks or runtime errors will be disabled.
+* Suspected slow and not smooth performance.
 
 Compiler used:
 * gcc is forced whenever O3 is present to take advantage of auto-parallelization (with multiple threads) with graphite which clang doesn't support,{2}{3} and auto-vectorization{1} (with SIMD).
