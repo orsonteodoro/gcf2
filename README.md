@@ -43,6 +43,15 @@ Compiler used:
 * clang is used for Os.
 
 sync-package.env - This is used to discover missing packages in package.env.  You should chmod +x it.  It will list the packages that you don't have and then you add it manually to your package.env file.  It requires the eix package to use it.
+make.conf - This contains the systemwide cflags used by default whenever there is no entry in the package.env.
+
+----
+
+Need more optimization?
+
+For PGO see https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/portage-bashrc/systemwide-pgo .  I currently do not use it but I've used it for Firefox, Seti@Home, WebkitGTK+, BFGMiner.
+
+PGO will optimize hot basic blocks and shrink cold basic blocks and push them out away from the hot code blocks.
 
 ----
 References
