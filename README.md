@@ -8,7 +8,7 @@ There are currently generally levels of optimizations (ranked most optimized to 
 * O3 - used for heavly optimized code or packages that process a lot of data.
 * O2 - used for average case whenever the package relies on searching but not very CPU intensive.  
 * Os - used for packages that are not important.
-* none - used for binary packages, code that doesn't need to be compiled, or just scripts.
+* none - used for binary packages, code that doesn't need to be compiled, just scripts, or just content and data.
 
 There are two classes of code:
 * FPU code - used for packages that are suspected of using floating point units.
