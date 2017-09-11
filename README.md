@@ -22,7 +22,7 @@ Reasons to apply specific optimizations:
 * maximize-fpu-throughput-fm vs maximize-fpu-throughput-am - the fm variation uses fast-math but the am code uses associative math.  Not all packages can use fast math.  Fast math or associated math is required "to enable vectorization of floating point reductions."{1}
 * the -no-lap will disable Graphite auto-parallelization since it may break on compile time.
 * minimize-random-access-latency.conf - is used for GUI widgets like viewports, packages with array data structure traversal.
-* Wrapper packages get Os but the core library that it wraps around may get heavier optimizations.
+* Wrapper packages get Os but the core library that it wraps around may pile on more optimizations.
 * Frontend GUIs generally get Os.  Frontends GUIs will get O2 if there is a slow down in scrolling.
 * Unpopular or infrequently used software get Os.
 * Packages that are IO bound get Os.
