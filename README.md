@@ -40,7 +40,7 @@ Compiler used:
 * gcc is forced whenever O3 is present to take advantage of auto-parallelization with graphite,{2}{3} and auto-vectorization{1} which clang doesn't support.
 * clang is used for Os.
 
-sync-package.env - This is used to discover missing packages in package.env.  You should chmod +x it.  It will list the packages that you don't have and then you add it to your package.env file.
+sync-package.env - This is used to discover missing packages in package.env.  You should chmod +x it.  It will list the packages that you don't have and then you add it to your package.env file.  It requires the eix package to use it.
 
 ----
 References
