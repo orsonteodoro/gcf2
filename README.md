@@ -42,6 +42,6 @@ sync-package.env - This is used to discover missing packages in package.env
 
 ----
 References
-{1} https://gcc.gnu.org/projects/tree-ssa/vectorization.html
-{2} https://gcc.gnu.org/wiki/AutoParInGCC
-{3} https://gcc.gnu.org/wiki/Graphite/Parallelization
+* {1} https://gcc.gnu.org/projects/tree-ssa/vectorization.html
+* {2} https://gcc.gnu.org/wiki/AutoParInGCC
+* {3} https://gcc.gnu.org/wiki/Graphite/Parallelization
