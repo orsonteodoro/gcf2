@@ -28,7 +28,7 @@ Reasons to apply specific optimizations:
 * Packages that are IO bound or may use hard drive a lot get Os.
 * Most parser packages and non IO bounded searching get O2.
 * Data structure libraries get O2 minimum.
-* IO bounded searching like databases gets Os.
+* IO bounded searching that touch the hard drive like databases gets Os.
 * Programming languages will generally get O2.  Programming languages packages will get O3 when it carries its own crypto libraries.
 * Build development tools generally get O2.
 * CPU bounded code and FPS (Frames Per Second) bounded code will get O3.
