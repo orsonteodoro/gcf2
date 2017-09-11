@@ -25,7 +25,7 @@ Reasons to apply specific optimizations:
 * Wrapper packages get Os but the core library that it wraps around may pile on more optimizations.
 * Frontend GUIs generally get Os.  Frontends GUIs will get O2 if there is a slow down in scrolling.
 * Unpopular or infrequently used software get Os.
-* Packages that are IO bound get Os.
+* Packages that are IO bound or may use hard drive a lot get Os.
 * Most parser packages and non IO bounded searching get O2.
 * IO bounded searching like databases gets Os.
 * Programming languages will generally get O2.  Programming languages packages will get O3 when it carries its own crypto libraries.
@@ -34,7 +34,8 @@ Reasons to apply specific optimizations:
 * LTO is used to reduce code size.
 
 Reasons to remove optimizations:
-Optimizatoins that causes memory leaks or runtime errors will be disabled.
+* Optimizatoins that causes memory leaks or runtime errors will be disabled.
+* 
 
 Compiler used:
 * gcc is forced whenever O3 is present to take advantage of auto-parallelization (with multiple threads) with graphite which clang doesn't support,{2}{3} and auto-vectorization{1} (with SIMD).
