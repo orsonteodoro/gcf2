@@ -22,20 +22,21 @@ Reasons to apply specific optimizations:
 * maximize-fpu-throughput-fm vs maximize-fpu-throughput-am - the fm variation uses fast-math but the am code uses associative math.  Not all packages can use fast math.  Fast math or associated math is required "to enable vectorization of floating point reductions."{1}
 * minimize-random-access-latency.conf - is used for GUI widgets like viewports, packages with array data structure traversal.
 * Wrapper packages get Os but the core library that it wraps around may get heavier optimizations.
+* Frontend GUIs generally get Os.  Frontends GUIs will get O2 if there is a slow down in scrolling.
 * Unpopular or infrequently used software get Os.
 * Packages that are IO bound get Os.
 * Most parser packages and non IO bounded searching get O2.
 * IO bounded searching like databases gets Os.
 * Programming languages will generally get O2.  Programming languages packages will get O3 when it carries its own crypto libraries.
 * Build development tools generally get O2.
-* CPU bounded code and FPS bounded code will get O3.
+* CPU bounded code and FPS (Frames Per Second) bounded code will get O3.
 * LTO is used to reduce code size.
 
 Reasons to remove optimizations:
 Optimizatoins that causes memory leaks or runtime errors will be disabled.
 
 Compiler used:
-* gcc is forced O3 to take advantage of auto parallelization with graphite,{2}{3} and auto vectorization{1} which clang doesn't support.
+* gcc is forced whenever O3 is present to take advantage of auto parallelization with graphite,{2}{3} and auto vectorization{1} which clang doesn't support.
 * clang is used for Os.
 
 sync-package.env - This is used to discover missing packages in package.env.  You should chmod +x it.  It will list the packages that you don't have and then you add it to your package.env file.
