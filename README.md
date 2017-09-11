@@ -49,7 +49,7 @@ make.conf - This contains the systemwide cflags used by default whenever there i
 
 Need more optimization?
 
-For PGO see https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/portage-bashrc/systemwide-pgo .  I currently do not use it but I've used it for Firefox, Seti@Home, WebkitGTK+, BFGMiner.
+For PGO see https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/portage-bashrc/systemwide-pgo .  I currently do not use it, but I've used it for Firefox, Seti@Home, WebkitGTK+, BFGMiner.
 
 PGO will optimize hot basic blocks and shrink cold basic blocks and push them out away from the hot code blocks.
 
