@@ -2,7 +2,7 @@
 
 My per-package cflags for Gentoo Linux.
 
-These cflags/cppflags are optimized for multi-core processor.  I used stable optimization flags, so I mostly rely on O2 and O3.
+I used stable optimization flags, so I mostly rely on O2 and O3.
 
 There are currently generally levels of optimizations (ranked most optimized to least):
 * O3 - used for packages that process a lot of data.
@@ -17,6 +17,9 @@ Reasons to remove optimizations or not to use optimizations:
 * Optimizations that causes memory leaks or runtime errors will be disabled.
 * Suspected slow and not smooth performance.
 * Newer optimizations will break because they are not feature complete or not debug enough.
+* I am currently not using Graphite auto-parallelization because overhead and possible thread explosion.  It is better just to manually code it to use both multicore and SIMD properly.
+* loop-unroll-and-jam is broken on GCC 5.4 for most packages.
+* loop-nest-optimize is broken on GCC 5.4 for most packages.
 
 Compiler used:
 * gcc is the default compiler because it has more access to experimental optimizations.
