@@ -10,7 +10,7 @@ There are currently generally levels of optimizations (ranked most optimized to 
 * none - used for binary packages, code that doesn't need to be compiled, just scripts, or just content and data.
 
 Reasons to use optimizations:
-* O3 is used for 3D libraries and applications, packages that utilize cryptography, cpu bound applications and libraries, video/still-image/audio codecs, compression libraries, certain gaming servers.
+* O3 is used for 3D libraries and applications, packages that utilize cryptographic algorithms or hashing, CPU bound applications and libraries, video/still-image/audio codecs, compression libraries, 3D gaming servers.
 * fast-math.conf is used for a few applications that use the CPU near full use more than 24/7.
 
 Reasons to remove optimizations or not to use optimizations:
