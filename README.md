@@ -6,7 +6,7 @@ These cflags/cppflags are optimized for multi-core processor.  I used stable opt
 
 There are currently generally levels of optimizations (ranked most optimized to least):
 * O3 - used for packages that process a lot of data.
-* O2 - used for packages on default.  
+* O2 - used for packages by default.  
 * none - used for binary packages, code that doesn't need to be compiled, just scripts, or just content and data.
 
 Reasons to use optimizations:
