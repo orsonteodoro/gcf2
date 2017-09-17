@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "copying package.env to ./" && cp /etc/portage/package.env ./
+for f in $(ls env)
+do
+	echo "copying $f to env"
+	cp /etc/portage/env/$f ./env
+done
