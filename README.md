@@ -8,7 +8,7 @@ Compiler optimization levels
 * O3 -- enabled for only apps using cryptographic ciphers and hashing algorithms, 3d math, compression algorithms, pixel image manipulation, bitwise math, (3d) game engines, physics engines, fft
 * O2 -- default
 
-* -fprefetch-loop-arrays is enabled for GUI toolkits, data structures with random access
+* -fprefetch-loop-arrays is enabled for GUI toolkits, data structures with random access and databases
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with plenty of data (e.g. pixel manipulation libraries).  Change 4 to the number of cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
 
