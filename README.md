@@ -1,44 +1,33 @@
 # gentoo-cflags
 
-My per-package cflags for Gentoo Linux.
+My per-package cflags for Hardened Gentoo Linux.
 
-I used stable optimization flags, so I mostly rely on O2 and O3.
+These are my current flags.
 
-There are currently generally levels of optimizations (ranked most optimized to least):
-* O3 - used for packages that process a lot of data.
-* O2 - used for packages by default.  
-* none - used for binary packages, code that doesn't need to be compiled, just scripts, or just content and data.
+Compiler optimization levels
+O3 -- enabled for only apps using cryptographic ciphers and hashing algorithms, 3d math, compression algorithms, pixel image manipulation, bitwise math, (3d) game engines, physics engines, fft
+O2 -- default
 
-Reasons to use optimizations:
-* O3 is used for 3D libraries and applications, packages that utilize cryptographic algorithms or hashing, CPU bound applications and libraries, video/still-image/audio codecs, compression libraries, 3D gaming servers.
-* fast-math.conf is used for a few applications that use the CPU near full use more than 24/7.
+-fprefetch-loop-arrays is enabled for GUI toolkits, data structures with random access
+-ftree-parallelize-loops=4 is enabled for single threaded libraries with plenty of data (e.g. pixel manipulation libraries).  Change 4 to the number of cores on your system.
+-fomit-frame-pointer -frename-registers are enabled to maximize register use
 
-Reasons to remove optimizations or not to use optimizations:
-* Optimizations that causes memory leaks or runtime errors will be disabled.
-* Suspected slow and not smooth performance.
-* Newer optimizations will break because they are not feature complete or not debug enough.
-* I am currently not using Graphite auto-parallelization because overhead and possible thread explosion.  It is better just to manually code it to use both multicore and SIMD properly.
-* loop-unroll-and-jam is broken on GCC 5.4 for most packages.
-* loop-nest-optimize is broken on GCC 5.4 for most packages.
+For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
+-fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for most apps
+-mindirect-branch=thunk-extern -mindirect-branch-register -- default for kernels with CONFIG_RETPOLINE=y
 
-Compiler used:
-* gcc is the default compiler because it has more access to experimental optimizations.
-* clang is forced if the package relies on it.
+Miscellaneous:
+-fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
 
-sync-package.env - This is used to discover missing packages in package.env.  You should chmod +x it.  It will list the packages that you don't have and then you add it manually to your package.env file.  It requires the eix package to use it.
-make.conf - This contains the systemwide cflags used by default whenever there is no entry in the package.env.
-sync-repository - keeps folders synced
+All packages were compiled with sys-devel/gcc-7.3.0-r1 and Clang sys-devel/clang-6.0.9999
+
+TODO:
+I need to find more single threaded -O3 apps and libraries that would benefit and not break from use of -ftree-parallelize-loops=4 .
 
 ----
 
-Need more optimization?
+My make.conf cflags:
 
-For PGO see https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/portage-bashrc/systemwide-pgo .  I currently do not use it, but I've used it for Firefox, Seti@Home, WebkitGTK+, BFGMiner.
+CFLAGS="-march=native -O2 -fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -pipe"
+CXXFLAGS="${CFLAGS}"
 
-PGO will optimize hot basic blocks and shrink cold basic blocks and push them out away from the hot code blocks.
-
-----
-References
-* {1} https://gcc.gnu.org/projects/tree-ssa/vectorization.html
-* {2} https://gcc.gnu.org/wiki/AutoParInGCC
-* {3} https://gcc.gnu.org/wiki/Graphite/Parallelization
