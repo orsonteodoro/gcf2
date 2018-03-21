@@ -5,7 +5,7 @@ My per-package cflags for Hardened Gentoo Linux.
 These are my current flags.
 
 Compiler optimization levels
-* O3 -- enabled for only apps using cryptographic ciphers and hashing algorithms, 3d math, compression algorithms, pixel image manipulation, bitwise math, (3d) game engines, physics engines, fft, audio and video codecs
+* O3 -- enabled for only apps/libraries using cryptographic ciphers and hashing algorithms, 3d math, compression algorithms, pixel image manipulation, bitwise math, (3d) game engines, physics engines, fft, audio and video codecs
 * O2 -- default
 
 * -fprefetch-loop-arrays is enabled for GUI toolkits, data structures with random access and databases
