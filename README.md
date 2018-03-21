@@ -28,6 +28,6 @@ I need to find more single threaded -O3 apps and libraries that would benefit an
 
 My make.conf cflags:
 
-> CFLAGS="-march=native -O2 -fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -pipe"
-> CXXFLAGS="${CFLAGS}"
+* CFLAGS="-march=native -O2 -fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -pipe"
+* CXXFLAGS="${CFLAGS}"
 
