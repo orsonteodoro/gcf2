@@ -19,7 +19,7 @@ For Spectre mitigation virtually all packages were filtered with Retpoline compi
 Miscellaneous:
 * -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
 
-All packages were compiled with sys-devel/gcc-7.3.0-r1 and Clang sys-devel/clang-6.0.9999
+All packages were compiled with sys-devel/gcc-7.3.0-r1 and sys-devel/clang-6.0.9999 .
 
 TODO:
 I need to find more single threaded -O3 apps and libraries that would benefit and not break from use of -ftree-parallelize-loops=4 .
