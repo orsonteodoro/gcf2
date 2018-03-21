@@ -15,11 +15,12 @@ Compiler optimization levels
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for most apps
 * -mindirect-branch=thunk-extern -mindirect-branch-register -- default for kernels with CONFIG_RETPOLINE=y
+* -fuse-ld=gold -Wl,-z,retpolineplt -- used for LDFLAGS if -no-plt is not possible.  It requires the patch from Sriraman Tallam at https://sourceware.org/ml/binutils/2018-01/msg00030.html and gold enabled binutils (https://wiki.gentoo.org/wiki/Gold) with the cxx USE flag.
 
 Miscellaneous:
 * -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
 
-All packages were compiled with sys-devel/gcc-7.3.0-r1 and sys-devel/clang-6.0.9999 .
+All packages were compiled with sys-devel/gcc-7.3.0-r1, sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30 .
 
 TODO:
 I need to find more single threaded -O3 apps and libraries that would benefit and not break from use of -ftree-parallelize-loops=4 .
