@@ -30,6 +30,14 @@ To ensure that your kernel is properly patched use `cat /sys/devices/system/cpu/
 
 To ensure that all Meltdown and Spectre mitigations are in place for the Linux kernel do `cat /sys/devices/system/cpu/vulnerabilities/*`.
 
+It should look like:
+
+<pre>
+Not affected
+Mitigation: __user pointer sanitization
+Mitigation: Full AMD retpoline
+</pre>
+
 All packages were compiled with sys-devel/gcc-7.3.0-r1, sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30 .
 
 I am using sys-kernel/zen-sources-4.15.9999 from cynede's overlay and enabled -O3 (Compiler optimization level: Optimize harder), -march=native (Processor family (Native optimizations autodetected by GCC)).  The native optimization comes from GraySky2's patch and the Optimize Harder is a zen-kernel patch https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9ba.
