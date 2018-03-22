@@ -20,10 +20,11 @@ For Spectre mitigation virtually all packages were filtered with Retpoline compi
 Miscellaneous:
 * -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
 
-I fed:
+I fed before running the kernel compilation process with genkernel:
 * export CFLAGS="-fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -pipe"
 * export CXXFLAGS="${CFLAGS}"
-Before the kernel compilation process with genkernel to produce `Mitigation: Full AMD retpoline`.
+
+The result produced `Mitigation: Full AMD retpoline`.
 
 To ensure that your kernel is properly patch use `cat /sys/devices/system/cpu/vulnerabilities/spectre_v2` to view if the Spectre mitigation works.  It should report `Mitigation: Full AMD retpoline` or `Mitigation: Full generic retpoline`.  On my machine it reports the former.
 
