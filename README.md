@@ -26,7 +26,7 @@ I fed before running the kernel compilation process with genkernel:
 
 The result produced `Mitigation: Full AMD retpoline`.
 
-To ensure that your kernel is properly patch use `cat /sys/devices/system/cpu/vulnerabilities/spectre_v2` to view if the Spectre mitigation works.  It should report `Mitigation: Full AMD retpoline` or `Mitigation: Full generic retpoline`.  On my machine it reports the former.
+To ensure that your kernel is properly patched use `cat /sys/devices/system/cpu/vulnerabilities/spectre_v2` to view if the Spectre mitigation works.  It should report `Mitigation: Full AMD retpoline` or `Mitigation: Full generic retpoline`.  On my machine it reports the former.
 
 To ensure that all Meltdown and Spectre mitigations are in place for the Linux kernel do `cat /sys/devices/system/cpu/vulnerabilities/*`.
 
