@@ -18,7 +18,7 @@ For Spectre mitigation virtually all packages were filtered with Retpoline compi
 * -fuse-ld=gold -Wl,-z,retpolineplt -- used for LDFLAGS if -fno-plt is not possible.  It requires the patch from Sriraman Tallam at https://sourceware.org/ml/binutils/2018-01/msg00030.html and gold enabled binutils (https://wiki.gentoo.org/wiki/Gold) with the cxx USE flag.
 
 Miscellaneous:
-* -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
+* -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for gcc -S when viewing generated assembly.
 
 I fed before running the kernel compilation process with genkernel:
 * export CFLAGS="-fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -pipe"
