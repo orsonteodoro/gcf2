@@ -20,7 +20,18 @@ For Spectre mitigation virtually all packages were filtered with Retpoline compi
 Miscellaneous:
 * -fno-asynchronous-unwind-tables was used to remove the cfi assembler lines for -S when viewing generated assembly.
 
+I fed:
+* export CFLAGS="-fomit-frame-pointer -fno-asynchronous-unwind-tables -frename-registers -pipe"
+* export CXXFLAGS="${CFLAGS}"
+Before the kernel compilation process with genkernel to produce `Mitigation: Full AMD retpoline`.
+
+To ensure that your kernel is properly patch use `cat /sys/devices/system/cpu/vulnerabilities/spectre_v2` to view if the Spectre mitigation works.  It should report `Mitigation: Full AMD retpoline` or `Mitigation: Full generic retpoline`.  On my machine it reports the former.
+
+To ensure that all Meltdown and Spectre mitigations are in place for the Linux kernel do `cat /sys/devices/system/cpu/vulnerabilities/*`.
+
 All packages were compiled with sys-devel/gcc-7.3.0-r1, sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30 .
+
+I am using sys-kernel/zen-sources-4.15.9999 from cynede's overlay and enabled -O3 (Compiler optimization level: Optimize harder), -march=native (Processor family (Native optimizations autodetected by GCC)).  The native optimization comes from GraySky2's patch and the Optimize Harder is a zen-kernel patch https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9ba.
 
 TODO:
 I need to find more single threaded -O3 apps and libraries that would benefit and not break from use of -ftree-parallelize-loops=4 .
