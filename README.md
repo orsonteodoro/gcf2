@@ -5,14 +5,14 @@ My per-package cflags on Gentoo Linux.
 These are my current flags.
 
 Compiler optimization levels
-* O3 -- enabled for only apps/libraries using cryptographic ciphers and hashing algorithms, 3D math and 3D game engines, computational geometry algorithms, bitwise math, physics engines, FFT, audio and video codecs and image processing, compression algorithms.
+* O3 -- enabled for only apps/libraries using cryptographic ciphers and hashing algorithms, 3D math and 3D game engines, computational geometry algorithms, bitwise math, physics libraries and engines, FFT, audio and video codecs and image processing, compression algorithms.
 * O2 -- default
 
-* -fprefetch-loop-arrays is enabled for libraries with either matrix math or image and video processing
+* -fprefetch-loop-arrays is enabled for package that process sequential data.
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with plenty of data (e.g. pixel manipulation libraries).  Change 4 to the number of cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
-* -ffast-math is enabled for 3D games and 3D engines.  For those using bullet for scientific purposes, consider removing fast-math.
-* -funroll-loops is enabled for crypto libraries and small packages but not for general purpose libraries
+* -ffast-math is enabled for 3D games, game engines and libraries, and audio processing.  For those using bullet for scientific purposes, consider removing fast-math.
+* -funroll-loops is enabled for crypto libraries but not for general purpose libraries.
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for most apps if not stripped by ebuild
@@ -33,7 +33,7 @@ Mitigation: __user pointer sanitization
 Mitigation: Full AMD retpoline
 </pre>
 
-This test was performed circa Mar 2018 with sys-devel/gcc-7.3.0-r1, sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30 .  And used sys-kernel/zen-sources-4.15.9999 from cynede's overlay and enabled -O3 (Compiler optimization level: Optimize harder), -march=native (Processor family (Native optimizations autodetected by GCC)).  The native optimization comes from GraySky2's patch and the Optimize Harder is a zen-kernel patch https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9ba.
+This test was performed circa Mar 2018 with sys-devel/gcc-7.3.0-r1, sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30.  It used sys-kernel/zen-sources-4.15.9999 from cynede's overlay and enabled -O3 (Compiler optimization level: Optimize harder), -march=native (Processor family (Native optimizations autodetected by GCC)).  The native optimization comes from GraySky2's patch and the Optimize Harder is a zen-kernel patch https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9ba.
 
 Entries for inclusion for the package.env are only those installed or may in the future be installed on my system.
 
