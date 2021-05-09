@@ -20,13 +20,6 @@ cores on your system.
 processing.  For those using bullet for scientific purposes, consider removing  
 fast-math.
 
-* unroll-loops reporting is enabled but not the -funroll-loop option which  
-looks suboptimal or non functioning.  Patches that enable pragma controlled  
-unrolling is preferred.  See the patch section below, for details and unroll  
-patches folder for speed ups.  For reasons why, see the  
-[env/unroll-loops.conf](https://github.com/orsonteodoro/gentoo-cflags/blob/master/env/unroll-loops.conf)
-file.
-
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for  
 most apps if not stripped by ebuild
@@ -67,12 +60,6 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 
 Entries for inclusion for the package.env are only those installed or may in  
  the future be installed on my system.
-
-## Patches
-
-The patch folder is a collection of per-package patches.  The folders within it  
- should be placed in the /etc/portage/patches folder.  For details see   
-[wiki.gentoo.org:/etc/portage/patches](https://wiki.gentoo.org/wiki//etc/portage/patches).
 
 ----
 
