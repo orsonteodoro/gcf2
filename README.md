@@ -12,7 +12,8 @@ Compiler optimization levels
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with plenty of data (e.g. pixel manipulation libraries).  Change 4 to the number of cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio processing.  For those using bullet for scientific purposes, consider removing fast-math.
-* -funroll-loops is enabled for crypto libraries but not for general purpose libraries.
+
+* unroll-loops reporting is enabled but not the -funroll-loop option which looks suboptimal or non functioning.  Patches that enable pragma controlled unrolling is preferred.
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for most apps if not stripped by ebuild
