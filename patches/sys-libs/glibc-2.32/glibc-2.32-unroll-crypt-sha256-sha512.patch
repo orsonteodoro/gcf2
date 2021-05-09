@@ -1,0 +1,67 @@
+Uses `pragma GCC unroll n` to rely on unroll instead of -funroll-loops.
+
+Package: GNU C Library (glibc)
+
+Compiler: gcc version 10.2.0
+
+Version: 2.32 (needs testing in other versions)
+
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+Licenses:
+https://sourceware.org/git/?p=glibc.git;a=blob;f=LICENSES;h=530893b1dc9ea00755603c68fb36bd4fc38a7be8;hb=3de512be7ea6053255afed6154db9ee31d4e557a
+diff -urp glibc-2.32.orig/crypt/sha256-block.c glibc-2.32/crypt/sha256-block.c
+--- glibc-2.32.orig/crypt/sha256-block.c	2020-08-04 19:17:00.000000000 -0700
++++ glibc-2.32/crypt/sha256-block.c	2021-05-08 19:58:13.096489755 -0700
+@@ -48,15 +48,18 @@ __sha256_process_block (const void *buff
+ #define CYCLIC(w, s) ((w >> s) | (w << (32 - s)))
+ 
+       /* Compute the message schedule according to FIPS 180-2:6.2.2 step 2.  */
++      #pragma GCC unroll 16
+       for (unsigned int t = 0; t < 16; ++t)
+ 	{
+ 	  W[t] = SWAP (*words);
+ 	  ++words;
+ 	}
++      #pragma GCC unroll 48
+       for (unsigned int t = 16; t < 64; ++t)
+ 	W[t] = R1 (W[t - 2]) + W[t - 7] + R0 (W[t - 15]) + W[t - 16];
+ 
+       /* The actual computation according to FIPS 180-2:6.2.2 step 3.  */
++      #pragma GCC unroll 64
+       for (unsigned int t = 0; t < 64; ++t)
+ 	{
+ 	  uint32_t T1 = h + S1 (e) + Ch (e, f, g) + K[t] + W[t];
+diff -urp glibc-2.32.orig/crypt/sha256.c glibc-2.32/crypt/sha256.c
+--- glibc-2.32.orig/crypt/sha256.c	2020-08-04 19:17:00.000000000 -0700
++++ glibc-2.32/crypt/sha256.c	2021-05-08 19:58:14.186532246 -0700
+@@ -133,6 +133,7 @@ __sha256_finish_ctx (struct sha256_ctx *
+   __sha256_process_block (ctx->buffer, bytes + pad + 8, ctx);
+ 
+   /* Put result from CTX in first 32 bytes following RESBUF.  */
++  #pragma GCC unroll 8
+   for (unsigned int i = 0; i < 8; ++i)
+     ((uint32_t *) resbuf)[i] = SWAP (ctx->H[i]);
+ 
+diff -urp glibc-2.32.orig/crypt/sha512-block.c glibc-2.32/crypt/sha512-block.c
+--- glibc-2.32.orig/crypt/sha512-block.c	2020-08-04 19:17:00.000000000 -0700
++++ glibc-2.32/crypt/sha512-block.c	2021-05-08 20:02:12.365857527 -0700
+@@ -55,15 +55,18 @@ __sha512_process_block (const void *buff
+ #define CYCLIC(w, s) ((w >> s) | (w << (64 - s)))
+ 
+       /* Compute the message schedule according to FIPS 180-2:6.3.2 step 2.  */
++      #pragma GCC unroll 16
+       for (unsigned int t = 0; t < 16; ++t)
+ 	{
+ 	  W[t] = SWAP (*words);
+ 	  ++words;
+ 	}
++      #pragma GCC unroll 64
+       for (unsigned int t = 16; t < 80; ++t)
+ 	W[t] = R1 (W[t - 2]) + W[t - 7] + R0 (W[t - 15]) + W[t - 16];
+ 
+       /* The actual computation according to FIPS 180-2:6.3.2 step 3.  */
++      #pragma GCC unroll 80
+       for (unsigned int t = 0; t < 80; ++t)
+ 	{
+ 	  uint64_t T1 = h + S1 (e) + Ch (e, f, g) + K[t] + W[t];
