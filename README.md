@@ -67,10 +67,10 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in  
  the future be installed on my system.
 
-## patches
+## Patches
 
-The patch folder is a collection of per-package patches.  It should be placed  
- in /etc/portage/patches folder.  For details see   
+The patch folder is a collection of per-package patches.  The folders within it  
+ should be placed in the /etc/portage/patches folder.  For details see   
 [wiki.gentoo.org:/etc/portage/patches](https://wiki.gentoo.org/wiki//etc/portage/patches).
 
 ----
