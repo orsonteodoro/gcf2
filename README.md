@@ -23,7 +23,8 @@ fast-math.
 * unroll-loops reporting is enabled but not the -funroll-loop option which  
 looks suboptimal or non functioning.  Patches that enable pragma controlled  
 unrolling is preferred.  See the patch section below, for details and unroll  
-patches folder for speed ups.  For reasons why, see the env/unroll-loops.conf
+patches folder for speed ups.  For reasons why, see the  
+[env/unroll-loops.conf](https://github.com/orsonteodoro/gentoo-cflags/blob/master/env/unroll-loops.conf)
 file.
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
