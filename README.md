@@ -4,6 +4,29 @@ My per-package cflags on Gentoo Linux.
 
 These are my current flags.
 
+My current profile is hardened.
+
+The hardened profile comes with the following built in defaults on:
+
+* -D_FORTIFY_SOURCE=2 -- for buffer overflow protection
+* -fstack-protector-strong -param=ssp-buffer-size=4 -- medium buffer overflow
+							checking
+* -fstack-clash-protection  -- protect against this class of attacks when
+				heap and stack clash with each other with
+				a program/daemon running as root (suid)
+* -Wl,relro -Wl,now -- Full RELRO for LDFLAGS to close hole to prevent
+			arbitrary code execution of overritten GOT entry
+			of jump address
+
+
+The hardened-clang.conf (with the equivalent above) will be added soon to
+affected packages in package.env since they are assumed not defaults, after
+inspection of the LLVM patchset and no direct way to tell if they are default
+on.  To determine affected packages without hardened flags build with
+FEATURES=binpkg-logs and PORTAGE_LOGDIR="/var/log/emerge/build-logs" grep
+for clang/clang++.  You need to manually add them since we have differing
+world files and USE flags.
+
 Compiler optimization levels
 * O3 -- enabled for only apps/libraries using cryptographic ciphers and  
 hashing algorithms, 3D math and 3D game engines, computational geometry  
