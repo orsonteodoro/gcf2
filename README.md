@@ -18,14 +18,13 @@ The hardened profile comes with the following built in defaults on:
 			arbitrary code execution of overritten GOT entry
 			of jump address
 
+These flags are also default ON via a modified ebuild with hardened clang
+is on the [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 
-The hardened-clang.conf (with the equivalent above) will be added soon to
-affected packages in package.env since they are assumed not defaults, after
-inspection of the LLVM patchset and no direct way to tell if they are default
-on.  To determine affected packages without hardened flags build with
-FEATURES=binpkg-logs and PORTAGE_LOGDIR="/var/log/emerge/build-logs" grep
-for clang/clang++.  You need to manually add them since we have differing
-world files and USE flags.
+PGO (profile-guided optimization) is done on the ebuild level instead of these
+the environment variables because they require some assets and maybe some
+additional coding.  Modified packages with support for PGO flags
+(-fprofile-generate/-fprofile-use) can be found on the same overlay.
 
 Compiler optimization levels
 * O3 -- enabled for only apps/libraries using cryptographic ciphers and  
