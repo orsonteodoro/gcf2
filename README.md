@@ -85,11 +85,11 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in  
  the future be installed on my system.
 
-[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then -no-plt 
+[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then -fno-plt 
 is not compatible with that package especially the x11-drivers.  You need to
 copy and paste one of the per-package bashrc files in
 env/x11-drivers/<package-name> into all the xorg-driver packages installed in
-your system or just delete the -no-plt package and rebuild all the drivers.
+your system or just delete the -fno-plt package and rebuild all the drivers.
 The env/x11-drivers should be the same as /etc/portage/env/x11-drivers.
 
 [2] Sometimes I may choose mostly built @world with clang or with gcc.
