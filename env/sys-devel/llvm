@@ -1,0 +1,11 @@
+pre_src_configure() {
+	# Prevents: llvm-tblgen segfault at build time with gcc 10.3.0
+	# It's only a problem with llvm:12 not llvm:14.
+	if (( ${SLOT} != 14 )) ; then
+		einfo "Removing no-plt"
+		CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-no-plt||g")
+		CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-no-plt||g")
+		LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-no-plt||g")
+		export CFLAGS CXXFLAGS LDFLAGS
+	fi
+}
