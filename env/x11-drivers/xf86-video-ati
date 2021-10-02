@@ -1,9 +1,9 @@
 pre_src_configure() {
 	# Prevents: undefined symbol: glamor_xv_init
-	# Reason: -Wl,lazy in LDFLAGS and -no-plt assumes -Wl,now
-	einfo "Removing no-plt"
-	CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-no-plt||g")
-	CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-no-plt||g")
-	LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-no-plt||g")
+	# Reason: -Wl,lazy in LDFLAGS and -fno-plt assumes -Wl,now
+	einfo "Removing -fno-plt"
+	CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-fno-plt||g")
+	CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-fno-plt||g")
+	LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-fno-plt||g")
 	export CFLAGS CXXFLAGS LDFLAGS
 }
