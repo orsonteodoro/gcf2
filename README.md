@@ -41,18 +41,20 @@ cores on your system.
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio  
 processing.  For those using bullet for scientific purposes, consider removing  
 fast-math.
+* -fno-plt -- additional code reduction [1]
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
-* -fno-plt -mindirect-branch=thunk -mindirect-branch-register -- compiled for  
-most apps if not stripped by ebuild
+* -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
+compiled for most apps if not stripped by ebuild.
 * -mindirect-branch=thunk-extern -mindirect-branch-register -- default for  
 kernels with CONFIG_RETPOLINE=y
 * -fuse-ld=gold -Wl,-z,retpolineplt -- used for LDFLAGS if -fno-plt is not  
 possible.  It requires the patch from Sriraman Tallam at  
 https://sourceware.org/ml/binutils/2018-01/msg00030.html and gold enabled  
 binutils (https://wiki.gentoo.org/wiki/Gold) with the cxx USE flag.
+* -mretpoline (found in clang-retpoline.conf) -- the Clang version [2]
 
-One may remove -fno-plt -mindirect-branch=thunk -mindirect-branch-register  
+One may remove -mindirect-branch=thunk -mindirect-branch-register  
 if the processor has already fixed the side-channel attack hardware flaw.  
 According to Wikipedia, all pre 2019 hardware had this flaw.
 
@@ -82,6 +84,23 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 
 Entries for inclusion for the package.env are only those installed or may in  
  the future be installed on my system.
+
+[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then -no-plt 
+is not compatible with that package especially the x11-drivers.  You need to
+copy and paste one of the per-package bashrc files in
+env/x11-drivers/<package-name> into all the xorg-driver packages installed in
+your system or just delete the -no-plt package and rebuild all the drivers.
+The env/x11-drivers should be the same as /etc/portage/env/x11-drivers.
+
+[2] Sometimes I may choose mostly built @world with clang or with gcc.
+You may choose to switch between -mindirect-branch=thunk or -mretpoline
+for the default {C,CXX}FLAGS and apply manually per-package
+clang-retpoline.conf or gcc-retpoline-thunk.conf.  It helps to grep the
+saved build logs to determine which packages should rebuild with retpoline.
+Adding to the make.conf with envvars PORTAGE_LOGDIR="/var/log/emerge/build-logs"
+and FEATURES="${FEATURES} binpkg-logs" then grepping them can help discover
+which packages need a per-package retpoline or which package needs
+an -fno-plt or -fopt-info-vec removal scripts.
 
 ----
 
