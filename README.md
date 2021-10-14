@@ -22,9 +22,11 @@ These flags are also default ON via a modified ebuild with hardened clang
 is on the [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 
 PGO (profile-guided optimization) is done on the ebuild level instead of these
-the environment variables because they require some assets and maybe some
-additional coding.  Modified packages with support for PGO flags
-(-fprofile-generate/-fprofile-use) can be found on the same overlay.
+the environment variables because they require some training assets and maybe
+some additional coding.  Modified packages with support for PGO flags
+(-fprofile-generate/-fprofile-use) can be found in the
+[PGO section](https://github.com/orsonteodoro/oiledmachine-overlay#pgo-packages).
+in the the same overlay.
 
 Compiler optimization levels
 * O3 -- enabled for only apps/libraries using cryptographic ciphers and  
