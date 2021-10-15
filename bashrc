@@ -60,9 +60,17 @@ gcf_strip_gcc_flags() {
 	fi
 }
 
+gcf_strip_z_retpolineplt() {
+	if [[ -n "${DISABLE_Z_RETPOLINEPLT}" && "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
+		einfo "Removing -Wl,-z,retpolineplt from LDFLAGS"
+		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
+	fi
+}
+
 pre_src_configure()
 {
 	gcf_retpoline_translate
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
+	gcf_strip_z_retpolineplt
 }
