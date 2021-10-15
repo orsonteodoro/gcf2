@@ -44,6 +44,7 @@ cores on your system.
 processing.  For those using bullet for scientific purposes, consider removing  
 fast-math.
 * -fno-plt -- additional code reduction [1]
+* -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3]
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
@@ -87,12 +88,11 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in  
  the future be installed on my system.
 
-[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then -fno-plt 
-is not compatible with that package especially the x11-drivers.  You need to
-copy and paste one of the per-package bashrc files in
-env/x11-drivers/<package-name> into all the xorg-driver packages installed in
-your system or just delete the -fno-plt package and rebuild all the drivers.
-The env/x11-drivers should be the same as /etc/portage/env/x11-drivers.
+[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
+-fno-plt is not compatible with that package especially the x11-drivers.  You
+need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf  row in the package.env.
+This assumes that the contents of bashrc have been copied into
+/etc/portage/bashrc.
 
 [2] Sometimes I may choose mostly built @world with clang or with gcc.
 You may choose to switch between -mindirect-branch=thunk or -mretpoline
@@ -103,6 +103,10 @@ Adding to the make.conf with envvars PORTAGE_LOGDIR="/var/log/emerge/build-logs"
 and FEATURES="${FEATURES} binpkg-logs" then grepping them can help discover
 which packages need a per-package retpoline or which package needs
 an -fno-plt or -fopt-info-vec removal scripts.
+
+[3] If you have a clang package, you need to add a
+${CATEGORY}/${PN} disable-fopt-info.conf  row to disable fopt-info since
+this is only a GCC only flag.
 
 ----
 
