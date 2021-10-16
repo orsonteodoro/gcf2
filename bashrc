@@ -67,10 +67,54 @@ gcf_strip_z_retpolineplt() {
 	fi
 }
 
+# Auto scales MAKEOPTS based on RAM size or by a
+# ${CATEGORY}/${PN} makeopts-xxx-MiB-per-process.conf row in package.env or
+# per-package TOTAL_MEMORY_PER_PROCESS_MIB to scale based on the observed
+# ceil_worst_case(rss+swap) usage per core from ps/top.
+gcf_scale_makeopts() {
+	# Set PHYSICAL_MEMORY_PER_GIB or PHYSICAL_MEMORY_PER_MIB in make.conf.
+	local physical_memory_per_mib=0
+	if [[ -n "${PHYSICAL_MEMORY_PER_GIB}" ]] ; then
+		physical_memory_per_mib=$(( ${PHYSICAL_MEMORY_PER_GIB} * 1024 ))
+	elif [[ -n "PHYSICAL_MEMORY_PER_MIB" ]] ; then
+		physical_memory_per_mib=${PHYSICAL_MEMORY_PER_MIB}
+	fi
+
+	# This is the observable ceil(ram + swap) of running processes [%cpu] during linking.
+	local total_memory_per_process_mib=${TOTAL_MEMORY_PER_PROCESS_MIB:=1024} # 1 GiB or override value
+
+	# Reasons for -1 thread is to minimize trashing and as a safety
+	# buffer from statistical outliers.
+
+	local phyical_memory_bytes=$(( ${physical_memory_per_mib} * 1024 ))
+	local process_bytes=$(( ${total_memory_per_process_mib} * 1024 ))
+	nthreads=$(python -c "import math;print(math.ceil(${phyical_memory_bytes}/${process_bytes} - 1))")
+	if (( ${nthreads} <= 0 )) ; then
+		nthreads=1
+	fi
+
+	if (( ${physical_memory_per_mib} == 0 )) ; then
+		ewarn
+		ewarn "Set PHYSICAL_MEMORY_PER_GIB or PHYSICAL_MEMORY_PER_MIB in make.conf to"
+		ewarn "enable the MAKEOPTS autoscaler."
+		ewarn
+	elif [[ -n "${DISABLE_SCALE_MAKEOPTS}" && "${DISABLE_SCALE_MAKEOPTS}" == "1" ]] ; then
+		:;
+	else
+		einfo
+		einfo "Auto adjusted with MAKEOPTS=-j${nthreads} assuming ${total_memory_per_process_mib} MiB per process"
+		einfo
+		export MAKEOPTS="-j${nthreads}"
+		export MAKEFLAGS="-j${nthreads}"
+	fi
+}
+
 pre_src_configure()
 {
+	einfo "Running pre_src_configure"
 	gcf_retpoline_translate
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
+	gcf_scale_makeopts
 }
