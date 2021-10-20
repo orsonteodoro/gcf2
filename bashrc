@@ -17,20 +17,20 @@ _gcf_translate_to_clang_retpoline() {
 gcf_retpoline_translate() {
 	if [[ -n "${USE_CLANG}" && "${USE_CLANG}" == "1" ]] ; then
 		# explicit
-		_translate_to_clang_retpoline
+		_gcf_translate_to_clang_retpoline
 	elif [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]] ; then
 		# explicit
-		_translate_to_gcc_retpoline
+		_gcf_translate_to_gcc_retpoline
 	elif [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mindirect-branch=thunk" \
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
-		_translate_to_clang_retpoline
+		_gcf_translate_to_clang_retpoline
 	elif [[ "${CC}" =~ "gcc" || "${CXX}" =~ "g++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mretpoline" \
 			|| "${CXXFLAGS}" =~ "-mretpoline" ]] ; then
 		# implicit
-		_translate_to_gcc_retpoline
+		_gcf_translate_to_gcc_retpoline
 	fi
 }
 
