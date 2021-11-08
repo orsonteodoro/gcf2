@@ -9,9 +9,9 @@ _gcf_translate_to_gcc_retpoline() {
 
 _gcf_translate_to_clang_retpoline() {
 	einfo "Auto translating retpoline for clang"
-	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g")
-	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g")
-	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g")
+	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
+	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
+	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
 }
 
 gcf_retpoline_translate() {
@@ -47,7 +47,7 @@ gcf_strip_gcc_flags() {
 	local gcc_flags=(
 		-fopt-info-vec
 		-fopt-info-inline
-		-frename_registers
+		-frename-registers
 	)
 
 	if [[ -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ]] ; then
@@ -117,4 +117,6 @@ pre_src_configure()
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
 	gcf_scale_makeopts
+	force_clang
+	force_gcc
 }
