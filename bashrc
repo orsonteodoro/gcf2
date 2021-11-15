@@ -109,6 +109,35 @@ gcf_scale_makeopts() {
 	fi
 }
 
+gcf_lto() {
+	_gcf_strip_lto_flags() {
+		export CFLAGS=$(echo "${CFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+	}
+
+	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] \
+		|| [[ -n "${USE_CLANG}" && "${USE_CLANG}" == "1" ]] ; then
+		einfo "Auto switching to ThinLTO"
+		_gcf_strip_lto_flags
+		export CFLAGS=$(echo "${CFLAGS} -flto=thin")
+		export CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
+		export LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld -flto=thin")
+	fi
+
+	if [[ -n "${DISABLE_LTO_STRIPPING}" && "${DISABLE_LTO_STRIPPING}" == "1" ]] ; then
+		:;
+	elif [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
+		einfo "Forced removal of -flto from ${C,CXX,LD}FLAGS"
+		_gcf_strip_lto_flags
+	elif has lto ${IUSE_EFFECTIVE} ; then
+		# Prioritize the lto USE flag over make.conf/package.env.
+		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
+		einfo "Removing -flto from ${C,CXX,LD}FLAGS using USE flag setting instead"
+		_gcf_strip_lto_flags
+	fi
+}
+
 pre_src_configure()
 {
 	einfo "Running pre_src_configure"
@@ -117,6 +146,5 @@ pre_src_configure()
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
 	gcf_scale_makeopts
-	force_clang
-	force_gcc
+	gcf_lto
 }

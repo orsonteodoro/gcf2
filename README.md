@@ -45,6 +45,7 @@ processing.  For those using bullet for scientific purposes, consider removing
 fast-math.
 * -fno-plt -- additional code reduction [1]
 * -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3]
+* -flto=auto -- used primarly for reduction of binary size [4]
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
@@ -109,6 +110,9 @@ an -fno-plt or -fopt-info-vec removal scripts.
 [3] If you have a clang package, you need to add a
 ${CATEGORY}/${PN} disable-fopt-info.conf  row to disable fopt-info since
 this is only a GCC only flag.
+
+[4] Not all packages can successfully use LTO.  A remove-lto.conf has
+been provided to remove the flag for select packages.
 
 ----
 
