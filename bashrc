@@ -93,6 +93,11 @@ gcf_scale_makeopts() {
 	# This is the observable ceil(ram + swap) of running processes [%cpu] during linking.
 	local total_memory_per_process_mib=${TOTAL_MEMORY_PER_PROCESS_MIB:=1024} # 1 GiB or override value
 
+	# Add one of the following templates in package.env to a ${CATEGORY}/${PN} row:
+	# makeopts-xxx-GiB-per-process.conf
+	# makeopts-xxx-MiB-per-process.conf
+	# or your package.conf manually setting TOTAL_MEMORY_PER_PROCESS_MIB
+
 	# Reasons for -1 thread is to minimize trashing and as a safety
 	# buffer from statistical outliers.
 
@@ -121,9 +126,11 @@ gcf_scale_makeopts() {
 
 gcf_lto() {
 	_gcf_strip_lto_flags() {
-		export CFLAGS=$(echo "${CFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s/-flto( |$)//g" -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export CFLAGS=$(echo "${CFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export FCFLAGS=$(echo "${FCFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export FFLAGS=$(echo "${FFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
 	}
 
 	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] \
@@ -134,6 +141,8 @@ gcf_lto() {
 		_gcf_strip_lto_flags
 		export CFLAGS=$(echo "${CFLAGS} -flto=thin")
 		export CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
+		export FCFLAGS=$(echo "${FCFLAGS} -flto=thin")
+		export FFLAGS=$(echo "${FFLAGS} -flto=thin")
 		export LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld -flto=thin")
 	fi
 
@@ -152,6 +161,19 @@ gcf_lto() {
 		einfo
 		_gcf_strip_lto_flags
 	fi
+	export CFLAGS
+	export CXXFLAGS
+	export FCFLAGS
+	export FFLAGS
+	export LDFLAGS
+}
+
+pre_pkg_setup()
+{
+	einfo
+	einfo "Running pre_pkg_setup()"
+	einfo
+	gcf_lto
 }
 
 pre_src_configure()
