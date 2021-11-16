@@ -186,5 +186,4 @@ pre_src_configure()
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
 	gcf_scale_makeopts
-	gcf_lto
 }
