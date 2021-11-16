@@ -50,14 +50,12 @@ fast-math.
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
 compiled for most apps if not stripped by ebuild.
-* -mindirect-branch=thunk-extern -mindirect-branch-register -- default for 
-kernels with CONFIG_RETPOLINE=y
-* -fuse-ld=gold -Wl,-z,retpolineplt -- used for LDFLAGS if -fno-plt is not 
-possible.  It requires the patch from Sriraman Tallam at 
+* -mretpoline (found in clang-retpoline.conf) -- the Clang version [2]
+* -Wl,-z,retpolineplt -- for lazy binded shared libraries or drivers.
+It is recommended to use clang/lld when applying these LDFLAGS.  GCC
+requires the patch from Sriraman Tallam at 
 https://sourceware.org/ml/binutils/2018-01/msg00030.html and gold enabled 
 binutils (https://wiki.gentoo.org/wiki/Gold) with the cxx USE flag.
-* -mretpoline (found in clang-retpoline.conf) -- the Clang version [2]
-* -Wl,-z,retpolineplt -- for lazy binded shared libraries or drivers
 * -fno-plt -- for now binded shared libraries
 
 One may remove -mindirect-branch=thunk -mindirect-branch-register 
@@ -79,6 +77,8 @@ Not affected
 Mitigation: __user pointer sanitization
 Mitigation: Full AMD retpoline
 </pre>
+
+You may also try `lscpu` to obtain more info about CPU hardware vulnerabilities.
 
 This test was performed circa Mar 2018 with sys-devel/gcc-7.3.0-r1, 
 sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30. 
@@ -119,5 +119,5 @@ been provided to remove the flag for select packages.
 My make.conf cflags:
 
 * CFLAGS="-march=native -O2 -fomit-frame-pointer -frename-registers -fno-plt 
--mindirect-branch=thunk -mindirect-branch-register -pipe"
+-mindirect-branch=thunk -mindirect-branch-register -flto=auto -pipe"
 * CXXFLAGS="${CFLAGS}"
