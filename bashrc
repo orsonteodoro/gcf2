@@ -1,14 +1,18 @@
 # Copy the following inside /etc/portage/bashrc:
 
 _gcf_translate_to_gcc_retpoline() {
+	einfo
 	einfo "Auto translating retpoline for gcc"
+	einfo
 	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
 	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
 	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
 }
 
 _gcf_translate_to_clang_retpoline() {
+	einfo
 	einfo "Auto translating retpoline for clang"
+	einfo
 	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
 	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
 	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
@@ -36,7 +40,9 @@ gcf_retpoline_translate() {
 
 gcf_strip_no_plt() {
 	if [[ -n "${DISABLE_FNO_PLT}" && "${DISABLE_FNO_PLT}" == "1" ]] ; then
+		einfo
 		einfo "Removing -fno-plt from ${C,CXX,LD}FLAGS"
+		einfo
 		export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-fno-plt||g")
 		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-fno-plt||g")
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-fno-plt||g")
@@ -51,7 +57,9 @@ gcf_strip_gcc_flags() {
 	)
 
 	if [[ -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ]] ; then
+		einfo
 		einfo "Removing ${gcc_flags[@]} from ${C,CXX,LD}FLAGS"
+		einfo
 		for f in ${gcc_flags[@]} ; do
 			export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${f}||g")
 			export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${f}||g")
@@ -62,7 +70,9 @@ gcf_strip_gcc_flags() {
 
 gcf_strip_z_retpolineplt() {
 	if [[ -n "${DISABLE_Z_RETPOLINEPLT}" && "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
+		einfo
 		einfo "Removing -Wl,-z,retpolineplt from LDFLAGS"
+		einfo
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
 	fi
 }
@@ -118,7 +128,9 @@ gcf_lto() {
 
 	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] \
 		|| [[ -n "${USE_CLANG}" && "${USE_CLANG}" == "1" ]] ; then
+		einfo
 		einfo "Auto switching to ThinLTO"
+		einfo
 		_gcf_strip_lto_flags
 		export CFLAGS=$(echo "${CFLAGS} -flto=thin")
 		export CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
@@ -128,19 +140,25 @@ gcf_lto() {
 	if [[ -n "${DISABLE_LTO_STRIPPING}" && "${DISABLE_LTO_STRIPPING}" == "1" ]] ; then
 		:;
 	elif [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
-		einfo "Forced removal of -flto from ${C,CXX,LD}FLAGS"
+		einfo
+		einfo "Forced removal of -flto from {C,CXX,LD}FLAGS"
+		einfo
 		_gcf_strip_lto_flags
 	elif has lto ${IUSE_EFFECTIVE} ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
-		einfo "Removing -flto from ${C,CXX,LD}FLAGS using USE flag setting instead"
+		einfo
+		einfo "Removing -flto from {C,CXX,LD}FLAGS using USE flag setting instead"
+		einfo
 		_gcf_strip_lto_flags
 	fi
 }
 
 pre_src_configure()
 {
-	einfo "Running pre_src_configure"
+	einfo
+	einfo "Running pre_src_configure()"
+	einfo
 	gcf_retpoline_translate
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
