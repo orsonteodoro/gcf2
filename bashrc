@@ -148,7 +148,7 @@ gcf_lto() {
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
 		einfo
-		einfo "Removing -flto from {C,CXX,LD}FLAGS using USE flag setting instead"
+		einfo "Removing -flto from {C,CXX,LD}FLAGS.  Using the USE flag setting instead."
 		einfo
 		_gcf_strip_lto_flags
 	fi
