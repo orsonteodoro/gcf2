@@ -103,7 +103,13 @@ gcf_scale_makeopts() {
 
 	local physical_memory_bytes=$(( ${physical_memory_per_mib} * 1024 ))
 	local process_bytes=$(( ${total_memory_per_process_mib} * 1024 ))
-	nthreads=$(python -c "import math;print(math.ceil(${physical_memory_bytes}/${process_bytes} - 1))")
+
+	# More memory be reserved per package or based on cores.
+	# The more cores the more reserved GiB may be required if more C/C++ instances overflow over 1 GiB.
+	# So maybe RESERVED_GIB_OVERRIDE = ncores / 4.
+	local reserved_gib=${RESERVED_GIB_OVERRIDE:=1}
+
+	nthreads=$(python -c "import math;print(math.ceil(${physical_memory_bytes}/${process_bytes} - ${reserved_gib}))")
 	if (( ${nthreads} <= 0 )) ; then
 		nthreads=1
 	fi
