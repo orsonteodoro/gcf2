@@ -86,7 +86,7 @@ gcf_scale_makeopts() {
 	local physical_memory_per_mib=0
 	if [[ -n "${PHYSICAL_MEMORY_PER_GIB}" ]] ; then
 		physical_memory_per_mib=$(( ${PHYSICAL_MEMORY_PER_GIB} * 1024 ))
-	elif [[ -n "PHYSICAL_MEMORY_PER_MIB" ]] ; then
+	elif [[ -n "${PHYSICAL_MEMORY_PER_MIB}" ]] ; then
 		physical_memory_per_mib=${PHYSICAL_MEMORY_PER_MIB}
 	fi
 
@@ -101,9 +101,9 @@ gcf_scale_makeopts() {
 	# Reasons for -1 thread is to minimize trashing and as a safety
 	# buffer from statistical outliers.
 
-	local phyical_memory_bytes=$(( ${physical_memory_per_mib} * 1024 ))
+	local physical_memory_bytes=$(( ${physical_memory_per_mib} * 1024 ))
 	local process_bytes=$(( ${total_memory_per_process_mib} * 1024 ))
-	nthreads=$(python -c "import math;print(math.ceil(${phyical_memory_bytes}/${process_bytes} - 1))")
+	nthreads=$(python -c "import math;print(math.ceil(${physical_memory_bytes}/${process_bytes} - 1))")
 	if (( ${nthreads} <= 0 )) ; then
 		nthreads=1
 	fi
