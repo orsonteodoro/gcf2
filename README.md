@@ -45,7 +45,7 @@ processing.  For those using bullet for scientific purposes, consider removing
 fast-math.
 * -fno-plt -- additional code reduction [1]
 * -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3]
-* -flto=auto -- used primarly for reduction of binary size [4]
+* -flto -- used primarly for reduction of binary size [4]
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
@@ -112,12 +112,29 @@ ${CATEGORY}/${PN} disable-fopt-info.conf  row to disable fopt-info since
 this is only a GCC only flag.
 
 [4] Not all packages can successfully use LTO.  A remove-lto.conf has
-been provided to remove the flag for select packages.
+been provided to remove the flag for select packages.  Due to the heavy time
+and memory cost, only ThinLTO will be used.
+
+----
+
+bashrc
+
+The bashrc script is also provided to control applying, removing, translating
+*FLAGS.  You may place it and source it in an external script,
+or place it directly in the bashrc.  Per-package environment variables are used
+to control filtering.
+
+The following can be added to package.env per package to control bashrc:
+disable-gcf-lto.conf -- Disables Clang + ThinLTO
+disable-lto-stripping.conf -- Disables auto removal of LTO *flags 
+force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang *flags
+force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC *flags
 
 ----
 
 My make.conf cflags:
 
 * CFLAGS="-march=native -O2 -fomit-frame-pointer -frename-registers -fno-plt 
--mindirect-branch=thunk -mindirect-branch-register -flto=auto -pipe"
+-mindirect-branch=thunk -mindirect-branch-register -flto -pipe"
 * CXXFLAGS="${CFLAGS}"
+* LDFLAGS="${LDFLAGS} -flto"
