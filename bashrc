@@ -141,11 +141,18 @@ gcf_lto() {
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
 	}
 
-	if [[ -z "${DISABLE_LTO}" || ( -n "${DISABLE_LTO}" && "${DISABLE_LTO}" != "1" ) ]] \
+	# It's okay to use GCC+BFD LTO or WPA-LTO for small packages.
+	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) && ( "${CC}" =~ "gcc" || "${CC}" =~ "g++" ) ]] ; then
+		# This should be disabled for packages that take literally most of the day or more to complete with GCC LTO.
+		# Auto switching to ThinLTO for larger packages instead.
+		_gcf_strip_lto_flags
+	fi
+
+	if [[ -z "${DISABLE_CLANG_LTO}" || ( -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" != "1" ) ]] \
 		&& gcf_is_thinlto_allowed \
 		&& gcf_met_lto_requirement ; then
 		einfo
-		einfo "Switching to clang for ThinLTO"
+		einfo "Auto switching to clang for ThinLTO"
 		einfo
 		export CC=clang
 		export CXX=clang++
@@ -212,15 +219,6 @@ gcf_replace_flags()
 	fi
 }
 
-pre_pkg_setup()
-{
-	einfo
-	einfo "Running pre_pkg_setup()"
-	einfo
-	gcf_replace_flags
-	gcf_lto
-}
-
 gcf_strip_lossy()
 {
 	if [[ -n "${I_WANT_LOSSLESS}" && "${I_WANT_LOSSLESS}" == "1" ]] ; then
@@ -256,11 +254,20 @@ gcf_use_Oz()
 	fi
 }
 
-pre_src_configure()
+gcf_replace_freorder_blocks_algorithm()
+{
+	if [[ "FREORDER_BLOCKS_ALGORITHM" == "stc" ]] ; then
+		_gcf_replace_flag "-freorder-blocks-algorithm=simple" "-freorder-blocks-algorithm=stc"
+	fi
+}
+
+pre_pkg_setup()
 {
 	einfo
-	einfo "Running pre_src_configure()"
+	einfo "Running pre_pkg_setup()"
 	einfo
+	gcf_replace_flags
+	gcf_lto
 	gcf_retpoline_translate
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
@@ -268,6 +275,7 @@ pre_src_configure()
 	gcf_strip_no_inline
 	gcf_strip_lossy
 	gcf_use_Oz
+	gcf_replace_freorder_blocks_algorithm
 }
 
 gcf_check_Ofast_safety()

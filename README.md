@@ -89,8 +89,9 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in 
  the future be installed on my system.
 
-[1] I_WANT_LOSSLESS=1 can be added to make.conf to remove or convert flags to
-their lossless counterparts in packages related to games, graphics, audio.
+[1] I_WANT_LOSSLESS=1 can be added to make.conf or applied per-package to
+remove or convert flags to their lossless counterparts in packages related to
+games, graphics, audio.
 
 [2] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
 -fno-plt is not compatible with that package especially the x11-drivers.  You
@@ -139,7 +140,10 @@ Some .conf files may contain additional information about the flag or envvar.
 
 My make.conf cflags:
 
-* CFLAGS="-march=native -Os -fomit-frame-pointer -frename-registers -fno-plt 
--mindirect-branch=thunk -mindirect-branch-register -flto -pipe"
+* CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
+-fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
+-mindirect-branch-register -flto -pipe"
+
 * CXXFLAGS="${CFLAGS}"
+
 * LDFLAGS="${LDFLAGS} -flto"
