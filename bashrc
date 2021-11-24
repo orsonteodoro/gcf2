@@ -270,8 +270,8 @@ pre_src_configure()
 
 gcf_check_Ofast_safety()
 {
-	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" \
-			&& ( -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" != "1" ) ]] ; then
+	[[ -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
+	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
 eerror
 eerror "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
@@ -279,8 +279,7 @@ eerror
 			die
 		fi
 	fi
-	if [[ "${CFLAGS}" =~ "-fallow-store-data-races" && -e "${T}/build.log" \
-			&& ( -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" != "1" ) ]] ; then
+	if [[ "${CFLAGS}" =~ "-fallow-store-data-races" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
 eerror
 eerror "Detected thread use.  Disable -fallow-store-data-races or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
