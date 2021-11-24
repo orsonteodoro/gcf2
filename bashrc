@@ -4,8 +4,11 @@
 # or
 #
 # Copy this file as /etc/portage/gcf-bashrc
-# then add source /etc/portage/gcf-bashrc
-# /etc/portage/bashrc
+# then add this line:
+#
+#   source /etc/portage/gcf-bashrc
+#
+# in /etc/portage/bashrc.
 #
 
 _gcf_replace_flag() {
