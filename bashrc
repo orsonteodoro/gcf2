@@ -296,7 +296,7 @@ eerror
 		export MAKEFLAGS="-j1"
 	fi
 	einfo
-	einfo "MAKEOPTS_MODE=${MAKEOPTS_MODE}: n=${n}"
+	einfo "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
 	einfo
 }
 
