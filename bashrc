@@ -82,7 +82,8 @@ gcf_strip_gcc_flags() {
 		-frename-registers
 	)
 
-	if [[ -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ]] ; then
+	if [[ ( -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ) \
+		|| ( -n "${_GCF_SWITCHED_TO_THINLTO}" && "${_GCF_SWITCHED_TO_THINLTO}" == "1" ) ]] ; then
 		einfo
 		einfo "Removing ${gcc_flags[@]} from *FLAGS"
 		einfo
@@ -157,6 +158,7 @@ gcf_lto() {
 		export RANLIB=llvm-ranlib
 		export READELF=llvm-readelf
 		export STRIP=llvm-strip
+		export _GCF_SWITCHED_TO_THINLTO=1
 
 		einfo
 		einfo "Auto switching to ThinLTO"
