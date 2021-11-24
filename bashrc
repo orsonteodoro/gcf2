@@ -15,7 +15,7 @@ _gcf_replace_flag() {
 	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FCFLAGS=$(echo "${FCFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FFLAGS=$(echo "${FFLAGS}" | sed -e "s|${i}|${o}|g")
-	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|${i}|${o}|g")
+	export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
 }
 
 _gcf_translate_to_gcc_retpoline() {
@@ -205,7 +205,7 @@ ewarn
 
 gcf_replace_flags()
 {
-	if [[ -n "${OPT_LEVEL}" && "${OPT_LEVEL}" =~ ("-O0"|"-O1"|"-O2"|"-O3"|"-O4"|"-Ofast"|"-Oz") ]] ; then
+	if [[ -n "${OPT_LEVEL}" && "${OPT_LEVEL}" =~ ("-O0"|"-O1"|"-O2"|"-O3"|"-O4"|"-Ofast"|"-Oz"|"-Os") ]] ; then
 		_gcf_replace_flag "${DEFAULT_OPT_LEVEL}" "${OPT_LEVEL}"
 	fi
 }
