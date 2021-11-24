@@ -8,22 +8,29 @@
 # /etc/portage/bashrc
 #
 
+_gcf_replace_flag() {
+	local i="${1}"
+	local o="${2}"
+	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${i}|${o}|g")
+	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${i}|${o}|g")
+	export FCFLAGS=$(echo "${FCFLAGS}" | sed -e "s|${i}|${o}|g")
+	export FFLAGS=$(echo "${FFLAGS}" | sed -e "s|${i}|${o}|g")
+	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|${i}|${o}|g")
+}
+
 _gcf_translate_to_gcc_retpoline() {
 	einfo
 	einfo "Auto translating retpoline for gcc"
 	einfo
-	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
-	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
-	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mretpoline|-mindirect-branch=thunk -mindirect-branch-register|g")
+	_gcf_replace_flag "-mretpoline" "-mindirect-branch=thunk -mindirect-branch-register"
 }
 
 _gcf_translate_to_clang_retpoline() {
 	einfo
 	einfo "Auto translating retpoline for clang"
 	einfo
-	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
-	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
-	export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-mindirect-branch=thunk|-mretpoline|g" -e "s|-mindirect-branch-register||g")
+	_gcf_replace_flag "-mindirect-branch=thunk" "-mretpoline"
+	_gcf_replace_flag "-mindirect-branch-register" ""
 }
 
 gcf_retpoline_translate() {
@@ -46,14 +53,25 @@ gcf_retpoline_translate() {
 	fi
 }
 
+gcf_strip_no_inline() {
+	if [[ "${CFLAGS}" =~ "-fno-inline" \
+		&& ( "${CFLAGS}" =~ ("-Ofast"|"-O2"|"O3") \
+			|| ( -n "${DISABLE_NO_INLINE}" && "${DISABLE_NO_INLINE}" == "1" ) \
+			|| ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) \
+		) ]] ; then
+		einfo
+		einfo "Removing -fno-inline from *FLAGS"
+		einfo
+		_gcf_replace_flag "-fno-inline" ""
+	fi
+}
+
 gcf_strip_no_plt() {
 	if [[ -n "${DISABLE_FNO_PLT}" && "${DISABLE_FNO_PLT}" == "1" ]] ; then
 		einfo
-		einfo "Removing -fno-plt from ${C,CXX,LD}FLAGS"
+		einfo "Removing -fno-plt from *FLAGS"
 		einfo
-		export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|-fno-plt||g")
-		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|-fno-plt||g")
-		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-fno-plt||g")
+		_gcf_replace_flag "-fno-plt" ""
 	fi
 }
 
@@ -66,12 +84,10 @@ gcf_strip_gcc_flags() {
 
 	if [[ -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ]] ; then
 		einfo
-		einfo "Removing ${gcc_flags[@]} from ${C,CXX,LD}FLAGS"
+		einfo "Removing ${gcc_flags[@]} from *FLAGS"
 		einfo
 		for f in ${gcc_flags[@]} ; do
-			export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${f}||g")
-			export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${f}||g")
-			export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|${f}||g")
+			_gcf_replace_flag "${f}" ""
 		done
 	fi
 }
@@ -107,7 +123,7 @@ gcf_met_lto_requirement() {
 		if ( has_version "sys-devel/llvm:${s}" \
 			&& has_version "sys-devel/clang:${s}" \
 			&& has_version ">=sys-devel/lld-${s}" ) ; then
-			ver_test ${s} -le ${LLVM_MAX_SLOT:=14} && found=1
+			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=1
 		fi
 	done
 	return ${found}
@@ -169,14 +185,14 @@ ewarn
 		:;
 	elif [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
 		einfo
-		einfo "Forced removal of -flto from {C,CXX,LD}FLAGS"
+		einfo "Forced removal of -flto from *FLAGS"
 		einfo
 		_gcf_strip_lto_flags
 	elif has lto ${IUSE_EFFECTIVE} ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
 		einfo
-		einfo "Removing -flto from {C,CXX,LD}FLAGS.  Using the USE flag setting instead."
+		einfo "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		einfo
 		_gcf_strip_lto_flags
 	fi
@@ -187,12 +203,55 @@ ewarn
 	export LDFLAGS
 }
 
+gcf_replace_flags()
+{
+	if [[ -n "${OPT_LEVEL}" && "${OPT_LEVEL}" =~ ("-O0"|"-O1"|"-O2"|"-O3"|"-O4"|"-Ofast"|"-Oz") ]] ; then
+		_gcf_replace_flag "${DEFAULT_OPT_LEVEL}" "${OPT_LEVEL}"
+	fi
+}
+
 pre_pkg_setup()
 {
 	einfo
 	einfo "Running pre_pkg_setup()"
 	einfo
+	gcf_replace_flags
 	gcf_lto
+}
+
+gcf_strip_lossy()
+{
+	if [[ -n "${I_WANT_LOSSLESS}" && "${I_WANT_LOSSLESS}" == "1" ]] ; then
+		if [[ "${CFLAGS}" =~ "-Ofast" ]] ; then
+			einfo
+			einfo "Converting -Ofast -> -O3"
+			einfo
+			_gcf_replace_flag "-Ofast" "-O3"
+		fi
+
+		if [[ "${CFLAGS}" =~ "-ffast-math" ]] ; then
+			einfo
+			einfo "Stripping -ffast-math"
+			einfo
+			_gcf_replace_flag "-ffast-math" ""
+		fi
+	fi
+}
+
+gcf_use_Oz()
+{
+	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
+		einfo
+		einfo "Detected clang.  Converting -Os -> -Oz"
+		einfo
+		_gcf_replace_flag "-Os" "-Oz"
+	fi
+	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" ) && "${CFLAGS}" =~ "-Oz" ]] ; then
+		einfo
+		einfo "Detected gcc.  Converting -Oz -> -Os"
+		einfo
+		_gcf_replace_flag "-Oz" "-Os"
+	fi
 }
 
 pre_src_configure()
@@ -204,4 +263,38 @@ pre_src_configure()
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
+	gcf_strip_no_inline
+	gcf_strip_lossy
+	gcf_use_Oz
+}
+
+gcf_check_Ofast_safety()
+{
+	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" \
+			|| ( -z "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" \
+				|| ( -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" != "1" ) ) ]] ; then
+		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
+eerror
+eerror "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
+eerror
+			die
+		fi
+	fi
+	if [[ "${CFLAGS}" =~ "-fallow-store-data-races" && -e "${T}/build.log" \
+		&& ( -z "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" \
+			|| ( -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" != "1" ) ) ]] ; then
+		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
+eerror
+eerror "Detected thread use.  Disable -fallow-store-data-races or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
+eerror
+			die
+		fi
+	fi
+}
+
+pre_src_install() {
+	einfo
+	einfo "Running pre_src_install()"
+	einfo
+	gcf_check_Ofast_safety
 }

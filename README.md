@@ -32,8 +32,9 @@ Compiler optimization levels
 * O3 -- enabled for only apps/libraries using cryptographic ciphers and 
 hashing algorithms, 3D math and 3D game engines, computational geometry 
 algorithms, bitwise math, physics libraries and engines, FFT, audio and video 
-codecs and image processing, compression algorithms.
-* O2 -- default
+codecs and image processing
+* O2 -- non turn based games, assembly like code, parsers
+* Os -- default
 
 * -fprefetch-loop-arrays is enabled for package that process sequential data.
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with 
@@ -42,25 +43,22 @@ cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio 
 processing.  For those using bullet for scientific purposes, consider removing 
-fast-math.
-* -fno-plt -- additional code reduction [1]
+fast-math (or applying [1]).
+* -fno-plt -- additional code reduction [2]
 * -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3]
 * -flto -- used primarly for reduction of binary size [4]
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
 compiled for most apps if not stripped by ebuild.
-* -mretpoline (found in clang-retpoline.conf) -- the Clang version [2]
+* -mretpoline (found in clang-retpoline.conf) -- the Clang version [5]
 * -Wl,-z,retpolineplt -- for lazy binded shared libraries or drivers.
-It is recommended to use clang/lld when applying these LDFLAGS.  GCC
-requires the patch from Sriraman Tallam at 
-https://sourceware.org/ml/binutils/2018-01/msg00030.html and gold enabled 
-binutils (https://wiki.gentoo.org/wiki/Gold) with the cxx USE flag.
+It is recommended to use clang/lld when applying these LDFLAGS.
 * -fno-plt -- for now binded shared libraries
 
 One may remove -mindirect-branch=thunk -mindirect-branch-register 
 if the processor has already fixed the side-channel attack hardware flaw. 
-According to Wikipedia, all pre 2019 hardware had this flaw.
+According to Wikipedia, just about all pre 2019 hardware had this flaw.
 
 To ensure that your kernel is properly patched use 
 `cat /sys/devices/system/cpu/vulnerabilities/spectre_v2` to view if the 
@@ -91,13 +89,24 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in 
  the future be installed on my system.
 
-[1] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
+[1] I_WANT_LOSSLESS=1 can be added to make.conf to remove or convert flags to
+their lossless counterparts in packages related to games, graphics, audio.
+
+[2] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
 -fno-plt is not compatible with that package especially the x11-drivers.  You
 need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf z-retpolineplt.conf  row
 in the package.env. This assumes that the contents of bashrc have been copied
 into /etc/portage/bashrc.
 
-[2] Sometimes I may choose mostly built @world with clang or with gcc.
+[3] If you have a clang package, you need to add a
+${CATEGORY}/${PN} disable-fopt-info.conf row to disable fopt-info since
+this is only a GCC only flag.
+
+[4] Not all packages can successfully use LTO.  A remove-lto.conf has
+been provided to remove the flag for select packages.  Due to the heavy time
+and memory cost, only ThinLTO will be used.
+
+[5] Sometimes I may choose mostly built @world with clang or with gcc.
 You may choose to switch between -mindirect-branch=thunk or -mretpoline
 for the default {C,CXX}FLAGS and apply manually per-package
 clang-retpoline.conf or gcc-retpoline-thunk.conf.  It helps to grep the
@@ -106,14 +115,6 @@ Adding to the make.conf with envvars PORTAGE_LOGDIR="/var/log/emerge/build-logs"
 and FEATURES="${FEATURES} binpkg-logs" then grepping them can help discover
 which packages need a per-package retpoline or which package needs
 an -fno-plt or -fopt-info-vec removal scripts.
-
-[3] If you have a clang package, you need to add a
-${CATEGORY}/${PN} disable-fopt-info.conf  row to disable fopt-info since
-this is only a GCC only flag.
-
-[4] Not all packages can successfully use LTO.  A remove-lto.conf has
-been provided to remove the flag for select packages.  Due to the heavy time
-and memory cost, only ThinLTO will be used.
 
 ----
 
@@ -124,17 +125,21 @@ The bashrc script is also provided to control applying, removing, translating
 or place it directly in the bashrc.  Per-package environment variables are used
 to control filtering.
 
-The following can be added to package.env per package to control bashrc:
+The following can be added to the package.env per package-wise to control bashrc:
+bypass-fallow-store-data-races-check.conf -- disables -Ofast or -fallow-store-data-races safety check
 disable-gcf-lto.conf -- Disables Clang + ThinLTO
 disable-lto-stripping.conf -- Disables auto removal of LTO *flags 
 force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang *flags
 force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC *flags
+remove-no-inline.conf -- Removes -fno-inline
+
+Some .conf files may contain additional information about the flag or envvar.
 
 ----
 
 My make.conf cflags:
 
-* CFLAGS="-march=native -O2 -fomit-frame-pointer -frename-registers -fno-plt 
+* CFLAGS="-march=native -Os -fomit-frame-pointer -frename-registers -fno-plt 
 -mindirect-branch=thunk -mindirect-branch-register -flto -pipe"
 * CXXFLAGS="${CFLAGS}"
 * LDFLAGS="${LDFLAGS} -flto"
