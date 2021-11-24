@@ -264,6 +264,42 @@ gcf_replace_freorder_blocks_algorithm()
 	fi
 }
 
+gcf_adjust_makeopts()
+{
+	if [[ -z "${NCORES}" ]] ; then
+eerror
+eerror "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
+eerror "without considering the threads per core."
+eerror
+		die
+	fi
+	if [[ -z "${MPROCS}" ]] ; then
+eerror
+eerror "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
+eerror
+		die
+	fi
+	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
+		local n=$((${NCORES} * ${MPROCS}))
+		export MAKEOPTS="-j${n}"
+		export MAKEFLAGS="-j${n}"
+	elif [[ "${MAKEOPTS_MODE}" == "swappy" ]] ; then
+		local n=$((${NCORES} / 2))
+		(( ${n} <= 0 )) && n=1
+		export MAKEOPTS="-j${n}"
+		export MAKEFLAGS="-j${n}"
+	elif [[ "${MAKEOPTS_MODE}" == "plain" ]] ; then
+		export MAKEOPTS="-j${NCORES}"
+		export MAKEFLAGS="-j${NCORES}"
+	elif [[ "${MAKEOPTS_MODE}" == "oom" ]] ; then
+		export MAKEOPTS="-j1"
+		export MAKEFLAGS="-j1"
+	fi
+	einfo
+	einfo "MAKEOPTS_MODE=${MAKEOPTS_MODE}: n=${n}"
+	einfo
+}
+
 pre_pkg_setup()
 {
 	einfo
@@ -279,6 +315,7 @@ pre_pkg_setup()
 	gcf_strip_lossy
 	gcf_use_Oz
 	gcf_replace_freorder_blocks_algorithm
+	gcf_adjust_makeopts
 }
 
 gcf_check_Ofast_safety()
