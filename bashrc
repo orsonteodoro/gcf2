@@ -269,7 +269,7 @@ gcf_adjust_makeopts()
 	if [[ -z "${NCORES}" ]] ; then
 eerror
 eerror "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
-eerror "without considering the threads per core."
+eerror "not multiplying the threads per core."
 eerror
 		die
 	fi
@@ -291,7 +291,7 @@ eerror
 	elif [[ "${MAKEOPTS_MODE}" == "plain" ]] ; then
 		export MAKEOPTS="-j${NCORES}"
 		export MAKEFLAGS="-j${NCORES}"
-	elif [[ "${MAKEOPTS_MODE}" == "oom" ]] ; then
+	elif [[ "${MAKEOPTS_MODE}" == "oom" || "${MAKEOPTS_MODE}" == "broken" ]] ; then
 		export MAKEOPTS="-j1"
 		export MAKEFLAGS="-j1"
 	fi
