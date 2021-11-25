@@ -151,7 +151,7 @@ gcf_lto() {
 		_gcf_strip_lto_flags
 	fi
 
-	if [[ -z "${DISABLE_CLANG_LTO}" || ( -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" != "1" ) ]] \
+	if [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
 		&& gcf_is_thinlto_allowed \
 		&& gcf_met_lto_requirement ; then
 		einfo
@@ -192,6 +192,10 @@ ewarn
 		fi
 	fi
 	# Avoiding gcc/lto because of *serious* memory issues on 1 GIB per core machines.
+
+	if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" && ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+		_gcf_strip_lto_flags
+	fi
 
 	if [[ -n "${DISABLE_LTO_STRIPPING}" && "${DISABLE_LTO_STRIPPING}" == "1" ]] ; then
 		:;
