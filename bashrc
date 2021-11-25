@@ -280,7 +280,8 @@ eerror
 		die
 	fi
 	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
-		local n=$((${NCORES} * ${MPROCS}))
+		local n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
+		(( ${n} <= 0 )) && n=1
 		export MAKEOPTS="-j${n}"
 		export MAKEFLAGS="-j${n}"
 	elif [[ "${MAKEOPTS_MODE}" == "swappy" ]] ; then
