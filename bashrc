@@ -119,15 +119,15 @@ gcf_is_thinlto_allowed() {
 }
 
 gcf_met_lto_requirement() {
-	local llvm_slots=(11 12 13 14)
+	local llvm_slots=(14 13 12 11)
 	has_version "sys-devel/llvm" || return 1
 
-	local found=0
+	local found=1
 	for s in ${llvm_slots[@]} ; do
 		if ( has_version "sys-devel/llvm:${s}" \
 			&& has_version "sys-devel/clang:${s}" \
 			&& has_version ">=sys-devel/lld-${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=1
+			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
 		fi
 	done
 	return ${found}
