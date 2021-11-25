@@ -48,7 +48,7 @@ gcf_retpoline_translate() {
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
 		_gcf_translate_to_clang_retpoline
-	elif [[ "${CC}" =~ "gcc" || "${CXX}" =~ "g++" ]] \
+	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ "g++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mretpoline" \
 			|| "${CXXFLAGS}" =~ "-mretpoline" ]] ; then
 		# implicit
@@ -145,7 +145,7 @@ gcf_lto() {
 	}
 
 	# It's okay to use GCC+BFD LTO or WPA-LTO for small packages.
-	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) ]] ; then
+	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) && ( "${CC}" =~ "gcc" || "${CXX}" =~ "g++" || ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
 		# This should be disabled for packages that take literally most of the day or more to complete with GCC LTO.
 		# Auto switching to ThinLTO for larger packages instead.
 		_gcf_strip_lto_flags
@@ -249,7 +249,7 @@ gcf_use_Oz()
 		einfo
 		_gcf_replace_flag "-Os" "-Oz"
 	fi
-	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" ) && "${CFLAGS}" =~ "-Oz" ]] ; then
+	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
 		einfo
 		einfo "Detected gcc.  Converting -Oz -> -Os"
 		einfo
