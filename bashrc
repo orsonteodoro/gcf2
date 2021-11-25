@@ -145,7 +145,7 @@ gcf_lto() {
 	}
 
 	# It's okay to use GCC+BFD LTO or WPA-LTO for small packages.
-	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) && ( "${CC}" =~ "gcc" || "${CC}" =~ "g++" ) ]] ; then
+	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) ]] ; then
 		# This should be disabled for packages that take literally most of the day or more to complete with GCC LTO.
 		# Auto switching to ThinLTO for larger packages instead.
 		_gcf_strip_lto_flags
