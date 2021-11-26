@@ -11,6 +11,18 @@
 # in /etc/portage/bashrc.
 #
 
+gcf_info() {
+	echo -e ">>> [GCF] ${@}"
+}
+
+gcf_warn() {
+	echo -e ">>> \e[30m\e[43m[GCF]\e[0m ${@}"
+}
+
+gcf_error() {
+	echo -e ">>> \e[30m\e[41m[GCF]\e[0m ${@}"
+}
+
 _gcf_replace_flag() {
 	local i="${1}"
 	local o="${2}"
@@ -22,16 +34,12 @@ _gcf_replace_flag() {
 }
 
 _gcf_translate_to_gcc_retpoline() {
-	einfo
-	einfo "Auto translating retpoline for gcc"
-	einfo
+	gcf_info "Auto translating retpoline for gcc"
 	_gcf_replace_flag "-mretpoline" "-mindirect-branch=thunk -mindirect-branch-register"
 }
 
 _gcf_translate_to_clang_retpoline() {
-	einfo
-	einfo "Auto translating retpoline for clang"
-	einfo
+	gcf_info "Auto translating retpoline for clang"
 	_gcf_replace_flag "-mindirect-branch=thunk" "-mretpoline"
 	_gcf_replace_flag "-mindirect-branch-register" ""
 }
@@ -62,18 +70,14 @@ gcf_strip_no_inline() {
 			|| ( -n "${DISABLE_NO_INLINE}" && "${DISABLE_NO_INLINE}" == "1" ) \
 			|| ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) \
 		) ]] ; then
-		einfo
-		einfo "Removing -fno-inline from *FLAGS"
-		einfo
+		gcf_info "Removing -fno-inline from *FLAGS"
 		_gcf_replace_flag "-fno-inline" ""
 	fi
 }
 
 gcf_strip_no_plt() {
 	if [[ -n "${DISABLE_FNO_PLT}" && "${DISABLE_FNO_PLT}" == "1" ]] ; then
-		einfo
-		einfo "Removing -fno-plt from *FLAGS"
-		einfo
+		gcf_info "Removing -fno-plt from *FLAGS"
 		_gcf_replace_flag "-fno-plt" ""
 	fi
 }
@@ -87,9 +91,7 @@ gcf_strip_gcc_flags() {
 
 	if [[ ( -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ) \
 		|| ( -n "${_GCF_SWITCHED_TO_THINLTO}" && "${_GCF_SWITCHED_TO_THINLTO}" == "1" ) ]] ; then
-		einfo
-		einfo "Removing ${gcc_flags[@]} from *FLAGS"
-		einfo
+		gcf_info "Removing ${gcc_flags[@]} from *FLAGS"
 		for f in ${gcc_flags[@]} ; do
 			_gcf_replace_flag "${f}" ""
 		done
@@ -98,9 +100,7 @@ gcf_strip_gcc_flags() {
 
 gcf_strip_z_retpolineplt() {
 	if [[ -n "${DISABLE_Z_RETPOLINEPLT}" && "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
-		einfo
-		einfo "Removing -Wl,-z,retpolineplt from LDFLAGS"
-		einfo
+		gcf_info "Removing -Wl,-z,retpolineplt from LDFLAGS"
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
 	fi
 }
@@ -154,9 +154,7 @@ gcf_lto() {
 	if [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
 		&& gcf_is_thinlto_allowed \
 		&& gcf_met_lto_requirement ; then
-		einfo
-		einfo "Auto switching to clang for ThinLTO"
-		einfo
+		gcf_info "Auto switching to clang for ThinLTO"
 		export CC=clang
 		export CXX=clang++
 		export CPP=clang-cpp
@@ -170,9 +168,7 @@ gcf_lto() {
 		export STRIP=llvm-strip
 		export _GCF_SWITCHED_TO_THINLTO=1
 
-		einfo
-		einfo "Auto switching to ThinLTO"
-		einfo
+		gcf_info "Auto switching to ThinLTO"
 		_gcf_strip_lto_flags
 		CFLAGS=$(echo "${CFLAGS} -flto=thin")
 		CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
@@ -184,10 +180,8 @@ gcf_lto() {
 			if clang --version | grep -q -e "Hardened" ; then
 				:;
 			else
-ewarn
-ewarn "Non-hardened clang detected.  Use the clang ebuild from the"
-ewarn "oiledmachine-overlay.  Not doing so can weaken the security."
-ewarn
+gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
+gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 			fi
 		fi
 	fi
@@ -200,16 +194,12 @@ ewarn
 	if [[ -n "${DISABLE_LTO_STRIPPING}" && "${DISABLE_LTO_STRIPPING}" == "1" ]] ; then
 		:;
 	elif [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
-		einfo
-		einfo "Forced removal of -flto from *FLAGS"
-		einfo
+		gcf_info "Forced removal of -flto from *FLAGS"
 		_gcf_strip_lto_flags
 	elif has lto ${IUSE_EFFECTIVE} ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
-		einfo
-		einfo "Removing -flto from *FLAGS.  Using the USE flag setting instead."
-		einfo
+		gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		_gcf_strip_lto_flags
 	fi
 	export CFLAGS
@@ -230,16 +220,12 @@ gcf_strip_lossy()
 {
 	if [[ -n "${I_WANT_LOSSLESS}" && "${I_WANT_LOSSLESS}" == "1" ]] ; then
 		if [[ "${CFLAGS}" =~ "-Ofast" ]] ; then
-			einfo
-			einfo "Converting -Ofast -> -O3"
-			einfo
+			gcf_info "Converting -Ofast -> -O3"
 			_gcf_replace_flag "-Ofast" "-O3"
 		fi
 
 		if [[ "${CFLAGS}" =~ "-ffast-math" ]] ; then
-			einfo
-			einfo "Stripping -ffast-math"
-			einfo
+			gcf_info "Stripping -ffast-math"
 			_gcf_replace_flag "-ffast-math" ""
 		fi
 	fi
@@ -248,15 +234,11 @@ gcf_strip_lossy()
 gcf_use_Oz()
 {
 	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
-		einfo
-		einfo "Detected clang.  Converting -Os -> -Oz"
-		einfo
+		gcf_info "Detected clang.  Converting -Os -> -Oz"
 		_gcf_replace_flag "-Os" "-Oz"
 	fi
 	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
-		einfo
-		einfo "Detected gcc.  Converting -Oz -> -Os"
-		einfo
+		gcf_info "Detected gcc.  Converting -Oz -> -Os"
 		_gcf_replace_flag "-Oz" "-Os"
 	fi
 }
@@ -271,16 +253,12 @@ gcf_replace_freorder_blocks_algorithm()
 gcf_adjust_makeopts()
 {
 	if [[ -z "${NCORES}" ]] ; then
-eerror
-eerror "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
-eerror "not multiplying the threads per core."
-eerror
+gcf_error "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
+gcf_error "not multiplying the threads per core."
 		die
 	fi
 	if [[ -z "${MPROCS}" ]] ; then
-eerror
-eerror "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
-eerror
+gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		die
 	fi
 	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
@@ -300,16 +278,12 @@ eerror
 		export MAKEOPTS="-j1"
 		export MAKEFLAGS="-j1"
 	fi
-	einfo
-	einfo "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
-	einfo
+	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
 }
 
 pre_pkg_setup()
 {
-	einfo
-	einfo "Running pre_pkg_setup()"
-	einfo
+	gcf_info "Running pre_pkg_setup()"
 	gcf_replace_flags
 	gcf_lto
 	gcf_retpoline_translate
@@ -328,25 +302,19 @@ gcf_check_Ofast_safety()
 	[[ -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
 	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
-eerror
-eerror "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
-eerror
+gcf_error "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
 			die
 		fi
 	fi
 	if [[ "${CFLAGS}" =~ "-fallow-store-data-races" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
-eerror
-eerror "Detected thread use.  Disable -fallow-store-data-races or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
-eerror
+gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
 			die
 		fi
 	fi
 }
 
 pre_src_install() {
-	einfo
-	einfo "Running pre_src_install()"
-	einfo
+	gcf_info "Running pre_src_install()"
 	gcf_check_Ofast_safety
 }
