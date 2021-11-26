@@ -84,8 +84,9 @@ gcf_strip_no_plt() {
 
 gcf_strip_gcc_flags() {
 	local gcc_flags=(
-		-fopt-info-vec
 		-fopt-info-inline
+		-fopt-info-loop
+		-fopt-info-vec
 		-frename-registers
 	)
 
