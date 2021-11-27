@@ -88,6 +88,8 @@ gcf_strip_gcc_flags() {
 		-fopt-info-loop
 		-fopt-info-vec
 		-frename-registers
+		-freorder-blocks-algorithm=simple
+		-freorder-blocks-algorithm=stc
 	)
 
 	if [[ ( -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ) \
