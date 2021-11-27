@@ -29,11 +29,10 @@ some additional coding.  Modified packages with support for PGO flags
 in the the same overlay.
 
 Compiler optimization levels
-* O3 -- enabled for only apps/libraries using cryptographic ciphers and 
-hashing algorithms, 3D math and 3D game engines, computational geometry 
+* O3 -- enabled for only 3D math and 3D game engines, computational geometry 
 algorithms, bitwise math, physics libraries and engines, FFT, audio and video 
 codecs and image processing
-* O2 -- non turn based games, assembly like code, parsers
+* O2 -- non turn based games, assembly like code, parsers, crypto
 * Os -- default
 
 * -fprefetch-loop-arrays is enabled for package that process sequential data.
