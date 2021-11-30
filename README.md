@@ -141,11 +141,11 @@ an -fno-plt or -fopt-info-vec removal scripts.
 
 Files involved
 
-bashrc -- used to dynamically modify *FLAGS
-env/*.conf -- per-package config definitions
-make.conf -- contains default *FLAGS.  To be modified manually on your end.  DO
+* bashrc -- used to dynamically modify *FLAGS
+* env/*.conf -- per-package config definitions
+* make.conf -- contains default *FLAGS.  To be modified manually on your end.  DO
  NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
-package.env -- per-package config
+* package.env -- per-package config
 
 ----
 
