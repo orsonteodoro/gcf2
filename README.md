@@ -116,9 +116,9 @@ z-retpolineplt.conf  row in the package.env. This assumes that the contents of
 the bashrc have been copied into /etc/portage/bashrc or sourced from an external
 file.
 
-<a name="footnote3">[3]</a> If you have a clang package, you need to add a
+<a name="footnote3">[3]</a> If you have a clang package, you may need to add a
 ${CATEGORY}/${PN} disable-fopt-info.conf row to disable fopt-info since
-this is only a GCC only flag.
+this is only a GCC only flag if it is not auto removed.
 
 <a name="footnote4">[4]</a> Not all packages can successfully use LTO.  A
 remove-lto.conf has been provided to remove the flag for select packages.  Due
