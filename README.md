@@ -148,12 +148,12 @@ The following can be added to the package.env per package-wise to control bashrc
 
 * bypass-fallow-store-data-races-check.conf -- disables -Ofast or
 -fallow-store-data-races safety check
-* disable-gcf-lto.conf -- Disables Clang + ThinLTO
-* disable-lto-stripping.conf -- Disables auto removal of LTO *flags 
+* disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
+* disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
- *flags
+ *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
- *flags
+ *FLAGS
 * remove-no-inline.conf -- Removes -fno-inline
 
 Some .conf files may contain additional information about the flag or the environment
