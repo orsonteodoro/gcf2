@@ -145,11 +145,16 @@ or place it directly in the bashrc.  Per-package environment variables are used
 to control filtering.
 
 The following can be added to the package.env per package-wise to control bashrc:
-bypass-fallow-store-data-races-check.conf -- disables -Ofast or -fallow-store-data-races safety check
-disable-gcf-lto.conf -- Disables Clang + ThinLTO
-disable-lto-stripping.conf -- Disables auto removal of LTO *flags 
-force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang *flags
-force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC *flags
-remove-no-inline.conf -- Removes -fno-inline
 
-Some .conf files may contain additional information about the flag or envvar.
+* bypass-fallow-store-data-races-check.conf -- disables -Ofast or
+-fallow-store-data-races safety check
+* disable-gcf-lto.conf -- Disables Clang + ThinLTO
+* disable-lto-stripping.conf -- Disables auto removal of LTO *flags 
+* force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
+ *flags
+* force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
+ *flags
+* remove-no-inline.conf -- Removes -fno-inline
+
+Some .conf files may contain additional information about the flag or the environment
+variable.
