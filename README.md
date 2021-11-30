@@ -135,7 +135,7 @@ an -fno-plt or -fopt-info-vec removal scripts.
 * env/*.conf -- per-package config definitions
 * make.conf -- contains default *FLAGS.  To be modified manually on your end.  DO
  NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
-* package.env -- per-package config
+* package.env -- per-package and per-category config
 
 ## bashrc
 
