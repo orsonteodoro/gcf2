@@ -59,7 +59,9 @@ fast-math (or applying [[1]](#footnote1)).
 * -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [[3]](#footnote3)
 * -flto -- used primarly for reduction of binary size [[4]](#footnote4)
 
-For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
+For Spectre mitigation virtually all packages were filtered with Retpoline
+compiler support with these flags:
+
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
 compiled for most apps if not stripped by ebuild.
 * -mretpoline (found in clang-retpoline.conf) -- the Clang version [[5]](#footnote5)
@@ -102,27 +104,28 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in 
  the future be installed on my system.
 
-<a name="footnote1">[1]</a> I_WANT_LOSSLESS=1 can be added to make.conf or applied per-package to
-remove or convert flags to their lossless counterparts in packages related to
-games, graphics, audio.
+<a name="footnote1">[1]</a> I_WANT_LOSSLESS=1 can be added to make.conf or
+applied per-package to remove or convert flags to their lossless counterparts
+in packages related to games, graphics, audio.
 
-<a name="footnote2">[2]</a> If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
--fno-plt is not compatible with that package especially the x11-drivers.  You
-need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf z-retpolineplt.conf  row
-in the package.env. This assumes that the contents of bashrc have been copied
-into /etc/portage/bashrc.
+<a name="footnote2">[2]</a> If you have a package that does lazy binding
+(LDFLAGS=-Wl,lazy) then -fno-plt is not compatible with that package especially
+the x11-drivers.  You need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf
+z-retpolineplt.conf  row in the package.env. This assumes that the contents of
+the bashrc have been copied into /etc/portage/bashrc or sourced from an external
+file.
 
 <a name="footnote3">[3]</a> If you have a clang package, you need to add a
 ${CATEGORY}/${PN} disable-fopt-info.conf row to disable fopt-info since
 this is only a GCC only flag.
 
-<a name="footnote4">[4]</a> Not all packages can successfully use LTO.  A remove-lto.conf has
-been provided to remove the flag for select packages.  Due to the heavy time
-and memory cost, only ThinLTO will be used.
+<a name="footnote4">[4]</a> Not all packages can successfully use LTO.  A
+remove-lto.conf has been provided to remove the flag for select packages.  Due
+to the heavy time and memory cost, only ThinLTO will be used.
 
-<a name="footnote5">[5]</a> Sometimes I may choose mostly built @world with clang or with gcc.
-You may choose to switch between -mindirect-branch=thunk or -mretpoline
-for the default {C,CXX}FLAGS and apply manually per-package
+<a name="footnote5">[5]</a> Sometimes I may choose mostly built @world with
+clang or with gcc.  You may choose to switch between -mindirect-branch=thunk or
+-mretpoline for the default {C,CXX}FLAGS and apply manually per-package
 clang-retpoline.conf or gcc-retpoline-thunk.conf.  It helps to grep the
 saved build logs to determine which packages should rebuild with retpoline.
 Adding to the make.conf with envvars PORTAGE_LOGDIR="/var/log/emerge/build-logs"
@@ -134,18 +137,19 @@ an -fno-plt or -fopt-info-vec removal scripts.
 
 * bashrc -- used to dynamically modify *FLAGS
 * env/*.conf -- per-package config definitions
-* make.conf -- contains default *FLAGS.  To be modified manually on your end.  DO
- NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
+* make.conf -- contains default *FLAGS.  To be modified manually on your end.
+DO NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
 * package.env -- per-package and per-category config
 
 ## bashrc
 
 The bashrc script is also provided to control applying, removing, translating
-*FLAGS and adjusting MAKEOPTS.  You may place it and source it in an external script,
-or place it directly in the bashrc.  Per-package environment variables are used
-to control *FLAG filtering.
+*FLAGS and adjusting MAKEOPTS.  You may place it and source it in an external
+script, or place it directly in the bashrc.  Per-package environment variables
+are used to control *FLAG filtering.
 
-The following can be added to the package.env per package-wise to control bashrc:
+The following can be added to the package.env per package-wise to control
+bashrc:
 
 * bypass-fallow-store-data-races-check.conf -- disables -Ofast or
 -fallow-store-data-races safety check
@@ -157,5 +161,5 @@ The following can be added to the package.env per package-wise to control bashrc
  *FLAGS
 * remove-no-inline.conf -- Removes -fno-inline
 
-Some .conf files may contain additional information about the flag or the environment
-variable.
+Some .conf files may contain additional information about the flag or the
+environment variable.
