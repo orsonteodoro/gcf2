@@ -4,9 +4,7 @@ My per-package cflags on Gentoo Linux.
 
 These are my current flags.
 
-----
-
-The default make.conf *FLAGS:
+## The default make.conf *FLAGS:
 
 * CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
 -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
@@ -16,9 +14,7 @@ The default make.conf *FLAGS:
 
 * LDFLAGS="${LDFLAGS} -flto"
 
-----
-
-Additional implicit hardened flags
+## Additional implicit hardened flags
 
 My current profile is hardened and comes with the following built in defaults ON:
 
@@ -42,9 +38,7 @@ some additional coding.  Modified packages with support for PGO flags
 [PGO section](https://github.com/orsonteodoro/oiledmachine-overlay#pgo-packages).
 in the the same overlay.
 
-----
-
-Package placement strategy at these target compiler optimization levels
+## Package placement strategy at these target compiler optimization levels
 
 * O3 -- enabled for only 3D math and 3D game engines, computational geometry 
 algorithms, bitwise math, physics libraries and engines, FFT, audio and video 
@@ -52,9 +46,7 @@ codecs and image processing
 * O2 -- non turn based games, assembly like code, parsers, crypto
 * Os -- default
 
-----
-
-Reasons for chosen flags
+## Reasons for the chosen flags
 
 * -fprefetch-loop-arrays is enabled for package that process sequential data.
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with 
@@ -137,9 +129,7 @@ and FEATURES="${FEATURES} binpkg-logs" then grepping them can help discover
 which packages need a per-package retpoline or which package needs
 an -fno-plt or -fopt-info-vec removal scripts.
 
-----
-
-Files involved
+## Files involved
 
 * bashrc -- used to dynamically modify *FLAGS
 * env/*.conf -- per-package config definitions
@@ -147,9 +137,7 @@ Files involved
  NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
 * package.env -- per-package config
 
-----
-
-bashrc
+## bashrc
 
 The bashrc script is also provided to control applying, removing, translating
 *FLAGS.  You may place it and source it in an external script,
