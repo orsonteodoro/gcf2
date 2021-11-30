@@ -4,9 +4,23 @@ My per-package cflags on Gentoo Linux.
 
 These are my current flags.
 
-My current profile is hardened.
+----
 
-The hardened profile comes with the following built in defaults on:
+The default make.conf *FLAGS:
+
+* CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
+-fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
+-mindirect-branch-register -flto -fopt-info-vec -pipe"
+
+* CXXFLAGS="${CFLAGS}"
+
+* LDFLAGS="${LDFLAGS} -flto"
+
+----
+
+Additional implicit hardened flags
+
+My current profile is hardened and comes with the following built in defaults ON:
 
 * -D_FORTIFY_SOURCE=2 -- for buffer overflow protection
 * -fstack-protector-strong -param=ssp-buffer-size=4 -- medium buffer overflow
@@ -28,12 +42,19 @@ some additional coding.  Modified packages with support for PGO flags
 [PGO section](https://github.com/orsonteodoro/oiledmachine-overlay#pgo-packages).
 in the the same overlay.
 
-Compiler optimization levels
+----
+
+Package placement strategy at these target compiler optimization levels
+
 * O3 -- enabled for only 3D math and 3D game engines, computational geometry 
 algorithms, bitwise math, physics libraries and engines, FFT, audio and video 
 codecs and image processing
 * O2 -- non turn based games, assembly like code, parsers, crypto
 * Os -- default
+
+----
+
+Reasons for chosen flags
 
 * -fprefetch-loop-arrays is enabled for package that process sequential data.
 * -ftree-parallelize-loops=4 is enabled for single threaded libraries with 
@@ -118,6 +139,16 @@ an -fno-plt or -fopt-info-vec removal scripts.
 
 ----
 
+Files involved
+
+bashrc -- used to dynamically modify *FLAGS
+env/*.conf -- per-package config definitions
+make.conf -- contains default *FLAGS.  To be modified manually on your end.  DO
+ NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
+package.env -- per-package config
+
+----
+
 bashrc
 
 The bashrc script is also provided to control applying, removing, translating
@@ -134,15 +165,3 @@ force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC *flags
 remove-no-inline.conf -- Removes -fno-inline
 
 Some .conf files may contain additional information about the flag or envvar.
-
-----
-
-My make.conf cflags:
-
-* CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
--fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
--mindirect-branch-register -flto -pipe"
-
-* CXXFLAGS="${CFLAGS}"
-
-* LDFLAGS="${LDFLAGS} -flto"
