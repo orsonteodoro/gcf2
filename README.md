@@ -55,19 +55,19 @@ cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio 
 processing.  For those using bullet for scientific purposes, consider removing 
-fast-math (or applying [1](#footnote1)).
-* -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3](#footnote3)
-* -flto -- used primarly for reduction of binary size [4](#footnote4)
+fast-math (or applying [[1]](#footnote1)).
+* -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [[3]](#footnote3)
+* -flto -- used primarly for reduction of binary size [[4]](#footnote4)
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
 compiled for most apps if not stripped by ebuild.
-* -mretpoline (found in clang-retpoline.conf) -- the Clang version [5](#footnote5)
+* -mretpoline (found in clang-retpoline.conf) -- the Clang version [[5]](#footnote5)
 * -Wl,-z,retpolineplt -- for lazy binded shared libraries or drivers.
 It is recommended to use Clang + LLD when applying these LDFLAGS as
 a Spectre v2 mitigation strategy.
 * -fno-plt -- for now binded shared libraries as a Spectre mitigation
-strategy.[2](#footnote2)
+strategy.[[2]](#footnote2)
 
 One may remove -mindirect-branch=thunk -mindirect-branch-register 
 if the processor has already fixed the side-channel attack hardware flaw. 
