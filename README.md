@@ -141,7 +141,7 @@ My make.conf cflags:
 
 * CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
 -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
--mindirect-branch-register -flto -pipe"
+-mindirect-branch-register -flto -fopt-info-vec -pipe"
 
 * CXXFLAGS="${CFLAGS}"
 
