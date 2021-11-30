@@ -140,9 +140,9 @@ an -fno-plt or -fopt-info-vec removal scripts.
 ## bashrc
 
 The bashrc script is also provided to control applying, removing, translating
-*FLAGS.  You may place it and source it in an external script,
+*FLAGS and adjusting MAKEOPTS.  You may place it and source it in an external script,
 or place it directly in the bashrc.  Per-package environment variables are used
-to control filtering.
+to control *FLAG filtering.
 
 The following can be added to the package.env per package-wise to control bashrc:
 
