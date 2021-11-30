@@ -55,19 +55,19 @@ cores on your system.
 * -fomit-frame-pointer -frename-registers are enabled to maximize register use
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio 
 processing.  For those using bullet for scientific purposes, consider removing 
-fast-math (or applying [^1]).
-* -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [^3]
-* -flto -- used primarly for reduction of binary size [^4]
+fast-math (or applying [1](#footnote1)).
+* -fopt-info-vec -- show SIMD optimized loops, added when using O3.conf [3](#footnote3)
+* -flto -- used primarly for reduction of binary size [4](#footnote4)
 
 For Spectre mitigation virtually all packages were filtered with Retpoline compiler support,
 * -mindirect-branch=thunk -mindirect-branch-register (the GCC version) --
 compiled for most apps if not stripped by ebuild.
-* -mretpoline (found in clang-retpoline.conf) -- the Clang version [^5]
+* -mretpoline (found in clang-retpoline.conf) -- the Clang version [5](#footnote5)
 * -Wl,-z,retpolineplt -- for lazy binded shared libraries or drivers.
 It is recommended to use Clang + LLD when applying these LDFLAGS as
 a Spectre v2 mitigation strategy.
 * -fno-plt -- for now binded shared libraries as a Spectre mitigation
-strategy.[^2]
+strategy.[2](#footnote2)
 
 One may remove -mindirect-branch=thunk -mindirect-branch-register 
 if the processor has already fixed the side-channel attack hardware flaw. 
@@ -102,25 +102,25 @@ https://github.com/torvalds/linux/commit/c41ed11fc416424d508803f861b6042c8c75f9b
 Entries for inclusion for the package.env are only those installed or may in 
  the future be installed on my system.
 
-[^1] I_WANT_LOSSLESS=1 can be added to make.conf or applied per-package to
+<a name="footnote1">[1]</a> I_WANT_LOSSLESS=1 can be added to make.conf or applied per-package to
 remove or convert flags to their lossless counterparts in packages related to
 games, graphics, audio.
 
-[^2] If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
+<a name="footnote2">[2]</a> If you have a package that does lazy binding (LDFLAGS=-Wl,lazy) then
 -fno-plt is not compatible with that package especially the x11-drivers.  You
 need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf z-retpolineplt.conf  row
 in the package.env. This assumes that the contents of bashrc have been copied
 into /etc/portage/bashrc.
 
-[^3] If you have a clang package, you need to add a
+<a name="footnote3">[3]</a> If you have a clang package, you need to add a
 ${CATEGORY}/${PN} disable-fopt-info.conf row to disable fopt-info since
 this is only a GCC only flag.
 
-[^4] Not all packages can successfully use LTO.  A remove-lto.conf has
+<a name="footnote4">[4]</a> Not all packages can successfully use LTO.  A remove-lto.conf has
 been provided to remove the flag for select packages.  Due to the heavy time
 and memory cost, only ThinLTO will be used.
 
-[^5] Sometimes I may choose mostly built @world with clang or with gcc.
+<a name="footnote5">[5]</a> Sometimes I may choose mostly built @world with clang or with gcc.
 You may choose to switch between -mindirect-branch=thunk or -mretpoline
 for the default {C,CXX}FLAGS and apply manually per-package
 clang-retpoline.conf or gcc-retpoline-thunk.conf.  It helps to grep the
