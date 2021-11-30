@@ -56,8 +56,7 @@ cores on your system.
 * -ffast-math is enabled for 3D games, game engines and libraries, and audio 
 processing.  For those using bullet for scientific purposes, consider removing 
 fast-math (or applying [[1]](#footnote1)).
-* -fopt-info-vec -- show SIMD optimized loops, added when using
-O3.conf [[3]](#footnote3)
+* -fopt-info-vec -- show SIMD optimized loops [[3]](#footnote3)
 * -flto -- used primarly for reduction of binary size and cache use
 efficiency [[4]](#footnote4)
 
