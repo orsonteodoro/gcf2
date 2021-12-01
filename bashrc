@@ -264,23 +264,20 @@ gcf_error "not multiplying the threads per core."
 gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		die
 	fi
+	local n
 	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
-		local n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
+		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
-		export MAKEOPTS="-j${n}"
-		export MAKEFLAGS="-j${n}"
 	elif [[ "${MAKEOPTS_MODE}" == "swappy" ]] ; then
-		local n=$((${NCORES} / 2))
+		n=$((${NCORES} / 2))
 		(( ${n} <= 0 )) && n=1
-		export MAKEOPTS="-j${n}"
-		export MAKEFLAGS="-j${n}"
 	elif [[ "${MAKEOPTS_MODE}" == "plain" ]] ; then
-		export MAKEOPTS="-j${NCORES}"
-		export MAKEFLAGS="-j${NCORES}"
+		n=${NCORES}
 	elif [[ "${MAKEOPTS_MODE}" == "oom" || "${MAKEOPTS_MODE}" == "broken" ]] ; then
-		export MAKEOPTS="-j1"
-		export MAKEFLAGS="-j1"
+		n=1
 	fi
+	export MAKEOPTS="-j${n}"
+	export MAKEFLAGS="-j${n}"
 	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
 }
 
