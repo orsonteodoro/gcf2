@@ -319,7 +319,7 @@ gcf_verify_libraries_built_correctly()
 	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" != "1" ]] && return
 	gcf_info "Verifying static/shared library correctness"
 	local p
-	for p in $(find "${ED}" -regextype 'posix-extended' -regex ".*(a|so)[0-9\.]*$") ; do
+	for p in $(find "${ED}" -type f -regextype 'posix-extended' -regex ".*(a|so)[0-9\.]*$") ; do
 		if [[ ! -L "${p}" && -e "${p}" ]] ; then
 			if ! readelf -h "${p}" 2>/dev/null 1>/dev/null ; then
 # static-libs linked with ThinLTO seems broken.
