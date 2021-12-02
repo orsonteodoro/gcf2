@@ -339,6 +339,7 @@ gcf_error "You may pass SKIP_LIB_CORRECTNESS_CHECK=1 to skip this check."
 				if [[ -d "/var/db/pkg/${CATEGORY}/${PN}-${PVR}" ]] ; then
 # The installed package is not always built correctly.
 # Example: static pkgA is broken and user does emerge -vuDN pkgB (parent package)
+gcf_warn ""
 gcf_warn "Detected a previous installation of =${CATEGORY}/${PN}-${PVR}"
 gcf_warn "which may trick the emerge system that the prereq is met but"
 gcf_warn "the installed package is actually broken.  If the broken"
