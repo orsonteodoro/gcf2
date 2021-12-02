@@ -163,6 +163,8 @@ bashrc:
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
  *FLAGS
 * remove-no-inline.conf -- Removes -fno-inline
+* skip-lib-correctness-check.conf -- Disables static/shared lib correctness
+checking
 
 Some .conf files may contain additional information about the flag or the
 environment variable.

@@ -314,7 +314,31 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 	fi
 }
 
+gcf_verify_libraries_built_correctly()
+{
+	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" != "1" ]] && return
+	gcf_info "Verifying static/shared library correctness"
+	local p
+	for p in $(find "${ED}" -regextype 'posix-extended' -regex ".*(a|so)[0-9\.]*") ; do
+		if [[ ! -L "${p}" && -e "${p}" ]] ; then
+			if ! readelf -h "${p}" 2>/dev/null 1>/dev/null ; then
+# static-libs linked with ThinLTO seems broken.
+gcf_error "${p} is not built correctly.  You may try to do the following:"
+gcf_error ""
+gcf_error "  * Remove or change *FLAGS into default or non-optimized form"
+gcf_error "  * Contact the ebuild maintainer to get it fixed"
+gcf_error "  * Switch to GCC + BFD"
+gcf_error "  * Switch to gold linker if using clang."
+gcf_error ""
+gcf_error "You may pass SKIP_LIB_CORRECTNESS_CHECK=1 to skip this check."
+				die
+			fi
+		fi
+	done
+}
+
 pre_src_install() {
 	gcf_info "Running pre_src_install()"
 	gcf_check_Ofast_safety
+	gcf_verify_libraries_built_correctly
 }
