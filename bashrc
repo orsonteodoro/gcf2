@@ -319,7 +319,7 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 
 gcf_verify_libraries_built_correctly()
 {
-	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" != "1" ]] && return
+	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" == "1" ]] && return
 	gcf_info "Verifying static/shared library correctness"
 	local p
 	# Ideally this function should be placed in post_src_install() with
