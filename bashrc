@@ -139,6 +139,9 @@ gcf_met_lto_requirement() {
 gcf_lto() {
 	[[ -n "${DISABLE_GCF_LTO}" && "${DISABLE_GCF_LTO}" == "1" ]] && return
 
+	has_version "sys-devel/binutils[plugins]" \
+		|| gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
+
 	_gcf_strip_lto_flags() {
 		export CFLAGS=$(echo "${CFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
 		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
