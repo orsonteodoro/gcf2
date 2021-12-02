@@ -316,10 +316,11 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 
 gcf_verify_libraries_built_correctly()
 {
+	# Run in post_src_install() but remove the installation from /var/pkg/db if broken
 	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" != "1" ]] && return
 	gcf_info "Verifying static/shared library correctness"
 	local p
-	for p in $(find "${ED}" -type f -regextype 'posix-extended' -regex ".*(a|so)[0-9\.]*$") ; do
+	for p in $(find "${WORKDIR}" -type f -regextype 'posix-extended' -regex ".*(a|so)[0-9\.]*$") ; do
 		if [[ ! -L "${p}" && -e "${p}" ]] ; then
 			if ! readelf -h "${p}" 2>/dev/null 1>/dev/null ; then
 # static-libs linked with ThinLTO seems broken.
