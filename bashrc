@@ -284,6 +284,16 @@ gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
 }
 
+gcf_strip_retpoline()
+{
+	if [[ -n "${DISABLE_RETPOLINE}" && "${DISABLE_RETPOLINE}" == "1" ]] ; then
+			_gcf_replace_flag "-mindirect-branch=thunk" ""
+			_gcf_replace_flag "-mretpoline" ""
+			_gcf_replace_flag "-mindirect-branch-register" ""
+			_gcf_replace_flag "-Wl,-z,retpolineplt" ""
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -293,6 +303,7 @@ pre_pkg_setup()
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
 	gcf_strip_z_retpolineplt
+	gcf_strip_retpoline
 	gcf_strip_no_inline
 	gcf_strip_lossy
 	gcf_use_Oz
