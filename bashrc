@@ -276,12 +276,16 @@ gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		(( ${n} <= 0 )) && n=1
 	elif [[ "${MAKEOPTS_MODE}" == "plain" ]] ; then
 		n=${NCORES}
-	elif [[ "${MAKEOPTS_MODE}" == "oom" || "${MAKEOPTS_MODE}" == "broken" ]] ; then
+	elif [[ "${MAKEOPTS_MODE}" == "oom" || "${MAKEOPTS_MODE}" == "broken" || "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
 		n=1
 	fi
 	export MAKEOPTS="-j${n}"
 	export MAKEFLAGS="-j${n}"
 	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
+	if [[ "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
+gcf-warn "Please close all web browsers and large programs to speed up"
+gcf-warn "linking time."
+	fi
 }
 
 gcf_strip_retpoline()
