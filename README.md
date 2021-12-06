@@ -122,9 +122,10 @@ this is only a GCC only flag if it is not auto removed.
 
 <a name="footnote4">[4]</a> Not all packages can successfully use LTO.  Both
 remove-clang-lto.conf and remove-gcc-lto.conf has been provided to remove the
-flag for select packages.  Due to the heavy time and memory cost, only ThinLTO
-will be used for heavy link time cost packages via use-thinlto.conf.  GCC +
-BFD + LTO will be used for a majority of small packages as the default.
+flag for select packages.  You may only choose one LTO compiler from
+beginning to end.  If a package doesn't support the chosen systemwide LTO
+default, you must strip the -flto flag from that package especially if that
+package produces a static library.
 
 <a name="footnote5">[5]</a> Sometimes I may choose mostly built @world with
 clang or with gcc.  You may choose to switch between -mindirect-branch=thunk or
