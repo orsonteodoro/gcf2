@@ -188,7 +188,7 @@ emerge -pve system \
 	| grep "/" \
 	| sed -E -e "s|[:]+.*||g" \
 	| sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" \
-	| sed -E  -e "s|-[.0-9a_z]+$||g" \
+	| sed -E  -e "s|-[.0-9_a-z]+$||g" \
 	| sort \
 	| uniq > /etc/portage/emerge-system.lst
 ```
