@@ -176,7 +176,8 @@ environment variable.
 The /etc/portage/emerge-system.lst is all @system packages to ban from systemwide
 LTO for clang.  This is to prevent configure checks from failing or IR
 (intermediate representation) incompatibility.  All packages that are using
-systemwide LTO should be using the same IR or no LTO.
+systemwide LTO should be using the same IR (the compiler's Intermediate
+Representation) or disabled LTO.
 
 This file must be generated.  To generate it, do the following:
 
