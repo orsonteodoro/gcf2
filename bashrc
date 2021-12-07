@@ -26,6 +26,7 @@ gcf_error() {
 _gcf_replace_flag() {
 	local i="${1}"
 	local o="${2}"
+	export COMMON_FLAGS=$(echo "${COMMON_FLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
 	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${i}|${o}|g")
 	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FCFLAGS=$(echo "${FCFLAGS}" | sed -e "s|${i}|${o}|g")
@@ -205,6 +206,7 @@ gcf_use_clang() {
 
 gcf_use_thinlto() {
 	gcf_info "Auto switching to ThinLTO"
+	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto=thin")
 	CFLAGS=$(echo "${CFLAGS} -flto=thin")
 	CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
 	FCFLAGS=$(echo "${FCFLAGS} -flto=thin")
@@ -214,6 +216,7 @@ gcf_use_thinlto() {
 
 gcf_use_clang_goldlto() {
 	gcf_info "Auto switching to Clang Gold LTO"
+	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto=full")
 	CFLAGS=$(echo "${CFLAGS} -flto=full")
 	CXXFLAGS=$(echo "${CXXFLAGS} -flto=full")
 	FCFLAGS=$(echo "${FCFLAGS} -flto=full")
@@ -223,6 +226,7 @@ gcf_use_clang_goldlto() {
 
 gcf_use_gcc_goldlto() {
 	gcf_info "Auto switching to GCC Gold LTO"
+	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto")
 	CFLAGS=$(echo "${CFLAGS} -flto")
 	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
 	FCFLAGS=$(echo "${FCFLAGS} -flto")
@@ -232,6 +236,7 @@ gcf_use_gcc_goldlto() {
 
 gcf_use_gcc_bfdlto() {
 	gcf_info "Auto switching to GCC BFD LTO"
+	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto")
 	CFLAGS=$(echo "${CFLAGS} -flto")
 	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
 	FCFLAGS=$(echo "${FCFLAGS} -flto")
@@ -247,6 +252,11 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 	fi
 
 	_gcf_strip_lto_flags() {
+		export COMMON_FLAGS=$(echo "${COMMON_FLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
 		export CFLAGS=$(echo "${CFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
@@ -373,6 +383,7 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 		fi
 	fi
 
+	export COMMON_FLAGS
 	export CFLAGS
 	export CXXFLAGS
 	export FCFLAGS
