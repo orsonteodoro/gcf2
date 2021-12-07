@@ -247,7 +247,6 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 	fi
 
 	_gcf_strip_lto_flags() {
-		gcf_info "Stripping LTO flags"
 		export CFLAGS=$(echo "${CFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
