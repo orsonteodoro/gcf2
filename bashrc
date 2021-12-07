@@ -367,6 +367,10 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 	if [[ "${CC_LTO}" =~ "g++" || "${CXX_LTO}" =~ "g++" ]] && ! gcf_is_gcc_lto_allowed ; then
 		gcf_info "${CATEGORY}/${PN} is blacklisted from LTO.  Stripping LTO flags."
 		_gcf_strip_lto_flags
+		if has lto ${IUSE_EFFECTIVE} && use lto ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
 	fi
 
 	export CFLAGS
@@ -560,9 +564,29 @@ gcf_check_lto_ir_compatibility_before_compile() {
 			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 			die
 		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CC}" =~ "g++" ) ) ]] ; then
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
 			gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
 			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+			die
+		fi
+
+	fi
+	if has lto ${IUSE_EFFECTIVE} && use lto \
+		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
 			die
 		fi
 	fi
@@ -571,7 +595,7 @@ gcf_check_lto_ir_compatibility_before_compile() {
 gcf_check_lto_ir_compatibility() {
 	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
 	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
-		if find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a[0-9\.]*$" ; then
+		if find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null 1>/dev/null ; then
 			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
 				gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
 				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
@@ -588,11 +612,31 @@ gcf_check_lto_ir_compatibility() {
 				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 				die
 			fi
-			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CC}" =~ "g++" ) ) ]] ; then
+			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
 				gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
 				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 				die
 			fi
+		fi
+	fi
+	# Check for things like libpython2.7.a
+	if has lto ${IUSE_EFFECTIVE} && use lto \
+		&& find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null 1>/dev/null ; then
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
+			eerror "The lto USE flag must be disabled because of different IR."
+			die
 		fi
 	fi
 }
