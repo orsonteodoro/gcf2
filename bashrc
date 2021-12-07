@@ -565,7 +565,8 @@ gcf_check_lto_ir_compatibility_before_compile() {
 	}
 
 	_gcf_ir_compat_before_with_use() {
-		eerror "Detected static-libs USE ON.  The lto USE flag must be disabled because of different IR."
+		gcf_error "Detected static-libs USE ON.  The lto USE flag must be disabled because of different IR."
+		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 		die
 	}
 
@@ -618,7 +619,8 @@ gcf_check_lto_ir_compatibility() {
 	_gcf_ir_compat_msg_with_use() {
 		gcf_error "Detected .a file(s):"
 		echo "${L[@]}"
-		eerror "The lto USE flag must be disabled because of different IR."
+		gcf_error "The lto USE flag must be disabled because of different IR."
+		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 		die
 	}
 
