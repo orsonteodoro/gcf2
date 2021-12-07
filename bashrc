@@ -161,6 +161,7 @@ gcf_met_clang_goldlto_requirement() {
 	local found=1
 	for s in ${llvm_slots[@]} ; do
 		if ( has_version "sys-devel/llvm:${s}[gold]" \
+			&& has_version "sys-devel/binutils[plugins,gold]" \
 			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
 		fi
@@ -171,19 +172,19 @@ gcf_met_clang_goldlto_requirement() {
 gcf_met_gcc_bfdlto_requirement() {
 	has_version "sys-devel/gcc" || return 1
 
-	if ( has_version "sys-devel/binutils[plugins]" ) ; then
-		return 1
+	if has_version "sys-devel/binutils[plugins]" ; then
+		return 0
 	fi
-	return 0
+	return 1
 }
 
 gcf_met_gcc_goldlto_requirement() {
 	has_version "sys-devel/gcc" || return 1
 
-	if ( has_version "sys-devel/binutils[plugins,gold]" ) ; then
-		return 1
+	if has_version "sys-devel/binutils[plugins,gold]" ; then
+		return 0
 	fi
-	return 0
+	return 1
 }
 
 gcf_use_clang() {
