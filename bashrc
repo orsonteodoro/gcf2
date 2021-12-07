@@ -557,97 +557,101 @@ gcf_warn "correctly."
 
 gcf_check_lto_ir_compatibility_before_compile() {
 	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
+
+	_gcf_ir_compat_before_with_flag() {
+		gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+		die
+	}
+
+	_gcf_ir_compat_before_with_use() {
+		eerror "Detected static-libs USE ON.  The lto USE flag must be disabled because of different IR."
+		die
+	}
+
 	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] \
 		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-			die
+			_gcf_ir_compat_before_with_flag
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-			die
+			_gcf_ir_compat_before_with_flag
 		fi
 
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
-			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-			die
+			_gcf_ir_compat_before_with_flag
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
-			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-			die
+			_gcf_ir_compat_before_with_flag
 		fi
 
 	fi
 	if has lto ${IUSE_EFFECTIVE} && use lto \
 		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_before_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_before_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_before_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_before_with_use
 		fi
 	fi
 }
 
 gcf_check_lto_ir_compatibility() {
 	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
-	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
-		if find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null 1>/dev/null ; then
-			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-				gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-				die
-			fi
-			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-				gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-				die
-			fi
+	local L=($(find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null))
 
-			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-				gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
-				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-				die
-			fi
-			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-				gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
-				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-				die
-			fi
+	_gcf_ir_compat_msg_with_flag() {
+		gcf_error "Detected .a file(s):"
+		echo "${L[@]}"
+		gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+		die
+	}
+
+	_gcf_ir_compat_msg_with_use() {
+		gcf_error "Detected .a file(s):"
+		echo "${L[@]}"
+		eerror "The lto USE flag must be disabled because of different IR."
+		die
+	}
+
+	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] \
+		&& (( ${#L[@]} > 0 )) ; then
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
+			_gcf_ir_compat_msg_with_flag
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
+			_gcf_ir_compat_msg_with_flag
+		fi
+
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
+			_gcf_ir_compat_msg_with_flag
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
+			_gcf_ir_compat_msg_with_flag
 		fi
 	fi
 	# Check for things like libpython2.7.a
 	if has lto ${IUSE_EFFECTIVE} && use lto \
-		&& find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null 1>/dev/null ; then
+		&& (( ${#L[@]} > 0 )) ; then
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_msg_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_msg_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_msg_with_use
 		fi
 		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
+			_gcf_ir_compat_msg_with_use
 		fi
 	fi
 }
