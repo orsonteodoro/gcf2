@@ -182,8 +182,7 @@ Representation) or disabled LTO.
 This file must be generated.  To generate it, do the following:
 
 ```Shell
-emerge -pve system > /tmp/emerge-core.lst
-cat /tmp/emerge-core.lst \
+emerge -pve system \
 	| cut -c 18- \
 	| cut -f 1 -d " " \
 	| grep "/" \

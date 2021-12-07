@@ -115,8 +115,7 @@ gcf_error
 gcf_error "Missing /etc/portage/emerge-system.lst."
 gcf_error
 gcf_error "To generate this file do:"
-gcf_error "emerge -pve system > /tmp/emerge-core.lst"
-gcf_error 'cat /tmp/emerge-core.lst | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9a_z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst'
+gcf_error 'emerge -pve system | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9a_z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst'
 gcf_error
 		die
 	fi
