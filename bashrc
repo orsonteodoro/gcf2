@@ -160,7 +160,7 @@ gcf_met_clang_goldlto_requirement() {
 
 	local found=1
 	for s in ${llvm_slots[@]} ; do
-		if ( has_version "sys-devel/llvm:${s}[gold]" \
+		if ( ( has_version "sys-devel/llvm:${s}[gold]" || has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
 			&& has_version "sys-devel/binutils[plugins,gold]" \
 			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
