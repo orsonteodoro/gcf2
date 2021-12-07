@@ -8,7 +8,7 @@ These are my current flags.
 
 * CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
 -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
--mindirect-branch-register -flto -fopt-info-vec -pipe"
+-mindirect-branch-register -flto=thin -fopt-info-vec -pipe"
 
 * CXXFLAGS="${CFLAGS}"
 
@@ -166,6 +166,21 @@ bashrc:
 * remove-no-inline.conf -- Removes -fno-inline
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
+* skip-ir-check.conf -- Disables IR compatibility checks when LTOing systemwide
 
 Some .conf files may contain additional information about the flag or the
 environment variable.
+
+## /etc/portage/emerge-system.lst
+
+The /etc/portage/emerge-system.lst is all @system packages to ban from systemwide
+LTO for clang.  This is to prevent configure checks from failing or IR
+(intermediate representation) incompatibility.  All packages that are using
+systemwide LTO should be using the same IR or no LTO.
+
+This file must be generated.  To generate it, do the following:
+
+<code>
+emerge -pve system > /tmp/emerge-core.lst
+cat /tmp/emerge-core.lst | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9a_z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst
+</code>

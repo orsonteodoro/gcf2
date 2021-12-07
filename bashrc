@@ -108,11 +108,20 @@ gcf_strip_z_retpolineplt() {
 	fi
 }
 
-gcf_is_thinlto_allowed() {
-	local blacklisted=(
-		"sys-devel/gcc"
-		"sys-libs/glibc"
-	)
+gcf_is_clang_lto_allowed() {
+	local blacklisted
+	if [[ ! -e "/etc/portage/emerge-system.lst" ]] ; then
+gcf_error
+gcf_error "Missing /etc/portage/emerge-system.lst."
+gcf_error
+gcf_error "To generate this file do:"
+gcf_error "emerge -pve system > /tmp/emerge-core.lst"
+gcf_error 'cat /tmp/emerge-core.lst | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9a_z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst'
+gcf_error
+		die
+	fi
+	# Prevent static-libs link and config test problems.
+	blacklisted=( $(cat /etc/portage/emerge-system.lst) )
 
 	local p
 	for p in ${blacklisted[@]} ; do
@@ -121,7 +130,17 @@ gcf_is_thinlto_allowed() {
 	return 0
 }
 
-gcf_met_lto_requirement() {
+gcf_is_gcc_lto_allowed() {
+	local blacklisted=()
+
+	local p
+	for p in ${blacklisted[@]} ; do
+		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 1
+	done
+	return 0
+}
+
+gcf_met_clang_lto_requirement() {
 	local llvm_slots=(14 13 12 11)
 	has_version "sys-devel/llvm" || return 1
 
@@ -136,83 +155,235 @@ gcf_met_lto_requirement() {
 	return ${found}
 }
 
+gcf_met_clang_goldlto_requirement() {
+	local llvm_slots=(14 13 12 11)
+	has_version "sys-devel/llvm" || return 1
+
+	local found=1
+	for s in ${llvm_slots[@]} ; do
+		if ( has_version "sys-devel/llvm:${s}[gold]" \
+			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
+			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
+		fi
+	done
+	return ${found}
+}
+
+gcf_met_gcc_bfdlto_requirement() {
+	has_version "sys-devel/gcc" || return 1
+
+	if ( has_version "sys-devel/binutils[plugins]" ) ; then
+		return 1
+	fi
+	return 0
+}
+
+gcf_met_gcc_goldlto_requirement() {
+	has_version "sys-devel/gcc" || return 1
+
+	if ( has_version "sys-devel/binutils[plugins,gold]" ) ; then
+		return 1
+	fi
+	return 0
+}
+
+gcf_use_clang() {
+	gcf_info "Auto switching to clang"
+	export CC=clang
+	export CXX=clang++
+	export CPP=clang-cpp
+	export AR=llvm-ar
+	export AS=llvm-as
+	export NM=llvm-nm
+	export OBJCOPY=llvm-objcopy
+	export OBJDUMP=llvm-objdump
+	export RANLIB=llvm-ranlib
+	export READELF=llvm-readelf
+	export STRIP=llvm-strip
+	export _GCF_SWITCHED_TO_THINLTO=1
+}
+
+gcf_use_thinlto() {
+	gcf_info "Auto switching to ThinLTO"
+	CFLAGS=$(echo "${CFLAGS} -flto=thin")
+	CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
+	FCFLAGS=$(echo "${FCFLAGS} -flto=thin")
+	FFLAGS=$(echo "${FFLAGS} -flto=thin")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld -flto=thin")
+}
+
+gcf_use_clang_goldlto() {
+	gcf_info "Auto switching to Clang Gold LTO"
+	CFLAGS=$(echo "${CFLAGS} -flto=full")
+	CXXFLAGS=$(echo "${CXXFLAGS} -flto=full")
+	FCFLAGS=$(echo "${FCFLAGS} -flto=full")
+	FFLAGS=$(echo "${FFLAGS} -flto=full")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold -flto=full")
+}
+
+gcf_use_gcc_goldlto() {
+	gcf_info "Auto switching to GCC Gold LTO"
+	CFLAGS=$(echo "${CFLAGS} -flto")
+	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
+	FCFLAGS=$(echo "${FCFLAGS} -flto")
+	FFLAGS=$(echo "${FFLAGS} -flto")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold -flto")
+}
+
+gcf_use_gcc_bfdlto() {
+	gcf_info "Auto switching to GCC BFD LTO"
+	CFLAGS=$(echo "${CFLAGS} -flto")
+	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
+	FCFLAGS=$(echo "${FCFLAGS} -flto")
+	FFLAGS=$(echo "${FFLAGS} -flto")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd -flto")
+}
+
 gcf_lto() {
 	[[ -n "${DISABLE_GCF_LTO}" && "${DISABLE_GCF_LTO}" == "1" ]] && return
 
-	has_version "sys-devel/binutils[plugins]" \
-		|| gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
+	if ! has_version "sys-devel/binutils[plugins]" ; then
+gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
+	fi
 
 	_gcf_strip_lto_flags() {
-		export CFLAGS=$(echo "${CFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export FCFLAGS=$(echo "${FCFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export FFLAGS=$(echo "${FFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
-		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e 's/-flto( |$)//g' -e "s/-flto=[0-9]+//g" -e "s/-flto=(auto|jobserver|thin|full)//g" -e "s/-fuse-ld=(lld|bfd)//g")
+		gcf_info "Stripping LTO flags"
+		export CFLAGS=$(echo "${CFLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
+		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
+		export FCFLAGS=$(echo "${FCFLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
+		export FFLAGS=$(echo "${FFLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
+		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd)//g")
 	}
 
-	# It's okay to use GCC+BFD LTO or WPA-LTO for small packages.
-	if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) && ( "${CC}" =~ "gcc" || "${CXX}" =~ "g++" || ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
-		# This should be disabled for packages that take literally most of the day or more to complete with GCC LTO.
-		# Auto switching to ThinLTO for larger packages instead.
+	if has lto ${IUSE_EFFECTIVE} ; then
+		# Prioritize the lto USE flag over make.conf/package.env.
+		# Some build systems are designed to ignore *FLAGS provided by \
+		#   make.conf/package.env.
+		# Some packages want to manipulate LTO -O* flags.
+gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		_gcf_strip_lto_flags
-	fi
+	else
+		# A reminder that you can only use one LTO implementation as the
+		# default systemwide.
 
-	if [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
-		&& gcf_is_thinlto_allowed \
-		&& gcf_met_lto_requirement ; then
-		gcf_info "Auto switching to clang for ThinLTO"
-		export CC=clang
-		export CXX=clang++
-		export CPP=clang-cpp
-		export AR=llvm-ar
-		export AS=llvm-as
-		export NM=llvm-nm
-		export OBJCOPY=llvm-objcopy
-		export OBJDUMP=llvm-objdump
-		export RANLIB=llvm-ranlib
-		export READELF=llvm-readelf
-		export STRIP=llvm-strip
-		export _GCF_SWITCHED_TO_THINLTO=1
-
-		gcf_info "Auto switching to ThinLTO"
-		_gcf_strip_lto_flags
-		CFLAGS=$(echo "${CFLAGS} -flto=thin")
-		CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
-		FCFLAGS=$(echo "${FCFLAGS} -flto=thin")
-		FFLAGS=$(echo "${FFLAGS} -flto=thin")
-		LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld -flto=thin")
-
-		if gcc --version | grep -q -e "Hardened" ; then
-			if clang --version | grep -q -e "Hardened" ; then
+		if [[      ( -n "${CC_LTO}"  && "${CC_LTO}"  == "clang" ) \
+			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "clang++" ) ]] \
+			&& [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
+			&& gcf_is_clang_lto_allowed \
+			&& gcf_met_clang_thinlto_requirement ; then
+			_gcf_strip_lto_flags
+			gcf_use_thinlto
+			if gcc --version | grep -q -e "Hardened" ; then
+				if clang --version | grep -q -e "Hardened" ; then
 				:;
-			else
+				else
 gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
 gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
+				fi
 			fi
+			# Avoiding gcc/lto because of *serious* memory issues \
+			# on 1 GIB per core machines.
+		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "clang" ) \
+			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "clang++" ) ]] \
+			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
+			&& gcf_is_clang_lto_allowed \
+			&& gcf_met_clang_goldlto_requirement ; then
+			_gcf_strip_lto_flags
+			gcf_use_clang_goldlto
+			if gcc --version | grep -q -e "Hardened" ; then
+				if clang --version | grep -q -e "Hardened" ; then
+				:;
+				else
+gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
+gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
+				fi
+			fi
+		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "gcc" ) \
+			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "g++" ) ]] \
+			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
+			&& gcf_is_gcc_lto_allowed \
+			&& gcf_met_gcc_goldlto_requirement ; then
+			_gcf_strip_lto_flags
+			gcf_use_gcc_goldlto
+		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "gcc" ) \
+			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "g++" ) ]] \
+			&& [[ -z "${USE_GOLDLTO}" || ( -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" != "1" ) ]] \
+			&& gcf_is_gcc_lto_allowed \
+			&& gcf_met_gcc_bfdlto_requirement ; then
+			_gcf_strip_lto_flags
+			gcf_use_gcc_bfdlto
+		else
+			gcf_warn "Did not meet LTO requirements."
+		fi
+
+		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
+		# but not okay to mix and switch LTO IR.
+		if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) \
+			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ "g++" \
+				|| ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
+			# This should be disabled for packages that take
+			# literally most of the day or more to complete with
+			# GCC LTO.
+			# Auto switching to ThinLTO for larger packages instead.
+			_gcf_strip_lto_flags
+		fi
+
+		if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" \
+			&& ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+			_gcf_strip_lto_flags
+		fi
+
+		# Remove all LTO flags
+		if [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
+			gcf_info "Forced removal of -flto from *FLAGS"
+			_gcf_strip_lto_flags
 		fi
 	fi
-	# Avoiding gcc/lto because of *serious* memory issues on 1 GIB per core machines.
 
-	if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" && ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+	if [[ "${CC_LTO}" =~ "clang" || "${CXX_LTO}" =~ "clang++" ]] && ! gcf_is_clang_lto_allowed ; then
+		gcf_info "${CATEGORY}/${PN} is blacklisted from LTO.  Stripping LTO flags."
 		_gcf_strip_lto_flags
 	fi
 
-	if [[ -n "${DISABLE_LTO_STRIPPING}" && "${DISABLE_LTO_STRIPPING}" == "1" ]] ; then
-		:;
-	elif [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
-		gcf_info "Forced removal of -flto from *FLAGS"
-		_gcf_strip_lto_flags
-	elif has lto ${IUSE_EFFECTIVE} ; then
-		# Prioritize the lto USE flag over make.conf/package.env.
-		# Some build systems are designed to ignore *FLAGS provided by make.conf/package.env.
-		gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
+	if [[ "${CC_LTO}" =~ "g++" || "${CXX_LTO}" =~ "g++" ]] && ! gcf_is_gcc_lto_allowed ; then
+		gcf_info "${CATEGORY}/${PN} is blacklisted from LTO.  Stripping LTO flags."
 		_gcf_strip_lto_flags
 	fi
+
 	export CFLAGS
 	export CXXFLAGS
 	export FCFLAGS
 	export FFLAGS
 	export LDFLAGS
+
+	if [[ "${CFLAGS}" =~ "-flto" ]] ; then
+		export CC="${CC_LTO}"
+		export CXX="${CXX_LTO}"
+		[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && gcf_use_clang
+	fi
+
+	export CC
+	export CXX
 }
 
 gcf_replace_flags()
@@ -276,7 +447,9 @@ gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		(( ${n} <= 0 )) && n=1
 	elif [[ "${MAKEOPTS_MODE}" == "plain" ]] ; then
 		n=${NCORES}
-	elif [[ "${MAKEOPTS_MODE}" == "oom" || "${MAKEOPTS_MODE}" == "broken" || "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
+	elif [[ "${MAKEOPTS_MODE}" == "oom" \
+		|| "${MAKEOPTS_MODE}" == "broken" \
+		|| "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
 		n=1
 	fi
 	export MAKEOPTS="-j${n}"
@@ -368,6 +541,67 @@ gcf_warn "correctly."
 	done
 }
 
+gcf_check_lto_ir_compatibility_before_compile() {
+	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
+	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] \
+		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
+			gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
+			gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+			die
+		fi
+
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
+			gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
+			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+			die
+		fi
+		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CC}" =~ "g++" ) ) ]] ; then
+			gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
+			gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+			die
+		fi
+	fi
+}
+
+gcf_check_lto_ir_compatibility() {
+	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
+	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
+		if find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a[0-9\.]*$" ; then
+			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
+				gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+				die
+			fi
+			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
+				gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
+				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+				die
+			fi
+
+			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
+				gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
+				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+				die
+			fi
+			if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CC}" =~ "g++" ) ) ]] ; then
+				gcf_error "You must strip -flto.  GCC GIMPLE IR is incompatible with LLVM IR for static-libs."
+				gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
+				die
+			fi
+		fi
+	fi
+}
+
+pre_src_compile() {
+	gcf_check_lto_ir_compatibility_before_compile
+}
+
 pre_src_install() {
 	gcf_info "Running pre_src_install()"
 	gcf_check_Ofast_safety
@@ -375,5 +609,6 @@ pre_src_install() {
 
 post_src_install() {
 	gcf_info "Running post_src_install()"
-	gcf_verify_libraries_built_correctly
+#	gcf_verify_libraries_built_correctly
+	gcf_check_lto_ir_compatibility
 }
