@@ -180,7 +180,7 @@ systemwide LTO should be using the same IR or no LTO.
 
 This file must be generated.  To generate it, do the following:
 
-<code>
+```Shell
 emerge -pve system > /tmp/emerge-core.lst
 cat /tmp/emerge-core.lst | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9a_z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst
-</code>
+```
