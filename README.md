@@ -179,7 +179,9 @@ LTO for clang.  This is to prevent configure checks from failing or IR
 are using systemwide LTO should be using the same compiler's IR (Intermediate
 Representation) or disabled LTO.
 
-This file must be generated.  To generate it, do the following:
+This file must be generated.  All slot or merge conflicts for @system should be
+fixed before generating it or else an incomplete list may be generated.  To
+generate it, do the following:
 
 ```Shell
 emerge -pve system \
@@ -192,3 +194,4 @@ emerge -pve system \
 	| sort \
 	| uniq > /etc/portage/emerge-system.lst
 ```
+
