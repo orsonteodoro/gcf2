@@ -383,7 +383,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
-		elif gcf_is_package_lto_restricted_system || gcf_is_package_lto_agnostic_system ; then
+		elif gcf_is_package_lto_agnostic_system ; then
 			# Disallow compiler autodetect
 			CC="${CC_LIBC:=gcc}"
 			CXX="${CXX_LIBC:=g++}"
@@ -403,7 +403,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 
 		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			gcf_warn "Disabling linker switch"
-		elif [[      ( -n "${CC}"  && "${CC}"  == "clang" ) \
+		elif [[    ( -n "${CC}"  && "${CC}"  == "clang" ) \
 			|| ( -n "${CXX}" && "${CXX}" == "clang++" ) ]] \
 			&& [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
 			&& gcf_met_clang_thinlto_requirement ; then
