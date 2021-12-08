@@ -161,6 +161,7 @@ bashrc:
 * disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
 * disable-lto-compiler-switch.conf -- Disables LTO compiler switching
 * disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
+* disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The ebuild itself or the build scripts may forcefully switch compilers.
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
