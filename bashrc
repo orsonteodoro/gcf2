@@ -360,9 +360,8 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 	#   or lto-restricted list via generator script.
 	if gcf_is_package_in_lto_blacklists \
 		|| gcf_is_package_lto_unknown \
-		|| ( has static-libs ${IUSE_EFFECTIVE} && use static-libs ) \
 		|| gcf_is_package_missing_in_lto_lists ; then
-		gcf_error "Stripping LTO flags for blacklisted, new install, static-libs, missing"
+		gcf_error "Stripping LTO flags for blacklisted, missing install file list"
 		_gcf_strip_lto_flags
 		if has lto ${IUSE_EFFECTIVE} && use lto ; then
 gcf_error "Possible IR incompatibility.  Please disable the lto USE flag."
