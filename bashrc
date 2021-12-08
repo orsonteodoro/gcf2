@@ -369,6 +369,12 @@ gcf_error "Possible IR incompatibility.  Please disable the lto USE flag."
 		fi
 	fi
 
+	if gcf_is_package_lto_restricted_world ; then
+gcf_warn "This package requires -flto stripped and lto USE disabled if there is"
+gcf_warn "a future hard dependency on a specific compiler differing from"
+gcf_warn "CC_LTO=${CC_LTO}."
+	fi
+
 	if has lto ${IUSE_EFFECTIVE} ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by \

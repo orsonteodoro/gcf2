@@ -166,6 +166,7 @@ bashrc:
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
  *FLAGS
+* remove-lto.conf -- Removes the -flto flag
 * remove-no-inline.conf -- Removes -fno-inline
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
