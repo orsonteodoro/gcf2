@@ -144,6 +144,7 @@ an -fno-plt or -fopt-info-vec removal scripts.
 * make.conf -- contains default *FLAGS.  To be modified manually on your end.
 DO NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
 * package.env -- per-package and per-category config
+* gen_lto_pkg_lists.sh -- generator for LTO blacklist and whitelists
 
 ## bashrc
 
@@ -171,27 +172,27 @@ checking
 Some .conf files may contain additional information about the flag or the
 environment variable.
 
-## /etc/portage/emerge-system.lst
+## The /etc/portage/emerge-*-*.lst generator
 
-The /etc/portage/emerge-system.lst is all @system packages to ban from systemwide
-LTO for clang.  This is to prevent configure checks from failing or IR
-(intermediate representation) incompatibility for static-libs.  All packages that
-are using systemwide LTO should be using the same compiler's IR (Intermediate
-Representation) or disabled LTO.
+The `gen_lto_pkg_lists.sh` script is provided to generate LTO blacklist and
+whitelists.  It can be run by doing `bash gen_lto_pkg_lists.sh`
 
-This file must be generated.  All slot or merge conflicts for @system should be
-fixed before generating it or else an incomplete list may be generated.  To
-generate it, do the following:
+The following files are generated:
 
-```Shell
-emerge -pve system \
-	| cut -c 18- \
-	| cut -f 1 -d " " \
-	| grep "/" \
-	| sed -E -e "s|[:]+.*||g" \
-	| sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" \
-	| sed -E  -e "s|-[.0-9_a-z]+$||g" \
-	| sort \
-	| uniq > /etc/portage/emerge-system.lst
-```
+* /etc/portage/emerge-system-lto-agnostic.lst -- Packages in this list are allowed any compiler for LTO for @system and @world
+* /etc/portage/emerge-system-lto-restricted.lst -- Packages in this list are only allowed the default LTO compiler for @system
+* /etc/portage/emerge-system-no-data.lst -- Packages are missing the emerged file list for @system
+* /etc/portage/emerge-system-no-lto.lst -- Packages in this are disallowed LTO for @system and @world
+* /etc/portage/emerge-world-lto-agnostic.lst -- Packages in this list are allowed any compiler for LTO for @world
+* /etc/portage/emerge-world-lto-restricted.lst -- Packages in this list are only allowed the default LTO compiler for @world
+* /etc/portage/emerge-world-no-data.lst -- Packages are missing the emerged file list for @world
+* /etc/portage/emerge-world-no-lto.lst -- Packages in this list are disallowed LTO for @world
 
+The packages in either `emerge-*-no-lto.lst` and `emerge-*-lto-restricted.lst`
+contain static-libs which may have compiler specific IR (Intermediate
+Representation) which may not be compatible.  To maximize compatibility,
+when linking static-libs LTO is disabled or uses the same IR as the chosen
+default systemwide LTO.
+
+The bashrc will process these lists.  They should be re-generated before a
+`emerge -ev @system` or `emerge -ev @world` is performed.
