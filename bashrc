@@ -94,7 +94,7 @@ gcf_strip_gcc_flags() {
 	)
 
 	if [[ ( -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ) \
-		|| ( -n "${_GCF_SWITCHED_TO_THINLTO}" && "${_GCF_SWITCHED_TO_THINLTO}" == "1" ) ]] ; then
+		|| ( -n "${CC}" && "${CC}" == "clang" ) ]] ; then
 		gcf_info "Removing ${gcc_flags[@]} from *FLAGS"
 		for f in ${gcc_flags[@]} ; do
 			_gcf_replace_flag "${f}" ""
@@ -170,7 +170,6 @@ gcf_use_clang() {
 	export RANLIB=llvm-ranlib
 	export READELF=llvm-readelf
 	export STRIP=llvm-strip
-	export _GCF_SWITCHED_TO_THINLTO=1
 }
 
 gcf_use_thinlto() {
