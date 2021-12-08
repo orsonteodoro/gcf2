@@ -606,6 +606,8 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 }
 
 gcf_check_ebuild_compiler_override() {
+	# TODO: Update so that it inspects "${T}/build.log" for compiler change but ignoring configure tests.
+	[[ -n "${DISABLE_OVERRIDE_COMPILER_CHECK}" && "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
 	if [[ "${CFLAGS}" =~ "-flto" ]] \
 		&& gcf_is_package_lto_restricted \
 		&& [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
