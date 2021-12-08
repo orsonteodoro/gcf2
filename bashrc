@@ -109,37 +109,6 @@ gcf_strip_z_retpolineplt() {
 	fi
 }
 
-gcf_is_clang_lto_allowed() {
-	local blacklisted
-	if [[ ! -e "/etc/portage/emerge-system.lst" ]] ; then
-gcf_error
-gcf_error "Missing /etc/portage/emerge-system.lst."
-gcf_error
-gcf_error "To generate this file do:"
-gcf_error 'emerge -pve system | cut -c 18- | cut -f 1 -d " " | grep "/" | sed -E -e "s|[:]+.*||g" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" | sed -E  -e "s|-[.0-9_a-z]+$||g" | sort | uniq > /etc/portage/emerge-system.lst'
-gcf_error
-		die
-	fi
-	# Prevent static-libs link and config test problems.
-	blacklisted=( $(cat /etc/portage/emerge-system.lst) )
-
-	local p
-	for p in ${blacklisted[@]} ; do
-		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 1
-	done
-	return 0
-}
-
-gcf_is_gcc_lto_allowed() {
-	local blacklisted=()
-
-	local p
-	for p in ${blacklisted[@]} ; do
-		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 1
-	done
-	return 0
-}
-
 gcf_met_clang_lto_requirement() {
 	local llvm_slots=(14 13 12 11)
 	has_version "sys-devel/llvm" || return 1
@@ -244,6 +213,94 @@ gcf_use_gcc_bfdlto() {
 	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd -flto")
 }
 
+gcf_is_package_in_lto_blacklists() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-${emerge_set}-no-lto.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
+gcf_is_package_lto_agnostic() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-${emerge_set}-lto-agnostic.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
+gcf_is_package_lto_agnostic_world() {
+	local emerge_set
+	local p
+	local L=($(cat /etc/portage/emerge-world-lto-agnostic.lst))
+	for p in ${L[@]} ; do
+		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+	done
+	return 1
+}
+
+gcf_is_package_lto_agnostic_system() {
+	local emerge_set
+	local p
+	local L=($(cat /etc/portage/emerge-system-lto-agnostic.lst))
+	for p in ${L[@]} ; do
+		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+	done
+	return 1
+}
+
+gcf_is_package_lto_restricted() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-${emerge_set}-lto-restricted.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
+gcf_is_package_lto_restricted_world() {
+	local emerge_set
+	local p
+	local L=($(cat /etc/portage/emerge-world-lto-restricted.lst))
+	for p in ${L[@]} ; do
+		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+	done
+	return 1
+}
+
+gcf_is_package_lto_restricted_system() {
+	local emerge_set
+	local p
+	local L=($(cat /etc/portage/emerge-world-lto-restricted.lst))
+	for p in ${L[@]} ; do
+		[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+	done
+	return 1
+}
+
+gcf_is_package_lto_unknown() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-${emerge_set}-no-data.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
 gcf_lto() {
 	[[ -n "${DISABLE_GCF_LTO}" && "${DISABLE_GCF_LTO}" == "1" ]] && return
 
@@ -284,6 +341,20 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 			-e "s/-fuse-ld=(lld|bfd)//g")
 	}
 
+	# New packages do not get LTO initially because it simplifies this script.
+	# New packages from the no-data list will get moved into agnostic, no-lto,
+	#   or lto-restricted list via generator script.
+	if gcf_is_package_in_lto_blacklists \
+		|| gcf_is_package_lto_unknown \
+		|| ( has static-libs ${IUSE_EFFECTIVE} && use static-libs ) ; then
+		gcf_error "Stripping LTO flags for blacklisted, new install, static-libs"
+		_gcf_strip_lto_flags
+		if has lto ${IUSE_EFFECTIVE} && use lto ; then
+gcf_error "Possible IR incompatibility.  Please disable the lto USE flag."
+			die
+		fi
+	fi
+
 	if has lto ${IUSE_EFFECTIVE} ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by \
@@ -291,20 +362,41 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 		# Some packages want to manipulate LTO -O* flags.
 gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		_gcf_strip_lto_flags
-	else
+	fi
+
+	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ); then
+		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
+			# Breaks the determinism in this closed system
+			gcf_warn "Disabling compiler switch"
+		elif gcf_is_package_lto_restricted_system || gcf_is_package_lto_agnostic_system ; then
+			# Disallow compiler autodetect
+			CC="${CC_LIBC:=gcc}"
+			CXX="${CXX_LIBC:=g++}"
+		elif gcf_is_package_lto_restricted_world || gcf_is_package_lto_agnostic_world ; then
+			CC="${CC_LTO}"
+			CXX="${CXX_LTO}"
+		else
+			CC="${CC_LIBC:=gcc}"
+			CXX="${CXX_LIBC:=g++}"
+		fi
+		[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && gcf_use_clang
+	fi
+
+	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
 		# A reminder that you can only use one LTO implementation as the
 		# default systemwide.
 
-		if [[      ( -n "${CC_LTO}"  && "${CC_LTO}"  == "clang" ) \
-			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "clang++" ) ]] \
+		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
+			gcf_warn "Disabling linker switch"
+		elif [[      ( -n "${CC}"  && "${CC}"  == "clang" ) \
+			|| ( -n "${CXX}" && "${CXX}" == "clang++" ) ]] \
 			&& [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
-			&& gcf_is_clang_lto_allowed \
 			&& gcf_met_clang_thinlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_thinlto
 			if gcc --version | grep -q -e "Hardened" ; then
 				if clang --version | grep -q -e "Hardened" ; then
-				:;
+					:;
 				else
 gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
 gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
@@ -312,37 +404,37 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 			fi
 			# Avoiding gcc/lto because of *serious* memory issues \
 			# on 1 GIB per core machines.
-		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "clang" ) \
-			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "clang++" ) ]] \
+		elif [[    ( -n "${CC}"  && "${CC}"  == "clang" ) \
+			|| ( -n "${CXX}" && "${CXX}" == "clang++" ) ]] \
 			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
-			&& gcf_is_clang_lto_allowed \
 			&& gcf_met_clang_goldlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_clang_goldlto
 			if gcc --version | grep -q -e "Hardened" ; then
 				if clang --version | grep -q -e "Hardened" ; then
-				:;
+					:;
 				else
 gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
 gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 				fi
 			fi
-		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "gcc" ) \
-			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "g++" ) ]] \
+		elif [[ ( -z "${CC}" || -z "${CXX}" ) \
+			|| ( -n "${CC}"  && "${CC}"  == "gcc" ) \
+			|| ( -n "${CXX}" && "${CXX}" == "g++" ) ]] \
 			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
-			&& gcf_is_gcc_lto_allowed \
 			&& gcf_met_gcc_goldlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_gcc_goldlto
-		elif [[    ( -n "${CC_LTO}"  && "${CC_LTO}"  == "gcc" ) \
-			|| ( -n "${CXX_LTO}" && "${CXX_LTO}" == "g++" ) ]] \
+		elif [[ ( -z "${CC}" || -z "${CXX}" ) \
+			|| ( -n "${CC}"  && "${CC}"  == "gcc" ) \
+			|| ( -n "${CXX}" && "${CXX}" == "g++" ) ]] \
 			&& [[ -z "${USE_GOLDLTO}" || ( -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" != "1" ) ]] \
-			&& gcf_is_gcc_lto_allowed \
 			&& gcf_met_gcc_bfdlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_gcc_bfdlto
 		else
 			gcf_warn "Did not meet LTO requirements."
+echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 		fi
 
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
@@ -369,35 +461,14 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 		fi
 	fi
 
-	if [[ "${CC_LTO}" =~ "clang" || "${CXX_LTO}" =~ "clang++" ]] && ! gcf_is_clang_lto_allowed ; then
-		gcf_info "${CATEGORY}/${PN} is blacklisted from LTO.  Stripping LTO flags."
-		_gcf_strip_lto_flags
-	fi
-
-	if [[ "${CC_LTO}" =~ "g++" || "${CXX_LTO}" =~ "g++" ]] && ! gcf_is_gcc_lto_allowed ; then
-		gcf_info "${CATEGORY}/${PN} is blacklisted from LTO.  Stripping LTO flags."
-		_gcf_strip_lto_flags
-		if has lto ${IUSE_EFFECTIVE} && use lto ; then
-			eerror "The lto USE flag must be disabled because of different IR."
-			die
-		fi
-	fi
-
+	export CC
+	export CXX
 	export COMMON_FLAGS
 	export CFLAGS
 	export CXXFLAGS
 	export FCFLAGS
 	export FFLAGS
 	export LDFLAGS
-
-	if [[ "${CFLAGS}" =~ "-flto" ]] ; then
-		export CC="${CC_LTO}"
-		export CXX="${CXX_LTO}"
-		[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && gcf_use_clang
-	fi
-
-	export CC
-	export CXX
 }
 
 gcf_replace_flags()
@@ -519,156 +590,32 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 	fi
 }
 
-gcf_verify_libraries_built_correctly()
-{
-	[[ -n "${SKIP_LIB_CORRECTNESS_CHECK}" && "${SKIP_LIB_CORRECTNESS_CHECK}" == "1" ]] && return
-	gcf_info "Verifying static/shared library correctness"
-	local p
-	for p in $(find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.(a|so)[0-9\.]*$") ; do
-		if [[ ! -L "${p}" && -e "${p}" ]] ; then
-			grep -q -e "https://bugs.gentoo.org/4411" "${p}" && continue
-			if ! readelf -h "${p}" 2>/dev/null 1>/dev/null ; then
-# static-libs linked with ThinLTO seems broken.
-gcf_error "${p} is not built correctly.  You may try to do the following:"
-gcf_error ""
-gcf_error "  * Remove or change *FLAGS into default or non-optimized form"
-gcf_error "  * Contact the ebuild maintainer to get it fixed"
-gcf_error "  * Switch to GCC + BFD"
-gcf_error "  * Switch to the gold linker if using clang"
-gcf_error "  * Disable lto flags and USE flag if using clang"
-gcf_error ""
-gcf_error "You may pass SKIP_LIB_CORRECTNESS_CHECK=1 to skip this check."
-				if [[ -d "/var/db/pkg/${CATEGORY}/${PN}-${PVR}" ]] ; then
-# The installed package is not always built correctly.
-# Example: static pkgA is broken and user does emerge -vuDN pkgB (parent package)
-gcf_warn ""
-gcf_warn "Detected a previous installation of =${CATEGORY}/${PN}-${PVR}"
-gcf_warn "which may trick the emerge system that the prereq is met but"
-gcf_warn "the installed package is actually broken.  If the broken"
-gcf_warn "shared/static lib still exists, it could lead to configure time check"
-gcf_warn "failures later on.  In other words, re-emerge the package built"
-gcf_warn "correctly."
-				fi
-				die
-			fi
-		fi
-	done
-}
+gcf_check_ebuild_compiler_override() {
+	if [[ "${CFLAGS}" =~ "-flto" ]] \
+		&& gcf_is_package_lto_restricted \
+		&& [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
+gcf_error
+gcf_error "Detected possible ebuild override of CC/CXX with incompatible IR."
+gcf_error "It is recommended disable LTO for this package."
+gcf_error
+gcf_error "CC=${CC}"
+gcf_error "CXX=${CXX}"
+gcf_error
 
-gcf_check_lto_ir_compatibility_before_compile() {
-	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
-
-	_gcf_ir_compat_before_with_flag() {
-		gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
 		die
-	}
-
-	_gcf_ir_compat_before_with_use() {
-		gcf_error "Detected static-libs USE ON.  The lto USE flag must be disabled because of different IR."
-		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-		die
-	}
-
-	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] \
-		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			_gcf_ir_compat_before_with_flag
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			_gcf_ir_compat_before_with_flag
-		fi
-
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			_gcf_ir_compat_before_with_flag
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			_gcf_ir_compat_before_with_flag
-		fi
-
-	fi
-	if has lto ${IUSE_EFFECTIVE} && use lto \
-		&& has static-libs ${IUSE_EFFECTIVE} && use static-libs ; then
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			_gcf_ir_compat_before_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			_gcf_ir_compat_before_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			_gcf_ir_compat_before_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			_gcf_ir_compat_before_with_use
-		fi
-	fi
-}
-
-gcf_check_lto_ir_compatibility() {
-	[[ -n "${SKIP_IR_CHECK}" && "${SKIP_IR_CHECK}" == "1" ]] && return
-	local L=($(find "${ED}" -type f -regextype 'posix-extended' -regex ".*\.a$" 2>/dev/null))
-
-	_gcf_ir_compat_msg_with_flag() {
-		gcf_error "Detected .a file(s):"
-		echo "${L[@]}"
-		gcf_error "You must strip -flto.  LLVM IR is incompatible with GCC GIMPLE IR for static-libs."
-		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-		die
-	}
-
-	_gcf_ir_compat_msg_with_use() {
-		gcf_error "Detected .a file(s):"
-		echo "${L[@]}"
-		gcf_error "The lto USE flag must be disabled because of different IR."
-		gcf_error "You may add SKIP_IR_CHECK=1 to per-package package.env to skip this check."
-		die
-	}
-
-	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] \
-		&& (( ${#L[@]} > 0 )) ; then
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			_gcf_ir_compat_msg_with_flag
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			_gcf_ir_compat_msg_with_flag
-		fi
-
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			_gcf_ir_compat_msg_with_flag
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			_gcf_ir_compat_msg_with_flag
-		fi
-	fi
-	# Check for things like libpython2.7.a
-	if has lto ${IUSE_EFFECTIVE} && use lto \
-		&& (( ${#L[@]} > 0 )) ; then
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "gcc" && ( -n "${CC}" && "${CC}" =~ "clang" ) ]] ; then
-			_gcf_ir_compat_msg_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "g++" && ( -n "${CXX}" && "${CXX}" =~ "clang++" ) ]] ; then
-			_gcf_ir_compat_msg_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang" && ( -z "${CC}" || ( "${CC}" =~ "gcc" ) ) ]] ; then
-			_gcf_ir_compat_msg_with_use
-		fi
-		if [[ -n "${CC_LTO}" && "${CC_LTO}" == "clang++" && ( -z "${CXX}" || ( "${CXX}" =~ "g++" ) ) ]] ; then
-			_gcf_ir_compat_msg_with_use
-		fi
 	fi
 }
 
 pre_src_compile() {
-	gcf_check_lto_ir_compatibility_before_compile
+	gcf_check_ebuild_compiler_override
 }
 
 pre_src_install() {
+	gcf_check_ebuild_compiler_override
 	gcf_info "Running pre_src_install()"
 	gcf_check_Ofast_safety
 }
 
 post_src_install() {
 	gcf_info "Running post_src_install()"
-#	gcf_verify_libraries_built_correctly
-	gcf_check_lto_ir_compatibility
 }
