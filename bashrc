@@ -327,32 +327,32 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 		export CFLAGS=$(echo "${CFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 		export FCFLAGS=$(echo "${FCFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 		export FFLAGS=$(echo "${FFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r \
 			-e 's/-flto( |$)//g' \
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd)//g")
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 	}
 
 	# New packages do not get LTO initially because it simplifies this script.
