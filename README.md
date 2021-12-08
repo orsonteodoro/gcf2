@@ -175,7 +175,9 @@ environment variable.
 ## The /etc/portage/emerge-*-*.lst generator
 
 The `gen_lto_pkg_lists.sh` script is provided to generate LTO blacklist and
-whitelists.  It can be run by doing `bash gen_lto_pkg_lists.sh`
+whitelists.  Before running the list generator, both `CC_LTO` and `CC_LIBC` in
+the generator script should be set to either clang or gcc.  It can be run
+by doing `bash gen_lto_pkg_lists.sh`
 
 The following files are generated:
 
