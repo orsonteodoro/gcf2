@@ -6,9 +6,6 @@ N_LTO_RESTRICTED=0
 N_NO_LTO=0
 N_NO_DATA=0
 
-CC_LTO="clang" # systemwide compiler.  values can only be clang or gcc
-CC_LIBC="gcc" # used to compile libc.  values can only be clang or gcc
-
 is_already_added_to_system_set() {
 	for t in no-data no-lto lto-agnostic lto-restricted ; do
 		grep -q -E -e "${pp}$" "/etc/portage/emerge-system-${t}.lst" && return 0
@@ -18,6 +15,7 @@ is_already_added_to_system_set() {
 
 check_static_libs() {
 	local emerge_set="${1}"
+	echo "Please wait.  Generating emerge list..."
 	local L=( $(emerge -pve ${emerge_set} 2>/dev/null \
 		| cut -c 18- \
 		| cut -f 1 -d " " \
@@ -34,12 +32,12 @@ check_static_libs() {
 	echo "" > /etc/portage/emerge-${emerge_set}-no-data.lst
 	local p
 	for p in ${L[@]} ; do
-		p=$(echo "${p}" | sed -e "s|:.*||g")
+		p=$(echo "${p}" | sed -e "s|:.*||g" | sed -e "s|^<||g")
 		local has_static=0
 		local has_data=0
 		local p_no_r=$(echo "${p}" | sed -E -e "s/(-r[0-9]+)+$//g")
 		local pp=$(echo "${p}" | sed -E -e "s/(-r[0-9]+|_p[0-9]+)+$//g" \
-			| sed -E  -e "s|-[.0-9_a-z]+$||g")
+			| sed -E -e "s|-[.0-9_a-z]+$||g")
 		local v_mm2=$(echo "${p_no_r}" | sed -e "s|${pp}-||g" | cut -f 1-2 -d ".")
 		local v_mm1=$(echo "${p_no_r}" | sed -e "s|${pp}-||g" | cut -f 1 -d ".")
 		local path2=$(realpath /var/db/pkg/${pp}-${v_mm2}*/CONTENTS 2>/dev/null | head -n 1)
@@ -117,12 +115,30 @@ check_static_libs() {
 }
 
 main() {
+	export CC_LTO=$(grep -r -e "CC_LTO" /etc/portage/make.conf | cut -f 2 -d "=" | sed -e "s|#.*||" -e 's|"||g')
+	export CC_LIBC=$(grep -r -e "CC_LIBC" /etc/portage/make.conf | cut -f 2 -d "=" | sed -e "s|#.*||" -e 's|"||g')
+
+	if [[ -z "${CC_LTO}" ]] ; then
+		echo "Missing CC_LTO in /etc/portage/make.conf.  Valid values clang, gcc."
+		exit 1
+	fi
+
+	if [[ -z "${CC_LIBC}" ]] ; then
+		echo "Missing CC_LIBC in /etc/portage/make.conf.  Valid values clang, gcc."
+		exit 1
+	fi
+
 	echo
 	echo "Current compilers:"
-	echo "Set the following below in this script:"
-
+	echo
 	echo "CC_LTO=${CC_LTO} (current LTO compiler)"
 	echo "CC_LIBC=${CC_LIBC} (current libc compiler)"
+	echo
+
+	echo
+	echo "Both emerge -pve @system and emerge -pve @world must have no"
+	echo "conflicts or build issues for complete lists to be generated."
+	echo
 
 	check_static_libs "system"
 	check_static_libs "world"
