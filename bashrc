@@ -662,7 +662,7 @@ gcf_report_emerge_time() {
 	local et_min=$(( ${elapsed_time} % 3600 / 60 ))
 	local et_sec=$(( ${elapsed_time} % 60 ))
 	gcf_info "Completion Time: ${elapsed_time} seconds ( ${et_days} days ${et_hours} hours ${et_min} minutes ${et_sec} seconds )"
-	if (( ${et_days} > 1 || ${et_hours} > 18 )) ; do # 3/4 of a day.
+	if (( ${et_days} >= 1 || ${et_hours} >= 18 )) ; do # 3/4 of a day.
 		# More than 1 day is not acceptable if updates are monotasking because it blocks
 		# security updates for critical 0-day exploits.
 		gcf_warn "The MAKEOPTS value may need to be reduced to increase goodput or"
