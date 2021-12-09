@@ -326,41 +326,19 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 	fi
 
 	_gcf_strip_lto_flags() {
-		export COMMON_FLAGS=$(echo "${COMMON_FLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export CFLAGS=$(echo "${CFLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export FCFLAGS=$(echo "${FCFLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export FFLAGS=$(echo "${FFLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export LDFLAGS=$(echo "${LDFLAGS}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
-		export DIST_MAKE=$(echo "${DIST_MAKE}" | sed -r \
-			-e 's/-flto( |$)//g' \
-			-e "s/-flto=[0-9]+//g" \
-			-e "s/-flto=(auto|jobserver|thin|full)//g" \
-			-e "s/-fuse-ld=(lld|bfd|gold)//g")
+		local flag_names=(
+			COMMON_FLAGS
+			CFLAGS
+			CXXFLAGS
+			FCFLAGS
+			FFLAGS
+			LDFLAGS
+			DIST_MAKE
+		)
+		local f
+		for f in ${flag_names[@]} ; do
+			eval "export ${f}=\$(echo \"\$${f}\" | sed -r -e 's/-flto( |\$)//g' -e \"s/-flto=[0-9]+//g\" -e \"s/-flto=(auto|jobserver|thin|full)//g\" -e \"s/-fuse-ld=(lld|bfd|gold)//g\")"
+		done
 	}
 
 	# New packages do not get LTO initially because it simplifies this script.
@@ -585,6 +563,11 @@ gcf_strip_retpoline()
 	fi
 }
 
+gcf_record_start_time()
+{
+	export GCF_START_EMERGE_TIME=$(date +%s)
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -600,6 +583,7 @@ pre_pkg_setup()
 	gcf_use_Oz
 	gcf_replace_freorder_blocks_algorithm
 	gcf_adjust_makeopts
+	gcf_record_start_time
 }
 
 gcf_check_Ofast_safety()
@@ -620,7 +604,6 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 }
 
 gcf_check_ebuild_compiler_override() {
-	# TODO: Update so that it inspects "${T}/build.log" for compiler change but ignoring configure tests.
 	[[ -n "${DISABLE_OVERRIDE_COMPILER_CHECK}" && "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
 
 	_gcf_ir_message_incompatible() {
@@ -634,28 +617,60 @@ gcf_error
 			die
 	}
 
-	if [[ "${CFLAGS}" =~ "-flto" ]] && gcf_is_package_lto_restricted ; then
+	if ( [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ) \
+		&& gcf_is_package_lto_restricted ; then
+		gcf_info "Running gcf_check_ebuild_compiler_override()"
 		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
 
-#		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1)
-#		if [[ "${CC_LIBC}" != "${CC_LTO}" ]] && (( $(tail -n +${start} "${T}/build.log" | grep -e "${CC_LIBC} " | wc -l) > 1 )) ; then
-#			_gcf_ir_message_incompatible
-#		fi
+		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1)
+		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1)
+		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
+		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
+			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
+				| grep -E -e "(^| |-)${CC_LIBC} " \
+				| wc -l) > 1 )) ; then
+			CC=${CC_LIBC}
+			CXX=${CXX_LIBC}
+			_gcf_ir_message_incompatible
+		fi
 	fi
 }
 
 pre_src_compile() {
+	gcf_info "Running pre_src_compile()"
+	gcf_check_ebuild_compiler_override
+}
+
+post_src_compile() {
+	gcf_info "Running post_src_compile()"
 	gcf_check_ebuild_compiler_override
 }
 
 pre_src_install() {
-	gcf_check_ebuild_compiler_override
 	gcf_info "Running pre_src_install()"
 	gcf_check_Ofast_safety
 }
 
+gcf_report_emerge_time() {
+	# Can used by log filtering
+	local now=$(date +%s)
+	local elapsed_time=$((${now} - ${GCF_START_EMERGE_TIME}))
+	local et_days=$(( ${elapsed_time} / 86400  ))
+	local et_hours=$(( ${elapsed_time} % 86400 / 3600 ))
+	local et_min=$(( ${elapsed_time} % 3600 / 60 ))
+	local et_sec=$(( ${elapsed_time} % 60 ))
+	gcf_info "Completion Time: ${elapsed_time} seconds ( ${et_days} days ${et_hours} hours ${et_min} minutes ${et_sec} seconds )"
+	if (( ${et_days} > 1 || ${et_hours} > 18 )) ; do # 3/4 of a day.
+		# More than 1 day is not acceptable if updates are monotasking because it blocks
+		# security updates for critical 0-day exploits.
+		gcf_warn "The MAKEOPTS value may need to be reduced to increase goodput or"
+		gcf_warn "don't use Full LTO or switch to ThinLTO instead."
+	done
+}
+
 post_src_install() {
 	gcf_info "Running post_src_install()"
+	gcf_report_emerge_time
 }
