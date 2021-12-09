@@ -26,12 +26,15 @@ gcf_error() {
 _gcf_replace_flag() {
 	local i="${1}"
 	local o="${2}"
-	export COMMON_FLAGS=$(echo "${COMMON_FLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
+	export COMMON_FLAGS=$(echo "${COMMON_FLAGS}" | sed -r -e "s/${i}/${o}/g")
 	export CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${i}|${o}|g")
 	export CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FCFLAGS=$(echo "${FCFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FFLAGS=$(echo "${FFLAGS}" | sed -e "s|${i}|${o}|g")
 	export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
+
+	# For the perl-module.eclass
+	export DIST_MAKE=$(echo "${DIST_MAKE}" | sed -r -e "s/${i}/${o}/g")
 }
 
 _gcf_translate_to_gcc_retpoline() {
@@ -353,6 +356,11 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 			-e "s/-flto=[0-9]+//g" \
 			-e "s/-flto=(auto|jobserver|thin|full)//g" \
 			-e "s/-fuse-ld=(lld|bfd|gold)//g")
+		export DIST_MAKE=$(echo "${DIST_MAKE}" | sed -r \
+			-e 's/-flto( |$)//g' \
+			-e "s/-flto=[0-9]+//g" \
+			-e "s/-flto=(auto|jobserver|thin|full)//g" \
+			-e "s/-fuse-ld=(lld|bfd|gold)//g")
 	}
 
 	# New packages do not get LTO initially because it simplifies this script.
@@ -489,6 +497,7 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 	export FCFLAGS
 	export FFLAGS
 	export LDFLAGS
+	export DIST_MAKE
 }
 
 gcf_replace_flags()
@@ -613,9 +622,8 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 gcf_check_ebuild_compiler_override() {
 	# TODO: Update so that it inspects "${T}/build.log" for compiler change but ignoring configure tests.
 	[[ -n "${DISABLE_OVERRIDE_COMPILER_CHECK}" && "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
-	if [[ "${CFLAGS}" =~ "-flto" ]] \
-		&& gcf_is_package_lto_restricted \
-		&& [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
+
+	_gcf_ir_message_incompatible() {
 gcf_error
 gcf_error "Detected possible ebuild override of CC/CXX with incompatible IR."
 gcf_error "It is recommended disable LTO for this package."
@@ -623,8 +631,18 @@ gcf_error
 gcf_error "CC=${CC}"
 gcf_error "CXX=${CXX}"
 gcf_error
+			die
+	}
 
-		die
+	if [[ "${CFLAGS}" =~ "-flto" ]] && gcf_is_package_lto_restricted ; then
+		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
+			_gcf_ir_message_incompatible
+		fi
+
+#		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1)
+#		if [[ "${CC_LIBC}" != "${CC_LTO}" ]] && (( $(tail -n +${start} "${T}/build.log" | grep -e "${CC_LIBC} " | wc -l) > 1 )) ; then
+#			_gcf_ir_message_incompatible
+#		fi
 	fi
 }
 
