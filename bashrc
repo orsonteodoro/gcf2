@@ -388,15 +388,31 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && gcf_use_clang
 	fi
 
+	local linker=""
+	if gcf_is_package_in_lto_blacklists \
+		|| gcf_is_package_lto_unknown \
+		|| gcf_is_package_missing_in_lto_lists ; then
+		linker="no-lto"
+	elif gcf_is_package_lto_agnostic \
+		|| gcf_is_package_lto_restricted ; then
+		if [[ "${CC}" == "clang" && "${USE_THINLTO}" == "1" ]] ; then
+			linker="thinlto"
+		elif [[ "${CC}" == "clang" && "${USE_GOLDLTO}" == "1" ]] ; then
+			linker="clang-goldlto"
+		elif [[ "${CC}" == "gcc" && "${USE_GOLDLTO}" == "1" ]] ; then
+			linker="gcc-goldlto"
+		elif [[ "${CC}" == "gcc" ]] ; then
+			linker="gcc-bfdlto"
+		fi
+	fi
+
 	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
 		# A reminder that you can only use one LTO implementation as the
 		# default systemwide.
 
 		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			gcf_warn "Disabling linker switch"
-		elif [[    ( -n "${CC}"  && "${CC}"  == "clang" ) \
-			|| ( -n "${CXX}" && "${CXX}" == "clang++" ) ]] \
-			&& [[ -n "${USE_THINLTO}" && "${USE_THINLTO}" == "1" ]] \
+		elif [[ "${linker}" == "thinlto" ]] \
 			&& gcf_met_clang_thinlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_thinlto
@@ -410,9 +426,7 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 			fi
 			# Avoiding gcc/lto because of *serious* memory issues \
 			# on 1 GIB per core machines.
-		elif [[    ( -n "${CC}"  && "${CC}"  == "clang" ) \
-			|| ( -n "${CXX}" && "${CXX}" == "clang++" ) ]] \
-			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
+		elif [[ "${linker}" == "clang-goldlto" ]] \
 			&& gcf_met_clang_goldlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_clang_goldlto
@@ -424,20 +438,16 @@ gcf_warn "Non-hardened clang detected.  Use the clang ebuild from the"
 gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 				fi
 			fi
-		elif [[ ( -z "${CC}" || -z "${CXX}" ) \
-			|| ( -n "${CC}"  && "${CC}"  == "gcc" ) \
-			|| ( -n "${CXX}" && "${CXX}" == "g++" ) ]] \
-			&& [[ -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" == "1" ]] \
+		elif [[ "${linker}" == "gcc-goldlto" ]] \
 			&& gcf_met_gcc_goldlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_gcc_goldlto
-		elif [[ ( -z "${CC}" || -z "${CXX}" ) \
-			|| ( -n "${CC}"  && "${CC}"  == "gcc" ) \
-			|| ( -n "${CXX}" && "${CXX}" == "g++" ) ]] \
-			&& [[ -z "${USE_GOLDLTO}" || ( -n "${USE_GOLDLTO}" && "${USE_GOLDLTO}" != "1" ) ]] \
+		elif [[ "${linker}" == "gcc-bfdlto" ]] \
 			&& gcf_met_gcc_bfdlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_gcc_bfdlto
+		elif [[ "${linker}" == "no-lto" ]] ; then
+			:;
 		else
 			gcf_warn "Did not meet LTO requirements."
 echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
@@ -662,12 +672,12 @@ gcf_report_emerge_time() {
 	local et_min=$(( ${elapsed_time} % 3600 / 60 ))
 	local et_sec=$(( ${elapsed_time} % 60 ))
 	gcf_info "Completion Time: ${elapsed_time} seconds ( ${et_days} days ${et_hours} hours ${et_min} minutes ${et_sec} seconds )"
-	if (( ${et_days} >= 1 || ${et_hours} >= 18 )) ; do # 3/4 of a day.
+	if (( ${et_days} >= 1 || ${et_hours} >= 18 )) ; then # 3/4 of a day.
 		# More than 1 day is not acceptable if updates are monotasking because it blocks
 		# security updates for critical 0-day exploits.
 		gcf_warn "The MAKEOPTS value may need to be reduced to increase goodput or"
 		gcf_warn "don't use Full LTO or switch to ThinLTO instead."
-	done
+	fi
 }
 
 post_src_install() {
