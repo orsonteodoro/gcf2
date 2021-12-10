@@ -644,13 +644,20 @@ gcf_error
 		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
-
 		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1)
 		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1)
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
 		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -E -e "(^| |-)${CC_LIBC} " \
+				| wc -l) > 1 )) ; then
+			CC=${CC_LIBC}
+			CXX=${CXX_LIBC}
+			_gcf_ir_message_incompatible
+		fi
+		if [[ -n "${start}" && "${CXX_LIBC}" != "${CXX_LTO}" ]] \
+			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
+				| grep -E -e "(^| |-)${CXX_LIBC} " \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
