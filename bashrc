@@ -635,6 +635,9 @@ gcf_error
 gcf_error "CC=${CC}"
 gcf_error "CXX=${CXX}"
 gcf_error
+gcf_error "You may supply DISABLE_OVERRIDE_COMPILER_CHECK=1 in the package.env"
+gcf_error "if it is a false-positive."
+gcf_error
 			die
 	}
 
@@ -649,7 +652,7 @@ gcf_error
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
 		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
-				| grep -E -e "(^| |-)${CC_LIBC}(-[.0-9]+)? " \
+				| grep -e "${CC_LIBC}" \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
@@ -657,7 +660,7 @@ gcf_error
 		fi
 		if [[ -n "${start}" && "${CXX_LIBC}" != "${CXX_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
-				| grep -E -e "(^| |-)${CXX_LIBC}(-[.0-9]+)? " \
+				| grep -e "${CXX_LIBC}" \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
