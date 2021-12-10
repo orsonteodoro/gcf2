@@ -91,6 +91,7 @@ gcf_strip_gcc_flags() {
 		-fopt-info-inline
 		-fopt-info-loop
 		-fopt-info-vec
+		-fprefetch-loop-arrays
 		-frename-registers
 		-freorder-blocks-algorithm=simple
 		-freorder-blocks-algorithm=stc
