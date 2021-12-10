@@ -207,3 +207,11 @@ contain static-libs which may have compiler specific IR (Intermediate
 Representation) which may not be compatible.  To maximize compatibility
 when linking static-libs, LTO is disabled or uses the same IR as the chosen
 default systemwide LTO.
+
+If LTO was never applied due to it previously placed in no-data list or
+was a new package, but placed later in the lto-agnostic lists after
+running `gen_lto_pkg_lists.sh`, you may re-enable the lto USE flag and
+re-emerge those packages afterwards.  If it was later placed in
+lto-restricted, you can only enable LTO for that particular package if
+there is no hard dependence on CC_LIBC compiler for packages that use
+it as a static-libs dependency.
