@@ -359,7 +359,7 @@ gcf_error "Possible IR incompatibility.  Please disable the lto USE flag."
 	if gcf_is_package_lto_restricted_world ; then
 gcf_warn "This package requires -flto stripped and lto USE disabled if there is"
 gcf_warn "a future hard dependency on a specific compiler differing from"
-gcf_warn "CC_LTO=${CC_LTO}."
+gcf_warn "CC_LTO=${CC_LTO} when linking static-libs."
 	fi
 
 	if has lto ${IUSE_EFFECTIVE} ; then
