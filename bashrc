@@ -581,7 +581,9 @@ gcf_record_start_time()
 
 gcf_translate_no_inline()
 {
-	if [[ "${CFLAGS}" =~ "-fno-inline" && "${CC}" == "clang" ]] ; then
+	if [[ ( "${CFLAGS}" =~ "-fno-inline" || "${CXXFLAGS}" =~ "-fno-inline" ) \
+		&& ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+		gcf_info "Detected clang.  Converting -fno-inline -> -fno-inline-functions"
 		_gcf_replace_flag "-fno-inline" "-fno-inline-functions"
 	fi
 }
