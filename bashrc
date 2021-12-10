@@ -645,6 +645,8 @@ gcf_error
 			CXX=${CXX_LIBC}
 			_gcf_ir_message_incompatible
 		fi
+
+		# TODO: auto inspect packages that turn off compiler verbosity.
 	fi
 }
 
