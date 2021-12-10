@@ -579,6 +579,13 @@ gcf_record_start_time()
 	export GCF_START_EMERGE_TIME=$(date +%s)
 }
 
+gcf_translate_no_inline()
+{
+	if [[ "${CFLAGS}" =~ "-fno-inline" && "${CC}" == "clang" ]] ; then
+		_gcf_replace_flag "-fno-inline" "-fno-inline-functions"
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -592,6 +599,7 @@ pre_pkg_setup()
 	gcf_strip_no_inline
 	gcf_strip_lossy
 	gcf_use_Oz
+	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_adjust_makeopts
 	gcf_record_start_time
