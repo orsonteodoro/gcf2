@@ -112,7 +112,7 @@ gcf_strip_z_retpolineplt() {
 	fi
 }
 
-gcf_met_clang_lto_requirement() {
+gcf_met_clang_thinlto_requirement() {
 	local llvm_slots=(14 13 12 11)
 	has_version "sys-devel/llvm" || return 1
 
