@@ -649,7 +649,7 @@ gcf_error
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
 		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
-				| grep -E -e "(^| |-)${CC_LIBC} " \
+				| grep -E -e "(^| |-)${CC_LIBC}(-[.0-9]+)? " \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
@@ -657,7 +657,7 @@ gcf_error
 		fi
 		if [[ -n "${start}" && "${CXX_LIBC}" != "${CXX_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
-				| grep -E -e "(^| |-)${CXX_LIBC} " \
+				| grep -E -e "(^| |-)${CXX_LIBC}(-[.0-9]+)? " \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
