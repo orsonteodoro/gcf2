@@ -60,7 +60,7 @@ gcf_retpoline_translate() {
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
 		_gcf_translate_to_clang_retpoline
-	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ "g++" ]] \
+	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mretpoline" \
 			|| "${CXXFLAGS}" =~ "-mretpoline" ]] ; then
 		# implicit
@@ -460,17 +460,19 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
 		# but not okay to mix and switch LTO IR.
 		if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) \
-			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ "g++" \
+			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" \
 				|| ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
 			# This should be disabled for packages that take
 			# literally most of the day or more to complete with
 			# GCC LTO.
 			# Auto switching to ThinLTO for larger packages instead.
+			gcf_info "Forced removal of -flto from *FLAGS for gcc"
 			_gcf_strip_lto_flags
 		fi
 
 		if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" \
 			&& ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+			gcf_info "Forced removal of -flto from *FLAGS for clang"
 			_gcf_strip_lto_flags
 		fi
 
@@ -516,11 +518,11 @@ gcf_strip_lossy()
 
 gcf_use_Oz()
 {
-	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
+	if [[ ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
 		gcf_info "Detected clang.  Converting -Os -> -Oz"
 		_gcf_replace_flag "-Os" "-Oz"
 	fi
-	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
+	if [[ ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
 		gcf_info "Detected gcc.  Converting -Oz -> -Os"
 		_gcf_replace_flag "-Oz" "-Os"
 	fi
