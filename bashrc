@@ -564,8 +564,8 @@ gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 	export MAKEFLAGS="-j${n}"
 	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
 	if [[ "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
-gcf_warn "Please close all web browsers and large programs to speed up"
-gcf_warn "linking time."
+gcf_warn "Please close all web browsers, downloaders, and large programs to"
+gcf_warn "speed up linking time."
 	fi
 }
 
