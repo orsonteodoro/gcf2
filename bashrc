@@ -647,8 +647,8 @@ gcf_error
 		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
-		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1)
-		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1)
+		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
+		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
 		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
@@ -696,7 +696,7 @@ gcf_report_emerge_time() {
 	local et_sec=$(( ${elapsed_time} % 60 ))
 	gcf_info "Completion Time: ${elapsed_time} seconds ( ${et_days} days ${et_hours} hours ${et_min} minutes ${et_sec} seconds )"
 	if (( ${et_days} >= 1 || ${et_hours} >= 18 )) ; then # 3/4 of a day.
-		# More than 1 day is not acceptable if updates are monotasking because it blocks
+		# More than 1 day is not acceptable.  If updates are monotasking, it blocks
 		# security updates for critical 0-day exploits.
 		gcf_warn "The MAKEOPTS value may need to be reduced to increase goodput or"
 		gcf_warn "don't use Full LTO or switch to ThinLTO instead."
