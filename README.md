@@ -6,13 +6,13 @@ These are my current flags.
 
 ## The default make.conf *FLAGS:
 
-* CFLAGS="-march=native -Os -freorder-blocks-algorithm=simple
+* CFLAGS="-march=native -Os -fno-inline -freorder-blocks-algorithm=simple
 -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk
 -mindirect-branch-register -flto=thin -fopt-info-vec -pipe"
 
 * CXXFLAGS="${CFLAGS}"
 
-* LDFLAGS="${LDFLAGS} -flto"
+* LDFLAGS="${LDFLAGS} -flto=thin"
 
 ## Additional implicit hardened flags
 
