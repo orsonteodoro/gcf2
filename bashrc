@@ -111,6 +111,9 @@ gcf_strip_z_retpolineplt() {
 		gcf_info "Removing -Wl,-z,retpolineplt from LDFLAGS"
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
 	fi
+	if [[ -z "${USE_THINLTO}" || ( -n "${USE_THINLTO}" && "${USE_THINLTO}" != "1" ) ]] ; then
+		_gcf_replace_flag "-Wl,-z,retpolineplt" ""
+	fi
 }
 
 gcf_met_clang_thinlto_requirement() {
