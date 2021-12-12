@@ -4,6 +4,17 @@ My per-package cflags on Gentoo Linux.
 
 These are my current flags.
 
+## Production status
+
+* Development mode (current / now): [master/head] (https://github.com/orsonteodoro/gentoo-cflags)
+* Semi-production ready (Aug 26, 2021): [7c47245133fc6bee15106960aa87def4f9f62976] (https://github.com/orsonteodoro/gentoo-cflags/tree/7c47245133fc6bee15106960aa87def4f9f62976)
+
+The semi-production ready image may need to be modified a bit on your side due
+to differences in package versions or hardware configuration.
+
+The development mode can be used with LTO parts disabled or removed.  Proper
+systemwide LTO support is being re-added.
+
 ## The default make.conf *FLAGS:
 
 * CFLAGS="-march=native -Os -fno-inline -freorder-blocks-algorithm=simple

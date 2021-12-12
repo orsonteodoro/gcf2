@@ -60,7 +60,7 @@ gcf_retpoline_translate() {
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
 		_gcf_translate_to_clang_retpoline
-	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" ]] \
+	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mretpoline" \
 			|| "${CXXFLAGS}" =~ "-mretpoline" ]] ; then
 		# implicit
@@ -460,7 +460,7 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
 		# but not okay to mix and switch LTO IR.
 		if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) \
-			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" \
+			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" \
 				|| ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
 			# This should be disabled for packages that take
 			# literally most of the day or more to complete with
@@ -522,7 +522,7 @@ gcf_use_Oz()
 		gcf_info "Detected clang.  Converting -Os -> -Oz"
 		_gcf_replace_flag "-Os" "-Oz"
 	fi
-	if [[ ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-)"g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
+	if [[ ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
 		gcf_info "Detected gcc.  Converting -Oz -> -Os"
 		_gcf_replace_flag "-Oz" "-Os"
 	fi
@@ -649,13 +649,14 @@ gcf_error
 	if ( [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ) \
 		&& gcf_is_package_lto_restricted ; then
 		gcf_info "Running gcf_check_ebuild_compiler_override()"
-		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ "${CXX_LTO}" ) ]] ; then
+
+		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ (^|-| )"${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
 		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
 		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
-		if [[ -n "${start}" && "${CC_LIBC}" != "${CC_LTO}" ]] \
+		if [[ -n "${start}" && ( ! "${CC_LIBC}" =~ "${CC_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -e "${CC_LIBC}" \
 				| wc -l) > 1 )) ; then
@@ -663,7 +664,7 @@ gcf_error
 			CXX=${CXX_LIBC}
 			_gcf_ir_message_incompatible
 		fi
-		if [[ -n "${start}" && "${CXX_LIBC}" != "${CXX_LTO}" ]] \
+		if [[ -n "${start}" && ! ( "${CXX_LIBC}" =~ (^|-| )"${CXX_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -e "${CXX_LIBC}" \
 				| wc -l) > 1 )) ; then
@@ -702,7 +703,8 @@ gcf_report_emerge_time() {
 	gcf_info "Completion Time: ${elapsed_time} seconds ( ${et_days} days ${et_hours} hours ${et_min} minutes ${et_sec} seconds )"
 	if (( ${et_days} >= 1 || ${et_hours} >= 18 )) ; then # 3/4 of a day.
 		# More than 1 day is not acceptable.  If updates are monotasking, it blocks
-		# security updates for critical 0-day exploits.
+		# security updates for critical 0-day exploits.  Critical updates require
+		# updates within a day.
 		gcf_warn "The MAKEOPTS value may need to be reduced to increase goodput or"
 		gcf_warn "don't use Full LTO or switch to ThinLTO instead."
 	fi
