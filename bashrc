@@ -49,10 +49,10 @@ _gcf_translate_to_clang_retpoline() {
 }
 
 gcf_retpoline_translate() {
-	if [[ -n "${USE_CLANG}" && "${USE_CLANG}" == "1" ]] ; then
+	if [[ "${USE_CLANG}" == "1" ]] ; then
 		# explicit
 		_gcf_translate_to_clang_retpoline
-	elif [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]] ; then
+	elif [[ "${USE_GCC}" == "1" ]] ; then
 		# explicit
 		_gcf_translate_to_gcc_retpoline
 	elif [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
@@ -71,7 +71,7 @@ gcf_retpoline_translate() {
 gcf_strip_no_inline() {
 	if [[ "${CFLAGS}" =~ "-fno-inline" \
 		&& ( "${CFLAGS}" =~ ("-Ofast"|"-O2"|"O3") \
-			|| ( -n "${DISABLE_NO_INLINE}" && "${DISABLE_NO_INLINE}" == "1" ) \
+			|| ( "${DISABLE_NO_INLINE}" == "1" ) \
 			|| ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
 		) ]] ; then
 		gcf_info "Removing -fno-inline from *FLAGS"
@@ -80,7 +80,7 @@ gcf_strip_no_inline() {
 }
 
 gcf_strip_no_plt() {
-	if [[ -n "${DISABLE_FNO_PLT}" && "${DISABLE_FNO_PLT}" == "1" ]] ; then
+	if [[ "${DISABLE_FNO_PLT}" == "1" ]] ; then
 		gcf_info "Removing -fno-plt from *FLAGS"
 		_gcf_replace_flag "-fno-plt" ""
 	fi
@@ -97,8 +97,8 @@ gcf_strip_gcc_flags() {
 		-freorder-blocks-algorithm=stc
 	)
 
-	if [[ ( -n "${DISABLE_GCC_FLAGS}" && "${DISABLE_GCC_FLAGS}" == "1" ) \
-		|| ( -n "${CC}" && "${CC}" == "clang" ) ]] ; then
+	if [[ "${DISABLE_GCC_FLAGS}" == "1" \
+		|| "${CC}" == "clang" ]] ; then
 		gcf_info "Removing ${gcc_flags[@]} from *FLAGS"
 		for f in ${gcc_flags[@]} ; do
 			_gcf_replace_flag "${f}" ""
@@ -107,11 +107,11 @@ gcf_strip_gcc_flags() {
 }
 
 gcf_strip_z_retpolineplt() {
-	if [[ -n "${DISABLE_Z_RETPOLINEPLT}" && "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
+	if [[ "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
 		gcf_info "Removing -Wl,-z,retpolineplt from LDFLAGS"
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
 	fi
-	if [[ -z "${USE_THINLTO}" || ( -n "${USE_THINLTO}" && "${USE_THINLTO}" != "1" ) ]] ; then
+	if [[ -z "${USE_THINLTO}" || "${USE_THINLTO}" != "1" ]] ; then
 		_gcf_replace_flag "-Wl,-z,retpolineplt" ""
 	fi
 }
@@ -323,16 +323,16 @@ gcf_is_package_lto_unknown() {
 }
 
 gcf_is_skipless() {
-	if [[ -n "${FORCE_PREFETCH_LOOP_ARRAYS}" && "${FORCE_PREFETCH_LOOP_ARRAYS}" == "1" ]] ; then
+	if [[ "${FORCE_PREFETCH_LOOP_ARRAYS}" == "1" ]] ; then
 		return 0
-	elif [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+	elif [[ "${GCF_IS_SKIPLESS}" == "1" ]] ; then
 		return 0
 	fi
 	return 1
 }
 
 gcf_lto() {
-	[[ -n "${DISABLE_GCF_LTO}" && "${DISABLE_GCF_LTO}" == "1" ]] && return
+	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
 
 	if ! has_version "sys-devel/binutils[plugins]" ; then
 gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
@@ -383,8 +383,8 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		_gcf_strip_lto_flags
 	fi
 
-	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ); then
-		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
+	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
+		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
 		elif gcf_is_skipless ; then
@@ -436,7 +436,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		# A reminder that you can only use one LTO implementation as the
 		# default systemwide.
 
-		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
+		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			gcf_warn "Disabling linker switch"
 		elif [[ "${linker}" == "thinlto" ]] \
 			&& gcf_met_clang_thinlto_requirement ; then
@@ -481,7 +481,7 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
 		# but not okay to mix and switch LTO IR.
-		if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) \
+		if [[ "${DISABLE_GCC_LTO}" == "1" \
 			&& ( "${CC}" == "gcc" || "${CXX}" == "g++" \
 				|| ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
 			# This should be disabled for packages that take
@@ -492,14 +492,14 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 			_gcf_strip_lto_flags
 		fi
 
-		if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" \
+		if [[ "${DISABLE_CLANG_LTO}" == "1" \
 			&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) ]] ; then
 			gcf_info "Forced removal of -flto from *FLAGS for clang"
 			_gcf_strip_lto_flags
 		fi
 
 		# Remove all LTO flags
-		if [[ -n "${DISABLE_LTO}" && "${DISABLE_LTO}" == "1" ]] ; then
+		if [[ "${DISABLE_LTO}" == "1" ]] ; then
 			gcf_info "Forced removal of -flto from *FLAGS"
 			_gcf_strip_lto_flags
 		fi
@@ -518,14 +518,14 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 
 gcf_replace_flags()
 {
-	if [[ -n "${OPT_LEVEL}" && "${OPT_LEVEL}" =~ ("-O0"|"-O1"|"-O2"|"-O3"|"-O4"|"-Ofast"|"-Oz"|"-Os") ]] ; then
+	if [[ "${OPT_LEVEL}" =~ ("-O0"|"-O1"|"-O2"|"-O3"|"-O4"|"-Ofast"|"-Oz"|"-Os") ]] ; then
 		_gcf_replace_flag "${DEFAULT_OPT_LEVEL}" "${OPT_LEVEL}"
 	fi
 }
 
 gcf_strip_lossy()
 {
-	if [[ -n "${I_WANT_LOSSLESS}" && "${I_WANT_LOSSLESS}" == "1" ]] ; then
+	if [[ "${I_WANT_LOSSLESS}" == "1" ]] ; then
 		if [[ "${CFLAGS}" =~ "-Ofast" ]] ; then
 			gcf_info "Converting -Ofast -> -O3"
 			_gcf_replace_flag "-Ofast" "-O3"
@@ -593,7 +593,7 @@ gcf_warn "speed up linking time."
 
 gcf_strip_retpoline()
 {
-	if [[ -n "${DISABLE_RETPOLINE}" && "${DISABLE_RETPOLINE}" == "1" ]] ; then
+	if [[ "${DISABLE_RETPOLINE}" == "1" ]] ; then
 			_gcf_replace_flag "-mindirect-branch=thunk" ""
 			_gcf_replace_flag "-mretpoline" ""
 			_gcf_replace_flag "-mindirect-branch-register" ""
@@ -636,7 +636,7 @@ pre_pkg_setup()
 
 gcf_check_Ofast_safety()
 {
-	[[ -n "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" && "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
+	[[ "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
 	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
 gcf_error "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
@@ -652,7 +652,7 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 }
 
 gcf_check_ebuild_compiler_override() {
-	[[ -n "${DISABLE_OVERRIDE_COMPILER_CHECK}" && "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
+	[[ "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
 
 	_gcf_ir_message_incompatible() {
 gcf_error
