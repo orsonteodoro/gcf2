@@ -210,6 +210,7 @@ ebuild itself or the build scripts may forcefully switch compilers.
 checking
 * skip-ir-check.conf -- Disables (static-libs) IR compatibility checks when
 LTOing systemwide
+* skipless.conf -- Force use of GCC to utilize -fprefetch-loop-arrays
 * use-gold.conf -- Turn on use of Gold LTO
 * use-thinlto.conf -- Turn on use of ThinLTO
 
