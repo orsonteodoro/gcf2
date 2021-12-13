@@ -167,10 +167,17 @@ are used to control *FLAG filtering.
 ### Environment variables
 
 The following can added to make.conf be applied as global defaults for the
-bashrc.
+provided bashrc script.
 
+* CC_LIBC -- The C LTO compiler toolchain used to build the libc [glibc/musl]
+or @system
+* CC_LTO -- The C LTO compiler toolchain to use for @world
+* CXX_LIBC -- The C++ LTO compiler toolchain used to build the libc or @system
+* CXX_LTO -- The C++ LTO compiler toolchain to use for @world
 * FORCE_PREFETCH_LOOP_ARRAYS -- Force use of GCC so that -fprefetch-loop-arrays
 is utilized
+* MPROCS -- The number of compiler/linker processes per CPU core
+* NCORES -- The number of CPU Cores
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 
@@ -191,7 +198,8 @@ bashrc:
 * disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
 * disable-gold.conf -- Turn off use of Gold LTO
 * disable-thinlto.conf -- Turn off use of ThinLTO
-* disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The ebuild itself or the build scripts may forcefully switch compilers.
+* disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
+ebuild itself or the build scripts may forcefully switch compilers.
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
@@ -232,7 +240,7 @@ no-lto or a lto-restricted list.
 
 The bashrc will process these lists.  They should be re-generated before a
 `emerge -ev @system` or `emerge -ev @world` is performed.  It cannot be
-gathered ahead of time due to lack of metadata or hints.
+gathered ahead of time due to lack of ebuild metadata or hints.
 
 The packages in either `emerge-*-no-lto.lst` and `emerge-*-lto-restricted.lst`
 contain static-libs which may have compiler specific IR (Intermediate
