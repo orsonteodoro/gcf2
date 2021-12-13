@@ -111,11 +111,11 @@ check_static_libs() {
 	echo
 	echo "Legend:"
 	echo
-	echo "no-data - Data is stored in /etc/portage/emerge-${emerge_set}-no-data.lst.  Requires emerge to generate this list or manual placement." | fold -s -w 80
+	echo "no-data - Data is stored in /etc/portage/emerge-${emerge_set}-no-data.lst.  Requires emerge to generate a installed files list for the package or manual placement." | fold -s -w 80
 	echo
 	echo "no-lto - Data is stored in /etc/portage/emerge-${emerge_set}-no-lto.lst.  LTO must be disabled unless LTO compiler matches the same one used by libc." | fold -s -w 80
 	echo
-	echo "lto-agnostic - Data is stored in /etc/portage/emerge-${emerge_set}-lto-agnostic.lst.  No IR incompatibilities.  Any compiler will work." | fold -s -w 80
+	echo "lto-agnostic - Data is stored in /etc/portage/emerge-${emerge_set}-lto-agnostic.lst.  No IR incompatibilities with static-libs.  Any compiler will work." | fold -s -w 80
 	echo
 	echo "lto-restricted - Data is stored in /etc/portage/emerge-${emerge_set}-lto-restricted.lst.  LTO either must be preformed by default LTO compiler or LTO must be disabled." | fold -s -w 80
 	echo
