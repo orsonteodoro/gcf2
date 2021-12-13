@@ -707,7 +707,7 @@ gcf_error
 		if [[ -n "${start}" && ( ! "${CC_LIBC}" == "${CC_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -e "${CC_LIBC}" \
-				| wc -l) > 1 )) ; then
+				| wc -l) >= 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
 			_gcf_ir_message_incompatible
@@ -716,7 +716,7 @@ gcf_error
 		if [[ -n "${start}" && ! ( "${CXX_LIBC}" == "${CXX_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -E -e "(^|-| )${CXX_LIBC//+/\\+}( |-|$)" \
-				| wc -l) > 1 )) ; then
+				| wc -l) >= 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
 			_gcf_ir_message_incompatible
