@@ -668,9 +668,9 @@ gcf_error
 		# The ebuild author can override with ${CHOST}-clang or ${CHOST}-gcc.
 		# Sample of possible values:
 		# gcc, ${CHOST}-gcc, gcc-11.2.0, ${CHOST}-gcc-11.2.0, unset CC # normalizes to gcc
-		# clang, ${CHOST}-clang, ${CHOST}-clang-14 # normalizes to clang
+		# clang, ${CHOST}-clang, clang-14, ${CHOST}-clang-14 # normalizes to clang
 		# g++, ${CHOST}-g++, ${CHOST}-g++-11.2.0, unset CXX # normalizes to g++
-		# clang++, ${CHOST}-clang++, clang-14, ${CHOST}-clang-14 # normalizes to clang
+		# clang++, ${CHOST}-clang++, ${CHOST}-clang++-14 # normalizes to clang
 		#
 		# g++ and clang++ are ambiguous in substring search.
 		#
