@@ -378,6 +378,9 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
+		elif [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+			CC=gcc
+			CXX=g++
 		elif gcf_is_package_lto_agnostic_system ; then
 			# Disallow compiler autodetect
 			CC="${CC_LIBC:=gcc}"
@@ -408,6 +411,18 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		elif [[ "${CC}" == "gcc" ]] ; then
 			linker="gcc-bfdlto"
 		fi
+	fi
+
+	if gcf_is_package_lto_agnostic \
+		&& [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+		if [[ "${USE_GOLDLTO}" == "1" ]] ; then
+			linker="gcc-goldlto"
+		else
+			linker="gcc-bfdlto"
+		fi
+	elif ! gcf_is_package_lto_agnostic \
+		&& [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+		linker="no-lto"
 	fi
 
 	if [[ "${CFLAGS}" =~ "-flto" || "${CXXFLAGS}" =~ "-flto" ]] ; then
