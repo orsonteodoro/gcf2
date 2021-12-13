@@ -55,12 +55,12 @@ gcf_retpoline_translate() {
 	elif [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]] ; then
 		# explicit
 		_gcf_translate_to_gcc_retpoline
-	elif [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] \
+	elif [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mindirect-branch=thunk" \
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
 		_gcf_translate_to_clang_retpoline
-	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" ]] \
+	elif [[ ( -z "${CC}" && -z "${CXX}" ) || "${CC}" == "gcc" || "${CXX}" == "g++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mretpoline" \
 			|| "${CXXFLAGS}" =~ "-mretpoline" ]] ; then
 		# implicit
@@ -72,7 +72,7 @@ gcf_strip_no_inline() {
 	if [[ "${CFLAGS}" =~ "-fno-inline" \
 		&& ( "${CFLAGS}" =~ ("-Ofast"|"-O2"|"O3") \
 			|| ( -n "${DISABLE_NO_INLINE}" && "${DISABLE_NO_INLINE}" == "1" ) \
-			|| ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) \
+			|| ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
 		) ]] ; then
 		gcf_info "Removing -fno-inline from *FLAGS"
 		_gcf_replace_flag "-fno-inline" ""
@@ -392,7 +392,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 			CC="${CC_LIBC:=gcc}"
 			CXX="${CXX_LIBC:=g++}"
 		fi
-		[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && gcf_use_clang
+		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
 	fi
 
 	local linker=""
@@ -475,7 +475,7 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
 		# but not okay to mix and switch LTO IR.
 		if [[ ( -n "${DISABLE_GCC_LTO}" && "${DISABLE_GCC_LTO}" == "1" ) \
-			&& ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" \
+			&& ( "${CC}" == "gcc" || "${CXX}" == "g++" \
 				|| ( -z "${CC}" && -z "${CXX}" ) ) ]] ; then
 			# This should be disabled for packages that take
 			# literally most of the day or more to complete with
@@ -486,7 +486,7 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 		fi
 
 		if [[ -n "${DISABLE_CLANG_LTO}" && "${DISABLE_CLANG_LTO}" == "1" \
-			&& ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+			&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) ]] ; then
 			gcf_info "Forced removal of -flto from *FLAGS for clang"
 			_gcf_strip_lto_flags
 		fi
@@ -533,11 +533,11 @@ gcf_strip_lossy()
 
 gcf_use_Oz()
 {
-	if [[ ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
+	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
 		gcf_info "Detected clang.  Converting -Os -> -Oz"
 		_gcf_replace_flag "-Os" "-Oz"
 	fi
-	if [[ ( "${CC}" =~ "gcc" || "${CXX}" =~ (^|-| )"g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
+	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
 		gcf_info "Detected gcc.  Converting -Oz -> -Os"
 		_gcf_replace_flag "-Oz" "-Os"
 	fi
@@ -602,7 +602,7 @@ gcf_record_start_time()
 gcf_translate_no_inline()
 {
 	if [[ ( "${CFLAGS}" =~ "-fno-inline" || "${CXXFLAGS}" =~ "-fno-inline" ) \
-		&& ( "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ) ]] ; then
+		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) ]] ; then
 		gcf_info "Detected clang.  Converting -fno-inline -> -fno-inline-functions"
 		_gcf_replace_flag "-fno-inline" "-fno-inline-functions"
 	fi
@@ -666,16 +666,36 @@ gcf_error
 		gcf_info "Running gcf_check_ebuild_compiler_override()"
 
 		# The ebuild author can override with ${CHOST}-clang or ${CHOST}-gcc.
-		# Possible values:
-		# gcc, clang
-		# g++, clang++
-		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ (^|-| )"${CXX_LTO}" ) ]] ; then
+		# Sample of possible values:
+		# gcc, ${CHOST}-gcc, gcc-11.2.0, ${CHOST}-gcc-11.2.0, unset CC # normalizes to gcc
+		# clang, ${CHOST}-clang, ${CHOST}-clang-14 # normalizes to clang
+		# g++, ${CHOST}-g++, ${CHOST}-g++-11.2.0, unset CXX # normalizes to g++
+		# clang++, ${CHOST}-clang++, clang-14, ${CHOST}-clang-14 # normalizes to clang
+		#
+		# g++ and clang++ are ambiguous in substring search.
+		#
+		local cc
+		local cxx
+		# Simplify / Normalize the above cases
+		if [[ "${CC}" =~ "gcc" || -z "${CC}" ]] ; then # trivial
+			cc="gcc"
+		elif [[ "${CC}" =~ "clang" ]] ; then # trivial
+			cc="clang"
+		fi
+
+		if [[ "g++" =~ (^|-| )"${CXX}"( |-|$) || -z "${CXX}" ]] ; then # not trivial
+			cxx="g++"
+		elif [[ "${CXX}" =~ "clang++" ]] ; then # trivial
+			cxx="clang++"
+		fi
+
+		if [[ ! ( "${cc}" == "${CC_LTO}" ) || ! ( "${cxx}" == "${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
 		local start=$(grep -n "Compiling source in" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
 		local end=$(grep -n "Source compiled" "${T}/build.log" | head -n 1 | cut -f 1 -d ":")
 		[[ -z "${end}" ]] && end=$(wc -l "${T}/build.log")
-		if [[ -n "${start}" && ( ! "${CC_LIBC}" =~ "${CC_LTO}" ) ]] \
+		if [[ -n "${start}" && ( ! "${CC_LIBC}" == "${CC_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
 				| grep -e "${CC_LIBC}" \
 				| wc -l) > 1 )) ; then
@@ -683,9 +703,10 @@ gcf_error
 			CXX=${CXX_LIBC}
 			_gcf_ir_message_incompatible
 		fi
-		if [[ -n "${start}" && ! ( "${CXX_LIBC}" =~ (^|-| )"${CXX_LTO}" ) ]] \
+		# non trivial
+		if [[ -n "${start}" && ! ( "${CXX_LIBC}" == "${CXX_LTO}" ) ]] \
 			&& (( $(sed -n ${start},${end}p "${T}/build.log" \
-				| grep -e "${CXX_LIBC}" \
+				| grep -E -e "(^|-| )${CXX_LIBC//+/\\+}( |-|$)" \
 				| wc -l) > 1 )) ; then
 			CC=${CC_LIBC}
 			CXX=${CXX_LIBC}
