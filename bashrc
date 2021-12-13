@@ -322,6 +322,15 @@ gcf_is_package_lto_unknown() {
 	return 1
 }
 
+gcf_is_skipless() {
+	if [[ -n "${FORCE_PREFETCH_LOOP_ARRAYS}" && "${FORCE_PREFETCH_LOOP_ARRAYS}" == "1" ]] ; then
+		return 0
+	elif [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 gcf_lto() {
 	[[ -n "${DISABLE_GCF_LTO}" && "${DISABLE_GCF_LTO}" == "1" ]] && return
 
@@ -378,7 +387,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		if [[ -n "${DISABLE_LTO_COMPILER_SWITCH}" && "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
-		elif [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+		elif gcf_is_skipless ; then
 			CC=gcc
 			CXX=g++
 		elif gcf_is_package_lto_agnostic_system ; then
@@ -413,15 +422,13 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		fi
 	fi
 
-	if gcf_is_package_lto_agnostic \
-		&& [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+	if gcf_is_package_lto_agnostic && gcf_is_skipless ; then
 		if [[ "${USE_GOLDLTO}" == "1" ]] ; then
 			linker="gcc-goldlto"
 		else
 			linker="gcc-bfdlto"
 		fi
-	elif ! gcf_is_package_lto_agnostic \
-		&& [[ -n "${GCF_IS_SKIPLESS}" && "${GCF_IS_SKIPLESS}" == "1" ]] ; then
+	elif ! gcf_is_package_lto_agnostic && gcf_is_skipless ; then
 		linker="no-lto"
 	fi
 

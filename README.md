@@ -164,6 +164,23 @@ The bashrc script is also provided to control applying, removing, translating
 script, or place it directly in the bashrc.  Per-package environment variables
 are used to control *FLAG filtering.
 
+### Environment variables
+
+The following can added to make.conf be applied as global defaults for the
+bashrc.
+
+* FORCE_PREFETCH_LOOP_ARRAYS -- Force use of GCC so that -fprefetch-loop-arrays
+is utilized
+* USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
+* USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
+
+The bashrc will prioritize ThinLTO over GoldLTO.  This can be controlled with
+use-gold.conf, use-thinlto.conf, disable-gold.conf, disable-thinlto.conf.
+Some packages will not build with ThinLTO so fall back to either Gold LTO,
+BFD LTO, or no LTO in that order.
+
+### Per-package environment variables
+
 The following can be added to the package.env per package-wise to control
 bashrc:
 
@@ -172,16 +189,20 @@ bashrc:
 * disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
 * disable-lto-compiler-switch.conf -- Disables LTO compiler switching
 * disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
+* disable-gold.conf -- Turn off use of Gold LTO
+* disable-thinlto.conf -- Turn off use of ThinLTO
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The ebuild itself or the build scripts may forcefully switch compilers.
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
  *FLAGS
-* remove-lto.conf -- Removes the -flto flag
 * remove-no-inline.conf -- Removes -fno-inline
+* remove-lto.conf -- Removes the -flto flag
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
 * skip-ir-check.conf -- Disables IR compatibility checks when LTOing systemwide
+* use-gold.conf -- Turn on use of Gold LTO
+* use-thinlto.conf -- Turn on use of ThinLTO
 
 Some .conf files may contain additional information about the flag or the
 environment variable.
