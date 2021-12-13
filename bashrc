@@ -665,6 +665,10 @@ gcf_error
 		&& gcf_is_package_lto_restricted ; then
 		gcf_info "Running gcf_check_ebuild_compiler_override()"
 
+		# The ebuild author can override with ${CHOST}-clang or ${CHOST}-gcc.
+		# Possible values:
+		# gcc, clang
+		# g++, clang++
 		if [[ ! ( "${CC}" =~ "${CC_LTO}" ) || ! ( "${CXX}" =~ (^|-| )"${CXX_LTO}" ) ]] ; then
 			_gcf_ir_message_incompatible
 		fi
@@ -694,7 +698,7 @@ gcf_error
 
 pre_src_compile() {
 	gcf_info "Running pre_src_compile()"
-	gcf_check_ebuild_compiler_override
+	#gcf_check_ebuild_compiler_override
 }
 
 post_src_compile() {
