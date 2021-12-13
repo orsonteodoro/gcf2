@@ -16,6 +16,13 @@ is_already_added_to_system_set() {
 check_static_libs() {
 	local emerge_set="${1}"
 	echo "Please wait.  Generating emerge list..."
+
+	echo
+	echo "Both emerge -pve @system and emerge -pve @world must have no"
+	echo "conflicts or build issues for complete lists to be generated."
+	echo "If no list appears, resolve the conflicts or issues first."
+	echo
+
 	local L=( $(emerge -pve ${emerge_set} 2>/dev/null \
 		| cut -c 18- \
 		| cut -f 1 -d " " \
@@ -133,11 +140,6 @@ main() {
 	echo
 	echo "CC_LTO=${CC_LTO} (current LTO compiler)"
 	echo "CC_LIBC=${CC_LIBC} (current libc compiler)"
-	echo
-
-	echo
-	echo "Both emerge -pve @system and emerge -pve @world must have no"
-	echo "conflicts or build issues for complete lists to be generated."
 	echo
 
 	check_static_libs "system"
