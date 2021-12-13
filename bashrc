@@ -323,6 +323,8 @@ gcf_is_package_lto_unknown() {
 }
 
 gcf_is_skipless() {
+	[[ "${USE_CLANG_CFI}" == "1" ]] && return 1
+
 	if [[ "${FORCE_PREFETCH_LOOP_ARRAYS}" == "1" ]] ; then
 		return 0
 	elif [[ "${GCF_IS_SKIPLESS}" == "1" ]] ; then
