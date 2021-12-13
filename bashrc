@@ -703,7 +703,7 @@ pre_src_compile() {
 
 post_src_compile() {
 	gcf_info "Running post_src_compile()"
-	gcf_check_ebuild_compiler_override
+	#gcf_check_ebuild_compiler_override
 }
 
 pre_src_install() {
