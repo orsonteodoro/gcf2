@@ -392,6 +392,14 @@ gcf_is_clang_cfi_ready() {
 	local llvm_slots=(14 13 12 11)
 	has_version "sys-devel/llvm" || return 1
 
+	if [[ "${CC_LTO}" == "clang" && "${CXX_LTO}" == "clang++" ]] ; then
+		:;
+	else
+gcf_error "CC_LTO=clang and CXX_LTO=clang++ must be the systemwide default."
+gcf_error "Disabling Clang CFI support."
+		return 1
+	fi
+
 	local found=1
 	for s in ${llvm_slots[@]} ; do
 		# TODO: support gold
