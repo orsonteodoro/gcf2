@@ -826,6 +826,9 @@ gcf_error "Clang CFI is not supported by GCC.  Please switch to clang for this"
 gcf_error "package or disable CFI flags."
 		fi
 	fi
+	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" "${T}/build.log" ; then
+gcf_error "Try disabling cfi-icall first followed by disabling cfi-vcall."
+	fi
 }
 
 gcf_setup_traps() {
