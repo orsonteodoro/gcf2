@@ -469,6 +469,7 @@ gcf_lto() {
 			export CXX="${CXX_LIBC:=g++}"
 		fi
 		_gcf_strip_lto_flags
+		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
 	fi
 
 	if ! has_version "sys-devel/binutils[plugins]" ; then
