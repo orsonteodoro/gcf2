@@ -189,7 +189,7 @@ and unstable systemwide.  bashrc support in development.)
 The bashrc will prioritize ThinLTO over GoldLTO.  This can be controlled with
 use-gold.conf, use-thinlto.conf, disable-gold.conf, disable-thinlto.conf.
 Some packages will not build with ThinLTO so fall back to either Gold LTO,
-BFD LTO, or no LTO in that order.
+BFD LTO (for LTO agnostic only), or no LTO in that order.
 
 ### Per-package environment variables
 
