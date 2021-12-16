@@ -462,8 +462,12 @@ gcf_lto() {
 	}
 
 	if gcf_is_lto_skippable ; then
-		# For packages that use compiler checks
-		# but don't install binaries.
+		# For packages that use compiler checks but don't install
+		# binaries.
+		if [[ -z "${CC}" || -z "${CXX}" ]] ; then
+			export CC="${CC_LIBC:=gcc}"
+			export CXX="${CXX_LIBC:=g++}"
+		fi
 		_gcf_strip_lto_flags
 	fi
 
