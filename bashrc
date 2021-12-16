@@ -444,17 +444,6 @@ gcf_error "gen_pkg_lists.sh to generate a compatible list."
 
 gcf_lto() {
 	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
-	if gcf_is_lto_skippable ; then
-		# For packages (e.g. x11-misc/xbitmaps) that use compiler checks
-		# but don't install binaries.
-		_gcf_strip_lto_flags
-	fi
-
-	if ! has_version "sys-devel/binutils[plugins]" ; then
-gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
-	fi
-
-	gcf_check_emerge_list_ready
 
 	_gcf_strip_lto_flags() {
 		local flag_names=(
@@ -471,6 +460,18 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 			eval "export ${f}=\$(echo \"\$${f}\" | sed -r -e 's/-flto( |\$)//g' -e \"s/-flto=[0-9]+//g\" -e \"s/-flto=(auto|jobserver|thin|full)//g\" -e \"s/-fuse-ld=(lld|bfd|gold)//g\")"
 		done
 	}
+
+	if gcf_is_lto_skippable ; then
+		# For packages that use compiler checks
+		# but don't install binaries.
+		_gcf_strip_lto_flags
+	fi
+
+	if ! has_version "sys-devel/binutils[plugins]" ; then
+gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
+	fi
+
+	gcf_check_emerge_list_ready
 
 	# New packages do not get LTO initially because it simplifies this script.
 	# New packages from the no-data list will get moved into agnostic, no-lto,
