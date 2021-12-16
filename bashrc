@@ -402,11 +402,17 @@ gcf_error "Disabling Clang CFI support."
 
 	local found=1
 	for s in ${llvm_slots[@]} ; do
-		# TODO: support gold
 		if (       has_version "sys-devel/clang:${s}" \
 			&& has_version "=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]" \
 			&& has_version "=sys-libs/compiler-rt-${s}*" \
-			&& has_version ">=sys-devel/lld-${s}" \
+			&& ( \
+				( has_version ">=sys-devel/lld-${s}" ) \
+					|| \
+				( ( has_version "sys-devel/llvm:${s}[gold]" \
+					|| has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
+		                        && has_version "sys-devel/binutils[plugins,gold]" \
+                		        && has_version ">=sys-devel/llvmgold-${s}" ) \
+			) \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
 			&& has_version "sys-devel/llvm:${s}" ) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
