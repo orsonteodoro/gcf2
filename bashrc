@@ -11,6 +11,8 @@
 # in /etc/portage/bashrc.
 #
 
+GCF_LIST_VERSION_MIN=3
+
 gcf_info() {
 	echo -e ">>> [GCF] ${@}"
 }
@@ -21,6 +23,33 @@ gcf_warn() {
 
 gcf_error() {
 	echo -e ">>> \e[30m\e[41m[GCF]\e[0m ${@}"
+}
+
+gcf_append_ldflags() {
+	export LDFLAGS=$(echo "${LDFLAGS} ${@}")
+}
+
+gcf_print_flags() {
+	[[ -z "${GCF_SHOW_FLAGS}" || "${GCF_SHOW_FLAGS}" != "1" ]] && return
+	gcf_info "COMMON_FLAGS=${COMMON_FLAGS}"
+	gcf_info "CFLAGS=${CFLAGS}"
+	gcf_info "CXXFLAGS=${CXXFLAGS}"
+	gcf_info "FCFLAGS=${FCFLAGS}"
+	gcf_info "FFLAGS=${FFLAGS}"
+	gcf_info "LDFLAGS=${LDFLAGS}"
+	gcf_info "DIST_MAKE=${DIST_MAKE}"
+}
+
+gcf_append_flags() {
+	export COMMON_FLAGS=$(echo "${COMMON_FLAGS} ${@}")
+	export CFLAGS=$(echo "${CFLAGS} ${@}")
+	export CXXFLAGS=$(echo "${CXXFLAGS} ${@}")
+	export FCFLAGS=$(echo "${FCFLAGS} ${@}")
+	export FFLAGS=$(echo "${FFLAGS} ${@}")
+	export LDFLAGS=$(echo "${LDFLAGS} ${@}")
+
+	# For the perl-module.eclass
+	export DIST_MAKE=$(echo "${DIST_MAKE} ${@}")
 }
 
 _gcf_replace_flag() {
@@ -181,42 +210,26 @@ gcf_use_clang() {
 
 gcf_use_thinlto() {
 	gcf_info "Auto switching to ThinLTO"
-	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto=thin")
-	CFLAGS=$(echo "${CFLAGS} -flto=thin")
-	CXXFLAGS=$(echo "${CXXFLAGS} -flto=thin")
-	FCFLAGS=$(echo "${FCFLAGS} -flto=thin")
-	FFLAGS=$(echo "${FFLAGS} -flto=thin")
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld -flto=thin")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld")
+	gcf_append_flags "-flto=thin"
 }
 
 gcf_use_clang_goldlto() {
 	gcf_info "Auto switching to Clang Gold LTO"
-	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto=full")
-	CFLAGS=$(echo "${CFLAGS} -flto=full")
-	CXXFLAGS=$(echo "${CXXFLAGS} -flto=full")
-	FCFLAGS=$(echo "${FCFLAGS} -flto=full")
-	FFLAGS=$(echo "${FFLAGS} -flto=full")
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold -flto=full")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold")
+	gcf_append_flags "-flto=full"
 }
 
 gcf_use_gcc_goldlto() {
 	gcf_info "Auto switching to GCC Gold LTO"
-	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto")
-	CFLAGS=$(echo "${CFLAGS} -flto")
-	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
-	FCFLAGS=$(echo "${FCFLAGS} -flto")
-	FFLAGS=$(echo "${FFLAGS} -flto")
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold -flto")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold")
+	gcf_append_flags "-flto"
 }
 
 gcf_use_gcc_bfdlto() {
 	gcf_info "Auto switching to GCC BFD LTO"
-	COMMON_FLAGS=$(echo "${COMMON_FLAGS} -flto")
-	CFLAGS=$(echo "${CFLAGS} -flto")
-	CXXFLAGS=$(echo "${CXXFLAGS} -flto")
-	FCFLAGS=$(echo "${FCFLAGS} -flto")
-	FFLAGS=$(echo "${FFLAGS} -flto")
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd -flto")
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
+	gcf_append_flags "-flto"
 }
 
 gcf_is_package_missing_in_lto_lists() {
@@ -322,6 +335,11 @@ gcf_is_package_lto_unknown() {
 	return 1
 }
 
+gcf_is_clang_cfi() {
+	[[ "${USE_CLANG_CFI}" == "1" ]] && return 0
+	return 1
+}
+
 gcf_is_skipless() {
 	[[ "${USE_CLANG_CFI}" == "1" ]] && return 1
 
@@ -333,12 +351,92 @@ gcf_is_skipless() {
 	return 1
 }
 
+gcf_is_lto_skippable() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-${emerge_set}-lto-skip.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
+gcf_is_cfi_skippable() {
+	local emerge_set
+	local p
+	for emerge_set in system world ; do
+		local L=($(cat /etc/portage/emerge-cfi-skip.lst))
+		for p in ${L[@]} ; do
+			[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+		done
+	done
+	return 1
+}
+
+gcf_is_cfiable() {
+	if grep -q -e "${CATEGORY}/${PN}:" /etc/portage/emerge-{cfi-system,cfi-world}.lst 2>/dev/null ; then
+		return 0
+	fi
+	return 1
+}
+
+get_cfi_flags() {
+	if grep -q -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst ; then
+		grep -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst | head -n 1 | cut -f 2- -d ":" | cut -f 2 -d ":"
+	fi
+}
+
+gcf_is_clang_cfi_ready() {
+	local llvm_slots=(14 13 12 11)
+	has_version "sys-devel/llvm" || return 1
+
+	local found=1
+	for s in ${llvm_slots[@]} ; do
+		# TODO: support gold
+		if (       has_version "sys-devel/clang:${s}" \
+			&& has_version "=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]" \
+			&& has_version "=sys-libs/compiler-rt-${s}*" \
+			&& has_version ">=sys-devel/lld-${s}" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
+			&& has_version "sys-devel/llvm:${s}" ) ; then
+			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
+		fi
+	done
+	return ${found}
+}
+
+gcf_check_emerge_list_ready() {
+	if ! find /etc/portage/emerge*.lst 2>/dev/null 1>/dev/null ; then
+gcf_error "Missing lto lists.  Use gen_pkg_lists.sh to generate them"
+		die
+	else
+		if ! grep -q -e "# version " $(find /etc/portage/emerge*.lst | head -n1) ; then
+gcf_error "The generated list is missing the version header.  Use the"
+gcf_error "gen_pkg_lists.sh to generate them."
+			die
+		fi
+
+		local gcf_list_ver=$(grep -e "# version " /etc/portage/emerge*.lst \
+			| head -n 1 | cut -f 2- -d ":" | cut -f 3 -d " ")
+		if (( ${gcf_list_ver} < ${GCF_LIST_VERSION_MIN} )) ; then
+gcf_error "The generated list version header is too old.  Use the"
+gcf_error "gen_pkg_lists.sh to generate a compatible list."
+			die
+		fi
+	fi
+}
+
 gcf_lto() {
 	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
+	gcf_is_lto_skippable && return
 
 	if ! has_version "sys-devel/binutils[plugins]" ; then
 gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
 	fi
+
+	gcf_check_emerge_list_ready
 
 	_gcf_strip_lto_flags() {
 		local flag_names=(
@@ -386,12 +484,16 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 	fi
 
 	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
+		local pkg_flags=$(get_cfi_flags)
 		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
+		elif gcf_is_package_lto_agnostic_world && gcf_is_clang_cfi && gcf_is_clang_cfi_ready && [[ ! ( "${pkg_flags}" =~ "A" ) ]] ; then
+			CC="clang"
+			CXX="clang++"
 		elif gcf_is_skipless ; then
-			CC=gcc
-			CXX=g++
+			CC="gcc"
+			CXX="g++"
 		elif gcf_is_package_lto_agnostic_system ; then
 			# Disallow compiler autodetect
 			CC="${CC_LIBC:=gcc}"
@@ -570,7 +672,7 @@ gcf_error "not multiplying the threads per core."
 gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		die
 	fi
-	local n
+	local n=1
 	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
 		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
@@ -596,10 +698,10 @@ gcf_warn "speed up linking time."
 gcf_strip_retpoline()
 {
 	if [[ "${DISABLE_RETPOLINE}" == "1" ]] ; then
-			_gcf_replace_flag "-mindirect-branch=thunk" ""
-			_gcf_replace_flag "-mretpoline" ""
-			_gcf_replace_flag "-mindirect-branch-register" ""
-			_gcf_replace_flag "-Wl,-z,retpolineplt" ""
+		_gcf_replace_flag "-mindirect-branch=thunk" ""
+		_gcf_replace_flag "-mretpoline" ""
+		_gcf_replace_flag "-mindirect-branch-register" ""
+		_gcf_replace_flag "-Wl,-z,retpolineplt" ""
 	fi
 }
 
@@ -617,11 +719,108 @@ gcf_translate_no_inline()
 	fi
 }
 
+gcf_add_cfi_flags() {
+	#
+	# The builds and installs for shared- and static-libs should totally isolated.
+	# Using -fsanitize-cfi-cross-dso may break static-lib builds.
+	#
+	# This means that CFI Cross-DSO and basic CFI are mutually exclusive
+	# at current state of this distro.  If a static-lib is detected, then
+	# CFI may have be disabled.
+	#
+	# CFI requires static linking (with -static or -Wl,-Bstatic) or
+	# built with -fsanitize-cfi-cross-dso.
+	#
+	local flags=$(get_cfi_flags)
+	gcf_info "Package flags: ${flags}"
+	if [[ "${flags}" =~ "A" ]] ; then
+		gcf_info "Found static-libs in package.  Disabling CFI."
+	elif [[ ( "${flags}" =~ "S" || "${flags}" =~ "X" ) && ! ( "${flags}" =~ "A" ) ]] ; then
+		gcf_info "Adding base CFI flags"
+		gcf_append_flags -fsanitize=${CFI_BASELINE}
+		# CFI_BASELINE, CFI_EXCEPTIONS, USE_CFI_IGNORE_LIST can be per package customizable.
+		if [[ -n "${CFI_EXCEPTIONS}" ]] ; then
+			gcf_info "Adding CFI exception flags"
+			gcf_append_flags -fno-sanitize=${CFI_EXCEPTIONS}
+		fi
+		if [[ -n "${USE_CFI_IGNORE_LIST}" ]] ; then
+			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}" ]] ; then
+				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}
+			fi
+			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}" ]] ; then
+				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}
+			fi
+			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}" ]] ; then
+				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}
+			fi
+		fi
+
+		gcf_info "Adding CFI Cross-DSO flags"
+		gcf_append_flags -fvisibility=default
+		gcf_append_flags -fsanitize-cfi-cross-dso
+
+		if [[ ! ( "${flags}" =~ "I" ) ]] ; then
+			gcf_info "Disabling cfi-icall"
+			gcf_append_flags -fno-sanitize=cfi-icall
+		fi
+	fi
+}
+
+gcf_add_clang_cfi() {
+	[[ -z "${USE_CLANG_CFI}" || "${USE_CLANG_CFI}" == "0" ]] && return
+	[[ "${CC}" == "clang" && "${CXX}" == "clang++" ]] || return
+	if ! gcf_is_clang_cfi_ready ; then
+		gcf_error "Skipping CFI because missing toolchain support."
+		return
+	fi
+	if ! which clang 2>/dev/null 1>/dev/null ; then
+		gcf_error "Skipping CFI because missing toolchain support."
+		return
+	fi
+
+	local llvm_v=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
+
+	if ! has_version "=sys-libs/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
+		gcf_error "Skipping CFI because missing toolchain support."
+		return
+	fi
+
+	gcf_check_emerge_list_ready
+
+	if gcf_is_cfiable ; then
+		gcf_warn "Clang Cross-DSO CFI is experimental and buggy"
+		gcf_add_cfi_flags
+	fi
+}
+
+gcf_catch_errors() {
+	gcf_error "Called gcf_catch_errors()"
+	if [[ -e "${PWD}/config.log" ]] ; then
+		if grep -q -F -e "Assertion \`(cfi_check & (kShadowAlign - 1)) == 0' failed" "${PWD}/config.log" ; then
+			# Test package: app-editors/leafpad
+			# This is a bug in the config test.
+gcf_error "Detected a Clang CFI bug.  Use the sys-libs/compiler-rt-sanitizers"
+gcf_error "package from oiledmachine-overlay that disables this assert."
+		fi
+		if grep -q -F -e "gcc: error: unrecognized argument to '-fsanitize=' option: 'cfi-vcall'" "${PWD}/config.log" ; then
+			# Test package: media-libs/opus
+gcf_error "Clang CFI is not supported by GCC.  Please switch to clang for this"
+gcf_error "package or disable CFI flags."
+		fi
+	fi
+}
+
+gcf_setup_traps() {
+	register_die_hook gcf_catch_errors
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
+	gcf_setup_traps
 	gcf_replace_flags
 	gcf_lto
+	gcf_add_clang_cfi
 	gcf_retpoline_translate
 	gcf_strip_no_plt
 	gcf_strip_gcc_flags
@@ -634,6 +833,7 @@ pre_pkg_setup()
 	gcf_replace_freorder_blocks_algorithm
 	gcf_adjust_makeopts
 	gcf_record_start_time
+	gcf_print_flags
 }
 
 gcf_check_Ofast_safety()
@@ -655,6 +855,7 @@ gcf_error "Detected thread use.  Disable -fallow-store-data-races or add DISABLE
 
 gcf_check_ebuild_compiler_override() {
 	[[ "${DISABLE_OVERRIDE_COMPILER_CHECK}" == "1" ]] && return
+	gcf_is_lto_skippable && return
 
 	_gcf_ir_message_incompatible() {
 gcf_error
@@ -724,6 +925,10 @@ gcf_error
 
 		# TODO: auto inspect packages that turn off compiler verbosity.
 	fi
+}
+
+post_src_prepare() {
+	:;
 }
 
 pre_src_compile() {
