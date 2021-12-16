@@ -444,7 +444,11 @@ gcf_error "gen_pkg_lists.sh to generate a compatible list."
 
 gcf_lto() {
 	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
-	gcf_is_lto_skippable && return
+	if gcf_is_lto_skippable ; then
+		# For packages (e.g. x11-misc/xbitmaps) that use compiler checks
+		# but don't install binaries.
+		_gcf_strip_lto_flags
+	fi
 
 	if ! has_version "sys-devel/binutils[plugins]" ; then
 gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to work."
