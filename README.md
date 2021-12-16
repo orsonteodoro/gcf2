@@ -173,6 +173,7 @@ provided bashrc script.
 or @system
 * CC_LTO -- The C LTO compiler toolchain to use for @world
 * CFI_BASELINE -- Set the default Clang CFI flags
+* GCF_CFI_DEBUG -- Sets to print Clang CFI violations.  Disable in production.
 * CXX_LIBC -- The C++ LTO compiler toolchain used to build the libc or @system
 * CXX_LTO -- The C++ LTO compiler toolchain to use for @world
 * GCF_SHOW_FLAGS -- Display the contents of all *FLAGS
@@ -210,6 +211,10 @@ ebuild itself or the build scripts may forcefully switch compilers.
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
  *FLAGS
+* no-cfi-cast.conf -- Turn off Clang CFI bad cast schemes (specifically cfi-derived-cast, cfi-unrelated-cast)
+* no-cfi-icall.conf -- Turn off Clang CFI icall
+* no-cfi-nvcall.conf -- Turn off Clang CFI nvcall
+* no-cfi-vcall.conf -- Turn off Clang CFI vcall (i.e. Forward Edge CFI, disable as a last resort)
 * remove-no-inline.conf -- Removes -fno-inline
 * remove-lto.conf -- Removes the -flto flag
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness

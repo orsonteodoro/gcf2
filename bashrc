@@ -735,8 +735,8 @@ gcf_translate_no_inline()
 
 gcf_add_cfi_flags() {
 	#
-	# The builds and installs for shared- and static-libs should totally isolated.
-	# Using -fsanitize-cfi-cross-dso may break static-lib builds.
+	# The builds and installs for shared- and static-libs should totally
+	# isolated.  Using -fsanitize-cfi-cross-dso may break static-lib builds.
 	#
 	# This means that CFI Cross-DSO and basic CFI are mutually exclusive
 	# at current state of this distro.  If a static-lib is detected, then
@@ -753,10 +753,6 @@ gcf_add_cfi_flags() {
 		gcf_info "Adding base CFI flags"
 		gcf_append_flags -fsanitize=${CFI_BASELINE}
 		# CFI_BASELINE, CFI_EXCEPTIONS, USE_CFI_IGNORE_LIST can be per package customizable.
-		if [[ -n "${CFI_EXCEPTIONS}" ]] ; then
-			gcf_info "Adding CFI exception flags"
-			gcf_append_flags -fno-sanitize=${CFI_EXCEPTIONS}
-		fi
 		if [[ -n "${USE_CFI_IGNORE_LIST}" ]] ; then
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}" ]] ; then
 				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}
@@ -769,6 +765,17 @@ gcf_add_cfi_flags() {
 			fi
 		fi
 
+		local cfi_exceptions=()
+		[[ -n "${CFI_EXCEPTIONS}" ]] && cfi_exceptions+=( ${CFI_EXCEPTIONS} )
+		[[ "${NO_CFI_ICALL}" == "1" ]] && cfi_exceptions+=( cfi-icall )
+		[[ "${NO_CFI_VCALL}" == "1" ]] && cfi_exceptions+=( cfi-vcall )
+		[[ "${NO_CFI_NVCALL}" == "1" ]] && cfi_exceptions+=( cfi-nvcall )
+		[[ "${NO_CFI_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast cfi-unrelated-cast )
+		[[ "${NO_CFI_UNRELATED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-unrelated-cast )
+		[[ "${NO_CFI_DERIVED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast )
+		[[ "${NO_CFI_UNRELATED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-unrelated-cast )
+		[[ ! ( "${flags}" =~ "I" ) ]] && cfi_exceptions+=( cfi-icall )
+
 		gcf_info "Adding CFI Cross-DSO flags"
 		gcf_append_flags -fvisibility=default
 		gcf_append_flags -fsanitize-cfi-cross-dso
@@ -777,9 +784,9 @@ gcf_add_cfi_flags() {
 			gcf_append_flags -fno-sanitize-trap=cfi
 		fi
 
-		if [[ ! ( "${flags}" =~ "I" ) ]] ; then
-			gcf_info "Disabling cfi-icall"
-			gcf_append_flags -fno-sanitize=cfi-icall
+		if (( ${#cfi_exceptions[@]} > 0 )) ; then
+			gcf_info "Adding CFI exception flags"
+			gcf_append_flags -fno-sanitize=$(echo "${cfi_exceptions[@]}" | tr " " ",")
 		fi
 	fi
 }
@@ -827,7 +834,7 @@ gcf_error "package or disable CFI flags."
 		fi
 	fi
 	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" "${T}/build.log" ; then
-gcf_error "Try disabling cfi-icall first followed by disabling cfi-vcall."
+gcf_error "Try disabling cfi-icall, first then more cfi related flags like cfi-nvcall, cfi-vcall."
 	fi
 }
 
