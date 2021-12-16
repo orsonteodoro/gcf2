@@ -772,6 +772,10 @@ gcf_add_cfi_flags() {
 		gcf_info "Adding CFI Cross-DSO flags"
 		gcf_append_flags -fvisibility=default
 		gcf_append_flags -fsanitize-cfi-cross-dso
+		if [[ "${GCF_CFI_DEBUG}" == "1" ]] ; then
+			gcf_warn "CFI debug enabled.  Turn off in production."
+			gcf_append_flags -fno-sanitize-trap=cfi
+		fi
 
 		if [[ ! ( "${flags}" =~ "I" ) ]] ; then
 			gcf_info "Disabling cfi-icall"
