@@ -470,6 +470,7 @@ gcf_lto() {
 		fi
 		_gcf_strip_lto_flags
 		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
+		return
 	fi
 
 	if ! has_version "sys-devel/binutils[plugins]" ; then
