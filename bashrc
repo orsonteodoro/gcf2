@@ -856,6 +856,9 @@ gcf_setup_traps() {
 
 pre_pkg_setup()
 {
+	env | grep -i "MERGE_TYPE"
+	env | sort | uniq
+	die
 	gcf_info "Running pre_pkg_setup()"
 	gcf_setup_traps
 	gcf_replace_flags
@@ -1015,7 +1018,7 @@ gcf_warn "be set as an environment variable before running, replacing the LLVM"
 gcf_warn "version and ARCH.  See equery f sys-libs/compiler-rt-sanitizers for"
 gcf_warn "details.  Using a wrapper script for the app helps."
 	fi
-	if [[ "${REQUIRES_CFI_PRELOAD_APP}" == "1" ]] || (( ${found_cef} >= 1 )) ; then
+	if [[ "${REQUIRES_CFI_PRELOAD_APP}" == "1" || "${MERGE_TYPE}" =~ "binary" ]] || (( ${found_cef} >= 1 )) ; then
 gcf_warn "This package requires the following"
 gcf_warn "LD_PRELOAD=\"/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so\""
 gcf_warn "be set as an environment variable before running, replacing the LLVM"
