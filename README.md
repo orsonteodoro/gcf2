@@ -285,3 +285,17 @@ it as a static-libs dependency.
 The bashrc will filter package for viability of Clang CFI support.  It requires
 to regenerate new lists with `gen_pkg_lists.sh` that will scan binaries for
 presence of binaries and dlopen().
+
+## CFI
+
+### Troubleshooting
+
+Special treatment is required if the following message appears:
+
+`undefined symbol: __ubsan_handle_cfi_check_fail_abort`
+
+Prebuilt binary packages need to add the full path of
+libclang_rt.ubsan_standalone-${ARCH}.so to LD_PRELOAD.  The full path and the
+ARCH can be obtained from `equery f sys-libs/compiler-rt-sanitizers`.  It
+is recommended to use a wrapper script.  Source based packages may need a
+rebuild if that message appears in command line.
