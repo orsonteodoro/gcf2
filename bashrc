@@ -754,7 +754,7 @@ gcf_add_cfi_flags() {
 	# CFI may have be disabled.
 	#
 	# CFI requires static linking (with -static for static executibles or
-	# -Wl,-Bstatic for static-libs) for Basic CFI or building with
+	# -Wl,-Bstatic with static-libs) for Basic CFI or building with
 	# -fsanitize-cfi-cross-dso for shared-libs.
 	#
 	local flags=$(get_cfi_flags)
