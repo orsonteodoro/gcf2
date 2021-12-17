@@ -1008,12 +1008,16 @@ gcf_report_cfi_preload() {
 	if [[ "${REQUIRES_CFI_PRELOAD}" == "1" ]] ; then
 gcf_warn "Prebuilt packages linking to this package require"
 gcf_warn "LD_PRELOAD=\"/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so\""
-gcf_warn "be set as an environment variable before running, replacing the llvm version and arch."
+gcf_warn "be set as an environment variable before running, replacing the LLVM"
+gcf_warn "version and ARCH.  See equery f sys-libs/compiler-rt-sanitizers for"
+gcf_warn "details.  Using a wrapper script for the app helps."
 	fi
 	if [[ "${REQUIRES_CFI_PRELOAD_APP}" == "1" ]] ; then
-gcf_warn "This package requires the following line in order to work"
+gcf_warn "This package requires the following"
 gcf_warn "LD_PRELOAD=\"/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so\""
-gcf_warn "be set as an environment variable before running, replacing the llvm version and arch."
+gcf_warn "be set as an environment variable before running, replacing the LLVM"
+gcf_warn "version and ARCH.  See equery f sys-libs/compiler-rt-sanitizers for"
+gcf_warn "details.  Using a wrapper script for the app helps."
 	fi
 }
 
