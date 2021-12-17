@@ -856,9 +856,6 @@ gcf_setup_traps() {
 
 pre_pkg_setup()
 {
-	env | grep -i "MERGE_TYPE"
-	env | sort | uniq
-	die
 	gcf_info "Running pre_pkg_setup()"
 	gcf_setup_traps
 	gcf_replace_flags
