@@ -746,15 +746,16 @@ gcf_translate_no_inline()
 
 gcf_add_cfi_flags() {
 	#
-	# The builds and installs for shared- and static-libs should totally
-	# isolated.  Using -fsanitize-cfi-cross-dso may break static-lib builds.
+	# The configure, compile, and installs for shared- and static-libs
+	# should totally isolated due to the -fvisibility changes.
 	#
 	# This means that CFI Cross-DSO and basic CFI are mutually exclusive
 	# at current state of this distro.  If a static-lib is detected, then
 	# CFI may have be disabled.
 	#
-	# CFI requires static linking (with -static or -Wl,-Bstatic) or
-	# built with -fsanitize-cfi-cross-dso.
+	# CFI requires static linking (with -static for static executibles or
+	# -Wl,-Bstatic for static-libs) for Basic CFI or building with
+	# -fsanitize-cfi-cross-dso for shared-libs.
 	#
 	local flags=$(get_cfi_flags)
 	gcf_info "Package flags: ${flags}"
@@ -1003,7 +1004,21 @@ gcf_report_emerge_time() {
 	fi
 }
 
+gcf_report_cfi_preload() {
+	if [[ "${REQUIRES_CFI_PRELOAD}" == "1" ]] ; then
+gcf_warn "Prebuilt packages linking to this package require"
+gcf_warn "LD_PRELOAD=\"/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so\""
+gcf_warn "be set as an environment variable before running, replacing the llvm version and arch."
+	fi
+	if [[ "${REQUIRES_CFI_PRELOAD_APP}" == "1" ]] ; then
+gcf_warn "This package requires the following line in order to work"
+gcf_warn "LD_PRELOAD=\"/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so\""
+gcf_warn "be set as an environment variable before running, replacing the llvm version and arch."
+	fi
+}
+
 post_src_install() {
 	gcf_info "Running post_src_install()"
 	gcf_report_emerge_time
+	gcf_report_cfi_preload
 }
