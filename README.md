@@ -299,3 +299,13 @@ libclang_rt.ubsan_standalone-${ARCH}.so to LD_PRELOAD.  The full path and the
 ARCH can be obtained from `equery f sys-libs/compiler-rt-sanitizers`.  It
 is recommended to use a wrapper script.  Source based packages may need a
 rebuild if that message appears in command line.
+
+#### Wrapper script example
+
+```Shell
+#!/bin/bash
+# Place in /usr/local/bin with 0755 permissions
+export LD_PRELOAD="/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so"
+your_program "${@}"
+
+```
