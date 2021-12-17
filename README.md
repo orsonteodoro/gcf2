@@ -241,12 +241,12 @@ list generator can be run by doing `bash gen_pkg_lists.sh`.
 The following files are generated for LTO flags:
 
 * /etc/portage/emerge-system-lto-agnostic.lst -- Packages in this list are allowed any compiler for LTO for @system and @world
-* /etc/portage/emerge-system-lto-restricted.lst -- Packages in this list are only allowed the default compiler for @system.  If no static-libs are linked, you can use LTO.  Otherwise, LTO must be disabled.
+* /etc/portage/emerge-system-lto-restricted.lst -- Packages in this list are only allowed the default compiler for @system.  If no static-libs are linked, you can use LTO.  Otherwise, LTO must be disabled for the package with static-libs.
 * /etc/portage/emerge-system-lto-skip.lst -- Packages in this do not require LTO for @system set due to lack of binaries
 * /etc/portage/emerge-system-no-data.lst -- Packages are missing the emerged file list for @system
 * /etc/portage/emerge-system-no-lto.lst -- Packages in this are disallowed LTO for @system and @world
 * /etc/portage/emerge-world-lto-agnostic.lst -- Packages in this list are allowed any compiler for LTO for @world
-* /etc/portage/emerge-world-lto-restricted.lst -- Packages in this list are only allowed the default compiler without LTO for @world if statically-linked.  Otherwise, you may use LTO with the preferred compiler.
+* /etc/portage/emerge-world-lto-restricted.lst -- Packages in this list are only allowed the systemwide LTO compiler for @world.  If no static-libs are linked, you can use LTO.  Otherwise, LTO must be disabled for the package with static-libs.
 * /etc/portage/emerge-world-lto-skip.lst -- Packages in this do not require LTO for @world set due to lack of binaries
 * /etc/portage/emerge-world-no-data.lst -- Packages are missing the emerged file list for @world
 * /etc/portage/emerge-world-no-lto.lst -- Packages in this list are disallowed LTO for @world

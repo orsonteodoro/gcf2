@@ -162,7 +162,8 @@ echo "     No LTO is required."
 echo
 echo "lto-restricted - Data is stored in /etc/portage/emerge-${emerge_set}-lto-restricted.lst."
 echo "     LTO either must be preformed by default LTO compiler or LTO must be"
-echo "     disabled."
+echo "     disabled.  Packages that statically link must use the same compiler;"
+echo "     otherwise, the package with the static-lib must have LTO disabled."
 echo
 }
 
