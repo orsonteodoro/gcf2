@@ -298,7 +298,8 @@ Prebuilt binary packages need to add the full path of
 libclang_rt.ubsan_standalone-${ARCH}.so to LD_PRELOAD.  The full path and the
 ARCH can be obtained from `equery f sys-libs/compiler-rt-sanitizers`.  It
 is recommended to use a wrapper script.  Source based packages may need a
-rebuild if that message appears in command line.
+rebuild of the package containing the app or executible if that message appears
+in command line.
 
 #### Wrapper script example
 
