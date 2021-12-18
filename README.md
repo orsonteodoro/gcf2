@@ -293,7 +293,7 @@ applies to systemwide Clang CFI (Code Flow Integrity).
 
 ### Requirements
 
-* All source based packages require a rebuild if linking to CFI libraries.
+* All source based packages require a rebuild if linking to CFIed libraries.
 * All binary based packages require LD_PRELOAD described in the troubleshooting
 section below.
 
