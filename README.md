@@ -288,6 +288,26 @@ presence of binaries and dlopen().
 
 ## CFI
 
+You may skip this if you use a hardware based implementation.  This section
+applies to systemwide Clang CFI (Code Flow Integrity).
+
+### Requirements
+
+* All source based packages require a rebuild if linking to CFI libraries.
+* All binary based packages require LD_PRELOAD described in the troubleshooting
+section below.
+
+### Coverage
+
+* Clang LTO packages qualify
+* Above the @system set only, but may allow to include some parts of @system in
+the future.
+* Only binary executables and shared-libs are CFIed.
+* Packages that install static-libs will disable CFI for that package.  This
+problem is due to -fvisibility requirements which can cause missing symbols
+and unusable shared libraries problem due to differences in enablement of CFI
+in CFI Basic mode and CFI Cross-DSO.
+
 ### Troubleshooting
 
 Special treatment is required if the following message appears:
