@@ -306,7 +306,7 @@ the future.
 * Packages that install static-libs will disable CFI for that package.  This
 problem is due to -fvisibility requirements which can cause missing symbols
 and unusable shared libraries problem due to differences in enablement of CFI
-in CFI Basic mode and CFI Cross-DSO.
+in CFI Basic mode and CFI Cross-DSO mode.
 
 ### Troubleshooting
 
