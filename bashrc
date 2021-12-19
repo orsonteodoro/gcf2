@@ -1036,17 +1036,19 @@ gcf_verify_cfi() {
 	[[ "${GCF_CFI}" == "1" ]] || return
 
 	# Strip may interfere with CFI
-	for f in $(find "${ED}") ; do
+	for f in $(find "${ED}" -name "*.so*") ; do
 		local is_so=0
 		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
 
-		if (( ${is_so} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
-			:;
-		else
+		if (( ${is_so} == 1 )) ; then
+			if grep -q -e "__cfi_init" "${f}" ; then
+				:;
+			else
 gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"
 gcf_error "per-package FEATURES.  You may disable this check by adding"
 gcf_error "DISABLE_CFI_VERIFY=1."
-			die
+				die
+			fi
 		fi
 	done
 }
