@@ -1041,7 +1041,7 @@ gcf_verify_cfi() {
 		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
 
 		if (( ${is_so} == 1 )) ; then
-			if grep -q -e "__cfi_init" "${f}" ; then
+			if grep -E -q -e "(__cfi_init|__cfi_check_fail)" "${f}" ; then
 				:;
 			else
 gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"
