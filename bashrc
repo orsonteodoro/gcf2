@@ -1034,10 +1034,8 @@ gcf_verify_cfi() {
 
 	# strip may interfere with CFI
 	for f in "${ED}" ; do
-		local is_bin=0
 		local is_so=0
-		local is_exe=0
-		file "${f}" | grep -q -e "ELF.*shared object" && is_bin=1 && is_so=1
+		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
 
 		if (( ${is_so} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
 			:;
