@@ -328,7 +328,8 @@ is recommended to use a wrapper script.
 Source based packages will require a rebuild of the package containing the app
 or executable if that message appears in the command line.
 
-lld may need to be rebuilt without CFI bad cast and to remove the above error.
+lld may need to be rebuilt without CFI bad cast and to remove the above error
+when linking other packages.
 
 libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to work.
 
