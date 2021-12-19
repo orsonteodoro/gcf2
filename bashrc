@@ -1032,8 +1032,8 @@ gcf_verify_cfi() {
 	[[ "${DISABLE_CFI_VERIFY}" == "1" ]] && return
 	[[ "${GCF_CFI}" == "1" ]] || return
 
-	# strip may interfere with CFI
-	for f in "${ED}" ; do
+	# Strip may interfere with CFI
+	for f in $(find "${ED}") ; do
 		local is_so=0
 		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
 
