@@ -184,6 +184,15 @@ gcf_met_gcc_bfdlto_requirement() {
 	return 1
 }
 
+gcf_met_clang_bfdlto_requirement() {
+	has_version "sys-devel/clang" || return 1
+
+	if has_version "sys-devel/binutils[plugins]" ; then
+		return 0
+	fi
+	return 1
+}
+
 gcf_met_gcc_goldlto_requirement() {
 	has_version "sys-devel/gcc" || return 1
 
@@ -228,6 +237,12 @@ gcf_use_gcc_goldlto() {
 
 gcf_use_gcc_bfdlto() {
 	gcf_info "Auto switching to GCC BFD LTO"
+	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
+	gcf_append_flags "-flto"
+}
+
+gcf_use_clang_bfdlto() {
+	gcf_info "Auto switching to Clang BFD LTO"
 	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
 	gcf_append_flags "-flto"
 }
@@ -549,6 +564,8 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 			linker="clang-goldlto"
 		elif [[ "${CC}" == "gcc" && "${USE_GOLDLTO}" == "1" ]] ; then
 			linker="gcc-goldlto"
+		elif [[ "${CC}" == "clang" ]] ; then
+			linker="clang-bfdlto"
 		elif [[ "${CC}" == "gcc" ]] ; then
 			linker="gcc-bfdlto"
 		fi
@@ -604,6 +621,10 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 			&& gcf_met_gcc_bfdlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_gcc_bfdlto
+		elif [[ "${linker}" == "clang-bfdlto" ]] \
+			&& gcf_met_clang_bfdlto_requirement ; then
+			_gcf_strip_lto_flags
+			gcf_use_clang_bfdlto
 		elif [[ "${linker}" == "no-lto" ]] ; then
 			:;
 		else
