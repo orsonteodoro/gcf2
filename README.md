@@ -297,6 +297,9 @@ applies to systemwide Clang CFI (Code Flow Integrity).
 * All source based packages require a rebuild if linking to CFIed libraries.
 * All binary based packages require LD_PRELOAD described in the troubleshooting
 section below.
+* A Rescue CD -- During bootstrapping, the network related packages and all
+linkers may break if missing CFI symbols.  The LLD linker may break itself if
+CFIed completely.
 
 ### Coverage
 
@@ -322,6 +325,10 @@ is recommended to use a wrapper script.
 
 Source based packages will require a rebuild of the package containing the app
 or executable if that message appears in the command line.
+
+lld may need to be rebuilt without CFI bad cast and to remove the above error.
+
+libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to work.
 
 #### Wrapper script example
 
