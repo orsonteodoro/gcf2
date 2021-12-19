@@ -297,6 +297,8 @@ applies to systemwide Clang CFI (Code Flow Integrity).
 * All source based packages require a rebuild if linking to CFIed libraries.
 * All binary based packages require LD_PRELOAD described in the troubleshooting
 section below.
+* Pre-downloaded all packages with `emerge -f @world` in case networking
+packages break with CFI.
 * A Rescue CD -- During bootstrapping, the network related packages and all
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
