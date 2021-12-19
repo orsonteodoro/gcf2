@@ -101,7 +101,6 @@ gcf_strip_no_inline() {
 	if [[ "${CFLAGS}" =~ "-fno-inline" \
 		&& ( "${CFLAGS}" =~ ("-Ofast"|"-O2"|"O3") \
 			|| ( "${DISABLE_NO_INLINE}" == "1" ) \
-			|| ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
 		) ]] ; then
 		gcf_info "Removing -fno-inline from *FLAGS"
 		_gcf_replace_flag "-fno-inline" ""
@@ -763,6 +762,7 @@ gcf_translate_no_inline()
 {
 	if [[ ( "${CFLAGS}" =~ "-fno-inline" || "${CXXFLAGS}" =~ "-fno-inline" ) \
 		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) ]] ; then
+		# Test with metalog package
 		gcf_info "Detected clang.  Converting -fno-inline -> -fno-inline-functions"
 		_gcf_replace_flag "-fno-inline" "-fno-inline-functions"
 	fi
