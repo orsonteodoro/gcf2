@@ -1053,7 +1053,6 @@ gcf_error "DISABLE_CFI_VERIFY=1."
 				# For Cross-DSO, this is undocumented.
 gcf_ewarn "${f} is not Clang CFI protected.  You may disable this check by"
 gcf_ewarn "adding DISABLE_CFI_VERIFY=1."
-				die
 			fi
 		fi
 	done
