@@ -513,6 +513,9 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
 			# Breaks the determinism in this closed system
 			gcf_warn "Disabling compiler switch"
+		elif [[ "${USE_GCC}" == "1" ]] ; then
+			CC="gcc"
+			CXX="g++"
 		elif gcf_is_package_lto_agnostic_world && gcf_is_clang_cfi && gcf_is_clang_cfi_ready && [[ ! ( "${pkg_flags}" =~ "A" ) ]] ; then
 			CC="clang"
 			CXX="clang++"
