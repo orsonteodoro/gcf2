@@ -1041,19 +1041,21 @@ gcf_verify_cfi() {
 		file "${f}" | grep -q -e "ELF.*shared object" && is_bin=1 && is_so=1
 		file "${f}" | grep -q -e "ELF.*executable" && is_bin=1 && is_exe=1
 
-		if which checksec 2>/dev/null 1>/dev/null ; then
-			if (( ${is_so} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
+		if (( ${is_so} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
+			:;
+		else
 gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"
 gcf_error "per-package FEATURES.  You may disable this check by adding"
 gcf_error "DISABLE_CFI_VERIFY=1."
-				die
-			fi
-			# For Basic CFI, lack of CFI symbols in executible is not a problem based on other projects.
-			if (( ${is_exe} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
-				# For Cross-DSO, this is undocumented.
+			die
+		fi
+		# For Basic CFI, lack of CFI symbols in executible is not a problem based on other projects.
+		if (( ${is_exe} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
+			:;
+		else
+			# For Cross-DSO, this is undocumented.
 gcf_ewarn "${f} is not Clang CFI protected.  You may disable this check by"
 gcf_ewarn "adding DISABLE_CFI_VERIFY=1."
-			fi
 		fi
 	done
 }
