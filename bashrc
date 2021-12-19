@@ -819,6 +819,16 @@ gcf_add_clang_cfi() {
 		return
 	fi
 
+	if [[ ( "${CFLAGS}" =~ "-flto" ) \
+		|| ( "${CXXFLAGS}" =~ "-flto" ) ]] \
+		|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
+		:;
+	else
+		# Clang CFI requires LTO
+		gcf_warn "Skipping CFI because it requires LTO."
+		return
+	fi
+
 	local llvm_v=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 
 	if ! has_version "=sys-libs/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
