@@ -300,6 +300,8 @@ section below.
 * A Rescue CD -- During bootstrapping, the network related packages and all
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
+* Two @world rebuilds due to the `undefined symbol: __ubsan_handle_cfi_check_fail_abort`
+bug.
 
 ### Coverage
 
