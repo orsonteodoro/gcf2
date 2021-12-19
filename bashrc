@@ -800,6 +800,7 @@ gcf_add_cfi_flags() {
 			gcf_info "Adding CFI exception flags"
 			gcf_append_flags -fno-sanitize=$(echo "${cfi_exceptions[@]}" | tr " " ",")
 		fi
+		export GCF_CFI="1"
 	fi
 }
 
@@ -831,22 +832,25 @@ gcf_add_clang_cfi() {
 }
 
 gcf_catch_errors() {
-	gcf_error "Called gcf_catch_errors()"
+	gcf_info "Called gcf_catch_errors()"
 	if [[ -e "${PWD}/config.log" ]] ; then
 		if grep -q -F -e "Assertion \`(cfi_check & (kShadowAlign - 1)) == 0' failed" "${PWD}/config.log" ; then
 			# Test package: app-editors/leafpad
 			# This is a bug in the config test.
 gcf_error "Detected a Clang CFI bug.  Use the sys-libs/compiler-rt-sanitizers"
 gcf_error "package from oiledmachine-overlay that disables this assert."
+			# Portage will terminate after showing this.
 		fi
 		if grep -q -F -e "gcc: error: unrecognized argument to '-fsanitize=' option: 'cfi-vcall'" "${PWD}/config.log" ; then
 			# Test package: media-libs/opus
 gcf_error "Clang CFI is not supported by GCC.  Please switch to clang for this"
 gcf_error "package or disable CFI flags."
+			# Portage will terminate after showing this.
 		fi
 	fi
 	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" "${T}/build.log" ; then
 gcf_error "Try disabling cfi-icall, first then more cfi related flags like cfi-nvcall, cfi-vcall."
+			# Portage will terminate after showing this.
 	fi
 }
 
@@ -1024,8 +1028,40 @@ gcf_warn "details.  Using a wrapper script for the app helps."
 	fi
 }
 
+gcf_verify_cfi() {
+	[[ "${DISABLE_CFI_VERIFY}" == "1" ]] && return
+	[[ "${GCF_CFI}" == "1" ]] || return
+
+	# strip may interfere with CFI
+	for f in "${ED}" ; do
+		local is_bin=0
+		local is_so=0
+		local is_exe=0
+		#file "${f}" | grep -q -e "ar archive" && is_bin=0
+		file "${f}" | grep -q -e "ELF.*shared object" && is_bin=1 && is_so=1
+		file "${f}" | grep -q -e "ELF.*executable" && is_bin=1 && is_exe=1
+
+		if which checksec 2>/dev/null 1>/dev/null ; then
+			if (( ${is_so} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
+gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"
+gcf_error "per-package FEATURES.  You may disable this check by adding"
+gcf_error "DISABLE_CFI_VERIFY=1."
+				die
+			fi
+			# For Basic CFI, lack of CFI symbols in executible is not a problem based on other projects.
+			if (( ${is_exe} == 1 )) && grep -q -e "__cfi_init" "${f}" ; then
+				# For Cross-DSO, this is undocumented.
+gcf_ewarn "${f} is not Clang CFI protected.  You may disable this check by"
+gcf_ewarn "adding DISABLE_CFI_VERIFY=1."
+				die
+			fi
+		fi
+	done
+}
+
 post_src_install() {
 	gcf_info "Running post_src_install()"
 	gcf_report_emerge_time
 	gcf_report_cfi_preload
+	gcf_verify_cfi
 }

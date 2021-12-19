@@ -201,6 +201,7 @@ bashrc:
 
 * bypass-fallow-store-data-races-check.conf -- disables -Ofast or
 -fallow-store-data-races safety check
+* disable-cfi-verify.conf
 * disable-clang-cfi.conf -- Turn off use of Clang CFI
 * disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
 * disable-lto-compiler-switch.conf -- Disables LTO compiler switching
@@ -320,7 +321,7 @@ ARCH can be obtained from `equery f sys-libs/compiler-rt-sanitizers`.  It
 is recommended to use a wrapper script.
 
 Source based packages will require a rebuild of the package containing the app
-or executible if that message appears in the command line.
+or executable if that message appears in the command line.
 
 #### Wrapper script example
 
