@@ -342,3 +342,31 @@ export LD_PRELOAD="/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-
 your_program "${@}"
 
 ```
+
+#### Depenency rollback(s) without CFI
+
+Currently no automated way to avoid the above problem, but some
+cases the wrapper technique does not work because the executable
+being forced to link with the GCC toolchain but needs to link
+against the ubsan library mentioned above.
+
+Some rollback to remove CFI of the dependencies may be required.
+
+Steps to resolve in order with one re-emerge per case:
+
+1. Try disabling some CFI flags first then all CFI for this package.
+2. Disable CFI for this package.
+3. Switch back to GCC.
+4. If this package is placed in the no-data LTO list, disable CFI
+in each named dependency temporary until this package is emerged
+then re-emerge back the dependencies with CFI.
+5. If this package is permenently blacklisted (because it contains
+a static-lib or other), the dependencies need to be re-emerged
+without CFI depending on how importance of the executable in this
+package.
+
+For cases 4 and 5 use \`equery b libfile\` to determine the package
+and \`emerge -1vO depend_pkg_name\` to revert with package.env
+changes"
+
+

@@ -883,7 +883,28 @@ gcf_error "package or disable CFI flags."
 		fi
 	fi
 	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" "${T}/build.log" ; then
-gcf_error "Try disabling cfi-icall, first then more cfi related flags like cfi-nvcall, cfi-vcall."
+gcf_error "Try disabling cfi-icall, first then more cfi related flags like"
+gcf_error "cfi-nvcall, cfi-vcall."
+			# Portage will terminate after showing this.
+	fi
+	if grep -q -E -e "undefined reference to \`__ubsan_handle_cfi_check_fail_abort'" "${T}/build.log" ; then
+gcf_error "Detected possible dead end that may require some rollback."
+gcf_error
+gcf_error "Steps to resolve in order with one re-emerge per case:"
+gcf_error
+gcf_error "(1) Try disabling some CFI flags first then all CFI for this package."
+gcf_error "(2) Disable CFI for this package."
+gcf_error "(3) Switch back to GCC."
+gcf_error "(4) If this package is placed in the no-data LTO list, disable CFI"
+gcf_error "in each named dependency temporary until this package is emerged"
+gcf_error "then re-emerge back the dependencies with CFI."
+gcf_error "(5) If this package is permenently blacklisted (because it contains"
+gcf_error "a static-lib or other), the dependencies need to be re-emerged"
+gcf_error "without CFI depending on how importance of the executable in this"
+gcf_error "package."
+gcf_error "For cases 4 and 5 use \`equery b libfile\` to determine the package"
+gcf_error "and \`emerge -1vO depend_pkg_name\` to revert with package.env"
+gcf_error "changes"
 			# Portage will terminate after showing this.
 	fi
 }
