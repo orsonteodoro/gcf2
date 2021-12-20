@@ -391,13 +391,12 @@ encountered:
 ==558==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
 
 To fix this problem, first disable CFI for the app / exe and then work backwards
-to the dependencies.
+to unCFI some of the dependencies.
 
 Associated with the above message is a list of libraries.  Look up the package
 for that library and cross reference it with /etc/portage/emerge-cfi-world.cfi
 and /etc/portage/emerge.lst.  If that package has been CFIed use
-disable-clang-cfi.conf and re-emerge to fix the package.  Some of the
-dependencies and the package itself may need to be un-CFIed.
+disable-clang-cfi.conf and re-emerge to fix the package.
 
 Once, the the message goes away, try to re-emerge back the max set of CFIed
 packages that were not responsible for triggering that message to reduce
