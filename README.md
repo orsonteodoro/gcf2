@@ -320,10 +320,10 @@ the future.
 problem is due to -fvisibility requirements which can cause missing symbols
 and unusable shared libraries problem due to differences in enablement of CFI
 in CFI Basic mode and CFI Cross-DSO mode.
-* Around 34% of the entire @world set will CFIed.  Most of the @world set are
-skipped due to a lack of binaries.  Others are skip due to containing
-static-libs, build-time failures.  Around 16% of @world belonging to 
-the @system set are candidates for CFI but currently not being CFIed.
+* Around 34% of the entire @world set will be CFIed.  Most of the @world set
+are skipped due to a lack of binaries.  Others are skip due to containing
+static-libs, build-time failures, first time install.  Around 16% of @world
+belonging to the @system set are candidates for CFI but currently not being CFIed.
 
 ### Troubleshooting
 
