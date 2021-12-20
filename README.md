@@ -305,6 +305,10 @@ packages break with CFI.
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
 * Graphical login disabled until @world is completely emerged and tested.
+* The @world set should be completely emerged before running `gen_pkg_lists.sh`
+to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set when doing
+just LTO without CFI.  The temporary blocks may result in unwanted manual
+rollbacks discussed later.
 
 ### Coverage
 
@@ -316,6 +320,9 @@ the future.
 problem is due to -fvisibility requirements which can cause missing symbols
 and unusable shared libraries problem due to differences in enablement of CFI
 in CFI Basic mode and CFI Cross-DSO mode.
+* Around 34% of the entire @world set will CFIed.  Most of the @world set are
+skipped due to a lack of binaries.  Others are skip due to containing
+static-libs, build-time failures.
 
 ### Troubleshooting
 
