@@ -302,6 +302,7 @@ packages break with CFI.
 * A Rescue CD -- During bootstrapping, the network related packages and all
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
+* Graphical login disabled until @world is completely emerged and tested.
 
 ### Coverage
 
