@@ -306,9 +306,9 @@ linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
 * Graphical login disabled until @world is completely emerged and tested.
 * The @world set should be completely emerged before running `gen_pkg_lists.sh`
-to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set when doing
-just LTO without CFI.  The temporary blocks may result in unwanted manual
-rollbacks discussed later.
+to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or uncommented
+in make.conf when doing just LTO without CFI.  The temporary blocks may result
+in unwanted manual rollbacks discussed later.
 
 ### Coverage
 
