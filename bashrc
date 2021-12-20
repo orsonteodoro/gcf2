@@ -803,13 +803,14 @@ gcf_add_cfi_flags() {
 
 		local cfi_exceptions=()
 		[[ -n "${CFI_EXCEPTIONS}" ]] && cfi_exceptions+=( ${CFI_EXCEPTIONS} )
-		[[ "${NO_CFI_ICALL}" == "1" ]] && cfi_exceptions+=( cfi-icall )
-		[[ "${NO_CFI_VCALL}" == "1" ]] && cfi_exceptions+=( cfi-vcall )
-		[[ "${NO_CFI_NVCALL}" == "1" ]] && cfi_exceptions+=( cfi-nvcall )
 		[[ "${NO_CFI_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast cfi-unrelated-cast )
-		[[ "${NO_CFI_UNRELATED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-unrelated-cast )
+		[[ "${NO_CFI_CAST_STRICT}" == "1" ]] && cfi_exceptions+=( cfi-cast-strict )
 		[[ "${NO_CFI_DERIVED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast )
+		[[ "${NO_CFI_ICALL}" == "1" ]] && cfi_exceptions+=( cfi-icall )
+		[[ "${NO_CFI_MFCALL}" == "1" ]] && cfi_exceptions+=( cfi-mfcall )
+		[[ "${NO_CFI_NVCALL}" == "1" ]] && cfi_exceptions+=( cfi-nvcall )
 		[[ "${NO_CFI_UNRELATED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-unrelated-cast )
+		[[ "${NO_CFI_VCALL}" == "1" ]] && cfi_exceptions+=( cfi-vcall )
 		[[ ! ( "${flags}" =~ "I" ) ]] && cfi_exceptions+=( cfi-icall )
 
 		gcf_info "Adding CFI Cross-DSO flags"
