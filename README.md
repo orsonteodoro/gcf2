@@ -381,6 +381,9 @@ For cases 4 and 5 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 
+Important:  When the cause is found, a partial revert of changes what were not
+the cause needs to happen so that the attack surface is minimized.
+
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered:
 
