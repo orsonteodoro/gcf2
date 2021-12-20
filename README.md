@@ -342,7 +342,8 @@ or executable if that message appears in the command line.
 lld may need to be rebuilt without CFI bad cast and to remove the above error
 when linking other packages.
 
-libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to work.
+libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to
+work.
 
 #### Wrapper script example
 
@@ -356,10 +357,10 @@ your_program "${@}"
 
 #### Depenency rollback(s) without CFI
 
-Currently no automated way to avoid the above problem, but some
-cases the wrapper technique does not work because the executable
-being forced to link with the GCC toolchain but needs to link
-against the ubsan library mentioned above.
+Currently no automated way to avoid the above problem, but some cases the
+wrapper technique does not work because the executable is being forced to link
+with the GCC toolchain but needs to link against the ubsan library mentioned
+above.
 
 Some rollback to remove CFI of the dependencies may be required.
 
