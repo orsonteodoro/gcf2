@@ -13,9 +13,11 @@ The semi-production ready image may need to be modified a bit on your side due
 to differences in package versions or hardware configuration.
 
 The development mode can be used with LTO parts disabled or removed.  Proper
-systemwide LTO support is being re-added.  Systemwide Clang CFI support is
-also being added, it is recommended to be disabled since it is pre alpha
-quality.
+systemwide LTO support is being re-added.
+
+Systemwide Clang CFI support is also being added, but it is strongly not
+recommended and should be disabled since it is pre alpha quality.  A
+complete @world build has not been done with CFI yet.
 
 ## The default make.conf *FLAGS:
 
