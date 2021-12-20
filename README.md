@@ -373,4 +373,13 @@ For cases 4 and 5 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 
+Sometimes disabling all CFI schemes will not work.  If the following message is
+encountered:
 
+==558==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
+
+associated with the message is a list of libraries.  Look up the package for
+that library and cross reference it with /etc/portage/emerge-cfi-world.cfi and
+/etc/portage/emerge.lst.  If that package has been CFIed use
+disable-clang-cfi.conf and re-emerge to fix the package.  Some of the
+dependencies and the package itself may need to be un-CFIed.
