@@ -387,6 +387,6 @@ and /etc/portage/emerge.lst.  If that package has been CFIed use
 disable-clang-cfi.conf and re-emerge to fix the package.  Some of the
 dependencies and the package itself may need to be un-CFIed.
 
-Once, the the message goes away, try to re-emerge back the min set of un-CFIed
+Once, the the message goes away, try to re-emerge back the max set of CFIed
 packages that were not responsible for triggering that message to reduce
 the attack surface.
