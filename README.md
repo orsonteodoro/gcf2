@@ -345,6 +345,8 @@ when linking other packages.
 libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to
 work.
 
+ccache needs to temporarly be disabled in FEATURES when reverting being CFIed.
+
 #### Wrapper script example
 
 ```Shell
