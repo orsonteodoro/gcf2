@@ -478,6 +478,7 @@ gcf_lto() {
 	if gcf_is_lto_skippable ; then
 		# For packages that use compiler checks but don't install
 		# binaries.
+gcf_info "Skipping package for LTO"
 		if [[ -z "${CC}" || -z "${CXX}" ]] ; then
 			export CC="${CC_LIBC:=gcc}"
 			export CXX="${CXX_LIBC:=g++}"
@@ -704,7 +705,7 @@ gcf_use_Oz()
 
 gcf_replace_freorder_blocks_algorithm()
 {
-	if [[ "FREORDER_BLOCKS_ALGORITHM" == "stc" ]] ; then
+	if [[ "${FREORDER_BLOCKS_ALGORITHM}" == "stc" ]] ; then
 		_gcf_replace_flag "-freorder-blocks-algorithm=simple" "-freorder-blocks-algorithm=stc"
 	fi
 }
