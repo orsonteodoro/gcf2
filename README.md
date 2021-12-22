@@ -293,6 +293,8 @@ If the package is temporarly CFI blocked or a new install, you may try to
 manually move the package from no-data to lto-agnostic and cfi-world /
 cfi-system in the emerge*.lst files in order to bypass the pre IR compatibility
 check only if static-libs will be not built or will have static-libs disabled.
+If a ebuild has been modified for proper visibility then add
+disable-override-compiler-check.conf to bypass this check.
 
 ## CFI
 
