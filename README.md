@@ -377,7 +377,7 @@ in each named dependency temporary until this package is emerged
 then re-emerge back the dependencies with CFI.
 5. If this package is permenently blacklisted (because it contains
 a static-lib or other), the dependencies need to be re-emerged
-without CFI depending on how importance of the executable in this
+without CFI depending on the importance of the executable in this
 package.
 
 For cases 4 and 5 use \`equery b libfile\` to determine the package
@@ -386,6 +386,15 @@ changes"
 
 Important:  When the cause is found, a partial revert of changes what were not
 the cause needs to happen so that the attack surface is minimized.
+
+Sometimes it is not obvious which dependency is the problem.  You may need to
+backtrack and rollback 2 levels deep or more while unCFIing those that block
+re-emerging the pack.  It is sometimes those CFIed blocks that should be
+unCFIed are cause by those package.  The more hints are provided, the more
+easy to fix the problem.  It is a good idea to use the GCF_CFI_DEBUG=1
+variable in the first `emerge -ev @world` pass for your own personal
+configuration and set of packages.  Then, disable the flag in subsequent
+`emerge -ev @world` passes.
 
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered:
@@ -401,5 +410,5 @@ and /etc/portage/emerge.lst.  If that package has been CFIed use
 disable-clang-cfi.conf and re-emerge to fix the package.
 
 Once, the the message goes away, try to re-emerge back the max set of CFIed
-packages that were not responsible for triggering that message to reduce
-the attack surface and to increase mitigation.
+packages with CFI that were not responsible for triggering that message to
+reduce the attack surface and to increase mitigation.
