@@ -289,12 +289,12 @@ The bashrc will filter package for viability of Clang CFI support.  It requires
 to regenerate new lists with `gen_pkg_lists.sh` that will scan binaries for
 presence of binaries and dlopen().
 
-If the package is temporarly CFI blocked or a new install, you may try to
+If the package is temporarly LTO or CFI blocked or a new install, you may try to
 manually move the package from no-data to lto-agnostic and cfi-world /
 cfi-system in the emerge*.lst files in order to bypass the pre IR compatibility
-check only if static-libs will be not built or will have static-libs disabled.
-If a ebuild has been modified for proper visibility then add
-disable-override-compiler-check.conf to bypass this check.
+check only if static-libs will be not built or will have static-libs disabled or
+will have its LTO disabled.  Disabling LTO will also disable Clang CFI which
+also weakens the security.
 
 ## CFI
 
