@@ -879,8 +879,9 @@ gcf_error "package from oiledmachine-overlay that disables this assert."
 		fi
 		if grep -q -F -e "gcc: error: unrecognized argument to '-fsanitize=' option: 'cfi-vcall'" "${PWD}/config.log" ; then
 			# Test package: media-libs/opus
-gcf_error "Clang CFI is not supported by GCC.  Please switch to clang for this"
-gcf_error "package or disable CFI flags."
+gcf_error "Clang CFI is not supported by GCC or the lto flag has been stripped"
+gcf_error "by the ebuild.  Please switch to clang for this package or disable"
+gcf_error "CFI flags."
 			# Portage will terminate after showing this.
 		fi
 	fi
