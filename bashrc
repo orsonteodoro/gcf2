@@ -831,7 +831,7 @@ gcf_add_cfi_flags() {
 			# For undefined symbol: __ubsan_handle_cfi_check_fail_abort
 			# For undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
 			# Only interested in linking to libclang_rt.ubsan_*-*.so.
-			local ubsan_args=( undefined )
+			local ubsan_args=( )
 			local ubsan_args_recover=( )
 			if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
 				ubsan_args+=( alignment )
@@ -971,7 +971,7 @@ gcf_use_ubsan() {
 		gcf_info "Adding UBSan flags"
 		# Only interested in linking to libclang_rt.ubsan_*-*.so.
 		# Use only if package contains executable.
-		local ubsan_args=( undefined )
+		local ubsan_args=( )
 		local ubsan_args_recover=()
 		if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
 			ubsan_args+=( alignment )
