@@ -831,12 +831,25 @@ gcf_add_cfi_flags() {
 			# For undefined symbol: __ubsan_handle_cfi_check_fail_abort
 			# For undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
 			# Only interested in linking to libclang_rt.ubsan_*-*.so.
-			if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
-				gcf_append_flags -fsanitize=vptr # link
+			local ubsan_args=( undefined )
+			local ubsan_args_recover=( )
+			if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
+				ubsan_args+=( alignment )
 				# crash depends on next instruction on that object
-			else
-				gcf_append_flags -fsanitize=null # link
-				gcf_append_flags -fno-sanitize-recover=null # force crash to stop running bad code
+			fi
+			if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
+				ubsan_args+=( vptr )
+				# crash depends on next instruction on that object
+			fi
+#			if (( ${#ubsan_args[@]} == 0 )) ; then
+				ubsan_args+=( null )
+				ubsan_args_recover+=( null )
+#			fi
+			if (( ${#ubsan_args[@]} > 0 )) ; then
+				gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
+			fi
+			if (( ${#ubsan_args_recover[@]} > 0 )) ; then
+				gcf_append_flags -fno-sanitize-recover=$(echo ${ubsan_args_recover[@]} | tr " " ",") # force crash to stop before running bad code
 			fi
 			export GCF_APPLIED_UBSAN="1"
 		fi
@@ -950,23 +963,45 @@ gcf_use_ubsan() {
 
 	if [[ -z "${GCF_APPLIED_UBSAN}" \
 		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
-		&& ( "${USE_UBSAN}" == "1" || "${USE_UBSAN_VPTR}" == "1" ) ]] \
+		&& ( "${USE_UBSAN}" == "1" \
+			|| "${USE_UBSAN_VPTR}" == "1" \
+			|| "${USE_UBSAN_ALIGN}" == "1" ) ]] \
 		&& (( ${has_ubsan} == 1 )) ; then
 
 		gcf_info "Adding UBSan flags"
 		# Only interested in linking to libclang_rt.ubsan_*-*.so.
 		# Use only if package contains executable.
-		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
-			gcf_append_flags -fsanitize=vptr # link
+		local ubsan_args=( undefined )
+		local ubsan_args_recover=()
+		if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
+			ubsan_args+=( alignment )
 			# crash depends on next instruction on that object
-		else
-			gcf_append_flags -fsanitize=null # link
-			gcf_append_flags -fno-sanitize-recover=null # force crash to stop running bad code
 		fi
+		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
+			ubsan_args+=( vptr )
+			# crash depends on next instruction on that object
+		fi
+#		if (( ${#ubsan_args[@]} == 0 )) ; then
+			ubsan_args+=( null )
+			ubsan_args_recover+=( null )
+#		fi
+		if (( ${#ubsan_args[@]} > 0 )) ; then
+			gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
+		fi
+		if (( ${#ubsan_args_recover[@]} > 0 )) ; then
+			gcf_append_flags -fno-sanitize-recover=$(echo ${ubsan_args_recover[@]} | tr " " ",") # force crash to stop before running bad code
+		fi
+
 		if [[ "${GCF_CFI_DEBUG}" != "1" && "${USE_UBSAN_VPTR}" != "1" ]] ; then
 			# Reduce the attack surface
 			gcf_append_flags -fsanitize-minimal-runtime
 		fi
+	fi
+}
+
+gcf_linker_errors_as_warnings() {
+	if [[ "${LINKER_ERRORS_AS_WARNINGS}" == "1" ]] ; then
+		gcf_append_ldflags -Wl,--warn-unresolved-symbols
 	fi
 }
 
@@ -988,6 +1023,7 @@ pre_pkg_setup()
 	gcf_use_ubsan
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
+	gcf_linker_errors_as_warnings
 	gcf_adjust_makeopts
 	gcf_record_start_time
 	gcf_print_flags
