@@ -778,7 +778,7 @@ gcf_add_cfi_flags() {
 	# at current state of this distro.  If a static-lib is detected, then
 	# CFI may have be disabled.
 	#
-	# CFI requires static linking (with -static for static executibles or
+	# CFI requires static linking (with -static for static executables or
 	# -Wl,-Bstatic with static-libs) for Basic CFI or building with
 	# -fsanitize-cfi-cross-dso for shared-libs.
 	#
@@ -826,6 +826,26 @@ gcf_add_cfi_flags() {
 			gcf_info "Adding CFI exception flags"
 			gcf_append_flags -fno-sanitize=$(echo "${cfi_exceptions[@]}" | tr " " ",")
 		fi
+		if [[ "${flags}" =~ "X" ]] ; then
+			gcf_info "Detected executable.  Linking to UBSan."
+			# For undefined symbol: __ubsan_handle_cfi_check_fail_abort
+			# For undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
+			# Only interested in linking to libclang_rt.ubsan_*-*.so.
+			if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
+				gcf_append_flags -fsanitize=vptr # link
+				# crash depends on next instruction on that object
+			else
+				gcf_append_flags -fsanitize=null # link
+				gcf_append_flags -fno-sanitize-recover=null # force crash to stop running bad code
+			fi
+			export GCF_APPLIED_UBSAN="1"
+		fi
+
+		if [[ "${GCF_CFI_DEBUG}" != "1" && "${USE_UBSAN_VPTR}" != "1" ]] ; then
+			# Reduces the attack surface
+			gcf_append_flags -fsanitize-minimal-runtime
+		fi
+
 		export GCF_CFI="1"
 	fi
 }
@@ -917,6 +937,32 @@ gcf_setup_traps() {
 	register_die_hook gcf_catch_errors
 }
 
+gcf_use_ubsan() {
+	# If a program is not linked with CFI, it may still need to be linked to
+	# UBSan to avoid linking errors:
+	# undefined symbol: __ubsan_handle_cfi_check_fail_abort
+	# undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
+
+	if [[ -z "${GCF_APPLIED_UBSAN}" \
+		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
+		&& ( "${USE_UBSAN}" == "1" || "${USE_UBSAN_VPTR}" == "1" ) ]] ; then
+		gcf_info "Adding UBSan flags"
+		# Only interested in linking to libclang_rt.ubsan_*-*.so.
+		# Use only if package contains executable.
+		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
+			gcf_append_flags -fsanitize=vptr # link
+			# crash depends on next instruction on that object
+		else
+			gcf_append_flags -fsanitize=null # link
+			gcf_append_flags -fno-sanitize-recover=null # force crash to stop running bad code
+		fi
+		if [[ "${GCF_CFI_DEBUG}" != "1" && "${USE_UBSAN_VPTR}" != "1" ]] ; then
+			# Reduce the attack surface
+			gcf_append_flags -fsanitize-minimal-runtime
+		fi
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -932,6 +978,7 @@ pre_pkg_setup()
 	gcf_strip_no_inline
 	gcf_strip_lossy
 	gcf_use_Oz
+	gcf_use_ubsan
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_adjust_makeopts
