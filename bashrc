@@ -841,10 +841,10 @@ gcf_add_cfi_flags() {
 				ubsan_args+=( vptr )
 				# crash depends on next instruction on that object
 			fi
-#			if (( ${#ubsan_args[@]} == 0 )) ; then
+			if (( ${#ubsan_args[@]} == 0 )) ; then
 				ubsan_args+=( null )
 				ubsan_args_recover+=( null )
-#			fi
+			fi
 			if (( ${#ubsan_args[@]} > 0 )) ; then
 				gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
 			fi
@@ -981,10 +981,10 @@ gcf_use_ubsan() {
 			ubsan_args+=( vptr )
 			# crash depends on next instruction on that object
 		fi
-#		if (( ${#ubsan_args[@]} == 0 )) ; then
+		if (( ${#ubsan_args[@]} == 0 )) ; then
 			ubsan_args+=( null )
 			ubsan_args_recover+=( null )
-#		fi
+		fi
 		if (( ${#ubsan_args[@]} > 0 )) ; then
 			gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
 		fi
