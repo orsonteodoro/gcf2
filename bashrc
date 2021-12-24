@@ -943,9 +943,16 @@ gcf_use_ubsan() {
 	# undefined symbol: __ubsan_handle_cfi_check_fail_abort
 	# undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
 
+	local has_ubsan=0
+	which clang 2>/dev/null 1>/dev/null || return
+	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
+	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
+
 	if [[ -z "${GCF_APPLIED_UBSAN}" \
 		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
-		&& ( "${USE_UBSAN}" == "1" || "${USE_UBSAN_VPTR}" == "1" ) ]] ; then
+		&& ( "${USE_UBSAN}" == "1" || "${USE_UBSAN_VPTR}" == "1" ) ]] \
+		&& (( ${has_ubsan} == 1 )) ; then
+
 		gcf_info "Adding UBSan flags"
 		# Only interested in linking to libclang_rt.ubsan_*-*.so.
 		# Use only if package contains executable.
