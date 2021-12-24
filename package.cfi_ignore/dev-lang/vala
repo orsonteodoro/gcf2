@@ -1,0 +1,4 @@
+[cfi-icall]
+# Found when building libsoup package
+# timsort.c:2129:5: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
+fun:_vala_array_destroy
