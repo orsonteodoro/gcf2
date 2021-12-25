@@ -854,11 +854,6 @@ gcf_add_cfi_flags() {
 			export GCF_APPLIED_UBSAN="1"
 		fi
 
-		if [[ "${GCF_CFI_DEBUG}" != "1" && "${USE_UBSAN_VPTR}" != "1" ]] ; then
-			# Reduces the attack surface
-			gcf_append_flags -fsanitize-minimal-runtime
-		fi
-
 		export GCF_CFI="1"
 	fi
 }
@@ -990,11 +985,6 @@ gcf_use_ubsan() {
 		fi
 		if (( ${#ubsan_args_recover[@]} > 0 )) ; then
 			gcf_append_flags -fno-sanitize-recover=$(echo ${ubsan_args_recover[@]} | tr " " ",") # force crash to stop before running bad code
-		fi
-
-		if [[ "${GCF_CFI_DEBUG}" != "1" && "${USE_UBSAN_VPTR}" != "1" ]] ; then
-			# Reduce the attack surface
-			gcf_append_flags -fsanitize-minimal-runtime
 		fi
 	fi
 }
