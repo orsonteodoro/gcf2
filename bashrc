@@ -155,7 +155,7 @@ gcf_met_clang_thinlto_requirement() {
 		if ( has_version "sys-devel/llvm:${s}" \
 			&& has_version "sys-devel/clang:${s}" \
 			&& has_version ">=sys-devel/lld-${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
@@ -170,7 +170,7 @@ gcf_met_clang_goldlto_requirement() {
 		if ( ( has_version "sys-devel/llvm:${s}[gold]" || has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
 			&& has_version "sys-devel/binutils[plugins,gold]" \
 			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
@@ -431,7 +431,7 @@ gcf_error "Disabling Clang CFI support."
 			) \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
 			&& has_version "sys-devel/llvm:${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=14} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
