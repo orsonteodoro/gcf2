@@ -923,7 +923,11 @@ gcf_error "changes"
 	if grep -q -E -e "(/usr/lib.*/.*+0x[0-9a-z]+): note: .* defined here" "${T}/build.log" \
 		&& grep -q -e "control flow integrity check for type '.*' failed during indirect function call" "${T}/build.log" ; then
 		# It will verify by function body address not by function declaration.
-gcf_error "Detected external function.  Try using -fno-sanitize-cfi-canonical-jump-tables."
+gcf_error "Detected external function.  Try rebuilding with"
+gcf_error "-fno-sanitize-cfi-canonical-jump-tables with the package containing"
+gcf_error "the source binary when using assembly, Python or non C family"
+gcf_error "language, or referencing an external function in the destination"
+gcf_error "lib."
 			# Portage will terminate after showing this.
 	fi
 }
