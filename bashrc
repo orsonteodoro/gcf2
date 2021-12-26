@@ -820,7 +820,7 @@ gcf_add_cfi_flags() {
 
 		if [[ "${CFI_CANONICAL_JUMP_TABLES}" == "0" ]] ; then
 			# Used for efficiency benefits or change technique of passing cfi checks
-			# based on declaration signature or by function body.
+			# based on function declaration signature (on) or by function body (off).
 			gcf_append_flags -fno-sanitize-cfi-canonical-jump-tables
 		fi
 
@@ -922,7 +922,7 @@ gcf_error "changes"
 	fi
 	if grep -q -E -e "(/usr/lib.*/.*+0x[0-9a-z]+): note: .* defined here" "${T}/build.log" \
 		&& grep -q -e "control flow integrity check for type '.*' failed during indirect function call" "${T}/build.log" ; then
-		# It will verify by function body address body not by function declaration.
+		# It will verify by function body address not by function declaration.
 gcf_error "Detected external function.  Try using -fno-sanitize-cfi-canonical-jump-tables."
 			# Portage will terminate after showing this.
 	fi
