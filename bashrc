@@ -26,7 +26,7 @@ gcf_error() {
 }
 
 gcf_append_ldflags() {
-	export LDFLAGS=$(echo "${LDFLAGS} ${@}")
+	export LDFLAGS="${LDFLAGS} ${@}"
 }
 
 gcf_print_flags() {
@@ -41,15 +41,15 @@ gcf_print_flags() {
 }
 
 gcf_append_flags() {
-	export COMMON_FLAGS=$(echo "${COMMON_FLAGS} ${@}")
-	export CFLAGS=$(echo "${CFLAGS} ${@}")
-	export CXXFLAGS=$(echo "${CXXFLAGS} ${@}")
-	export FCFLAGS=$(echo "${FCFLAGS} ${@}")
-	export FFLAGS=$(echo "${FFLAGS} ${@}")
-	export LDFLAGS=$(echo "${LDFLAGS} ${@}")
+	export COMMON_FLAGS="${COMMON_FLAGS} ${@}"
+	export CFLAGS="${CFLAGS} ${@}"
+	export CXXFLAGS="${CXXFLAGS} ${@}"
+	export FCFLAGS="${FCFLAGS} ${@}"
+	export FFLAGS="${FFLAGS} ${@}"
+	export LDFLAGS="${LDFLAGS} ${@}"
 
 	# For the perl-module.eclass
-	export DIST_MAKE=$(echo "${DIST_MAKE} ${@}")
+	export DIST_MAKE="${DIST_MAKE} ${@}"
 }
 
 _gcf_replace_flag() {
@@ -218,31 +218,31 @@ gcf_use_clang() {
 
 gcf_use_thinlto() {
 	gcf_info "Auto switching to ThinLTO"
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=lld")
+	LDFLAGS="${LDFLAGS} -fuse-ld=lld"
 	gcf_append_flags "-flto=thin"
 }
 
 gcf_use_clang_goldlto() {
 	gcf_info "Auto switching to Clang Gold LTO"
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold")
+	LDFLAGS="${LDFLAGS} -fuse-ld=gold"
 	gcf_append_flags "-flto=full"
 }
 
 gcf_use_gcc_goldlto() {
 	gcf_info "Auto switching to GCC Gold LTO"
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=gold")
+	LDFLAGS="${LDFLAGS} -fuse-ld=gold"
 	gcf_append_flags "-flto"
 }
 
 gcf_use_gcc_bfdlto() {
 	gcf_info "Auto switching to GCC BFD LTO"
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
+	LDFLAGS="${LDFLAGS} -fuse-ld=bfd"
 	gcf_append_flags "-flto"
 }
 
 gcf_use_clang_bfdlto() {
 	gcf_info "Auto switching to Clang BFD LTO"
-	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
+	LDFLAGS="${LDFLAGS} -fuse-ld=bfd"
 	gcf_append_flags "-flto=full"
 }
 
