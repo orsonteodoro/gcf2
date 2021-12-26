@@ -12,6 +12,8 @@
 #
 
 GCF_LIST_VERSION_MIN=3
+GCF_LLVM_MAX=14
+GCF_LLVM_MIN=11
 
 gcf_info() {
 	echo -e ">>> [GCF] ${@}"
@@ -145,7 +147,7 @@ gcf_strip_z_retpolineplt() {
 }
 
 gcf_met_clang_thinlto_requirement() {
-	local llvm_slots=(14 13 12 11)
+	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
 	has_version "sys-devel/llvm" || return 1
 
 	local found=1
@@ -160,7 +162,7 @@ gcf_met_clang_thinlto_requirement() {
 }
 
 gcf_met_clang_goldlto_requirement() {
-	local llvm_slots=(14 13 12 11)
+	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
 	has_version "sys-devel/llvm" || return 1
 
 	local found=1
@@ -403,7 +405,7 @@ get_cfi_flags() {
 }
 
 gcf_is_clang_cfi_ready() {
-	local llvm_slots=(14 13 12 11)
+	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
 	has_version "sys-devel/llvm" || return 1
 
 	if [[ "${CC_LTO}" == "clang" && "${CXX_LTO}" == "clang++" ]] ; then
