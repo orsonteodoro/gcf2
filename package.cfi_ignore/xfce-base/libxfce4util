@@ -1,4 +1,0 @@
-[cfi-icall]
-# Build time failures
-#   xfce-rc.c:83:1: runtime error: control flow integrity check for type 'unsigned long (const char *, union (unnamed at xfce-rc.c:83:1), union (unnamed at xfce-rc.c:83:1))' failed during indirect function call
-type:G_DEFINE_BOXED_TYPE

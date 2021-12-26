@@ -817,6 +817,13 @@ gcf_add_cfi_flags() {
 		gcf_info "Adding CFI Cross-DSO flags"
 		gcf_append_flags -fvisibility=default
 		gcf_append_flags -fsanitize-cfi-cross-dso
+
+		if [[ "${CFI_CANONICAL_JUMP_TABLES}" == "0" ]] ; then
+			# Used for efficiency benefits or change technique of passing cfi checks
+			# based on declaration signature or by function body.
+			gcf_append_flags -fno-sanitize-cfi-canonical-jump-tables
+		fi
+
 		if [[ "${GCF_CFI_DEBUG}" == "1" ]] ; then
 			gcf_warn "CFI debug is enabled.  Turn it off in production."
 			gcf_append_flags -fno-sanitize-trap=cfi
@@ -825,33 +832,6 @@ gcf_add_cfi_flags() {
 		if (( ${#cfi_exceptions[@]} > 0 )) ; then
 			gcf_info "Adding CFI exception flags"
 			gcf_append_flags -fno-sanitize=$(echo "${cfi_exceptions[@]}" | tr " " ",")
-		fi
-		if [[ "${flags}" =~ "X" ]] ; then
-			gcf_info "Detected executable.  Linking to UBSan."
-			# For undefined symbol: __ubsan_handle_cfi_check_fail_abort
-			# For undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
-			# Only interested in linking to libclang_rt.ubsan_*-*.so.
-			local ubsan_args=( )
-			local ubsan_args_recover=( )
-			if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
-				ubsan_args+=( alignment )
-				# crash depends on next instruction on that object
-			fi
-			if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
-				ubsan_args+=( vptr )
-				# crash depends on next instruction on that object
-			fi
-			if (( ${#ubsan_args[@]} == 0 )) ; then
-				ubsan_args+=( null )
-				ubsan_args_recover+=( null )
-			fi
-			if (( ${#ubsan_args[@]} > 0 )) ; then
-				gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
-			fi
-			if (( ${#ubsan_args_recover[@]} > 0 )) ; then
-				gcf_append_flags -fno-sanitize-recover=$(echo ${ubsan_args_recover[@]} | tr " " ",") # force crash to stop before running bad code
-			fi
-			export GCF_APPLIED_UBSAN="1"
 		fi
 
 		export GCF_CFI="1"
@@ -934,9 +914,16 @@ gcf_error "(5) If this package is permenently blacklisted (because it contains"
 gcf_error "a static-lib or other), the dependencies need to be re-emerged"
 gcf_error "without CFI depending on how importance of the executable in this"
 gcf_error "package."
+gcf_error
 gcf_error "For cases 4 and 5 use \`equery b libfile\` to determine the package"
 gcf_error "and \`emerge -1vO depend_pkg_name\` to revert with package.env"
 gcf_error "changes"
+			# Portage will terminate after showing this.
+	fi
+	if grep -q -E -e "(/usr/lib.*/.*+0x[0-9a-z]+): note: .* defined here" "${T}/build.log" \
+		&& grep -q -e "control flow integrity check for type '.*' failed during indirect function call" "${T}/build.log" ; then
+		# It will verify by function body address body not by function declaration.
+gcf_error "Detected external function.  Try using -fno-sanitize-cfi-canonical-jump-tables."
 			# Portage will terminate after showing this.
 	fi
 }
@@ -946,6 +933,12 @@ gcf_setup_traps() {
 }
 
 gcf_use_ubsan() {
+	# We would like to disable CFI but link to UBSan to avoid missing symbols.
+	# One way is to point it to the abspath of the UBSan lib, which is bad because
+	# you need to update it every new point release of compiler-rt-sanitizers.
+	# The other way is to do it indirectly by performing a UBsan check.
+	# Choosing the right UBSan check depends on the missing symbol.
+
 	# If a program is not linked with CFI, it may still need to be linked to
 	# UBSan to avoid linking errors:
 	# undefined symbol: __ubsan_handle_cfi_check_fail_abort
@@ -956,11 +949,11 @@ gcf_use_ubsan() {
 	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
 
-	if [[ -z "${GCF_APPLIED_UBSAN}" \
-		&& ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
-		&& ( "${USE_UBSAN}" == "1" \
-			|| "${USE_UBSAN_VPTR}" == "1" \
-			|| "${USE_UBSAN_ALIGN}" == "1" ) ]] \
+	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
+		&& ( "${USE_UBSAN_ALIGN}" == "1" \
+			|| "${USE_UBSAN_NULL}" == "1" \
+			|| "${USE_UBSAN_VPTR}" == "1" ) \
+			]] \
 		&& (( ${has_ubsan} == 1 )) ; then
 
 		gcf_info "Adding UBSan flags"
@@ -970,11 +963,17 @@ gcf_use_ubsan() {
 		local ubsan_args_recover=()
 		if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
 			ubsan_args+=( alignment )
-			# crash depends on next instruction on that object
+			# Crash depends on next instruction on that object.
+		fi
+		if [[ "${USE_UBSAN_NULL}" == "1" ]] ; then
+			ubsan_args+=( null )
+			ubsan_args_recover+=( null ) # crash
+			# Crash depends on next instruction on that object.
 		fi
 		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
+			# Cannot be combined if build scripts use -fno-rtti.
 			ubsan_args+=( vptr )
-			# crash depends on next instruction on that object
+			# Crash depends on next instruction on that object.
 		fi
 		if (( ${#ubsan_args[@]} == 0 )) ; then
 			ubsan_args+=( null )
@@ -1108,6 +1107,20 @@ gcf_error
 
 		# TODO: auto inspect packages that turn off compiler verbosity.
 	fi
+}
+
+gcf_check_external_linkage_for_cfi() {
+	[[ -n "${CFI_CANONICAL_JUMP_TABLES}" ]] && return
+	if grep -r -q -e "asmlinkage" "${WORKDIR}" ; then
+gcf_ewarn "Detected asmlinkage (aka external assembly function).  Add"
+gcf_ewarn "-fno-sanitize-cfi-canonical-jump-tables to *FLAGS or add"
+gcf_ewarn "CFI_CANONICAL_JUMP_TABLES=1 to per-package envvar to bypass check"
+gcf_ewarn "if problematic."
+	fi
+}
+
+post_src_unpack() {
+	gcf_check_external_linkage_for_cfi
 }
 
 post_src_prepare() {
