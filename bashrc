@@ -925,9 +925,8 @@ gcf_error "changes"
 		# It will verify by function body address not by function declaration.
 gcf_error "Detected external function.  Try rebuilding with"
 gcf_error "-fno-sanitize-cfi-canonical-jump-tables with the package containing"
-gcf_error "the source binary when using assembly, Python or non C family"
-gcf_error "language, or referencing an external function in the destination"
-gcf_error "lib."
+gcf_error "the source binary when using assembly, a non C family language,"
+gcf_error "or referencing an external function in the destination lib."
 			# Portage will terminate after showing this.
 	fi
 }
@@ -956,6 +955,7 @@ gcf_use_ubsan() {
 	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
 		&& ( "${USE_UBSAN_ALIGN}" == "1" \
 			|| "${USE_UBSAN_NULL}" == "1" \
+			|| "${USE_UBSAN_UNDEFINED}" == "1" \
 			|| "${USE_UBSAN_VPTR}" == "1" ) \
 			]] \
 		&& (( ${has_ubsan} == 1 )) ; then
@@ -973,6 +973,10 @@ gcf_use_ubsan() {
 			ubsan_args+=( null )
 			ubsan_args_recover+=( null ) # crash
 			# Crash depends on next instruction on that object.
+		fi
+		if [[ "${USE_UBSAN_UNDEFINED}" == "1" ]] ; then
+			ubsan_args+=( undefined )
+			# Crash depends on next instruction
 		fi
 		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
 			# Cannot be combined if build scripts use -fno-rtti.
@@ -998,12 +1002,23 @@ gcf_linker_errors_as_warnings() {
 	fi
 }
 
+gcf_split_lto_unit() {
+	local require_lto_split=0
+	# Applies to packages with static-libs
+	if gcf_is_package_lto_restricted && [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] ; then
+		require_lto_split=1
+	fi
+	[[ "${SPLIT_LTO_UNIT}" == "1" ]] && require_lto_split=1
+	(( ${require_lto_split} == 1 )) && gcf_append_flags -fsplit-lto-unit
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
 	gcf_setup_traps
 	gcf_replace_flags
 	gcf_lto
+	gcf_split_lto_unit
 	gcf_add_clang_cfi
 	gcf_retpoline_translate
 	gcf_strip_no_plt
