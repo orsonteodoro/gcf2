@@ -225,6 +225,7 @@ ebuild itself or the build scripts may forcefully switch compilers.
 * no-cfi-vcall.conf -- Turn off Clang CFI vcall (i.e. Forward Edge CFI, disable as a last resort)
 * remove-no-inline.conf -- Removes -fno-inline
 * remove-lto.conf -- Removes the -flto flag
+* remove-split-lto-unit.conf -- Disables auto applying of -fsplit-lto-unit
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
 * skip-ir-check.conf -- Disables (static-libs) IR compatibility checks when
