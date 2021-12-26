@@ -229,10 +229,10 @@ ebuild itself or the build scripts may forcefully switch compilers.
 checking
 * skip-ir-check.conf -- Disables (static-libs) IR compatibility checks when
 LTOing systemwide
-* split-lto-unit.conf -- Enables LTO splitting.  It should be applied
-to packages that Clang LTOed static-libs.
 * skipless.conf -- Force use of GCC to utilize -fprefetch-loop-arrays (
 applied to audio/video packages that do decoding playback.)
+* split-lto-unit.conf -- Enables LTO splitting.  It should be applied
+to packages that Clang LTOed static-libs.  It is implied in CFIed packages.
 * use-gold.conf -- Turn on use of Gold LTO
 * use-thinlto.conf -- Turn on use of ThinLTO
 
