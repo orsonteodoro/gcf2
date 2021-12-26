@@ -1005,8 +1005,12 @@ gcf_linker_errors_as_warnings() {
 gcf_split_lto_unit() {
 	local require_lto_split=0
 	# Applies to packages with static-libs
-	if gcf_is_package_lto_restricted && [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] ; then
-		require_lto_split=1
+	if gcf_is_package_lto_restricted \
+		&& [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] ; then
+		if [[ "${CFLAGS}" =~ "-flto" \
+			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ]] ; then
+			require_lto_split=1
+		fi
 	fi
 	[[ "${SPLIT_LTO_UNIT}" == "1" ]] && require_lto_split=1
 	(( ${require_lto_split} == 1 )) && gcf_append_flags -fsplit-lto-unit
