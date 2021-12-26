@@ -243,7 +243,7 @@ gcf_use_gcc_bfdlto() {
 gcf_use_clang_bfdlto() {
 	gcf_info "Auto switching to Clang BFD LTO"
 	LDFLAGS=$(echo "${LDFLAGS} -fuse-ld=bfd")
-	gcf_append_flags "-flto"
+	gcf_append_flags "-flto=full"
 }
 
 gcf_is_package_missing_in_lto_lists() {
