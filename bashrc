@@ -852,8 +852,8 @@ gcf_add_clang_cfi() {
 		return
 	fi
 
-	if [[ ( "${CFLAGS}" =~ "-flto" ) \
-		|| ( "${CXXFLAGS}" =~ "-flto" ) ]] \
+	if [[ "${CFLAGS}" =~ "-flto" \
+		|| "${CXXFLAGS}" =~ "-flto" ]] \
 		|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 		:;
 	else
@@ -1010,8 +1010,8 @@ gcf_split_lto_unit() {
 	# Applies to packages with static-libs
 	if gcf_is_package_lto_restricted \
 		&& [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] ; then
-		if [[ "${CFLAGS}" =~ "-flto" \
-			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ]] ; then
+		if [[ "${CFLAGS}" =~ "-flto" ]] \
+			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 			require_lto_split=1
 		fi
 	fi
