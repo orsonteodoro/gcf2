@@ -415,7 +415,7 @@ the cause needs to happen so that the attack surface is minimized.
 
 Sometimes it is not obvious which dependency is the problem.  You may need to
 backtrack and rollback 2 levels deep or more while unCFIing those that block
-re-emerging the pack.  It is sometimes those CFIed blocks that should be
+re-emerging the package.  It is sometimes those CFIed blocks that should be
 unCFIed are cause by those package.  The more hints are provided, the more
 easy to fix the problem.  It is a good idea to use the GCF_CFI_DEBUG=1
 variable in the first `emerge -ev @world` pass for your own personal
