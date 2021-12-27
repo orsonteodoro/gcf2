@@ -1138,10 +1138,10 @@ gcf_error
 gcf_check_external_linkage_for_cfi() {
 	[[ -n "${CFI_CANONICAL_JUMP_TABLES}" ]] && return
 	if find "${WORKDIR}" -name "*.asm" ; then
-gcf_ewarn "Detected assembly file(s).  Either add"
-gcf_ewarn "-fno-sanitize-cfi-canonical-jump-tables to *FLAGS to fix cfi"
-gcf_ewarn "violation or add CFI_CANONICAL_JUMP_TABLES=1 to per-package envvar"
-gcf_ewarn "to bypass this check if problematic."
+gcf_warn "Detected assembly file(s).  Either add"
+gcf_warn "-fno-sanitize-cfi-canonical-jump-tables to *FLAGS to fix cfi"
+gcf_warn "violation or add CFI_CANONICAL_JUMP_TABLES=1 to per-package envvar"
+gcf_warn "to bypass this check if problematic."
 	fi
 }
 
