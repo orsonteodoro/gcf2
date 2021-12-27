@@ -1140,9 +1140,8 @@ gcf_check_external_linkage_for_cfi() {
 	local nfiles=$(find "${WORKDIR}" -name "*.asm" 2>/dev/null | wc -l)
 	if (( ${nfiles} > 0 )) ; then
 gcf_warn "Detected assembly file(s).  A -fno-sanitize-cfi-canonical-jump-tables"
-gcf_warn "may needed to be added to *FLAGS to fix CFI function violation."
-gcf_warn "checks.  If no problems are encountered, you may skip this"
-gcf_warn "recommenendation."
+gcf_warn "may needed to be added to *FLAGS to fix a CFI function violation."
+gcf_warn "If no problems are encountered, you may skip this recommenendation."
 	fi
 }
 
