@@ -1142,7 +1142,7 @@ gcf_check_external_linkage_for_cfi() {
 gcf_warn "Detected assembly file(s).  A -fno-sanitize-cfi-canonical-jump-tables"
 gcf_warn "may needed to be added to per-package *FLAGS to fix a external or"
 gcf_warn "indirect CFI function violation.  If no problems are encountered,"
-gcf_warn "you may skip this recommenendation.  See docs for additional info."
+gcf_warn "you may skip this recommendation.  See docs for additional info."
 	fi
 }
 
