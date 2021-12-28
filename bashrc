@@ -695,7 +695,8 @@ gcf_strip_lossy()
 
 gcf_use_Oz()
 {
-	[[ "${KEEP_OFLAG}" == "1" ]] && return
+	[[ "${FORCE_OS}" == "1" ]] && return
+	[[ "${FORCE_OZ}" == "1" ]] && return
 	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) && "${CFLAGS}" =~ "-Os" ]] ; then
 		gcf_info "Detected clang.  Converting -Os -> -Oz"
 		_gcf_replace_flag "-Os" "-Oz"
