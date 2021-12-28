@@ -943,7 +943,7 @@ gcf_use_ubsan() {
 	# We would like to disable CFI but link to UBSan to avoid missing symbols.
 	# One way is to point it to the abspath of the UBSan lib, which is bad because
 	# you need to update it every new point release of compiler-rt-sanitizers.
-	# The other way is to do it indirectly by performing a UBsan check.
+	# The other way is to do it indirectly by performing a UBSan check.
 	# Choosing the right UBSan check depends on the missing symbol.
 
 	# If a program is not linked with CFI, it may still need to be linked to
@@ -986,10 +986,6 @@ gcf_use_ubsan() {
 			# Cannot be combined if build scripts use -fno-rtti.
 			ubsan_args+=( vptr )
 			# Crash depends on next instruction on that object.
-		fi
-		if (( ${#ubsan_args[@]} == 0 )) ; then
-			ubsan_args+=( null )
-			ubsan_args_recover+=( null )
 		fi
 		if (( ${#ubsan_args[@]} > 0 )) ; then
 			gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
