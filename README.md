@@ -442,9 +442,9 @@ for that library and cross reference it with /etc/portage/emerge-cfi-world.cfi
 and /etc/portage/emerge.lst.  If that package has been CFIed use
 disable-clang-cfi.conf and re-emerge to fix the package.
 
-Several CFIed shared libraries may be responsible for this message.
+Several CFIed shared libraries could be responsible for this message.
 
-Once, the the message goes away, try to re-emerge back the max set of CFIed
+Once, the message goes away, try to re-emerge back the max set of CFIed
 packages with CFI that were not responsible for triggering that message to
 reduce the attack surface and to increase mitigation.
 
