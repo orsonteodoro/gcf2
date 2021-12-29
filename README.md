@@ -462,5 +462,5 @@ less chance of triggering the sanitizer check.
 mitigation.
 3.  Ignore linker warnings with linker-errors-as-warnings.conf added per
 package.  This should only be done for shared-lib packages without executables.
-It is assumed that these packages will link to a executible package that is or
+It is assumed that these packages will link to an executible package that is or
 will be linked to UBSan or be CFIed.
