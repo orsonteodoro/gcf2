@@ -426,8 +426,10 @@ configuration and set of packages.  Then, disable the flag in subsequent
 hours to be restored back in minutes.  Details are covered in the
 [wiki](https://wiki.gentoo.org/wiki/Ccache).
 
+##### Resolving the case 4 error
+
 Sometimes disabling all CFI schemes will not work.  If the following message is
-encountered:
+encountered with a list of shared libraries:
 
 ==558==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
 
@@ -439,6 +441,25 @@ for that library and cross reference it with /etc/portage/emerge-cfi-world.cfi
 and /etc/portage/emerge.lst.  If that package has been CFIed use
 disable-clang-cfi.conf and re-emerge to fix the package.
 
+Several CFIed shared libraries may be responsible for this message.
+
 Once, the the message goes away, try to re-emerge back the max set of CFIed
 packages with CFI that were not responsible for triggering that message to
 reduce the attack surface and to increase mitigation.
+
+#### Linking a disabled CFI app package to other CFI shared libraries
+
+When you completely disable CFI on the app package, you will encounter
+the `undefined symbol: __ubsan_handle_cfi_check_fail_abort` error again.
+
+The following can be used:
+1.  Indirectly link to UBSan, which is preferred.  These correspond to the
+per-package ubsan-align.conf, ubsan-null.conf, ubsan-vptr.conf configs.  The
+.conf most preferred is the one that is the lowest performance impacting one and
+less chance of triggering the sanitizer.
+2.  Rollback dependencies without CFI.  This is not desirable since it lowers
+mitigation.
+3.  Ignore linker warnings with linker-errors-as-warnings.conf added per
+package.  This should only be done for shared-lib packages without executables.
+It is assumed that these packages will link to a executible package that is or
+will be linked to UBSan or be CFIed.
