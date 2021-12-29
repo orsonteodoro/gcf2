@@ -460,7 +460,7 @@ per-package ubsan-align.conf, ubsan-null.conf, ubsan-vptr.conf configs.  The
 less chance of triggering the sanitizer check.
 2.  Rollback dependencies without CFI.  This is not desirable since it lowers
 mitigation.
-3.  Ignore linker warnings with linker-errors-as-warnings.conf added per
+3.  Ignore linker errors with linker-errors-as-warnings.conf added per
 package.  This should only be done for shared-lib packages without executables.
 It is assumed that these packages will link to an executable package that is or
 will be linked to UBSan or be CFIed.
