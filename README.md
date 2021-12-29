@@ -422,6 +422,10 @@ variable in the first `emerge -ev @world` pass for your own personal
 configuration and set of packages.  Then, disable the flag in subsequent
 `emerge -ev @world` passes.
 
+`ccache` is recommended to speed up rollbacks for packages that normally take
+hours to be restored back in minutes.  Details are covered in the
+[wiki](https://wiki.gentoo.org/wiki/Ccache).
+
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered:
 
