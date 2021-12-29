@@ -450,7 +450,7 @@ reduce the attack surface and to increase mitigation.
 
 #### Linking a disabled CFI app package to other CFI shared libraries
 
-When you completely disable CFI on the app package, you will encounter
+When you completely disable CFI on the app package, you may encounter
 the `undefined symbol: __ubsan_handle_cfi_check_fail_abort` error again.
 
 The following can be used:
