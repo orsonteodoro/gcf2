@@ -457,7 +457,7 @@ The following can be used:
 1.  Indirectly link to UBSan, which is preferred.  These correspond to the
 per-package ubsan-align.conf, ubsan-null.conf, ubsan-vptr.conf configs.  The
 .conf most preferred is the one that is the lowest performance impacting one and
-less chance of triggering the sanitizer.
+less chance of triggering the sanitizer check.
 2.  Rollback dependencies without CFI.  This is not desirable since it lowers
 mitigation.
 3.  Ignore linker warnings with linker-errors-as-warnings.conf added per
