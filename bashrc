@@ -824,7 +824,8 @@ gcf_add_cfi_flags() {
 
 		if [[ "${CFI_CANONICAL_JUMP_TABLES}" == "0" ]] ; then
 			# Used for efficiency benefits or change technique of passing cfi checks
-			# based on function declaration signature (on) or by function body (off).
+			# based on function declaration signature (default on) or by function
+			# body address (setting below).
 			gcf_append_flags -fno-sanitize-cfi-canonical-jump-tables
 		fi
 
