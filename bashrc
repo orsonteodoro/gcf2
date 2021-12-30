@@ -1005,6 +1005,7 @@ gcf_linker_errors_as_warnings() {
 
 gcf_split_lto_unit() {
 	[[ "${DISABLE_SPLIT_LTO_UNIT}" == "1" ]] && return
+	[[ -z "${CC}" || -z "${CXX}" || "${CC}" == "gcc" || "${CXX}" == "g++" ]] && return
 	local require_lto_split=0
 	# Applies to packages with static-libs
 	if gcf_is_package_lto_restricted \
