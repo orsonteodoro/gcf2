@@ -473,7 +473,13 @@ gcf_lto() {
 		)
 		local f
 		for f in ${flag_names[@]} ; do
-			eval "export ${f}=\$(echo \"\$${f}\" | sed -r -e 's/-flto( |\$)//g' -e \"s/-flto=[0-9]+//g\" -e \"s/-flto=(auto|jobserver|thin|full)//g\" -e \"s/-fuse-ld=(lld|bfd|gold)//g\")"
+			eval "export ${f}=\$("\
+"echo \"\$${f}\" "\
+"  |  sed -r -e  's/-flto( |\$)//g' "\
+"            -e \"s/-flto=[0-9]+//g\" "\
+"            -e \"s/-flto=(auto|jobserver|thin|full)//g\" "\
+"            -e \"s/-fuse-ld=(lld|bfd|gold)//g\" "\
+"                                           )"
 		done
 	}
 
