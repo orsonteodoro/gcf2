@@ -934,6 +934,11 @@ gcf_error "the source binary when using assembly, a non C family language,"
 gcf_error "or referencing an external function in the destination lib."
 			# Portage will terminate after showing this.
 	fi
+	if grep -q -e ".a: error adding symbols: file format not recognized" "${T}/build.log" ; then
+gcf_error "Detected static-libs IR incompatibility.  Please disable LTO on"
+gcf_error "packages that contain .a files listed in the build.log."
+gcf_error "Use \`equery b path-to-static-lib.a\` to find those packages."
+	fi
 }
 
 gcf_setup_traps() {
