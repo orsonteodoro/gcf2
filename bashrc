@@ -898,7 +898,8 @@ gcf_error "CFI flags."
 			# Portage will terminate after showing this.
 		fi
 	fi
-	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" "${T}/build.log" ; then
+	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" \
+		"${T}/build.log" ; then
 gcf_error "Try disabling cfi-icall, first then more cfi related flags like"
 gcf_error "cfi-nvcall, cfi-vcall."
 			# Portage will terminate after showing this.
