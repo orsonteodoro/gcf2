@@ -938,6 +938,7 @@ gcf_error "or referencing an external function in the destination lib."
 gcf_error "Detected static-libs IR incompatibility.  Please disable LTO on"
 gcf_error "packages that contain .a files listed in the build.log."
 gcf_error "Use \`equery b static-lib\` to find those packages."
+			# Portage will terminate after showing this.
 	fi
 }
 
