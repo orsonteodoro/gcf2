@@ -817,12 +817,11 @@ gcf_add_cfi_flags() {
 		[[ "${NO_CFI_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast cfi-unrelated-cast )
 		[[ "${NO_CFI_CAST_STRICT}" == "1" ]] && cfi_exceptions+=( cfi-cast-strict )
 		[[ "${NO_CFI_DERIVED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast )
-		[[ "${NO_CFI_ICALL}" == "1" ]] && cfi_exceptions+=( cfi-icall )
+		[[ "${NO_CFI_ICALL}" == "1" || ! ( "${flags}" =~ "I" ) ]] && cfi_exceptions+=( cfi-icall )
 		[[ "${NO_CFI_MFCALL}" == "1" ]] && cfi_exceptions+=( cfi-mfcall )
 		[[ "${NO_CFI_NVCALL}" == "1" ]] && cfi_exceptions+=( cfi-nvcall )
 		[[ "${NO_CFI_UNRELATED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-unrelated-cast )
 		[[ "${NO_CFI_VCALL}" == "1" ]] && cfi_exceptions+=( cfi-vcall )
-		[[ ! ( "${flags}" =~ "I" ) ]] && cfi_exceptions+=( cfi-icall )
 
 		gcf_info "Adding CFI Cross-DSO flags"
 		gcf_append_flags -fvisibility=default
@@ -1037,6 +1036,25 @@ gcf_split_lto_unit() {
 	(( ${require_lto_split} == 1 )) && gcf_append_flags -fsplit-lto-unit
 }
 
+gcf_singlefy_spaces() {
+	local flag_names=(
+		COMMON_FLAGS
+		CFLAGS
+		CXXFLAGS
+		FCFLAGS
+		FFLAGS
+		LDFLAGS
+		DIST_MAKE
+	)
+	local f
+	for f in ${flag_names[@]} ; do
+		eval "export ${f}=\$("\
+"echo \"\$${f}\" "\
+"  | sed -E -e 's/[ ]+/ /g' "\
+"                                   )"
+	done
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1058,6 +1076,7 @@ pre_pkg_setup()
 	gcf_replace_freorder_blocks_algorithm
 	gcf_linker_errors_as_warnings
 	gcf_adjust_makeopts
+	gcf_singlefy_spaces
 	gcf_record_start_time
 	gcf_print_flags
 }
