@@ -1025,10 +1025,15 @@ gcf_split_lto_unit() {
 		&& [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] ; then
 		if [[ "${CFLAGS}" =~ "-flto" ]] \
 			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
+			# Auto apply split-lto-unit
 			require_lto_split=1
 		fi
 	fi
+
+	# Force split-lto-unit
+	# For ebuilds or build scripts that switch to clang and auto add LTO flags.
 	[[ "${SPLIT_LTO_UNIT}" == "1" ]] && require_lto_split=1
+
 	(( ${require_lto_split} == 1 )) && gcf_append_flags -fsplit-lto-unit
 }
 
