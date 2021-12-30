@@ -937,7 +937,7 @@ gcf_error "or referencing an external function in the destination lib."
 	if grep -q -e ".a: error adding symbols: file format not recognized" "${T}/build.log" ; then
 gcf_error "Detected static-libs IR incompatibility.  Please disable LTO on"
 gcf_error "packages that contain .a files listed in the build.log."
-gcf_error "Use \`equery b path-to-static-lib.a\` to find those packages."
+gcf_error "Use \`equery b static-lib\` to find those packages."
 	fi
 }
 
