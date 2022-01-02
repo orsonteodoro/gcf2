@@ -916,7 +916,7 @@ gcf_error "Steps to resolve in order with one re-emerge per case:"
 gcf_error
 gcf_error "(1) Try disabling all CFI flags first, and if it works then converge"
 gcf_error "towards the minimal CFI exception set for this package."
-gcf_error "(2) Disable CFI for this package."
+gcf_error "(2) Disable CFI for this package.  UBSan may still need to be linked."
 gcf_error "(3) Switch back to GCC."
 gcf_error "(4) If this package is placed in the no-data LTO list, disable CFI"
 gcf_error "in each named dependency temporary until this package is emerged"
