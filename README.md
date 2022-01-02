@@ -410,7 +410,7 @@ a static-lib or other), the dependencies need to be re-emerged
 without CFI depending on the importance of the executable in this
 package.
 
-For cases 4 and 5 use \`equery b libfile\` to determine the package
+For cases 5 and 6 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 

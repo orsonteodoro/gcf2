@@ -930,7 +930,7 @@ gcf_error "a static-lib or other), the dependencies need to be re-emerged"
 gcf_error "without CFI depending on how importance of the executable in this"
 gcf_error "package."
 gcf_error
-gcf_error "For cases 4 and 5 use \`equery b libfile\` to determine the package"
+gcf_error "For cases 5 and 6 use \`equery b libfile\` to determine the package"
 gcf_error "and \`emerge -1vO depend_pkg_name\` to revert with package.env"
 gcf_error "changes"
 			# Portage will terminate after showing this.
