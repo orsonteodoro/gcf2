@@ -345,7 +345,8 @@ the future.
 * Packages that install static-libs will disable CFI for that package.  This
 problem is due to -fvisibility requirements which can cause missing symbols
 and unusable shared libraries problem due to differences in enablement of CFI
-in CFI Basic mode and CFI Cross-DSO mode.
+in CFI Basic mode and CFI Cross-DSO mode.  In addition, this prevents the
+applying the -fsanitize-cfi-cross-dso to object files for static-libs.
 * Around 34% of the entire @world set will be CFIed.  Most of the @world set
 are skipped due to a lack of binaries.  Others are skip due to containing
 static-libs, build-time failures, first time install.  Around 16% of @world

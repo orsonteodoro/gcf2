@@ -782,7 +782,9 @@ gcf_translate_no_inline()
 gcf_add_cfi_flags() {
 	#
 	# The configure, compile, and installs for shared- and static-libs
-	# should totally isolated due to the -fvisibility changes.
+	# should totally isolated due to the -fvisibility changes and
+	# disallowing -fsanitize-cfi-cross-dso for object files for
+	# static-libs.
 	#
 	# This means that CFI Cross-DSO and basic CFI are mutually exclusive
 	# at current state of this distro.  If a static-lib is detected, then
