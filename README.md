@@ -395,15 +395,17 @@ Some rollback to remove CFI of the dependencies may be required.
 
 Steps to resolve in order with one re-emerge per case:
 
-1. Try disabling all CFI flags first, and if it works then converge
+1. Manually recategorize the package in /etc/portage/emerge*.lst if"
+gcf_error "temporarly blocked.
+2. Try disabling all CFI flags first, and if it works then converge
 towards the minimal CFI exception set for this package.
-2. Disable CFI for this package.    UBSan may still need to be linked.
+3. Disable CFI for this package.    UBSan may still need to be linked.
 It's discussed several sections below.
-3. Switch back to GCC.
-4. If this package is placed in the no-data LTO list, disable CFI
+4. Switch back to GCC.
+5. If this package is placed in the no-data LTO list, disable CFI
 in each named dependency temporary until this package is emerged
 then re-emerge back the dependencies with CFI.
-5. If this package is permenently blacklisted (because it contains
+6. If this package is permenently blacklisted (because it contains
 a static-lib or other), the dependencies need to be re-emerged
 without CFI depending on the importance of the executable in this
 package.
