@@ -464,3 +464,14 @@ mitigation.
 package.  This should only be done for shared-lib packages without executables.
 It is assumed that these packages will link to an executable package that is or
 will be linked to UBSan or be CFIed.
+
+## One liners
+
+### Sorted list of completion times
+
+If you enabled logging for bashrc in make.conf, you can get a sorted list of
+ebuild completion times by doing the following:
+
+```Shell
+for f in $(ls /var/log/emerge/build-logs) ; do l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") && echo "${l} ${f}" ; done  | sort -V
+```
