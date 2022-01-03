@@ -2,3 +2,8 @@
 # Found when building libsoup package
 # timsort.c:2129:5: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
 fun:_vala_array_destroy
+
+# Found when building gnome-calculator
+# arraylist.c:340:68: runtime error: control flow integrity check for type 'void *(void *)' failed during indirect function call
+# (/usr/lib64/vala-0.52/libvalaccodegen.so+0x6b170): note: (unknown) defined here
+# gee/arraylist.c is generated code
