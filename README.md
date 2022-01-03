@@ -461,7 +461,8 @@ The following can be used:
 1.  Indirectly link to UBSan, which is preferred.  These correspond to the
 per-package ubsan-align.conf, ubsan-null.conf, ubsan-vptr.conf configs.  The
 .conf most preferred is the one that is the lowest performance impacting one and
-less chance of triggering the sanitizer check.
+less chance of triggering the sanitizer check.  The executable packages that
+link to the shared-lib must have the UBSan sanitizer symbol as well.
 2.  Rollback dependencies without CFI.  This is not desirable since it lowers
 mitigation.
 3.  Ignore linker errors with linker-errors-as-warnings.conf added per
