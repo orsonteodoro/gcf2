@@ -147,11 +147,11 @@ applied per-package to remove or convert flags to their lossless counterparts
 in packages related to games, graphics, audio.
 
 <a name="footnote2">[2]</a> If you have a package that does lazy binding
-(LDFLAGS=-Wl,lazy) then -fno-plt is not compatible with that package especially
-the x11-drivers.  You need to add a  ${CATEGORY}/${PN} disable-fno-plt.conf
-z-retpolineplt.conf  row in the package.env. This assumes that the contents of
-the bashrc have been copied into /etc/portage/bashrc or sourced from an external
-file.
+(i.e. LDFLAGS=-Wl,lazy), then -fno-plt is not compatible with that package
+especially the x11-drivers.  You need to add a
+`${CATEGORY}/${PN} disable-fno-plt.conf z-retpolineplt.conf`
+row in the package.env. This assumes that the contents of the bashrc have been
+copied into /etc/portage/bashrc or sourced from an external file.
 
 <a name="footnote3">[3]</a> If you have a clang package, you may need to add a
 ${CATEGORY}/${PN} disable-fopt-info.conf row to disable fopt-info since
