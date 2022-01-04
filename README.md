@@ -19,15 +19,15 @@ is focused on systemwide CFI.  Performance degration is indiscernible
 mostly maybe except for loading times.
 
 Systemwide Clang CFI support has been applied for many packages but there
-are still a lot of packages that are not able to be CFIed, with some 
-unmergable packages (x11-libs/vte, dev-util/bazel) one of them due to the
-missing UBSan symbols problem even though CFI was disabled.  Using systemwide
-CFI is not recommend until this issue is solved along with eliminating the UBSan
-sanitizer choose game when CFI is disabled.  It maybe would take an
-additional compiler patch to eliminate the guessing game with maybe making
-it a default or an additional compiler switch to solve these problems to
-smooth things out.  The reason for not recommended yet is that this block
-could prevent critical updates but it is unlikely to block a major package
+are still a lot of packages that are not able to be CFIed, with some unmergable
+packages (x11-libs/vte, dev-util/bazel) one of them due to the missing UBSan
+symbols problem even though CFI was disabled and UBSan was used.  Using
+systemwide CFI is not recommend until this issue is solved along with
+eliminating the UBSan sanitizer choose game when CFI is disabled.  It maybe
+would take an additional compiler patch to eliminate the guessing game with
+maybe making it a default or an additional compiler switch to solve these
+problems to smooth things out.  The reason for not recommended yet is that this
+block could prevent critical updates but it is unlikely to block a major package
 from being updated, but other packages that have this kind of unresolvable
 symbol bug with disabled CFI can block critical updates or increase the
 backlog of critical updates.
