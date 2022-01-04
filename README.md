@@ -480,3 +480,9 @@ ebuild completion times by doing the following:
 ```Shell
 for f in $(ls /var/log/emerge/build-logs) ; do l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") && echo "${l} ${f}" ; done  | sort -V
 ```
+
+#### Pulseaudio can't record mic
+
+It depends on the security tradeoff.  You can use LD_PRELOAD or unCFI more
+packages to get rid of missing symbols.  This issue affects web browsers.  It
+helps to `pulseaudio -k` with the same user to remove the older build instance.
