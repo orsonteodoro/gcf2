@@ -500,7 +500,7 @@ will be linked to UBSan or be CFIed.
 
 It depends on the security tradeoff.  You can use LD_PRELOAD or unCFI more
 packages to get rid of missing symbols.  This issue affects web browsers.
-Increased migation for a dependency of pulseaudio was favored resulting
+Increased mitigation for a dependency of pulseaudio was favored resulting
 in a broken `pulseaudio -k`, so using `killall -9 pulseaudio` with the
 same user should be used instead.
 
