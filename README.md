@@ -12,12 +12,23 @@ These are my current flags.
 The semi-production ready image may need to be modified a bit on your side due
 to differences in package versions or hardware configuration.
 
-The development mode can be used with LTO parts disabled or removed.  Proper
-systemwide LTO support is being re-added.
+### Development mode progress
 
-Systemwide Clang CFI support is also being added, but it is strongly not
-recommended and should be disabled since it is pre alpha quality.  A
-complete @world build has not been done with CFI yet.
+LTO is mostly working and on par with a basic www setup.  Current development
+is focused on systemwide CFI.  Performance is degration is indiscernible
+mostly maybe except for loading times.
+
+Systemwide Clang CFI support has been applied for many packages but there
+are still a lot of packages that are not able to be CFIed, with one 
+unmergable package (x11-libs/vte) due to UBSan symbols problem even though
+CFI was disabled.  Using CFI is not recommend until this issue is solved
+along with eliminating the UBSan sanitizer choose game when CFI is
+disabled.  It maybe would take an additional compiler patch to eliminate
+the guessing game with maybe making it a default or an additional compiler
+switch to solve these problems to smooth things out.
+
+The bashrc with the latest package.env has processed 786 packages with
+2 unmerged left with systemwide LTO and CFI ON.
 
 ## The default make.conf *FLAGS:
 
@@ -425,6 +436,10 @@ easy to fix the problem.  It is a good idea to use the GCF_CFI_DEBUG=1
 variable in the first `emerge -ev @world` pass for your own personal
 configuration and set of packages.  Then, disable the flag in subsequent
 `emerge -ev @world` passes.
+
+Setting GCF_CFI_DEBUG may help but expect random unannounced runtime feature
+breakage as a result of enabling CFI.  You may need to disable CFI schemes
+or completely disable CFI to fix these types of bugs.
 
 `ccache` is recommended to speed up rollbacks for packages that normally take
 hours to be restored back in minutes.  Details are covered in the
