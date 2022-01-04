@@ -34,6 +34,12 @@ CFI can block critical updates or increase the backlog of critical updates.
 The bashrc with the latest package.env has processed 786 packages with
 2 unmerged left with systemwide LTO and CFI ON.
 
+So, if you want to use development mode, it is fine to use systemwide LTO
+but not systemwide CFI just yet.  If you choose to try systemwide CFI
+and I haven't tested the package, you have to fix the CFI problems
+yourself which is preferred or send an issue request.  Enough documentation
+in this readme has been provided to solve CFI related problems.
+
 ## The default make.conf *FLAGS:
 
 * CFLAGS="-march=native -Os -fno-inline -freorder-blocks-algorithm=simple
