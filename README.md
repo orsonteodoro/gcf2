@@ -179,7 +179,7 @@ an -fno-plt or -fopt-info-vec removal scripts.
 * bashrc -- used to dynamically modify *FLAGS
 * env/*.conf -- per-package config definitions
 * gen_pkg_lists.sh -- generator for LTO blacklist and whitelists, and CFI lists
-* make.conf -- contains default *FLAGS.  To be modified manually on your end.
+* make.conf -- contains default *FLAGS to be modified manually on your end.
 DO NOT `cp ${REPO_DIR}/make.conf /etc/portage/make.conf`
 * package.cfi_ignore -- per-package CFI ignore list (Allow / Permit rules.
 Limited to build time and common use or basic features.  Expand for your use
