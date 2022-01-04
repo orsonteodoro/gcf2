@@ -20,9 +20,9 @@ mostly maybe except for loading times.
 
 Systemwide Clang CFI support has been applied for many packages but there
 are still a lot of packages that are not able to be CFIed, with some 
-unmergable packages (x11-libs/vte, dev-util/bazel) one of them due to UBSan
-symbols problem even though CFI was disabled.  Using systemwide CFI is not
-recommend until this issue is solved along with eliminating the UBSan
+unmergable packages (x11-libs/vte, dev-util/bazel) one of them due to the
+missing UBSan symbols problem even though CFI was disabled.  Using systemwide
+CFI is not recommend until this issue is solved along with eliminating the UBSan
 sanitizer choose game when CFI is disabled.  It maybe would take an
 additional compiler patch to eliminate the guessing game with maybe making
 it a default or an additional compiler switch to solve these problems to
