@@ -16,7 +16,7 @@ to differences in package versions or hardware configuration.
 
 LTO with CFI is mostly working and on par with a basic www setup.  Current
 development is focused on systemwide CFI.  Performance degration with CFI is
-indiscernible mostly maybe except for loading times
+indiscernible mostly maybe except for loading times.
 
 Systemwide Clang CFI support has been applied for many packages but there
 are still a lot of packages that are not able to be CFIed, with some unmergable
