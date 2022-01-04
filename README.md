@@ -417,8 +417,8 @@ Some rollback to remove CFI of the dependencies may be required.
 
 Steps to resolve in order with one re-emerge per case:
 
-1. Manually recategorize the package in /etc/portage/emerge*.lst if"
-gcf_error "temporarly blocked.
+1. Manually recategorize the package in /etc/portage/emerge*.lst if
+temporarly blocked.
 2. Try disabling all CFI flags first, and if it works then converge
 towards the minimal CFI exception set for this package.
 3. Disable CFI for this package.    UBSan may still need to be linked.
