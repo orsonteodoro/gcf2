@@ -319,9 +319,9 @@ linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
 * Graphical login disabled until @world is completely emerged and tested.
 * The @world set should be completely emerged before running `gen_pkg_lists.sh`
-to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or uncommented
-in make.conf when doing just LTO without CFI.  The temporary blocks may result
-in unwanted manual rollbacks discussed later.
+to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or commented
+with a # in from of the line in make.conf when doing just LTO without CFI.
+The temporary blocks may result in unwanted manual rollbacks discussed later.
 * Modified `sys-devel/clang` and `sys-libs/compiler-rt-sanitizers` for
 disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
