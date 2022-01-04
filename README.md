@@ -373,6 +373,8 @@ applying the -fsanitize-cfi-cross-dso to object files for static-libs.
 are skipped due to a lack of binaries.  Others are skip due to containing
 static-libs, build-time failures, first time install.  Around 16% of @world
 belonging to the @system set are candidates for CFI but currently not being CFIed.
+* Around 18% of the packages that may be CFIable were unable to be CFIed.
+Most of these are due to the init problem related to "failed to allocate noreserve".
 
 ### Troubleshooting
 
