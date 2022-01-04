@@ -470,6 +470,12 @@ package.  This should only be done for shared-lib packages without executables.
 It is assumed that these packages will link to an executable package that is or
 will be linked to UBSan or be CFIed.
 
+#### Pulseaudio can't record mic
+
+It depends on the security tradeoff.  You can use LD_PRELOAD or unCFI more
+packages to get rid of missing symbols.  This issue affects web browsers.  It
+helps to `pulseaudio -k` with the same user to remove the older build instance.
+
 ## One liners
 
 ### Sorted list of completion times
@@ -480,9 +486,3 @@ ebuild completion times by doing the following:
 ```Shell
 for f in $(ls /var/log/emerge/build-logs) ; do l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") && echo "${l} ${f}" ; done  | sort -V
 ```
-
-#### Pulseaudio can't record mic
-
-It depends on the security tradeoff.  You can use LD_PRELOAD or unCFI more
-packages to get rid of missing symbols.  This issue affects web browsers.  It
-helps to `pulseaudio -k` with the same user to remove the older build instance.
