@@ -25,7 +25,11 @@ CFI was disabled.  Using CFI is not recommend until this issue is solved
 along with eliminating the UBSan sanitizer choose game when CFI is
 disabled.  It maybe would take an additional compiler patch to eliminate
 the guessing game with maybe making it a default or an additional compiler
-switch to solve these problems to smooth things out.
+switch to solve these problems to smooth things out.  The reason for
+not recommended yet is that this block could prevent critical updates
+but it is unlikely to block a major package from being updated, but
+other packages that have this kind of unresolvable symbol bug with disabled
+CFI can block critical updates or increase the backlog of critical updates.
 
 The bashrc with the latest package.env has processed 786 packages with
 2 unmerged left with systemwide LTO and CFI ON.
