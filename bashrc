@@ -356,8 +356,17 @@ gcf_is_clang_cfi() {
 	return 1
 }
 
+gcf_is_ubsan() {
+	[[ "${USE_UBSAN_ALIGN}" == "1" ]] && return 0
+	[[ "${USE_UBSAN_NULL}" == "1" ]] && return 0
+	[[ "${USE_UBSAN_UNDEFINED}" == "1" ]] && return 0
+	[[ "${USE_UBSAN_VPTR}" == "1" ]] && return 0
+	return 1
+}
+
 gcf_is_skipless() {
 	[[ "${USE_CLANG_CFI}" == "1" ]] && return 1
+	gcf_is_ubsan && return 1
 
 	if [[ "${FORCE_PREFETCH_LOOP_ARRAYS}" == "1" ]] ; then
 		return 0
@@ -543,6 +552,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 			CC="clang"
 			CXX="clang++"
 		elif gcf_is_skipless ; then
+			gcf_info "Detected skipless"
 			CC="gcc"
 			CXX="g++"
 		elif gcf_is_package_lto_agnostic_system ; then
