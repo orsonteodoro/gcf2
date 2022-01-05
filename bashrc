@@ -1070,6 +1070,43 @@ gcf_singlefy_spaces() {
 	done
 }
 
+gcf_print_compiler() {
+	if [[ "${CC}" =~ "gcc" ]] ; then
+		gcf_info "GCC version:  "$(${CC} --version \
+			| head -n 1 \
+			| grep -o -E -e ") [0-9.]+" \
+			| cut -f 2 -d " ")
+	fi
+	if [[ "${CC}" =~ "clang" ]] ; then
+		gcf_info "Clang version:  "$(${CC} --version \
+			| head -n 1 \
+			| cut -f 3 -d " ")
+	fi
+}
+
+gcf_print_path() {
+	gcf_info "PATH: ${PATH}"
+}
+
+gcf_use_slotted_compiler() {
+	if [[ -n "${USE_GCC_SLOT}" ]] ; then
+		export CC=$(basename /usr/bin/gcc-${USE_GCC_SLOT}*)
+		export CPP=$(basename /usr/bin/cpp-${USE_GCC_SLOT}*)
+		export CXX=$(basename /usr/bin/g++-${USE_GCC_SLOT}*)
+		gcf_info "Switched to gcc:${USE_GCC_SLOT}"
+	fi
+	if [[ -n "${USE_CLANG_SLOT}" ]] ; then
+		local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
+		_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${USE_CLANG_SLOT}/bin" | tr "\n" ":")
+		export PATH="${_PATH}"
+		[[ -z "${CC}" ]] && gcf_use_clang
+		gcf_info "Switched to clang:${USE_CLANG_SLOT}"
+	fi
+	gcf_info "CC=${CC}"
+	gcf_info "CPP=${CPP}"
+	gcf_info "CXX=${CXX}"
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1094,6 +1131,9 @@ pre_pkg_setup()
 	gcf_singlefy_spaces
 	gcf_record_start_time
 	gcf_print_flags
+	gcf_use_slotted_compiler
+	gcf_print_compiler
+	gcf_print_path
 }
 
 gcf_check_Ofast_safety()
