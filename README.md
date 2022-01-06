@@ -517,7 +517,7 @@ ebuild completion times by doing the following:
 for f in $(ls /var/log/emerge/build-logs) ; do \
 	l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") \
 		&& echo "${l} ${f}" ; \
-done | sort -V
+done | sort -rV
 ```
 
 ## Required re-emerges
