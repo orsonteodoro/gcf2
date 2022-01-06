@@ -565,7 +565,7 @@ emerge -1vO \
 If any of the above packages is a new package, you don't need to re-emerge
 it at this time.
 
-For more comprehensive fix, you can do the following:
+For more comprehensive fix, you can do one the following:
 
 1. Selective with logging
 If you enabled logging and want a more comprehensive fix you may also do:
