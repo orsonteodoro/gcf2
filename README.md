@@ -530,17 +530,19 @@ UBSan checks removed, and linker-errors-as-warnings.conf removal in package.env.
 So the following need to be updated if you installed any of the following below:
 
 ```Shell
-emerge -1vO dev-libs/dbus-glib \
+emerge -1vO \
+	dev-libs/fribidi \
+	dev-libs/dbus-glib \
+	net-libs/libpsl \
 	xfce-base/xfconf \
 	x11-libs/cairo \
-	net-libs/libpsl \
-	x11-libs/libXext \
-	dev-libs/fribidi \
 	x11-libs/libXcomposite \
 	x11-libs/libXdamage \
+	x11-libs/libXext \
 	x11-libs/libXfixes \
 	x11-libs/libXi
-emerge -1vO gnome-base/librsvg \
+emerge -1vO \
+	app-crypt/libmd \
 	app-admin/keepassxc \
 	app-text/poppler \
 	dev-libs/dbus-glib \
@@ -548,16 +550,16 @@ emerge -1vO gnome-base/librsvg \
 	dev-libs/libpeas \
 	dev-qt/qtgui \
 	dev-qt/qtwidgets \
+	gnome-base/librsvg \
 	media-gfx/eog \
 	net-libs/cef-bin \
+	net-libs/libasyncns \
 	net-libs/libndp \
 	net-libs/libsoup \
 	x11-libs/gtk+ \
 	x11-libs/gtksourceview \
 	x11-libs/pango \
-	xfce-base/xfconf \
-	media-plugins/alsa-plugins \
-	net-libs/libasyncns
+	xfce-base/xfconf
 ```
 
 If any of the above packages is a new package, you don't need to re-emerge
