@@ -357,10 +357,7 @@ gcf_is_clang_cfi() {
 }
 
 gcf_is_ubsan() {
-	[[ "${USE_UBSAN_ALIGN}" == "1" ]] && return 0
-	[[ "${USE_UBSAN_NULL}" == "1" ]] && return 0
-	[[ "${USE_UBSAN_UNDEFINED}" == "1" ]] && return 0
-	[[ "${USE_UBSAN_VPTR}" == "1" ]] && return 0
+	[[ "${LINK_UBSAN}" == "1" ]] && return 0
 	return 1
 }
 
@@ -410,6 +407,18 @@ gcf_is_cfiable() {
 get_cfi_flags() {
 	if grep -q -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst ; then
 		grep -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst | head -n 1 | cut -f 2- -d ":" | cut -f 2 -d ":"
+	fi
+}
+
+get_cfi_flags_world() {
+	if grep -q -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-cfi-world.lst ; then
+		grep -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-cfi-world.lst | head -n 1 | cut -f 2- -d ":" | cut -f 2 -d ":"
+	fi
+}
+
+get_cfi_flags_system() {
+	if grep -q -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-cfi-system.lst ; then
+		grep -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-cfi-system.lst | head -n 1 | cut -f 2- -d ":" | cut -f 2 -d ":"
 	fi
 }
 
@@ -858,6 +867,12 @@ gcf_add_cfi_flags() {
 			gcf_append_flags -fno-sanitize=$(echo "${cfi_exceptions[@]}" | tr " " ",")
 		fi
 
+		if [[ "${flags}" =~ "S" || "${flags}" =~ "X" ]] ; then
+			gcf_info "Auto linking to UBSan"
+			gcf_append_ldflags -Wl,-lubsan
+			export GCF_UBSAN_LINKED="1"
+		fi
+
 		export GCF_CFI="1"
 	fi
 }
@@ -971,53 +986,32 @@ gcf_setup_traps() {
 
 gcf_use_ubsan() {
 	# We would like to disable CFI but link to UBSan to avoid missing symbols.
-	# One way is to point it to the abspath of the UBSan lib, which is bad because
-	# you need to update it every new point release of compiler-rt-sanitizers.
-	# The other way is to do it indirectly by performing a UBSan check.
-	# Choosing the right UBSan check depends on the missing symbol.
 
 	# If a program is not linked with CFI, it may still need to be linked to
 	# UBSan to avoid linking errors:
 	# undefined symbol: __ubsan_handle_cfi_check_fail_abort
 	# undefined symbol: __ubsan_handle_cfi_check_fail_minimal_abort
 
+	[[ "${GCF_UBSAN_LINKED}" == "1" ]] && return # Already linked
+
 	local has_ubsan=0
 	which clang 2>/dev/null 1>/dev/null || return
 	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
 
-	if ( [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
-		&& gcf_is_ubsan ) \
+	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
 		&& (( ${has_ubsan} == 1 )) ; then
 
-		gcf_info "Adding UBSan flags"
-		# Only interested in linking to libclang_rt.ubsan_*-*.so.
-		# Use only if package contains executable.
-		local ubsan_args=( )
-		local ubsan_args_recover=()
-		if [[ "${USE_UBSAN_ALIGN}" == "1" ]] ; then
-			ubsan_args+=( alignment )
-			# Crash depends on next instruction on that object.
-		fi
-		if [[ "${USE_UBSAN_NULL}" == "1" ]] ; then
-			ubsan_args+=( null )
-			ubsan_args_recover+=( null ) # crash
-			# Crash depends on next instruction on that object.
-		fi
-		if [[ "${USE_UBSAN_UNDEFINED}" == "1" ]] ; then
-			ubsan_args+=( undefined )
-			# Crash depends on next instruction
-		fi
-		if [[ "${USE_UBSAN_VPTR}" == "1" ]] ; then
-			# Cannot be combined if build scripts use -fno-rtti.
-			ubsan_args+=( vptr )
-			# Crash depends on next instruction on that object.
-		fi
-		if (( ${#ubsan_args[@]} > 0 )) ; then
-			gcf_append_flags -fsanitize=$(echo ${ubsan_args[@]} | tr " " ",") # link
-		fi
-		if (( ${#ubsan_args_recover[@]} > 0 )) ; then
-			gcf_append_flags -fno-sanitize-recover=$(echo ${ubsan_args_recover[@]} | tr " " ",") # force crash to stop before running bad code
+		# We would like to apply UBSan to packages that are above the
+		# @system set, use clang, have static-libs but still have either
+		#shared-libs or executables, skipped being CFIed.
+
+		# Link to UBSan anyway if CFI disabled
+		local flags=$(get_cfi_flags_world)
+		if [[ "${LINK_UBSAN}" == "1" || "${USE_CLANG_CFI}" == "0" \
+			|| ( "${flags}" =~ "A" && ( "${flags}" =~ "X" || "${flags}" =~ "S" ) ) ]] ; then
+			gcf_info "Linking to UBSan"
+			gcf_append_ldflags -lubsan
 		fi
 	fi
 }

@@ -488,11 +488,7 @@ When you completely disable CFI on the app package, you may encounter
 the `undefined symbol: __ubsan_handle_cfi_check_fail_abort` error again.
 
 The following can be used:
-1.  Indirectly link to UBSan, which is preferred.  These correspond to the
-per-package ubsan-align.conf, ubsan-null.conf, ubsan-vptr.conf configs.  The
-.conf most preferred is the one that is the lowest performance impacting one and
-less chance of triggering the sanitizer check.  The executable packages that
-link to the shared-lib must have the UBSan sanitizer symbol as well.
+1.  Link to UBSan, which is preferred with link-ubsan.conf.
 2.  Rollback dependencies without CFI.  This is not desirable since it lowers
 mitigation.
 3.  Ignore linker errors with linker-errors-as-warnings.conf added per
