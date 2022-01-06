@@ -514,3 +514,37 @@ ebuild completion times by doing the following:
 ```Shell
 for f in $(ls /var/log/emerge/build-logs) ; do l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") && echo "${l} ${f}" ; done  | sort -V
 ```
+
+## Required re-emerges
+
+Jan 6, 2022 - A change was made to rid of sanitizer checks and just link to
+UBSan to simplify and eliminate the sanitizer guessing game.  This requires
+dev-libs/dbus-glib, xfce-base/xfconf, x11-libs/cairo be rebuilt first and
+rebuilding of shared-lib packages with the above undefined symbol message be
+rebuilt as well as packages that got UBSan checks removed and
+linker-errors-as-warnings.conf removal in package.env.  So the following need
+to be updated if you installed any of the following below:
+
+```Shell
+emerge -1vO gnome-base/librsvg \
+	app-admin/keepassxc \
+	app-text/poppler \
+	dev-libs/dbus-glib \
+	dev-libs/gobject-introspection \
+	dev-libs/libpeas \
+	dev-qt/qtgui \
+	dev-qt/qtwidgets \
+	media-gfx/eog \
+	net-libs/cef-bin \
+	net-libs/libndp \
+	net-libs/libsoup \
+	x11-libs/gtk+ \
+	x11-libs/gtksourceview \
+	x11-libs/pango \
+	xfce-base/xfconf \
+	media-plugins/alsa-plugins \
+	net-libs/libasyncns
+```
+
+If any of the above packages is a new package, you don't need to re-emerge
+it at this time.
