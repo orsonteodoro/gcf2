@@ -531,7 +531,7 @@ gcf_warn "a future hard dependency on a specific compiler differing from"
 gcf_warn "CC_LTO=${CC_LTO} when linking static-libs."
 	fi
 
-	if has lto ${IUSE_EFFECTIVE} ; then
+	if has lto ${IUSE_EFFECTIVE} && [[ "${CATEGORY}/${PN}" != "net-misc/networkmanager" ]] ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by \
 		#   make.conf/package.env.
@@ -568,6 +568,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		fi
 		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
 	fi
+	[[ -z "${CC}" || -z "${CXX}" ]] && gcf_is_ubsan && gcf_use_clang
 
 	local linker=""
 	if gcf_is_package_in_lto_blacklists \
@@ -862,6 +863,7 @@ gcf_add_cfi_flags() {
 }
 
 gcf_add_clang_cfi() {
+	[[ "${DISABLE_CLANG_LTO}" == "1" ]] && return
 	[[ -z "${USE_CLANG_CFI}" || "${USE_CLANG_CFI}" == "0" ]] && return
 	[[ "${CC}" == "clang" && "${CXX}" == "clang++" ]] || return
 	if ! gcf_is_clang_cfi_ready ; then
@@ -984,12 +986,8 @@ gcf_use_ubsan() {
 	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
 
-	if [[ ( "${CC}" == "clang" || "${CXX}" == "clang++" ) \
-		&& ( "${USE_UBSAN_ALIGN}" == "1" \
-			|| "${USE_UBSAN_NULL}" == "1" \
-			|| "${USE_UBSAN_UNDEFINED}" == "1" \
-			|| "${USE_UBSAN_VPTR}" == "1" ) \
-			]] \
+	if ( [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
+		&& gcf_is_ubsan ) \
 		&& (( ${has_ubsan} == 1 )) ; then
 
 		gcf_info "Adding UBSan flags"
