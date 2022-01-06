@@ -1011,7 +1011,7 @@ gcf_use_ubsan() {
 		if [[ "${LINK_UBSAN}" == "1" || "${USE_CLANG_CFI}" == "0" \
 			|| ( "${flags}" =~ "A" && ( "${flags}" =~ "X" || "${flags}" =~ "S" ) ) ]] ; then
 			gcf_info "Linking to UBSan"
-			gcf_append_ldflags -lubsan
+			gcf_append_ldflags -Wl,-lubsan
 		fi
 	fi
 }
