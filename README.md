@@ -585,7 +585,8 @@ emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs
 	| sort \
 	| uniq)
 ```
-This may, however, not catch skipped CFI packages with static-libs that should
-maybe be linked with UBSan.
+
+This above fix may, however, not catch skipped CFI packages with static-libs
+that should maybe be linked with UBSan.
 
 3. `emerge -ve world`
