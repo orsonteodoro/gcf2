@@ -568,6 +568,7 @@ it at this time.
 For a more comprehensive fix, you can do one the following:
 
 1. Selective with logging
+
 If you enabled logging and want a more comprehensive fix you may also do:
 ```Shell
 emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs/ \
