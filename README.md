@@ -567,9 +567,11 @@ emerge -1vO \
 If any of the above packages is a new package, you don't need to re-emerge
 it at this time.
 
-For a more comprehensive fix, you can do one the following ordered by time required:
+For a more comprehensive fix, you can do one the following ordered by time
+required:
 
-1. Re-emerge the shared-lib ebuild-package if the UBSan undefined symbol is encountered.
+1. Re-emerge the shared-lib ebuild-package if the UBSan undefined symbol is
+encountered.
 2. Selective with logging
 
 If you enabled logging and want a more comprehensive fix you may also do:
@@ -583,6 +585,7 @@ emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs
 	| sort \
 	| uniq)
 ```
-This may, however, not catch skipped CFI packages that should maybe be linked with UBSan.
+This may, however, not catch skipped CFI packages with static-libs that should
+maybe be linked with UBSan.
 
 3. `emerge -ve world`
