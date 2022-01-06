@@ -488,7 +488,9 @@ When you completely disable CFI on the app package, you may encounter
 the `undefined symbol: __ubsan_handle_cfi_check_fail_abort` error again.
 
 The following can be used:
-1.  Link to UBSan, which is preferred with link-ubsan.conf.
+
+1.  Link to UBSan automatically with the new bashrc changes which is preferred
+or by force with link-ubsan.conf.
 2.  Rollback dependencies without CFI.  This is not desirable since it lowers
 mitigation.
 3.  Ignore linker errors with linker-errors-as-warnings.conf added per
@@ -504,7 +506,7 @@ Increased mitigation for a dependency of pulseaudio was favored resulting
 in a broken `pulseaudio -k`, so using `killall -9 pulseaudio` with the
 same user should be used instead.
 
-## One liners
+## Helper script(s)
 
 ### Sorted list of completion times
 
@@ -512,20 +514,32 @@ If you enabled logging for bashrc in make.conf, you can get a sorted list of
 ebuild completion times by doing the following:
 
 ```Shell
-for f in $(ls /var/log/emerge/build-logs) ; do l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") && echo "${l} ${f}" ; done  | sort -V
+for f in $(ls /var/log/emerge/build-logs) ; do \
+	l=$(grep  -e "Completion Time:" "/var/log/emerge/build-logs/${f}") \
+		&& echo "${l} ${f}" ; \
+done | sort -V
 ```
 
 ## Required re-emerges
 
 Jan 6, 2022 - A change was made to rid of sanitizer checks and just link to
-UBSan to simplify and eliminate the sanitizer guessing game.  This requires
-dev-libs/dbus-glib, xfce-base/xfconf, x11-libs/cairo be rebuilt first and
-rebuilding of shared-lib packages with the above undefined symbol message be
-rebuilt as well as packages that got UBSan checks removed and
-linker-errors-as-warnings.conf removal in package.env.  So the following need
-to be updated if you installed any of the following below:
+UBSan to simplify and eliminate the UBSan sanitizer check guessing game.  This
+requires the rebuilding of shared-lib packages with -lubsan or -Wl,-lubsan if
+any of the above undefined symbol message is encountered, packages that got
+UBSan checks removed, and linker-errors-as-warnings.conf removal in package.env.
+So the following need to be updated if you installed any of the following below:
 
 ```Shell
+emerge -1vO dev-libs/dbus-glib \
+	xfce-base/xfconf \
+	x11-libs/cairo \
+	net-libs/libpsl \
+	x11-libs/libXext \
+	dev-libs/fribidi \
+	x11-libs/libXcomposite \
+	x11-libs/libXdamage \
+	x11-libs/libXfixes \
+	x11-libs/libXi
 emerge -1vO gnome-base/librsvg \
 	app-admin/keepassxc \
 	app-text/poppler \
@@ -548,3 +562,20 @@ emerge -1vO gnome-base/librsvg \
 
 If any of the above packages is a new package, you don't need to re-emerge
 it at this time.
+
+For more comprehensive fix, you can do the following:
+
+1. Selective with logging
+If you enabled logging and want a more comprehensive fix you may also do:
+```Shell
+emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs/ \
+	| cut -f 1-2 -d ":" \
+	| sed -e "s|/var/log/emerge/build-logs/||g" \
+	| sed -e "s|:|/|g" \
+	| sed -r -e "s/(_p.*|-r[0-9]+)//g" \
+	| sed -r -e "s|-[0-9.]+([a-z])?$||g" \
+	| sort \
+	| uniq)
+```
+2. Re-emerge the lib ebuild-package if the UBSan undefined symbol is encountered.
+3. `emerge -ve world`
