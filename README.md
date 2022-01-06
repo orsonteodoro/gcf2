@@ -524,6 +524,9 @@ done | sort -rV
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
 
+This requires bashrc be updated to commit `ed89cbf` or newer before emerging
+the list below.
+
 A change was made to rid of sanitizer checks and just link to UBSan to simplify
 and eliminate the UBSan sanitizer check guessing game.  This requires the
 rebuilding of shared-lib packages with -lubsan or -Wl,-lubsan if any of the
