@@ -522,12 +522,14 @@ done | sort -rV
 
 ## Required re-emerges
 
-Jan 6, 2022 - A change was made to rid of sanitizer checks and just link to
-UBSan to simplify and eliminate the UBSan sanitizer check guessing game.  This
-requires the rebuilding of shared-lib packages with -lubsan or -Wl,-lubsan if
-any of the above undefined symbol message is encountered, packages that got
-UBSan checks removed, and linker-errors-as-warnings.conf removal in package.env.
-So the following need to be updated if you installed any of the following below:
+The following is required if using systemwide CFI at and before Jan 6, 2022.
+
+A change was made to rid of sanitizer checks and just link to UBSan to simplify
+and eliminate the UBSan sanitizer check guessing game.  This requires the
+rebuilding of shared-lib packages with -lubsan or -Wl,-lubsan if any of the
+above undefined symbol message is encountered, packages that got UBSan checks
+removed, and linker-errors-as-warnings.conf removal in package.env.  So the
+following need to be updated if you installed any of the following below:
 
 ```Shell
 emerge -1vO \
@@ -565,9 +567,10 @@ emerge -1vO \
 If any of the above packages is a new package, you don't need to re-emerge
 it at this time.
 
-For a more comprehensive fix, you can do one the following:
+For a more comprehensive fix, you can do one the following ordered by time required:
 
-1. Selective with logging
+1. Re-emerge the shared-lib ebuild-package if the UBSan undefined symbol is encountered.
+2. Selective with logging
 
 If you enabled logging and want a more comprehensive fix you may also do:
 ```Shell
@@ -580,5 +583,6 @@ emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs
 	| sort \
 	| uniq)
 ```
-2. Re-emerge the lib ebuild-package if the UBSan undefined symbol is encountered.
+This may, however, not catch skipped CFI packages that should maybe be linked with UBSan.
+
 3. `emerge -ve world`
