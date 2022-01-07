@@ -383,10 +383,6 @@ Steps 9-11 is in testing.  DO NOT USE.
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
-volation is not really isolated in the @system set but can affect the @world set
-like with zlib.
-
 It is recommended in steps 7-11 that you test your software every 25-100
 packages to find runtime CFI violations instead of waiting too long.  Long
 waits could make it difficult to backtrack the broken package in
@@ -395,6 +391,18 @@ waits could make it difficult to backtrack the broken package in
 Steps 11-12 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
+
+The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
+volation is not really isolated in the @system set but can affect the @world set
+like with zlib.  When a CFI violation is encountered it should be fixed as
+follows:
+
+1.  Fix the exposed bug
+2.  If not able to be fixed, then add exceptions to ignore list.  Add
+cfi-ignore-list.conf to package.env and add the ignore list to
+/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See docs for details.
+3.  If ignore list doesn't work well, use the -fno-sanitize.  These
+correspond to one or more the no-cfi-*.conf files.
 
 ### Coverage
 
