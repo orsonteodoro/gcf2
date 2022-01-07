@@ -361,14 +361,79 @@ problem is due to -fvisibility requirements which can cause missing symbols
 and unusable shared libraries problem due to differences in enablement of CFI
 in CFI Basic mode and CFI Cross-DSO mode.  In addition, this prevents the
 applying the -fsanitize-cfi-cross-dso to object files for static-libs.
-* Around 34% of the entire @world set will be CFIed.  Most of the @world set
-are skipped due to a lack of binaries.  Others are skip due to containing
-static-libs, build-time failures, first time install.  Around 16% of @world
-belonging to the @system set are candidates for CFI but currently not being
-CFIed.
-* Around 18% of the packages that may be CFIable were unable to be CFIed.
-Most of these are due to the init problem related to "ERROR: SanitizerTool
+
+#### Stats
+
+These proportions will differ from your @world set.  This is a stat snapshot
+for Jan 7, 2022.
+
+* Skips are due to a lack of binaries because they are either metapackages,
+header only packages, non C-family, etc.  Actual skips are due to static-libs
+(to avoid IR incompatibilies [corresponding to restricted]), build-time
+failures, first time install [corresponding to no-data].
+
+* disable-clang-cfi.conf corresponds to errors for "ERROR: SanitizerTool
 failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
+
+##### Estimates before emerging
+
+###### Set sizes
+
+* @world:  788 (100 %)
+* @world - @system:  493 (62.56345177664975 %)
+* @system:  295 (37.43654822335025 %)
+
+###### LTO only estimates
+
+* LTO agnostic:  436 (55.32994923857868 %)
+*   @world - @system:  310 (39.340101522842644 %)
+*   @system:  126 (15.989847715736042 %)
+* LTO restricted:  29 (4.187817258883249 %)
+*   @world - @system: 29 (4.187817258883249 %)
+*   @system: 0 (0 %)
+* LTO disallowed:  13 (1.6624040920716114 %)
+*   @world - @system: 0 (0 %)
+*   @system: 13 (1.6624040920716114 %)
+* LTO skip:  296 (37.56345177664975 %)
+*   @world - @system:  145 (18.401015228426395 %)
+*   @system:  151 (19.16243654822335 %)
+* No data:  0 (0.0 %)
+
+###### CFI only estimates
+
+* CFIable:  464 (58.88324873096447 %)
+*   @world - @system:  338 (42.89340101522843 %)
+*   @system:  126 (15.989847715736042 %)
+* Allowable cfi-icall candidates:  248 (31.472081218274113 %)
+*   @world - @system: 144 (18.274111675126903 %)
+*   @system: 104 (13.19796954314721 %)
+* Not CFIable:  14 (1.7766497461928936 %)
+* CFI skippable:  296 (37.56345177664975 %)
+* No Data:  0 (0.0 %)
+
+##### CFI only actual
+
+* CFIed: 174 22.081218274111674 %
+* NOT CFIed: 614 77.91878172588832 %
+
+##### Misc
+
+* 41 marked with disable-clang-cfi.conf (5.203045685279188 %)
+* 20 marked with use-gcc.conf (0.6345177664974619 %)
+* 68 marked with no-cfi-icall.conf (8.629441624365482 %)
+* 3 marked with no-cfi-vcall.conf (0.3807106598984772 %)
+* 5 marked with no-cfi-cast.conf (0.6345177664974619 %)
+* 5 marked with no-cfi-nvcall.conf (0.6345177664974619 %)
+* 9 marked with remove-lto.conf (1.1421319796954315 %)
+* 10 marked with remove-gcc-lto.conf (1.2690355329949239 %)
+* 26 marked with skipless.conf (3.2994923857868024 %)
+* 3 marked with no-strip.conf (0.3807106598984772 %)
+* 118 marked with prefetch-loop-arrays.conf (14.974619289340103 %)
+* 4 marked with stc.conf (0.5076142131979695 %)
+* Max package build time:  87526 seconds ( 1 days 0 hours 18 minutes 46 seconds )
+* Min package build time:  4 seconds
+
+No source base browser tested yet for build time.
 
 ### Troubleshooting
 

@@ -256,29 +256,29 @@ check_cfi() {
 			if (( ${RELIABLE_FORMAT_CHECK} == 1 )) ; then
 				if file "${f}" | grep -q -e "ar archive" ; then
 					has_static="A"
-					grep -q -e "dlopen" "${f}" || ncfi_icall=$((${ncfi_icall} + 1))
+					objdump -T "${f}" 2>/dev/null | grep -q -e "dlopen" || ncfi_icall=$((${ncfi_icall} + 1))
 					nbin=$((${nbin} + 1))
 				fi
 				if file "${f}" | grep -q -e "ELF.*shared object" ; then
 					has_shared="S"
-					grep -q -e "dlopen" "${f}" || ncfi_icall=$((${ncfi_icall} + 1))
+					objdump -T "${f}" 2>/dev/null | grep -q -e "dlopen" || ncfi_icall=$((${ncfi_icall} + 1))
 					nbin=$((${nbin} + 1))
 				fi
 			else
 				if echo "${f}" | grep -q -e "\.a$" ; then
 					has_static="A"
-					grep -q -e "dlopen" "${f}" || ncfi_icall=$((${ncfi_icall} + 1))
+					objdump -T "${f}" 2>/dev/null | grep -q -e "dlopen" || ncfi_icall=$((${ncfi_icall} + 1))
 					nbin=$((${nbin} + 1))
 				fi
 				if echo "${f}" | grep -q -e "\.so[.0-9]*$" ; then
 					has_shared="S"
-					grep -q -e "dlopen" "${f}" || ncfi_icall=$((${ncfi_icall} + 1))
+					objdump -T "${f}" 2>/dev/null | grep -q -e "dlopen" || ncfi_icall=$((${ncfi_icall} + 1))
 					nbin=$((${nbin} + 1))
 				fi
 			fi
 			if file "${f}" | grep -q -e "ELF.*executable" ; then
 				# libdl can be static, so libdl.so check is not enough.
-				grep -q -e "dlopen" "${f}" || ncfi_icall=$((${ncfi_icall} + 1))
+				objdump -T "${f}" 2>/dev/null | grep -q -e "dlopen" || ncfi_icall=$((${ncfi_icall} + 1))
 				has_exe="X"
 				nbin=$((${nbin} + 1))
 			fi
@@ -431,7 +431,7 @@ main() {
 	echo "CC_LIBC=${CC_LIBC} (current libc compiler)"
 	echo
 
-	gen_lto_lists
+#	gen_lto_lists
 	gen_cfi_lists
 }
 
