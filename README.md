@@ -379,7 +379,7 @@ Steps 6-8 is in testing.  DO NOT USE.
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-The reasons for emerging world 3 times is for CFI violation discovery.  The CFI
+The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
 volation is not really isolated in the @system set but can affect the @world set
 like with zlib.
 
