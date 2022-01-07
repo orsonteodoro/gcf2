@@ -487,8 +487,8 @@ The above percents are relative to the @world.
 
 ### Plans
 
-* Built CFIed @world (agnostic LTO) -- done
-* Built CFIed @system (agnostic LTO) -- WIP (Work In Progress)
+* Built CFIed @world (on top of agnostic LTO) -- done
+* Built CFIed @system (on top of agnostic LTO) -- WIP (Work In Progress)
 * Increased mitigation with ignore lists converting from -fno-sanitize=cfi* form -- on hold
 (Disabled CFI schemes is being used currently for reasons to get a working
 system up as fast as possible.  Difficulties with ignore lists disincentivize
