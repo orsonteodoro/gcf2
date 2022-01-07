@@ -25,8 +25,13 @@ are still a lot of important packages that are not able to be CFIed due to the
 The bashrc with the latest package.env has processed 786 packages with
 2 unmerged left with systemwide LTO and CFI ON.
 
+Also, there is an issue with the stats for CFI shown sections below.  Using
+systemwide CFI is not recommended with my bashrc and package.env until the ratio
+of actual to estimate are near the same or good reason to justify the 51.479%
+ratio.
+
 So, if you want to use development mode, it is fine to use systemwide LTO.
-Systemwide CFI can be used but it is better to wait for the above problem to get
+Systemwide CFI can be used but it is better to wait for the above problems to get
 fixed first to avoid a possible mandatory rebuild @world if the fix for this
 build is found.  If you choose to try systemwide CFI and I haven't tested the
 package, you have to fix the CFI problems yourself which is preferred or send an
@@ -418,6 +423,8 @@ The above percents are relative to the @world.
 ##### CFI only actual
 
 * CFIed: 174 (22.081218274111674 %)
+  * @world - @system: 174 (22.081218274111674 %)
+  * @system: 0 (0 %)
 * NOT CFIed: 614 (77.91878172588832 %)
 
 ##### Misc
