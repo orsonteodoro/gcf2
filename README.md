@@ -383,7 +383,7 @@ The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
 volation is not really isolated in the @system set but can affect the @world set
 like with zlib.
 
-It is recommended in steps 5 and 8 that you test your software every 25-100
+It is recommended in steps 5-8 that you test your software every 25-100
 packages to find runtime CFI violations instead of waiting too long.  Long
 waits could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
