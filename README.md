@@ -579,7 +579,7 @@ encountered.
 
 If you enabled logging and want a more comprehensive fix you may also do:
 ```Shell
-emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs/ \
+emerge -1vO $(grep -r -l -E -e "Package flags:" /var/log/emerge/build-logs/ \
 	| cut -f 1-2 -d ":" \
 	| sed -e "s|/var/log/emerge/build-logs/||g" \
 	| sed -e "s|:|/|g" \
@@ -588,8 +588,5 @@ emerge -1vO $(grep -r -l -E -e "Package flags.*(S|X)" /var/log/emerge/build-logs
 	| sort \
 	| uniq)
 ```
-
-This above fix, however, may not catch skipped CFI packages with static-libs
-that should maybe be linked with UBSan.
 
 3. `emerge -ve world`
