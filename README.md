@@ -413,8 +413,8 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
 
 ##### CFI only actual
 
-* CFIed: 174 22.081218274111674 %
-* NOT CFIed: 614 77.91878172588832 %
+* CFIed: 174 (22.081218274111674 %)
+* NOT CFIed: 614 (77.91878172588832 %)
 
 ##### Misc
 
