@@ -374,8 +374,8 @@ for Jan 7, 2022.
 
 * Skips are due to a lack of binaries because they are either metapackages,
 header only packages, non C-family, etc.  Actual skips are due to static-libs
-(to avoid IR incompatibilies [corresponding to restricted]), build-time
-failures, first time install [corresponding to no-data].
+(to avoid IR incompatibilies [corresponding to some restricted and all
+disallowed]), build-time failures, first time install [corresponding to no-data].
 
 * disable-clang-cfi.conf corresponds to errors for "ERROR: SanitizerTool
 failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
