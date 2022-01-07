@@ -365,16 +365,19 @@ sys-devel/clang -experimental
 2. `emerge -vuDN @world`
 3. `emerge -f @world`
 4. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-5. `emerge -ve @world`
-6. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+5. `emerge -1v binutils glibc gcc`
+6. `eselect gcc list ; eselect gcc set # to newest version ; source /etc/profile`
 7. `emerge -ve @system`
 8. `emerge -ve @world`
-9. Set `GCF_CFI_DEBUG=0` in make.conf.
-10. `emerge -ve @world`
+9. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+10. `emerge -ve @system`
+11. `emerge -ve @world`
+12. Set `GCF_CFI_DEBUG=0` in make.conf.
+13. `emerge -ve @world`
 
 Steps 1-3 again is to minimize temporarly blocks and rollbacks.
 
-Steps 6-8 is in testing.  DO NOT USE.
+Steps 9-11 is in testing.  DO NOT USE.
 
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
@@ -383,12 +386,12 @@ The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
 volation is not really isolated in the @system set but can affect the @world set
 like with zlib.
 
-It is recommended in steps 5-8 that you test your software every 25-100
+It is recommended in steps 7-11 that you test your software every 25-100
 packages to find runtime CFI violations instead of waiting too long.  Long
 waits could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Steps 9-10 is optional, but makes the build more production ready.  Disabling
+Steps 11-12 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
