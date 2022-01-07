@@ -388,7 +388,7 @@ packages to find runtime CFI violations instead of waiting too long.  Long
 waits could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Steps 7-8 is optional, but makes the build more production ready.  Disabling
+Steps 9-10 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
