@@ -836,9 +836,9 @@ gcf_add_cfi_flags() {
 		fi
 
 		local cfi_exceptions=()
+		[[ "${CFI_CAST_STRICT}" == "1" ]] && gcf_append_flags -fsanitize=cfi-cast-strict
 		[[ -n "${CFI_EXCEPTIONS}" ]] && cfi_exceptions+=( ${CFI_EXCEPTIONS} )
 		[[ "${NO_CFI_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast cfi-unrelated-cast )
-		[[ "${NO_CFI_CAST_STRICT}" == "1" ]] && cfi_exceptions+=( cfi-cast-strict )
 		[[ "${NO_CFI_DERIVED_CAST}" == "1" ]] && cfi_exceptions+=( cfi-derived-cast )
 		[[ "${NO_CFI_ICALL}" == "1" || ! ( "${flags}" =~ "I" ) ]] && cfi_exceptions+=( cfi-icall )
 		[[ "${NO_CFI_MFCALL}" == "1" ]] && cfi_exceptions+=( cfi-mfcall )
