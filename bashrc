@@ -1004,7 +1004,7 @@ gcf_use_ubsan() {
 
 		# We would like to apply UBSan to packages that are above the
 		# @system set, use clang, have static-libs but still have either
-		#shared-libs or executables, skipped being CFIed.
+		# shared-libs or executables, skipped being CFIed.
 
 		# Link to UBSan anyway if CFI disabled
 		local flags=$(get_cfi_flags_world)

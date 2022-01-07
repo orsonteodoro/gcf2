@@ -19,27 +19,19 @@ development is focused on systemwide CFI.  Performance degration with CFI is
 indiscernible mostly maybe except for loading times.
 
 Systemwide Clang CFI support has been applied for many packages but there
-are still a lot of packages that are not able to be CFIed, with some unmergable
-packages (x11-libs/vte, dev-util/bazel) one of them due to the missing UBSan
-symbols problem even though CFI was disabled and UBSan was used.  Using
-systemwide CFI is not recommended until this issue is solved along with
-eliminating the UBSan sanitizer choose game when CFI is disabled.  It maybe
-would take an additional compiler patch to eliminate the guessing game with
-maybe making it a default or an additional compiler switch to solve these
-problems to smooth things out.  The reason for not recommended yet is that this
-block could prevent critical updates but it is unlikely to block a major package
-from being updated, but other packages that have this kind of unresolvable
-symbol bug with disabled CFI can block critical updates or increase the
-backlog of critical updates.
+are still a lot of important packages that are not able to be CFIed due to the
+"failed to allocate noreserve 0x0 (0) bytes of CFI shadow" problem.
 
 The bashrc with the latest package.env has processed 786 packages with
-3 unmerged left with systemwide LTO and CFI ON.
+2 unmerged left with systemwide LTO and CFI ON.
 
-So, if you want to use development mode, it is fine to use systemwide LTO
-but not systemwide CFI just yet.  If you choose to try systemwide CFI
-and I haven't tested the package, you have to fix the CFI problems
-yourself which is preferred or send an issue request.  Enough documentation
-in this readme has been provided to solve CFI related problems.
+So, if you want to use development mode, it is fine to use systemwide LTO.
+Systemwide CFI can be used but it is better to wait for the above problem to get
+fixed first to avoid a possible mandatory rebuild @world if the fix for this
+build is found.  If you choose to try systemwide CFI and I haven't tested the
+package, you have to fix the CFI problems yourself which is preferred or send an
+issue request.  Enough documentation in this readme and in the code comments of
+this repo to solve CFI related problems.
 
 ## The default make.conf *FLAGS:
 
@@ -567,7 +559,7 @@ emerge -1vO \
 	xfce-base/xfconf
 ```
 
-If any of the above packages is a new package, you don't need to re-emerge
+If any of the above packages is/are a new package, you don't need to re-emerge
 it at this time.
 
 For a more comprehensive fix, you can do one the following ordered by time
