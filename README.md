@@ -405,6 +405,8 @@ docs for details.
 3.  If ignore list doesn't work well, use the -fno-sanitize to completely
 disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
 
+See also the [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting) section.
+
 ### Coverage
 
 * Clang LTO packages qualify
