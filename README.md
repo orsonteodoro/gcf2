@@ -360,6 +360,7 @@ sys-devel/clang -experimental
 
 ### Steps
 
+0. `emerge --sync`
 1. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
 `CXX_LTO="clang++"` in make.conf.
 2. `emerge -vuDN @world`
