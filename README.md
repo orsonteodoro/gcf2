@@ -439,6 +439,8 @@ The above percents are relative to the @world.
 
 No source base browser tested yet for build time.
 
+The above percents are relative to the @world.
+
 ### Troubleshooting
 
 Special treatment is required if the following message appears:
