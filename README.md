@@ -398,11 +398,12 @@ like with zlib.  When a CFI violation is encountered it should be fixed as
 follows:
 
 1.  Fix the exposed bug
-2.  If not able to be fixed, then add exceptions to ignore list.  Add
-cfi-ignore-list.conf to package.env and add the ignore list to
-/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See docs for details.
-3.  If ignore list doesn't work well, use the -fno-sanitize.  These
-correspond to one or more the no-cfi-*.conf files.
+2.  If not able to be fixed, then add exceptions to the ignore list while
+continuing to use the CFI scheme.  Add cfi-ignore-list.conf to package.env and
+add the ignore list to /etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See
+docs for details.
+3.  If ignore list doesn't work well, use the -fno-sanitize to completely
+disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
 
 ### Coverage
 
