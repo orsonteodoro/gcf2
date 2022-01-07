@@ -399,6 +399,8 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
    * @system:  151 (19.16243654822335 %)
 * No data:  0 (0.0 %)
 
+Percents relative to @world %.
+
 ###### CFI only estimates
 
 * CFIable:  464 (58.88324873096447 %)
@@ -410,6 +412,8 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
 * Not CFIable:  14 (1.7766497461928936 %)
 * CFI skippable:  296 (37.56345177664975 %)
 * No Data:  0 (0.0 %)
+
+Percents relative to @world %.
 
 ##### CFI only actual
 
