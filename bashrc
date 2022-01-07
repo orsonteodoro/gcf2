@@ -404,6 +404,20 @@ gcf_is_cfiable() {
 	return 1
 }
 
+gcf_is_cfiable_world() {
+	if grep -q -e "${CATEGORY}/${PN}:" /etc/portage/emerge-cfi-world.lst 2>/dev/null ; then
+		return 0
+	fi
+	return 1
+}
+
+gcf_is_cfiable_system() {
+	if grep -q -e "${CATEGORY}/${PN}:" /etc/portage/emerge-cfi-system.lst 2>/dev/null ; then
+		return 0
+	fi
+	return 1
+}
+
 get_cfi_flags() {
 	if grep -q -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst ; then
 		grep -e "${CATEGORY}/${PN}:.*" /etc/portage/emerge-{cfi-system,cfi-world}.lst | head -n 1 | cut -f 2- -d ":" | cut -f 2 -d ":"
@@ -557,7 +571,17 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		elif [[ "${USE_GCC}" == "1" ]] ; then
 			CC="gcc"
 			CXX="g++"
-		elif gcf_is_package_lto_agnostic_world && gcf_is_clang_cfi && gcf_is_clang_cfi_ready && [[ ! ( "${pkg_flags}" =~ "A" ) ]] ; then
+		elif [[ "${USE_CLANG_CFI_AT_SYSTEM}" == "1" ]] \
+			&& gcf_is_package_lto_agnostic_system \
+			&& gcf_is_clang_cfi \
+			&& gcf_is_clang_cfi_ready \
+			&& [[ "${DISABLE_CFI_AT_SYSTEM}" != "1" ]] ; then
+			CC="clang"
+			CXX="clang++"
+		elif gcf_is_package_lto_agnostic_world \
+			&& gcf_is_clang_cfi \
+			&& gcf_is_clang_cfi_ready \
+			&& [[ ! ( "${pkg_flags}" =~ "A" ) ]] ; then
 			CC="clang"
 			CXX="clang++"
 		elif gcf_is_skipless ; then
@@ -819,6 +843,10 @@ gcf_add_cfi_flags() {
 	if [[ "${flags}" =~ "A" ]] ; then
 		gcf_info "Found static-libs in package.  Disabling CFI."
 	elif [[ ( "${flags}" =~ "S" || "${flags}" =~ "X" ) && ! ( "${flags}" =~ "A" ) ]] ; then
+		if gcf_is_cfiable_system ; then
+			gcf_warn "Allowing @system package to be CFIed is experimental and may break the @system toolchain"
+			gcf_error "CFIing @system is being tested.  DO NOT USE."
+		fi
 		gcf_info "Adding base CFI flags"
 		gcf_append_flags -fsanitize=${CFI_BASELINE}
 		# CFI_BASELINE, CFI_EXCEPTIONS, USE_CFI_IGNORE_LIST can be per package customizable.

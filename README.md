@@ -210,6 +210,8 @@ precedence to reduce the attack surface.
 * MPROCS -- The number of compiler/linker processes per CPU core
 * USE_CLANG_CFI -- Use Clang CFI (Uses only CFI Cross-DSO mode.  Experimental
 and unstable systemwide.  bashrc support in development.)
+* USE_CLANG_CFI_AT_SYSTEM -- Use Clang CFI for @system.  It should only be
+enabled after emerging @world.  Currently in testing.  DO NOT USE.
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
@@ -234,6 +236,7 @@ bashrc:
 * disable-thinlto.conf -- Turn off use of ThinLTO
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
 ebuild itself or the build scripts may forcefully switch compilers.
+* disable-cfi-at-system.conf -- Disable CFIing this package in the @system set
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
@@ -355,6 +358,40 @@ Changes required for modded clang ebuild:
 sys-devel/clang -experimental
 ```
 
+### Steps
+
+1. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
+`CXX_LTO="clang++"` in make.conf.
+2. `emerge -vuDN @world`
+3. `emerge -f @world`
+4. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
+5. `emerge -ve @world`
+6. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+7. `emerge -ve @system`
+8. `emerge -ve @world`
+9. Set `GCF_CFI_DEBUG=0` in make.conf.
+10. `emerge -ve @world`
+
+Steps 1-3 again is to minimize temporarly blocks and rollbacks.
+
+Steps 6-8 is in testing.  DO NOT USE.
+
+Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
+to not disrupt the bootstrapping process.
+
+The reasons for emerging world 3 times is for CFI violation discovery.  The CFI
+volation is not really isolated in the @system set but can affect the @world set
+like with zlib.
+
+It is recommended in steps 5 and 8 that you test your software every 25-100
+packages to find runtime CFI violations instead of waiting too long.  Long
+waits could make it difficult to backtrack the broken package in
+`/var/log/emerge.log`.
+
+Steps 7-8 is optional, but makes the build more production ready.  Disabling
+CFI debug can make it difficult to determine the type of CFI violation or
+even to decide if it was a miscompile or CFI itself.
+
 ### Coverage
 
 * Clang LTO packages qualify
@@ -447,6 +484,15 @@ The above percents are relative to the @world.
 No source base browser tested yet for build time.
 
 The above percents are relative to the @world.
+
+### Plans
+
+* Built CFIed @world (agnostic LTO) -- done
+* Built CFIed @system (agnostic LTO) -- WIP (Work In Progress)
+* Increased mitigation with ignore lists converting from -fno-sanitize=cfi* form -- on hold
+(Disabled CFI schemes is being used currently for reasons to get a working
+system up as fast as possible.  Difficulties with ignore lists disincentivize
+using them.)
 
 ### Troubleshooting
 
