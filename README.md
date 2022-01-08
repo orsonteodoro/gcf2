@@ -468,19 +468,29 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
 
 The above percents are relative to the @world.
 
+Multi slots reduced to one.
+
 ###### CFI only estimates
 
 * CFIable:  464 (58.88324873096447 %)
    * @world - @system:  338 (42.89340101522843 %)
    * @system:  126 (15.989847715736042 %)
-* Allowable cfi-icall candidates:  248 (31.472081218274113 %)
-   * @world - @system: 144 (18.274111675126903 %)
-   * @system: 104 (13.19796954314721 %)
+* Allowable cfi-icall candidates:  232 (29.441624365482234 %)
+   * @world - @system: 141 (17.893401015228427 %)
+   * @system: 91 (11.548223350253807 %)
+* CFI restricted: 29 (3.6802030456852792)
+   * @world - @system: 29 (3.6802030456852792 %)
+   * @system: 0 (0 %)
 * Not CFIable:  14 (1.7766497461928936 %)
 * CFI skippable:  296 (37.56345177664975 %)
 * No Data:  0 (0.0 %)
 
 The above percents are relative to the @world.
+
+Multi slots reduced to one.
+
+Not CFIable is interpreted as the not LTOable @system set with
+a static-lib.
 
 ##### CFI only actual
 
