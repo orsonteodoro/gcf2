@@ -365,30 +365,35 @@ sys-devel/clang -experimental
 `CXX_LTO="clang++"` in make.conf.
 2. `emerge -vuDN @world`
 3. `emerge -f @world`
-4. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-5. `emerge -1v binutils glibc gcc`
-6. `eselect gcc list ; eselect gcc set # to newest version ; source /etc/profile`
-7. `emerge -ve @system`
-8. `emerge -ve @world`
-9. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
-10. `emerge -ve @system`
-11. `emerge -ve @world`
-12. Set `GCF_CFI_DEBUG=0` in make.conf.
-13. `emerge -ve @world`
+4. `emerge -ve --quickpkg-direct y --root=/bak @system`
+5. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
+6. `emerge -1v binutils glibc gcc`
+7. `eselect gcc list ; eselect gcc set # to newest version ; source /etc/profile`
+8. `emerge -ve @system`
+9. `emerge -ve @world`
+10. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+11. `emerge -ve @system`
+12. `emerge -ve @world`
+13. Set `GCF_CFI_DEBUG=0` in make.conf.
+14. `emerge -ve @world`
 
 Steps 1-3 again is to minimize temporarly blocks and rollbacks.
 
-Steps 9-11 is in testing.  DO NOT USE.
+Steps 10-12 is in testing.  DO NOT USE.
+
+Step 4 is to make a unCFIed backup of the @system set in /bak before breaking
+it.  If a breakage is encountered, you can restore parts from this /bak
+image.
 
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-It is recommended in steps 7-11 that you test your software every 25-100
+It is recommended in steps 8-12 that you test your software every 25-100
 packages to find runtime CFI violations instead of waiting too long.  Long
 waits could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Steps 11-12 is optional, but makes the build more production ready.  Disabling
+Steps 13-14 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
