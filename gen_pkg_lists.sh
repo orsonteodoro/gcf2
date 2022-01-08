@@ -431,7 +431,7 @@ main() {
 	echo "CC_LIBC=${CC_LIBC} (current libc compiler)"
 	echo
 
-#	gen_lto_lists
+	gen_lto_lists
 	gen_cfi_lists
 }
 
