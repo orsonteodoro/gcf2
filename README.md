@@ -382,8 +382,12 @@ Steps 1-3 again is to minimize temporarly blocks and rollbacks.
 Steps 10-12 is in testing.  DO NOT USE.
 
 Step 4 is to make a unCFIed backup of the @system set in /bak before breaking
-it.  If a breakage is encountered, you can restore parts from this /bak
+it.  If breakage is encountered, you can restore parts from this /bak
 image.  This step can be skipped if your planning to skip CFIed @system.
+You may also use an unpacked stage3 tarball or copied image of / instead
+of emerging @system again.  CFI will tell you the library or program
+that caused the CFI violation, all you need to do is replace that exe or lib
+from /bak.
 
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
