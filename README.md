@@ -484,10 +484,13 @@ The above percents are relative to the @world.
 
 ##### CFI only actual
 
-* CFIed: 174 (22.081218274111674 %)
-  * @world - @system: 174 (22.081218274111674 %)
-  * @system: 0 (0 %)
-* NOT CFIed: 614 (77.91878172588832 %)
+* CFIed: 179 (22.715736040609137 %)
+  * @world: 179 (22.715736040609137 %)
+  * @world - @system: 166 (21.065989847715734 %)
+  * @system: 13 (1.6497461928934012 %)
+* NOT CFIed: 609 (77.28426395939087 %)
+
+@system numbers are a WIP (Work In Progress) and may change.
 
 ##### Misc
 
