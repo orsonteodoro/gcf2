@@ -1249,7 +1249,7 @@ gcf_error
 
 gcf_check_external_linkage_for_cfi() {
 	[[ -n "${CFI_CANONICAL_JUMP_TABLES}" ]] && return
-	local nfiles=$(find "${WORKDIR}" -name "*.asm" 2>/dev/null | wc -l)
+	local nfiles=$(find "${WORKDIR}" -name "*.asm" -o -name "*.S" -o -name "*.s" 2>/dev/null | wc -l)
 	if (( ${nfiles} > 0 )) ; then
 gcf_warn "Detected assembly file(s).  A -fno-sanitize-cfi-canonical-jump-tables"
 gcf_warn "may needed to be added to per-package *FLAGS to fix a external or"
