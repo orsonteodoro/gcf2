@@ -469,7 +469,7 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
 
 The above percents are relative to the @world.
 
-Multi slots reduced to one.
+Multi slots are reduced to one.
 
 ###### CFI only estimates
 
@@ -488,7 +488,7 @@ Multi slots reduced to one.
 
 The above percents are relative to the @world.
 
-Multi slots reduced to one.
+Multi slots are reduced to one.
 
 Not CFIable is interpreted as the not LTOable @system set with
 a static-lib.
