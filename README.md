@@ -402,10 +402,10 @@ Steps 13-14 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
-The reasons for emerging @world 3 times is for CFI violation discovery.  The CFI
-volation is not really isolated in the @system set but can affect the @world set
-like with zlib.  When a CFI violation is encountered it should be fixed as
-follows:
+The reasons for emerging @world CFIed 2 times with 1 CFIed @system emerge is
+for CFI violation discovery.  The CFI volation is not really isolated in the
+@system set but can affect the @world set like with zlib.  When a CFI violation
+is encountered it should be fixed as follows:
 
 1.  Fix the exposed bug
 2.  If not able to be fixed, then add exceptions to the ignore list while
