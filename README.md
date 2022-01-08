@@ -383,7 +383,7 @@ Steps 10-12 is in testing.  DO NOT USE.
 
 Step 4 is to make a unCFIed backup of the @system set in /bak before breaking
 it.  If a breakage is encountered, you can restore parts from this /bak
-image.
+image.  This step can be skipped if your planning to skip CFIed @system.
 
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
