@@ -340,7 +340,7 @@ packages break with CFI.
 linkers may break if missing CFI symbols or if a CFI violation is encountered.
 The LLD linker may break itself if CFIed completely.
 * Keys, instructions, experience to access drive manually and also WIFI if any.
-Do not continue unless you are are sure you know how to access these devices
+Do not continue unless you are sure you know how to access these devices
 with that Rescue CD/USB.
 * Graphical login disabled until @world is completely emerged and tested.
 * The @world set should be completely emerged before running `gen_pkg_lists.sh`
