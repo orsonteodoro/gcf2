@@ -336,12 +336,12 @@ applies to systemwide Clang CFI (Code Flow Integrity).
 section below.
 * Pre-downloaded all packages with `emerge -f @world` in case networking
 packages break with CFI.
-* A Rescue CD -- During bootstrapping, the network related packages and all
+* A Rescue CD/USB -- During bootstrapping, the network related packages and all
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
 * Keys, instructions, experience to access drive manually and also WIFI if any.
 Do not continue unless you are are sure you know how to access these devices
-with that rescue CD.
+with that Rescue CD/USB.
 * Graphical login disabled until @world is completely emerged and tested.
 * The @world set should be completely emerged before running `gen_pkg_lists.sh`
 to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or commented
