@@ -370,7 +370,7 @@ sys-devel/clang -experimental
    * `cp -a env /etc/portage`
    * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
    * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0644`
-   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0755`
+   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type d -print0 | xargs -0 chmod 0755`
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
 0. Do the following edits:
