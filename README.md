@@ -732,7 +732,7 @@ same user should be used instead.
 #### Perl modules
 
 The some perl-modules will copy the CC corresponding to the compiler that
-was used when building dev-lang/perl.  In some packages won't allow you
+was used when building dev-lang/perl.  In some packages, it won't allow you
 to override this.  Use the use-gcc.conf, use-clang.conf, 
 disable-lto-compiler-switch.conf to control how to build the perl module
 packages.
