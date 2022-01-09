@@ -367,6 +367,7 @@ sys-devel/clang -experimental
    * `cp -a bashrc /etc/portage/gcf-bashrc`
    * `echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc`
    * `cp -a package.cfi_ignore /etc/portage`
+   * `cp -a env /etc/portage`
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
 0. Do the following edits:
