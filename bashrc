@@ -963,7 +963,7 @@ gcf_error "CFI flags."
 	fi
 	if grep -q -E -e "lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol \`__typeid__.*_align' can not be used when making a shared object" \
 		"${T}/build.log" ; then
-gcf_error "Try disabling cfi-icall, first then more cfi related flags like"
+gcf_error "Try disabling cfi-icall first, then more cfi related flags like"
 gcf_error "cfi-nvcall, cfi-vcall."
 			# Portage will terminate after showing this.
 	fi
@@ -1127,12 +1127,26 @@ gcf_use_slotted_compiler() {
 	gcf_info "CXX=${CXX}"
 }
 
+gcf_disable_integrated_as() {
+	[[ "${DISABLE_INTEGRATED_AS}" == "1" ]] && gcf_append_flags -no-integrated-as
+}
+
+gcf_check_packages() {
+	if ! has_version "dev-libs/libgcrypt[o-flag-munging]" \
+		&& [[ "${CC}" =~ "clang" \
+			&& "${CATEGORY}/${PN}" == "dev-libs/libgcrypt" ]] ; then
+		die "You must enable dev-libs/libgcrypt[o-flag-munging]"
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
 	gcf_setup_traps
+	gcf_disable_integrated_as
 	gcf_replace_flags
 	gcf_lto
+	gcf_check_packages
 	gcf_split_lto_unit
 	gcf_add_clang_cfi
 	gcf_retpoline_translate
