@@ -598,7 +598,8 @@ using them.)
 
 Build logs can found in `${T}/build.log` or `${BUILD_DIR}/config.log`.  The
 latter is not completely revealed in the build.log but helps a lot when finding
-missing symbols and CFI violations.
+missing symbols and CFI violations.  Find the error by doing a search on
+"error:".
 
 #### Undefined symbol __ubsan_handle_cfi_check_fail_abort 
 
