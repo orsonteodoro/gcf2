@@ -751,6 +751,42 @@ for f in $(ls /var/log/emerge/build-logs) ; do \
 done | sort -rV
 ```
 
+### Resume list
+
+Many times emerge is forgetful about the resume list as a result of
+one shotting too many times after trying to find fixes.
+
+The following script has been added to allow you to resume emerging.  It
+requires `emerge -pv --resume > ~/resume.lst` and manual edit to remove
+the header and footer.  All lines in ~/resume.lst should have the `[`
+character before invoking the script below.  Keep the resume.lst updated
+once in a while.
+
+```Shell
+#!/bin/bash
+# Can be named as ~/resume-emerge-lst.
+# Run as ~/resume-emerge-lst ~/resume.lst
+
+lst="${1}"
+
+main() {
+        local list="${1}"
+        echo "Resume list path: ${list}"
+        if [[ ! -e "${list}" ]] ; then
+                echo "Missing a resume list"
+                exit 1
+        fi
+	local o=()
+        for p in $(cat "${list}" | cut -c 18- | cut -f 1 -d " ") ; do
+                o+=( "=${p}" )
+        done
+	# You can add sudo before the following
+	emerge -1vO ${o[@]}
+}
+
+main "${1}"
+```
+
 ## Required re-emerges
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
