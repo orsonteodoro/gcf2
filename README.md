@@ -360,28 +360,64 @@ sys-devel/clang -experimental
 
 ### Steps
 
-0. `emerge --sync`
-1. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
+0. Do the following edits
+```Shell
+# Contents of /etc/portage/package.use/clang
+sys-devel/binutils plugins gold
+sys-devel/clang hardened
+sys-devel/llvm binutils-plugin gold
+sys-libs/compiler-rt-sanitizers cfi ubsan
+```
+```Shell
+# Contents of /etc/portage/profile/package.use.mask
+sys-devel/clang -experimental
+```
+1. `emerge --sync`
+2. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
 `CXX_LTO="clang++"` in make.conf.
-2. `emerge -vuDN @world`
 3. `emerge -f @world`
-4. `emerge -ve --quickpkg-direct y --root=/bak @system`
-5. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-6. `emerge -1v binutils glibc gcc`
-7. `eselect gcc list ; eselect gcc set # to newest version ; source /etc/profile`
-8. `emerge -ve @system`
-9. `emerge -ve @world`
-10. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
-11. `emerge -ve @system`
-12. `emerge -ve @world`
-13. Set `GCF_CFI_DEBUG=0` in make.conf.
+4. `emerge -vuDN @world`
+5. `emerge -ve --quickpkg-direct y --root=/bak @system`
+6. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
+7. `emerge -1v binutils glibc gcc`
+8. Set up the default gcc compiler
+```Shell
+eselect gcc list
+eselect gcc set <newest_version_installed>
+source /etc/profile
+```
+9. `emerge -ve @system`
+10. ```Shell
+emerge -v sys-devel/binutils \
+	sys-devel/llvm:13 \
+	sys-devel/llvm:14 \
+	sys-devel/lld \
+	sys-devel/clang:13 \
+	sys-devel/clang:14 \
+	=sys-devel/clang-runtime-13* \
+	=sys-libs/compiler-rt-13* \
+	=sys-libs/compiler-rt-sanitizers-13* \
+	=sys-libs/compiler-rt-14* \
+	=sys-devel/clang-runtime-14* \
+	=sys-libs/compiler-rt-sanitizers-14* \
+	sys-devel/llvmgold
+```
+(Any package with a 14 is optional if you don't use packages that depend on them.)
+(All llvm toolchain ebuilds should have a fixed commit with exceptions to prevent symbol breakage.
+details are covered in the [metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
+in the oiledmachine-overlay.)
+11. `emerge -ve @world`
+12. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+13. `emerge -ve @system`
 14. `emerge -ve @world`
+15. Set `GCF_CFI_DEBUG=0` in make.conf.
+16. `emerge -ve @world`
 
-Steps 1-3 again is to minimize temporarly blocks and rollbacks.
+Step 2-4 again is to minimize temporarly blocks and rollbacks.
 
-Steps 10-12 is in testing.  DO NOT USE.
+Steps 12-14 DO NOT USE.  STILL IN DEVELOPMENT.
 
-Step 4 is to make an unCFIed backup of the @system set in /bak before breaking
+Step 5 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
 process.  If breakage is encountered, you can restore parts from
 this /bak image.  This step can be skipped if your planning to skip CFIed
@@ -393,7 +429,7 @@ from /bak.
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-It is recommended in steps 8-12 that you test your software every 10-100 emerged
+It is recommended in steps 9-11 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
