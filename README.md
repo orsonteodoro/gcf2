@@ -366,6 +366,7 @@ sys-devel/clang -experimental
    3. `cp -a package.cfi_ignore /etc/portage`
    4. Manually copy sections of make.conf to your personal /etc/portage/make.conf
    5. Manually copy sections of package.env to your personal /etc/portage/package.env
+
 0. Do the following edits:
 ```Shell
 # Contents of /etc/portage/package.use/clang
