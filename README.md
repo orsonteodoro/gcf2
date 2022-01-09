@@ -365,7 +365,7 @@ sys-devel/clang -experimental
 
 -1. Install repo files:
    * `cp -a bashrc /etc/portage/gcf-bashrc`
-   * `echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc`
+   * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
    * `cp -a package.cfi_ignore /etc/portage`
    * `cp -a env /etc/portage`
    * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
