@@ -423,8 +423,9 @@ emerge -v sys-devel/binutils \
 
 Any package with a 14 is optional if you don't use packages that depend on them.
 
-All llvm toolchain ebuilds should have a fixed commit with exceptions to prevent symbol breakage.
-Details are covered in the [metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
+All live llvm toolchain ebuilds should have a fixed commit with exceptions to
+prevent symbol breakage.  Details are covered in the
+[metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
 in the oiledmachine-overlay.
 
 11. `emerge -ve @world`
