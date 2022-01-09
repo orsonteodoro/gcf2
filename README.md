@@ -729,6 +729,14 @@ Increased mitigation for a dependency of pulseaudio was favored resulting
 in a broken `pulseaudio -k`, so using `killall -9 pulseaudio` with the
 same user should be used instead.
 
+#### Perl modules
+
+The some perl-modules will copy the CC corresponding to the compiler that
+was used when building dev-lang/perl.  In some packages won't allow you
+to override this.  Use the use-gcc.conf, use-clang.conf, 
+disable-lto-compiler-switch.conf to control how to build the perl module
+packages.
+
 ## Helper script(s)
 
 ### Sorted list of completion times
