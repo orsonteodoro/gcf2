@@ -387,7 +387,8 @@ eselect gcc set # to the newest version
 source /etc/profile
 ```
 9. `emerge -ve @system`
-10. ```Shell
+10.  Install the Clang / LLVM toolchain
+```Shell
 emerge -v sys-devel/binutils \
 	sys-devel/llvm:13 \
 	sys-devel/llvm:14 \
