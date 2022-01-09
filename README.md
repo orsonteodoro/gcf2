@@ -366,7 +366,7 @@ sys-devel/clang -experimental
    3. `cp -a package.cfi_ignore /etc/portage`
    4. Manually copy sections of make.conf to your personal /etc/portage/make.conf
    5. Manually copy sections of package.env to your personal /etc/portage/package.env
-0. Do the following edits
+0. Do the following edits:
 ```Shell
 # Contents of /etc/portage/package.use/clang
 sys-devel/binutils plugins gold
@@ -393,7 +393,7 @@ eselect gcc set <newest_gcc_version>
 source /etc/profile
 ```
 9. `emerge -ve @system`
-10.  Install the Clang / LLVM toolchain
+10.  Install the Clang/LLVM toolchain:
 ```Shell
 emerge -v sys-devel/binutils \
 	sys-devel/llvm:13 \
