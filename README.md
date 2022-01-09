@@ -393,9 +393,9 @@ from /bak.
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-It is recommended in steps 8-12 that you test your software every 25-100
-packages to find runtime CFI violations instead of waiting too long.  Long
-waits could make it difficult to backtrack the broken package in
+It is recommended in steps 8-12 that you test your software every 10-100 emerged
+packages to find runtime CFI violations instead of waiting too long.  Long waits
+could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
 Steps 13-14 is optional, but makes the build more production ready.  Disabling
