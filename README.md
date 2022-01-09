@@ -337,8 +337,8 @@ section below.
 * Pre-downloaded all packages with `emerge -f @world` in case networking
 packages break with CFI.
 * A Rescue CD/USB -- During bootstrapping, the network related packages and all
-linkers may break if missing CFI symbols.  The LLD linker may break itself if
-CFIed completely.
+linkers may break if missing CFI symbols if a CFI violation is encountered.
+The LLD linker may break itself if CFIed completely.
 * Keys, instructions, experience to access drive manually and also WIFI if any.
 Do not continue unless you are are sure you know how to access these devices
 with that Rescue CD/USB.
