@@ -383,7 +383,7 @@ sys-devel/clang -experimental
 8. Set up the default gcc compiler
 ```Shell
 eselect gcc list
-eselect gcc set <newest_version_installed>
+eselect gcc set # to the newest version
 source /etc/profile
 ```
 9. `emerge -ve @system`
