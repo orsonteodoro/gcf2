@@ -339,6 +339,9 @@ packages break with CFI.
 * A Rescue CD -- During bootstrapping, the network related packages and all
 linkers may break if missing CFI symbols.  The LLD linker may break itself if
 CFIed completely.
+* Keys, instructions, experience to access drive manually and also WIFI if any.
+Do not continue unless you are are sure you know how to access these devices
+with that rescue CD.
 * Graphical login disabled until @world is completely emerged and tested.
 * The @world set should be completely emerged before running `gen_pkg_lists.sh`
 to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or commented
@@ -383,7 +386,11 @@ sys-devel/clang -experimental
 `CXX_LTO="clang++"` in make.conf.
 3. `emerge -f @world`
 4. `emerge -vuDN @world`
-5. `emerge -ve --quickpkg-direct y --root=/bak @system`
+5. Choose a recovery method:
+  * `emerge -ve --quickpkg-direct y --root=/bak @system`
+  * `Unpack stage 3 tarball into /bak`
+  * `Copy / into /bak`
+(/bak can be any location)
 6. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
 7. `emerge -1v binutils glibc gcc`
 8. Set up the default gcc compiler
@@ -434,7 +441,8 @@ this /bak image.  This step can be skipped if your planning to skip CFIed
 @system.  You may also use an unpacked stage3 tarball or copied image of /
 instead of emerging @system again.  CFI will tell you the library or program
 that caused the CFI violation, all you need to do is replace that exe or lib
-from /bak.
+from /bak.  Also, you should have the rescue CD in case coreutils (cp) or
+bash breaks.
 
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
@@ -444,7 +452,7 @@ packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Steps 13-14 is optional, but makes the build more production ready.  Disabling
+Steps 15-16 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
