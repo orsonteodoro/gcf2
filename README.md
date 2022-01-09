@@ -386,7 +386,7 @@ sys-devel/clang -experimental
 `CXX_LTO="clang++"` in make.conf.
 3. `emerge -f @world`
 4. `emerge -vuDN @world`
-5. Choose a recovery method:
+5. Choose a recovery image for @system:
   * `emerge -ve --quickpkg-direct y --root=/bak @system`
   * `Unpack stage 3 tarball into /bak`
   * `Copy / into /bak`
