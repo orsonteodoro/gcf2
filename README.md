@@ -734,7 +734,8 @@ same user should be used instead.
 The some perl-modules will copy the CC corresponding to the compiler that
 was used when building dev-lang/perl.  In some packages, it won't allow you
 to override this.  Use the use-gcc.conf, use-clang.conf, 
-disable-lto-compiler-switch.conf to control how to build the perl module
+disable-lto-compiler-switch.conf, disable-perl-makemaker-autoedit.conf,
+enable-perl-makemaker-autoedit.conf to control how to build the perl module
 packages.
 
 ## Helper script(s)
