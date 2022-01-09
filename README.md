@@ -758,10 +758,9 @@ Many times emerge is forgetful about the resume list as a result of
 one shotting too many times after trying to find fixes.
 
 The following script has been added to allow you to resume emerging.  It
-requires `emerge -pv --resume > ~/resume.lst` and manual edit to remove
-the header and footer.  All lines in ~/resume.lst should have the `[`
-character before invoking the script below.  Keep the resume.lst updated
-once in a while.
+requires `emerge -pv --resume | grep -e "^\[" > ~/resume.lst`  Keep the
+resume.lst updated once in a while or after emerge failure after
+--resume.
 
 ```Shell
 #!/bin/bash
