@@ -767,8 +767,6 @@ resume.lst updated once in a while or after emerge failure after
 # Can be named as ~/resume-emerge-lst.
 # Run as ~/resume-emerge-lst ~/resume.lst
 
-lst="${1}"
-
 main() {
         local list="${1}"
         echo "Resume list path: ${list}"
