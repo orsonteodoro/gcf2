@@ -490,6 +490,11 @@ gcf_error "gen_pkg_lists.sh to generate a compatible list."
 	fi
 }
 
+gcf_lto_no_strip_with_iuse() {
+	[[ "${CATEGORY}/${PN}" != "net-misc/networkmanager" ]] && return 0
+	[[ "${CATEGORY}/${PN}" != "dev-lang/networkmanager" ]] && return 0
+}
+
 gcf_lto() {
 	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
 
@@ -554,7 +559,7 @@ gcf_warn "a future hard dependency on a specific compiler differing from"
 gcf_warn "CC_LTO=${CC_LTO} when linking static-libs."
 	fi
 
-	if has lto ${IUSE_EFFECTIVE} && [[ "${CATEGORY}/${PN}" != "net-misc/networkmanager" ]] ; then
+	if has lto ${IUSE_EFFECTIVE} && [[ "${DISABLE_LTO_STRIPPING}" != "1" ]] ; then
 		# Prioritize the lto USE flag over make.conf/package.env.
 		# Some build systems are designed to ignore *FLAGS provided by \
 		#   make.conf/package.env.
