@@ -792,7 +792,7 @@ main "${1}"
 
 ### Checking for early CFI violations and missing symbols
 
-This does a simple --version check.  Add any potentially dangerous commands in
+This does a simple --help check.  Add any potentially dangerous commands in
 the exclude list.
 
 ```Shell
@@ -830,7 +830,7 @@ main() {
 main
 ```
 
-Use `<path> --version` to see the violation or missing symbol problem.
+Use `<path> --help` to see the violation or missing symbol problem.
 
 ## Required re-emerges
 
