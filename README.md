@@ -463,7 +463,9 @@ even to decide if it was a miscompile or CFI itself.
 
 The reasons for emerging @world CFIed 2 times with 1 CFIed @system emerge is
 for CFI violation discovery.  The CFI volation is not really isolated in the
-@system set but can affect the @world set like with zlib.
+@system set but can affect the @world set like with zlib.  To fix the violation
+see [fixing CFI violation](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violation)
+section.
 
 See also the [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting) section.
 
