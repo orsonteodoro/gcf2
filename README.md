@@ -331,9 +331,7 @@ applies to systemwide Clang CFI (Code Flow Integrity).
 
 ### Requirements
 
-* All source based packages require a rebuild if linking to CFIed libraries.
-* All binary based packages require LD_PRELOAD described in the troubleshooting
-section below.
+* All source based packages may require a rebuild if linking to CFIed libraries.
 * Pre-downloaded all packages with `emerge -f @world` in case networking
 packages break with CFI.
 * A Rescue CD/USB -- During bootstrapping, the network related packages and all
@@ -612,19 +610,11 @@ latter is not completely revealed in the build.log but helps a lot when finding
 missing symbols and CFI violations.  Find the error by doing a search on
 "error:".
 
-#### Undefined symbol __ubsan_handle_cfi_check_fail_abort 
+#### Package issues
 
 Special treatment is required if the following message appears:
 
 `undefined symbol: __ubsan_handle_cfi_check_fail_abort`
-
-Prebuilt binary packages need to add the full path of
-libclang_rt.ubsan_standalone-${ARCH}.so to LD_PRELOAD.  The full path and the
-ARCH can be obtained from `equery f sys-libs/compiler-rt-sanitizers`.  It
-is recommended to use a wrapper script.
-
-Source based packages will require a rebuild of the package containing the app
-or executable if that message appears in the command line.
 
 lld may need to be rebuilt without CFI bad cast and to remove the above error
 when linking other packages.
@@ -633,16 +623,6 @@ libnl need to be rebuilt without CFI in order for wpa_supplicant and linkers to
 work.
 
 ccache needs to temporarly be disabled in FEATURES when reverting being CFIed.
-
-#### Wrapper script example
-
-```Shell
-#!/bin/bash
-# Place in /usr/local/bin with 0755 permissions
-export LD_PRELOAD="/usr/lib/clang/14.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.so"
-your_program "${@}"
-
-```
 
 #### Depenency rollback(s) without CFI
 
@@ -731,14 +711,6 @@ mitigation.
 package.  This should only be done for shared-lib packages without executables.
 It is assumed that these packages will link to an executable package that is or
 will be linked to UBSan or be CFIed.
-
-#### Pulseaudio can't record mic
-
-It depends on the security tradeoff.  You can use LD_PRELOAD or unCFI more
-packages to get rid of missing symbols.  This issue affects web browsers.
-Increased mitigation for a dependency of pulseaudio was favored resulting
-in a broken `pulseaudio -k`, so using `killall -9 pulseaudio` with the
-same user should be used instead.
 
 #### Perl modules
 
