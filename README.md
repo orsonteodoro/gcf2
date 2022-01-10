@@ -554,11 +554,21 @@ a static-lib.
 
 ##### CFI only actual
 
-* CFIed: 179 (22.715736040609137 %)
-  * @world: 179 (22.715736040609137 %)
-  * @world - @system: 166 (21.065989847715734 %)
-  * @system: 13 (1.6497461928934012 %)
-* NOT CFIed: 609 (77.28426395939087 %)
+Last updated Jan 9, 2022
+
+* Set sizes
+  * @world:  788
+  * @world - @system:  496
+  * @system:  295
+
+* CFIed:  231 (29.314720812182742 %_rel_world)
+  * @world:  231 (29.314720812182742 %_rel_world)
+  * @world - @system:  167 (33.66935483870967 %_rel_world_minus_system, 21.19289340101523 %_rel_world)
+  * @system:  67 (22.71186440677966 %_rel_system, 8.50253807106599 %_rel_world)
+* NOT CFIed:  557 (70.68527918781726 %_rel_world)
+  * @world:  557 (70.68527918781726 %_rel_world)
+  * @world - @system:  329 (66.33064516129032 %_rel_world_minus_system, 41.75126903553299 %_rel_world)
+  * @system:  228 (77.28813559322035 %_rel_system, 28.934010152284262 %_rel_world)
 
 @system numbers are a WIP (Work In Progress) and may change.
 
