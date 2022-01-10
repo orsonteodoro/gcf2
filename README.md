@@ -790,6 +790,48 @@ main() {
 main "${1}"
 ```
 
+### Checking for early CFI violations and missing symbols
+
+This does a simple --version check.  Add any potentially dangerous commands in
+the exclude list.
+
+```Shell
+#!/bin/bash
+main() {
+	echo "Scanning system for CFI violations and breakage.  Please wait..."
+	local exclude=(
+		# basename goes here
+	)
+	local error_list_=(
+		"control flow integrity"
+		"failed to allocate noreserve"
+		"__cfi_"
+		"__dso_handle"
+		"CFI: CHECK failed:"
+		"__ubsan_handle"
+	)
+	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
+	# Add more search paths below if necessary.
+	for f in $(find /bin /sbin /usr/bin /usr/sbin -executable) ; do
+		local skip=0
+		for n in ${exclude[@]} ; do
+			[[ "${f}" =~ "${n}" ]] && skip=1
+		done
+		if (( ${skip} == 1 )) ; then
+			echo "Skipping ${f}"
+			continue
+		fi
+		#echo "Inspecting ${f}"
+		timeout 2 ${f} --help 2>&1 \
+			| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
+	done
+}
+
+main
+```
+
+Use `<path> --version` to see the violation or missing symbol problem.
+
 ## Required re-emerges
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
