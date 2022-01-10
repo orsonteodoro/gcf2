@@ -799,6 +799,7 @@ the exclude list.
 #!/bin/bash
 main() {
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
+	echo "You can stop anytime with kill -9 $$"
 	local exclude=(
 		# basename goes here
 	)
