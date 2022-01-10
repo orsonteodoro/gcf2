@@ -837,7 +837,7 @@ emerge -1vO \
 	xfce-base/xfconf
 ```
 
-If any of the above package(s) is/are a new package, you don't need to re-emerge
+If any of the above package(s) is a or are new package(s), you don't need to re-emerge
 it at this time.
 
 For a more comprehensive fix, you can do one the following ordered by time
