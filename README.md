@@ -594,7 +594,8 @@ Last updated Jan 10, 2022
 * Min package build time:  4 seconds
 
 The no-cfi-icall.conf numbers is higher because it does not count the auto
-applied -fno-sanitize=cfi-icall.
+applied -fno-sanitize=cfi-icall which is around maybe 232 unique packages
+(obtained from difference of CFIable - Allowable CFI icall candidates).
 
 No source base browser tested yet for build time.
 
