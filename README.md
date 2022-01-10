@@ -756,15 +756,20 @@ the package name corresponding to that binary.
 
 ##### Fixing CFI violation
 
-When a CFI violation is encountered it should be fixed as follows:
+When a CFI violation is encountered it should be fixed as follows (ordered
+from best to worst):
 
-1.  Fix the exposed bug
+1.  Fix the exposed bug (or vulnerability)
 2.  If not able to be fixed, then add exceptions to the ignore list while
 continuing to use the CFI scheme.  Add cfi-ignore-list.conf to package.env and
 add the ignore list to /etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See
 docs for details.
 3.  If ignore list doesn't work well, use the -fno-sanitize to completely
 disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
+
+When choosing the fix, one should pick the solution that will maximize
+mitigation while minimizing or eliminating the security hole.  This pertains
+to choices in #2 (fun: versus src:) and exclusions.
 
 ## Helper script(s)
 
