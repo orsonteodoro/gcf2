@@ -736,7 +736,7 @@ from best to worst):
 continuing to use the CFI scheme.  Add cfi-ignore-list.conf to package.env and
 add the ignore list to /etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See
 docs for details.
-3.  If ignore list doesn't work well, use the -fno-sanitize to completely
+3.  If the ignore list doesn't work well, use the -fno-sanitize to completely
 disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
 
 When choosing the fix, one should pick the solution that will maximize
