@@ -348,7 +348,7 @@ The temporary blocks may result in unwanted manual rollbacks discussed later.
 * Modified `sys-devel/clang` and `sys-libs/compiler-rt-sanitizers` for
 disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
-It also requires the removal of the hard mask for the package and the
+It also requires the removal of the hard mask for the package's
 experimental USE flag.
 
 Changes required for modded clang ebuild:
