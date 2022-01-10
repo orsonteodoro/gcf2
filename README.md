@@ -554,16 +554,16 @@ a static-lib.
 
 ##### CFI only actual
 
-Last updated Jan 9, 2022
+Last updated Jan 10, 2022
 
 * Set sizes
   * @world:  788
-  * @world - @system:  496
+  * @world - @system:  493
   * @system:  295
 
 * CFIed:  231 (29.314720812182742 %_rel_world)
   * @world:  231 (29.314720812182742 %_rel_world)
-  * @world - @system:  167 (33.66935483870967 %_rel_world_minus_system, 21.19289340101523 %_rel_world)
+  * @world - @system:  164 (33.2657200811359 %_rel_world_minus_system, 20.812182741116754 %_rel_world)
   * @system:  67 (22.71186440677966 %_rel_system, 8.50253807106599 %_rel_world)
 * NOT CFIed:  557 (70.68527918781726 %_rel_world)
   * @world:  557 (70.68527918781726 %_rel_world)
@@ -574,18 +574,22 @@ Last updated Jan 9, 2022
 
 ##### Misc
 
-* 41 marked with disable-clang-cfi.conf (5.203045685279188 %)
-* 20 marked with use-gcc.conf (0.6345177664974619 %)
-* 68 marked with no-cfi-icall.conf (8.629441624365482 %)
-* 3 marked with no-cfi-vcall.conf (0.3807106598984772 %)
-* 5 marked with no-cfi-cast.conf (0.6345177664974619 %)
-* 5 marked with no-cfi-nvcall.conf (0.6345177664974619 %)
-* 9 marked with remove-lto.conf (1.1421319796954315 %)
+Last updated Jan 10, 2022
+
+* 47 marked with disable-clang-cfi.conf (5.964467005076142 %)
+* 22 marked with use-gcc.conf (2.7918781725888326 %)
+* 104 marked with no-cfi-icall.conf (13.19796954314721 %)
+* 6 marked with no-cfi-vcall.conf (0.7614213197969544 %)
+* 8 marked with no-cfi-cast.conf (1.015228426395939 %)
+* 8 marked with no-cfi-nvcall.conf (1.015228426395939 %)
+* 0 marked with no-cfi-mfcall.conf (0 %)
+* 13 marked with remove-lto.conf (1.6497461928934012 %)
 * 10 marked with remove-gcc-lto.conf (1.2690355329949239 %)
 * 26 marked with skipless.conf (3.2994923857868024 %)
 * 3 marked with no-strip.conf (0.3807106598984772 %)
 * 118 marked with prefetch-loop-arrays.conf (14.974619289340103 %)
 * 4 marked with stc.conf (0.5076142131979695 %)
+* 1 marked with no-cfi-canonical-jump-tables.conf (0.12690355329949238 %)
 * Max package build time:  87526 seconds ( 1 days 0 hours 18 minutes 46 seconds )
 * Min package build time:  4 seconds
 
