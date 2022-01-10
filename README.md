@@ -756,6 +756,11 @@ disable-lto-compiler-switch.conf, disable-perl-makemaker-autoedit.conf,
 enable-perl-makemaker-autoedit.conf to control how to build the perl module
 packages.
 
+#### runtime error: control flow integrity check
+
+The problematic binary is in parenthesis.  Use `equery b <path>` to find
+the package name corresponding to that binary.
+
 ## Helper script(s)
 
 ### Sorted list of completion times
