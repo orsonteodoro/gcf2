@@ -593,6 +593,9 @@ Last updated Jan 10, 2022
 * Max package build time:  87526 seconds ( 1 days 0 hours 18 minutes 46 seconds )
 * Min package build time:  4 seconds
 
+The no-cfi-icall.conf numbers is higher because it does not count the auto
+applied -fno-sanitize=cfi-icall.
+
 No source base browser tested yet for build time.
 
 The above percents are relative to the @world.
