@@ -463,16 +463,7 @@ even to decide if it was a miscompile or CFI itself.
 
 The reasons for emerging @world CFIed 2 times with 1 CFIed @system emerge is
 for CFI violation discovery.  The CFI volation is not really isolated in the
-@system set but can affect the @world set like with zlib.  When a CFI violation
-is encountered it should be fixed as follows:
-
-1.  Fix the exposed bug
-2.  If not able to be fixed, then add exceptions to the ignore list while
-continuing to use the CFI scheme.  Add cfi-ignore-list.conf to package.env and
-add the ignore list to /etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See
-docs for details.
-3.  If ignore list doesn't work well, use the -fno-sanitize to completely
-disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
+@system set but can affect the @world set like with zlib.
 
 See also the [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting) section.
 
@@ -760,6 +751,18 @@ packages.
 
 The problematic binary is in parenthesis.  Use `equery b <path>` to find
 the package name corresponding to that binary.
+
+##### Fixing CFI violation
+
+When a CFI violation is encountered it should be fixed as follows:
+
+1.  Fix the exposed bug
+2.  If not able to be fixed, then add exceptions to the ignore list while
+continuing to use the CFI scheme.  Add cfi-ignore-list.conf to package.env and
+add the ignore list to /etc/portage/package.cfi_ignore/${CATEGORY}/${PN}.  See
+docs for details.
+3.  If ignore list doesn't work well, use the -fno-sanitize to completely
+disable the scheme.  These correspond to one or more the no-cfi-*.conf files.
 
 ## Helper script(s)
 
