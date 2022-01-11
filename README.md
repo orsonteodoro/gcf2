@@ -833,7 +833,7 @@ main() {
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
 		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
-		(( ${is_exe} )) && continue
+		(( ${is_exe} == 0 )) && continue
 		local skip=0
 		for n in ${exclude[@]} ; do
 			[[ "${f}" =~ "${n}" ]] && skip=1
