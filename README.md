@@ -814,10 +814,10 @@ main() {
 	)
 	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
 	# Add more search paths below if necessary.
-	for f in $(find /bin /sbin /usr/bin /usr/sbin /usr/libexec /usr/*/gcc-bin /usr/lib* -executable) ; do
+	for f in $(find /bin /sbin /usr/bin /usr/sbin /usr/libexec /usr/*/gcc-bin /usr/lib* /opt -executable) ; do
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
-		file "${f}" | grep -q -e "symbolic link" && is_exe=0
+		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
 		(( ${is_exe} )) && continue
 		local skip=0
 		for n in ${exclude[@]} ; do
