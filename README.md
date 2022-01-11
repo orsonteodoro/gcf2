@@ -798,6 +798,7 @@ the exclude list.
 
 ```Shell
 #!/bin/bash
+FULL_SCAN=${FULL_SCAN:=0}
 main() {
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
 	echo "You can stop anytime with kill -9 $$"
@@ -812,9 +813,23 @@ main() {
 		"CFI: CHECK failed:"
 		"__ubsan_handle"
 	)
+	local full_scan_paths=(
+		# Add your custom paths here
+		$(realpath /usr/*/gcc-bin)
+		$(realpath /usr/lib*)
+		/opt
+	)
 	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
 	# Add more search paths below if necessary.
-	for f in $(find /bin /sbin /usr/bin /usr/sbin /usr/libexec /usr/*/gcc-bin /usr/lib* /opt -executable) ; do
+	local full_scan_paths_=( /bin /sbin /usr/bin /usr/sbin )
+	if (( ${FULL_SCAN} == 1 )) ; then
+		full_scan_paths_=( ${full_scan_paths_[@]} ${full_scan_paths[@]} )
+		echo "Full scan enabled:  ${full_scan_paths_[@]}"
+	else
+		echo "Full scan disabled:  ${full_scan_paths_[@]}"
+	fi
+	echo "Set FULL_SCAN=1 to scan all paths."
+	for f in $(find ${full_scan_paths_[@]} -executable) ; do
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
 		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
