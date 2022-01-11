@@ -812,7 +812,7 @@ main() {
 	echo "You can stop anytime with kill -9 $$"
 	echo
 	echo "* This may crash X and lose unsaved work."
-	echo "* It is not recommended to run this script with unclean (or"
+	echo "* It is not recommended to run this script with an unclean (or"
 	echo "     possibly compromised) computer."
 	echo
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
@@ -865,6 +865,7 @@ main() {
 		if (( ${LOGGING} == 1 )) ; then
 			echo "Inspecting ${f}" >> "${LOGGING_PATH}"
 			if timeout 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
+				echo "Detected in ${f}"
 				echo "Detected in ${f}" >> "${LOGGING_PATH}"
 			fi
 		else
