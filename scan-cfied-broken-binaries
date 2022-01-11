@@ -1,7 +1,7 @@
 #!/bin/bash
 FULL_SCAN=${FULL_SCAN:=0}
-SHOW_ERRORS=${SHOW_ERRORS:=0}
-LOGGING=${LOGGING:=0}
+SHOW_ERRORS=${SHOW_ERRORS:=1}
+LOGGING=${LOGGING:=1}
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
 main() {
 	echo
@@ -14,7 +14,7 @@ main() {
 	echo
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
 	echo
-	sleep 20
+#	sleep 20
 	echo
 	echo "When scanning is done you may see the results by running \`<path> --help\`"
 	echo
@@ -64,19 +64,21 @@ main() {
 			echo "Skipping ${f}"
 			continue
 		fi
+		local error_found=0
 		if (( ${LOGGING} == 1 )) ; then
 			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
 			if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
-				echo "Detected in ${f}"
-				echo "Detected in ${f}" >> "${LOGGING_PATH}"
+				error_found=1
+				echo "Detected in ${f}:"
+				echo "Detected in ${f}:" >> "${LOGGING_PATH}"
 			fi
 		else
 			timeout -s SIGKILL 2 ${f} --help 2>&1 \
 				| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
 		fi
-		if (( ${SHOW_ERRORS} == 1 )) ; then
-			timeout -s SIGKILL 2 "${f}" --help
-			timeout -s SIGKILL 2 "${f}" --help 2>&1 >> "${LOGGING_PATH}"
+		if (( ${SHOW_ERRORS} == 1 && ${error_found} == 1 )) ; then
+			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 1>/dev/null ; echo "----")"
+			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 2>> \"${LOGGING_PATH}\" ; echo "----" >> \"${LOGGING_PATH}\")"
 		fi
 	done
 }
