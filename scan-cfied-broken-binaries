@@ -14,7 +14,7 @@ main() {
 	echo
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
 	echo
-#	sleep 20
+	sleep 20
 	echo
 	echo "When scanning is done you may see the results by running \`<path> --help\`"
 	echo
