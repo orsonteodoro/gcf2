@@ -611,10 +611,10 @@ latter is not completely revealed in the build.log but helps a lot when finding
 missing symbols and CFI violations.  Find the error by doing a search on
 "error:" or "symbol:".
 
-`dmesg` could also be used to find segfaults that may be indirectly related
-to CFI flags.  The direct package of some segfaults may not be the actual cause.
-Using `ldd <lib_path or exe_path>` or the ebuilds themselves can be used to
-traverse the dependency tree.
+`dmesg` could also be used to find segfaults that may be related to CFI flags.
+The direct package of some segfaults may not be the actual cause.  Using
+`ldd <lib_path or exe_path>` or the ebuilds themselves can be used to traverse
+the dependency tree.
 
 #### Package issues
 
