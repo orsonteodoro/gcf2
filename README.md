@@ -811,8 +811,9 @@ main() {
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
 	echo "You can stop anytime with kill -9 $$"
 	echo
-	echo "This may crash X and lose unsaved work."
-	echo "It is not recommended to run this script with unclean (or possibly compromised) computer."
+	echo "* This may crash X and lose unsaved work."
+	echo "* It is not recommended to run this script with unclean (or"
+	echo "     possibly compromised) computer."
 	echo
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
 	echo
