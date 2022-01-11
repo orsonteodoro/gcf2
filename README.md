@@ -805,6 +805,9 @@ The script is called
 
 Use `<path> --help` to see the violation or missing symbol problem.
 
+The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
+instead.
+
 ## Required re-emerges
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
