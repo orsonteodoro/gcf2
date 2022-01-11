@@ -863,7 +863,7 @@ main() {
 			continue
 		fi
 		if (( ${LOGGING} == 1 )) ; then
-			echo "Inspecting ${f}" >> "${LOGGING_PATH}"
+			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
 			if timeout 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
 				echo "Detected in ${f}"
 				echo "Detected in ${f}" >> "${LOGGING_PATH}"
