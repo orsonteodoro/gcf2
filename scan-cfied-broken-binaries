@@ -1,12 +1,24 @@
 #!/bin/bash
-FULL_SCAN=${FULL_SCAN:=0}
+FULL_SCAN=${FULL_SCAN:=1}
+ALLOW_OPT=${ALLOW_OPT:=0}
 SHOW_ERRORS=${SHOW_ERRORS:=1}
-LOGGING=${LOGGING:=1} # do not turn off
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
+ANALYSIS="${ANALYSIS:=1}"
+GEN_LOG="${GEN_LOG:=1}"
+
+decho() {
+	echo "${@}" >> "${LOGGING_PATH}"
+	echo "${@}"
+}
+
+dcat() {
+	cat "${1}" >> "${LOGGING_PATH}"
+	cat "${1}"
+}
+
 gen_log() {
 	echo
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
-	echo "You can stop anytime with kill -9 $$"
 	echo
 	echo "* This may crash X and lose unsaved work."
 	echo "* It is not recommended to run this script with an unclean (or"
@@ -20,6 +32,7 @@ gen_log() {
 	echo
 	local exclude=(
 		# basename goes here
+		startx
 	)
 	local error_list_=(
 		"control flow integrity"
@@ -33,14 +46,9 @@ gen_log() {
 		# Add your custom paths here
 		$(realpath /usr/*/gcc-bin)
 		$(realpath /usr/lib*)
-		/opt
 	)
-	if (( ${LOGGING} == 1 )) ; then
-		echo "" > "${LOGGING_PATH}"
-		echo "Logging is enabled.  See ${LOGGING_PATH} for details."
-	else
-		echo "Logging is disabled.  Set LOGGING=1 to generate a log."
-	fi
+	(( ${ALLOW_OPT} )) && full_scan_paths+=( /opt )
+	echo "" > "${LOGGING_PATH}"
 	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
 	# Add more search paths below if necessary.
 	local full_scan_paths_=( /bin /sbin /usr/bin /usr/sbin )
@@ -51,6 +59,8 @@ gen_log() {
 		echo "Full scan disabled:  ${full_scan_paths_[@]}"
 	fi
 	echo "Set FULL_SCAN=1 to scan all paths."
+	decho "----" >> "${LOGGING_PATH}"
+	decho "" >> "${LOGGING_PATH}"
 	for f in $(find ${full_scan_paths_[@]} -executable) ; do
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
@@ -65,21 +75,33 @@ gen_log() {
 			continue
 		fi
 		local error_found=0
-		if (( ${LOGGING} == 1 )) ; then
-			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
-			if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
-				error_found=1
-				local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS)
-				echo "Detected in ${f} (pkg_name = ${pkg_name}):"
-				echo "Detected in ${f} (pkg_name = ${pkg_name}):" >> "${LOGGING_PATH}"
-			fi
-		else
-			timeout -s SIGKILL 2 ${f} --help 2>&1 \
-				| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
+		#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
+		if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
+			error_found=1
+			local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g" | tr "\n" " ")
+			decho "Detected in ${f} (pkg_name = ${pkg_name}):"
 		fi
 		if (( ${SHOW_ERRORS} == 1 && ${error_found} == 1 )) ; then
-			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 1>/dev/null ; echo "----")"
-			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 2>> \"${LOGGING_PATH}\" ; echo "----" >> \"${LOGGING_PATH}\")"
+			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
+			dcat "${SANDBOX_DIR}/output.log"
+			decho ""
+			decho "----"
+			decho ""
+			# Make it easier to extract for condensed analysis
+			if grep -q -e "CFI: CHECK failed" "${SANDBOX_DIR}/output.log" ; then
+				decho "CFI: CHECK failed: (${pkg_name})"
+			fi
+			if grep -q -e "failed to allocate noreserve" "${SANDBOX_DIR}/output.log" ; then
+				echo "failed to allocate noreserve (${pkg_name})" >> "${LOGGING_PATH}"
+				for g in $(grep -E -e "/usr/.*" "${SANDBOX_DIR}/output.log") ; do
+					[[ "${g}" =~ ^0x ]] && continue
+					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+				done
+				for g in $(grep -E -e ".*/lib.*" "${SANDBOX_DIR}/output.log") ; do
+					[[ "${g}" =~ ^0x ]] && continue
+					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+				done
+			fi
 		fi
 	done
 }
@@ -108,26 +130,60 @@ find_indirect_function_call_errors() {
 	echo
 	echo "indirect function call errors from (src):"
 	echo
-	grep -r -e "indirect function call" /var/log/cfi-scan.log | cut -f 1 -d ":" | sort | uniq
+	grep -r -e "indirect function call" "${LOGGING_PATH}" | cut -f 1 -d ":" | sort | uniq
 	echo
 	echo "indirect function call errors from (lib):"
 	echo
-	for f in $(cat /var/log/cfi-scan.log | pcregrep -M  "indirect function call\n[(]" | sed -e ':a;N;$!ba;s/\n[(]/ (/g' | grep -o -e "(/.*.so.*):" | sed -r -e "s|\):||g" -e "s|\(||g" -e "s|\+0x[0-9a-z]+$||g" | sort | uniq) ; do
+	for f in $(cat "${LOGGING_PATH}" | pcregrep -M "indirect function call\n[(]" | sed -e ':a;N;$!ba;s/\n[(]/ (/g' | grep -o -e "(/.*.so.*):" | sed -r -e "s|\):||g" -e "s|\(||g" -e "s|\+0x[0-9a-z]+$||g" | sort | uniq) ; do
 		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 	done
 	echo
+}
+
+find_noreserve_libs_errors() {
+	echo
+	echo "noreserve errors (libs):"
+	echo
+	grep "noreserve:" "${LOGGING_PATH}" | sort | uniq
+}
+
+find_cfi_check_failed_errors() {
+	echo
+	echo "CFI: CHECK failed errors (libs):"
+	echo
+	grep "CFI: CHECK failed:" "${LOGGING_PATH}" | sort | uniq
 }
 
 analysis() {
 	find_slowpath_errors
 	find_check_fail_abort_errors
 	find_indirect_function_call_errors
+	find_cfi_check_failed_errors
 	echo "Manual analysis still required because of parsing difficulty.  See ${LOGGING_PATH} for details."
 }
 
+cleanup() {
+	echo "Removing sandbox"
+	rm -rf "${sandboxdir}"
+	exit 1
+}
+
+install_traps() {
+	trap cleanup INT
+	trap cleanup KILL
+	trap cleanup ABRT
+	trap cleanup QUIT
+}
+
 main() {
-	gen_log
-	analysis
+	export SANDBOX_DIR=$(mktemp -d)
+	mkdir -p "${SANDBOX_DIR}"
+	pushd "${SANDBOX_DIR}"
+	install_traps
+	(( ${GEN_LOG} == 1 )) && gen_log
+	(( ${ANALYSIS} == 1)) && analysis
+	popd
+	cleanup
 }
 
 main
