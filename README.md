@@ -890,4 +890,6 @@ emerge -1vO $(grep -r -l -E -e "Package flags:" /var/log/emerge/build-logs/ \
 	| uniq)
 ```
 
-3. `emerge -ve world`
+3. Use `scan-cfied-broken-binaries` to list __ubsan_handle_cfi_check_fail_abort
+missing symbol and others.  Re-emerge all packages listed.
+4. `emerge -ve world`
