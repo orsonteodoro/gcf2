@@ -803,7 +803,8 @@ this outside of X to prevent crash with X.
 It may randomly stall.  The stalled process need to be killed before futher
 processing.
 
-The script is called [scan-cfied-broken-binaries]().
+The script is called
+[scan-cfied-broken-binaries](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries).
 
 Use `<path> --help` to see the violation or missing symbol problem.
 
