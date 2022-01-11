@@ -552,14 +552,14 @@ Last updated Jan 10, 2022
   * @world - @system:  493
   * @system:  295
 
-* CFIed:  231 (29.314720812182742 %_rel_world)
-  * @world:  231 (29.314720812182742 %_rel_world)
+* CFIed:
+  * @world:  261 (33.121827411167516 %_rel_world)
   * @world - @system:  164 (33.2657200811359 %_rel_world_minus_system, 20.812182741116754 %_rel_world)
-  * @system:  67 (22.71186440677966 %_rel_system, 8.50253807106599 %_rel_world)
-* NOT CFIed:  557 (70.68527918781726 %_rel_world)
-  * @world:  557 (70.68527918781726 %_rel_world)
-  * @world - @system:  329 (66.33064516129032 %_rel_world_minus_system, 41.75126903553299 %_rel_world)
-  * @system:  228 (77.28813559322035 %_rel_system, 28.934010152284262 %_rel_world)
+  * @system:  97 (32.88135593220339 %_rel_system, 12.30964467005076 %_rel_world)
+* NOT CFIed:
+  * @world:  527 (66.87817258883248 %_rel_world)
+  * @world - @system:  329 (66.73427991886409 %_rel_world_minus_system, 41.75126903553299 %_rel_world)
+  * @system:  198 (67.11864406779661 %_rel_system, 25.12690355329949 %_rel_world)
 
 @system numbers are a WIP (Work In Progress) and may change.
 
