@@ -65,13 +65,13 @@ main() {
 			continue
 		fi
 		if (( ${LOGGING} == 1 )) ; then
-			echo "Inspecting ${f}" >> "${LOGGING_PATH}"
-			if timeout 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
+			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
+			if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
 				echo "Detected in ${f}"
 				echo "Detected in ${f}" >> "${LOGGING_PATH}"
 			fi
 		else
-			timeout 2 ${f} --help 2>&1 \
+			timeout -s SIGKILL 2 ${f} --help 2>&1 \
 				| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
 		fi
 		(( ${SHOW_ERRORS} == 1 )) && timeout 2 "${f}" --help

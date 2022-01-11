@@ -800,11 +800,6 @@ the exclude list.
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
 
-It may randomly stall.  The stalled process needs to be killed before
-continuing futher processing.  To do that, run with `LOGGING=1`, and then do
-`tail /var/log/cfi-scan.log`, then use `ps -aux | grep "<binary name>"`,
-then use `kill -9 <pid>`.
-
 The script is called
 [scan-cfied-broken-binaries](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries).
 
