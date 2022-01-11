@@ -74,7 +74,7 @@ main() {
 			timeout -s SIGKILL 2 ${f} --help 2>&1 \
 				| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
 		fi
-		(( ${SHOW_ERRORS} == 1 )) && timeout 2 "${f}" --help
+		(( ${SHOW_ERRORS} == 1 )) && timeout -s SIGKILL 2 "${f}" --help
 	done
 }
 
