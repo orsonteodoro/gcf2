@@ -1,9 +1,9 @@
 #!/bin/bash
 FULL_SCAN=${FULL_SCAN:=0}
 SHOW_ERRORS=${SHOW_ERRORS:=1}
-LOGGING=${LOGGING:=1}
+LOGGING=${LOGGING:=1} # do not turn off
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
-main() {
+gen_log() {
 	echo
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
 	echo "You can stop anytime with kill -9 $$"
@@ -82,6 +82,37 @@ main() {
 			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 2>> \"${LOGGING_PATH}\" ; echo "----" >> \"${LOGGING_PATH}\")"
 		fi
 	done
+}
+
+find_slowpath() {
+	echo
+	echo "__cfi_slowpath_diag errors from:"
+	echo
+	for f in $(grep -e "__cfi_slowpath_diag" "${LOGGING_PATH}" | grep -o -E " /.*.so[.0-9]+" | sort | uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	done
+	echo
+}
+
+find_check_fail_abort() {
+	echo
+	echo "__ubsan_handle_cfi_check_fail_abort errors from:"
+	echo
+	for f in $(grep -e "__ubsan_handle_cfi_check_fail_abort" "${LOGGING_PATH}" | grep -o -E " /.*.so[.0-9]+" | sort | uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	done
+	echo
+}
+
+analysis() {
+	find_slowpath
+	find_check_fail_abort
+	echo "Manual analysis still required because of parsing difficulty.  See ${LOGGING_PATH} for details."
+}
+
+main() {
+	gen_log
+	analysis
 }
 
 main
