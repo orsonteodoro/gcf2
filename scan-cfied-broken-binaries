@@ -84,7 +84,7 @@ gen_log() {
 	done
 }
 
-find_slowpath() {
+find_slowpath_errors() {
 	echo
 	echo "__cfi_slowpath_diag errors from:"
 	echo
@@ -94,7 +94,7 @@ find_slowpath() {
 	echo
 }
 
-find_check_fail_abort() {
+find_check_fail_abort_errors() {
 	echo
 	echo "__ubsan_handle_cfi_check_fail_abort errors from:"
 	echo
@@ -104,9 +104,24 @@ find_check_fail_abort() {
 	echo
 }
 
+find_indirect_function_call_errors() {
+	echo
+	echo "indirect function call errors from (src):"
+	echo
+	grep -r -e "indirect function call" /var/log/cfi-scan.log | cut -f 1 -d ":" | sort | uniq
+	echo
+	echo "indirect function call errors from (lib):"
+	echo
+	for f in $(cat /var/log/cfi-scan.log | pcregrep -M  "indirect function call\n[(]" | sed -e ':a;N;$!ba;s/\n[(]/ (/g' | grep -o -e "(/.*.so.*):" | sed -r -e "s|\):||g" -e "s|\(||g" -e "s|\+0x[0-9a-z]+$||g" | sort | uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	done
+	echo
+}
+
 analysis() {
-	find_slowpath
-	find_check_fail_abort
+	find_slowpath_errors
+	find_check_fail_abort_errors
+	find_indirect_function_call_errors
 	echo "Manual analysis still required because of parsing difficulty.  See ${LOGGING_PATH} for details."
 }
 
