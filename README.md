@@ -27,8 +27,8 @@ The bashrc with the latest package.env has processed 786 packages with
 
 Also, there is an issue with the stats for CFI shown sections below.  Using
 systemwide CFI is not recommended with my bashrc and package.env until the ratio
-of 174 actual to 338 estimate are near the same or a good reason to justify
-the odd ratio.
+of 261 actual to 464 estimate are near the same or a good reason to justify
+the discrepancy.
 
 So, if you want to use development mode, it is fine to use systemwide LTO.
 Systemwide CFI can be used but it is better to wait for the above problems to get
