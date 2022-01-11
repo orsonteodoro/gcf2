@@ -811,6 +811,13 @@ instead.
 
 ## Required re-emerges
 
+If any of the undefined symbols is encountered, it requires a rebuild:
+
+* __ubsan_handle_cfi_check_fail_abort
+* __cfi_slowpath_diag (There's a small chance it could be fixed with auto
+-Wl,-lubsan but may require explicity add of -fno-sanitize=cfi-icall
+(with no-cfi-icall.conf) or more.)
+
 The following is required if using systemwide CFI at and before Jan 6, 2022.
 
 This requires bashrc be updated to commit `ed89cbf` or newer before emerging
