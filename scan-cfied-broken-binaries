@@ -69,8 +69,9 @@ main() {
 			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
 			if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
 				error_found=1
-				echo "Detected in ${f}:"
-				echo "Detected in ${f}:" >> "${LOGGING_PATH}"
+				local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS)
+				echo "Detected in ${f} (pkg_name = ${pkg_name}):"
+				echo "Detected in ${f} (pkg_name = ${pkg_name}):" >> "${LOGGING_PATH}"
 			fi
 		else
 			timeout -s SIGKILL 2 ${f} --help 2>&1 \
