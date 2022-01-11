@@ -800,84 +800,10 @@ the exclude list.
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
 
-```Shell
-#!/bin/bash
-FULL_SCAN=${FULL_SCAN:=0}
-SHOW_ERRORS=${SHOW_ERRORS:=0}
-LOGGING=${LOGGING:=0}
-LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
-main() {
-	echo
-	echo "Scanning system for CFI violations and breakage.  Please wait..."
-	echo "You can stop anytime with kill -9 $$"
-	echo
-	echo "* This may crash X and lose unsaved work."
-	echo "* It is not recommended to run this script with an unclean (or"
-	echo "     possibly compromised) computer."
-	echo
-	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
-	echo
-	sleep 20
-	echo
-	echo "When scanning is done you may see the results by running \`<path> --help\`"
-	echo
-	local exclude=(
-		# basename goes here
-	)
-	local error_list_=(
-		"control flow integrity"
-		"failed to allocate noreserve"
-		"__cfi_"
-		"__dso_handle"
-		"CFI: CHECK failed:"
-		"__ubsan_handle"
-	)
-	local full_scan_paths=(
-		# Add your custom paths here
-		$(realpath /usr/*/gcc-bin)
-		$(realpath /usr/lib*)
-		/opt
-	)
-	(( ${LOGGING} == 1 )) && echo "" > "${LOGGING_PATH}"
-	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
-	# Add more search paths below if necessary.
-	local full_scan_paths_=( /bin /sbin /usr/bin /usr/sbin )
-	if (( ${FULL_SCAN} == 1 )) ; then
-		full_scan_paths_=( ${full_scan_paths_[@]} ${full_scan_paths[@]} )
-		echo "Full scan enabled:  ${full_scan_paths_[@]}"
-	else
-		echo "Full scan disabled:  ${full_scan_paths_[@]}"
-	fi
-	echo "Set FULL_SCAN=1 to scan all paths."
-	for f in $(find ${full_scan_paths_[@]} -executable) ; do
-		local is_exe=1
-		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
-		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
-		(( ${is_exe} == 0 )) && continue
-		local skip=0
-		for n in ${exclude[@]} ; do
-			[[ "${f}" =~ "${n}" ]] && skip=1
-		done
-		if (( ${skip} == 1 )) ; then
-			echo "Skipping ${f}"
-			continue
-		fi
-		if (( ${LOGGING} == 1 )) ; then
-			#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
-			if timeout 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
-				echo "Detected in ${f}"
-				echo "Detected in ${f}" >> "${LOGGING_PATH}"
-			fi
-		else
-			timeout 2 ${f} --help 2>&1 \
-				| grep -q -E -e "(${error_list})" && echo "Detected in ${f}"
-		fi
-		(( ${SHOW_ERRORS} == 1 )) && timeout 2 "${f}" --help
-	done
-}
+It may randomly stall.  The stalled process need to be killed before futher
+processing.
 
-main
-```
+The script is called [scan-cfied-broken-binaries]().
 
 Use `<path> --help` to see the violation or missing symbol problem.
 
