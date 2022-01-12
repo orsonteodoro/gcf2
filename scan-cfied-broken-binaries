@@ -26,7 +26,7 @@ banner() {
 	echo
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
 	echo
-	sleep 20
+#	sleep 20
 }
 
 gen_log() {
@@ -50,11 +50,6 @@ gen_log() {
 		# Add your custom paths here
 		$(realpath /usr/*/gcc-bin)
 		$(realpath /usr/lib*)
-		/opt/firefox
-		/opt/google
-		/opt/openjdk-bin-11.0.13_p8
-		/opt/rust-bin-1.56.1
-		/opt/spotify
 	)
 	(( ${ALLOW_OPT} )) && full_scan_paths+=( /opt )
 	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
