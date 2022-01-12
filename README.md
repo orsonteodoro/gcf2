@@ -596,7 +596,7 @@ The above percents are relative to the @world.
 
 * Built CFIed @world (on top of agnostic LTO) -- done
 * Built CFIed @system (on top of agnostic LTO) -- done
-* Testing pre startup -- WIP (Current; Work In Progress)
+* Testing pre startup -- done but ongoing for new packages
 * Increased mitigation with ignore lists converting from -fno-sanitize=cfi* form -- on hold
 (Disabled CFI schemes is being used currently for reasons to get a working
 system up as fast as possible.  Difficulties with ignore lists disincentivize
