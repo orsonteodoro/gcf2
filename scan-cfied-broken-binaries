@@ -5,6 +5,7 @@ SHOW_ERRORS=${SHOW_ERRORS:=1}
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
 ANALYSIS="${ANALYSIS:=1}"
 GEN_LOG="${GEN_LOG:=1}"
+CHECK_VERSION="${CHECK_VERSION:=0}"
 
 decho() {
 	echo "${@}" >> "${LOGGING_PATH}"
@@ -192,6 +193,7 @@ main() {
 		"--version"
 	)
 	for a in ${args[@]} ; do
+		(( ${CHECK_VERSION} != 1 )) && [[ "${a}" == "--version" ]] && continue
 		(( ${GEN_LOG} == 1 )) && gen_log "${a}"
 	done
 	(( ${ANALYSIS} == 1)) && analysis
