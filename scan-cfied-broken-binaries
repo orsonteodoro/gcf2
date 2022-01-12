@@ -16,7 +16,7 @@ dcat() {
 	cat "${1}"
 }
 
-gen_log() {
+banner() {
 	echo
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
 	echo
@@ -27,8 +27,12 @@ gen_log() {
 	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
 	echo
 	sleep 20
+}
+
+gen_log() {
+	local arg="${1}"
 	echo
-	echo "When scanning is done you may see the results by running \`<path> --help\`"
+	echo "When scanning is done you may see the results by running \`<path> ${arg}\`"
 	echo
 	local exclude=(
 		# basename goes here
@@ -46,9 +50,13 @@ gen_log() {
 		# Add your custom paths here
 		$(realpath /usr/*/gcc-bin)
 		$(realpath /usr/lib*)
+		/opt/firefox
+		/opt/google
+		/opt/openjdk-bin-11.0.13_p8
+		/opt/rust-bin-1.56.1
+		/opt/spotify
 	)
 	(( ${ALLOW_OPT} )) && full_scan_paths+=( /opt )
-	echo "" > "${LOGGING_PATH}"
 	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
 	# Add more search paths below if necessary.
 	local full_scan_paths_=( /bin /sbin /usr/bin /usr/sbin )
@@ -67,8 +75,9 @@ gen_log() {
 		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
 		(( ${is_exe} == 0 )) && continue
 		local skip=0
+		local bn=$(basename "${f}")
 		for n in ${exclude[@]} ; do
-			[[ "${f}" =~ "${n}" ]] && skip=1
+			[[ "${bn}" == "${n}" ]] && skip=1
 		done
 		if (( ${skip} == 1 )) ; then
 			echo "Skipping ${f}"
@@ -76,13 +85,13 @@ gen_log() {
 		fi
 		local error_found=0
 		#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
-		if timeout -s SIGKILL 2 ${f} --help 2>&1 | grep -q -E -e "(${error_list})" ; then
+		if timeout -s SIGKILL 2 ${f} ${arg} 2>&1 | grep -q -E -e "(${error_list})" ; then
 			error_found=1
 			local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g" | tr "\n" " ")
 			decho "Detected in ${f} (pkg_name = ${pkg_name}):"
 		fi
 		if (( ${SHOW_ERRORS} == 1 && ${error_found} == 1 )) ; then
-			timeout -s SIGKILL 2 bash -c "(\"${f}\" --help 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
+			timeout -s SIGKILL 2 bash -c "(\"${f}\" ${arg} 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
 			dcat "${SANDBOX_DIR}/output.log"
 			decho ""
 			decho "----"
@@ -158,6 +167,7 @@ analysis() {
 	find_slowpath_errors
 	find_check_fail_abort_errors
 	find_indirect_function_call_errors
+	find_noreserve_libs_errors
 	find_cfi_check_failed_errors
 	echo "Manual analysis still required because of parsing difficulty.  See ${LOGGING_PATH} for details."
 }
@@ -180,7 +190,15 @@ main() {
 	mkdir -p "${SANDBOX_DIR}"
 	pushd "${SANDBOX_DIR}"
 	install_traps
-	(( ${GEN_LOG} == 1 )) && gen_log
+	banner
+	echo "" > "${LOGGING_PATH}"
+	local args=(
+		"--help"
+		"--version"
+	)
+	for a in ${args[@]} ; do
+		(( ${GEN_LOG} == 1 )) && gen_log "${a}"
+	done
 	(( ${ANALYSIS} == 1)) && analysis
 	popd
 	cleanup

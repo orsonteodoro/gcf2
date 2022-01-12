@@ -800,8 +800,8 @@ main "${1}"
 
 ### Checking for early CFI violations and missing symbols
 
-This does a simple --help check.  Add any potentially dangerous commands in
-the exclude list.
+This does a simple --help and --version check.  Add any potentially dangerous
+commands in the exclude list.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
@@ -809,7 +809,8 @@ this outside of X to prevent crash with X.
 The script is called
 [scan-cfied-broken-binaries](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries).
 
-Use `<path> --help` to see the violation or missing symbol problem.
+Use `<path> --help` AND `<path> --version` to see the violation or missing
+symbol problem.
 
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
