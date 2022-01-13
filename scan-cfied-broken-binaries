@@ -60,15 +60,18 @@ gen_log() {
 		#  * Stall progress
 		# These have to be manually inspected.
 		exclude+=(
-			emacs
+			emacs # output problem
 			halt
+			pipewire-media-session # possible x crash
 			poweroff
 			reboot
-			screen
+			screen # output problem
 			shutdown
-			vipw
-			vigr
+			vipw # stall
+			vigr # stall
 		)
+
+		# output problem
 		for e in $(realpath /usr/bin/emacs*) ; do
 			exclude+=( $(basename "${e}") )
 		done
@@ -229,12 +232,28 @@ find_cfi_check_failed_errors() {
 	grep "CFI: CHECK failed:" "${LOGGING_PATH}" | sort | uniq
 }
 
+find_segfaults() {
+	echo
+	echo "dmesg segfaults:"
+	echo
+	dmesg \
+		| grep "segfault" \
+		| cut -c 16- \
+		| sed -r -e "s/\[[\+0-9a-z]+\]//g" \
+			-e "s| [0-9a-f]+ | |g" \
+			-e "s/(at|ip|sp)//g" \
+			-e "s|[ ]+| |g" \
+		| sort \
+		| uniq
+}
+
 analysis() {
 	find_slowpath_errors
 	find_check_fail_abort_errors
 	find_indirect_function_call_errors
 	find_noreserve_libs_errors
 	find_cfi_check_failed_errors
+	find_segfaults
 	echo "Manual analysis still required because of parsing difficulty."
 	echo "See ${LOGGING_PATH} for details."
 }
