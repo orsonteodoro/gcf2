@@ -62,6 +62,7 @@ gen_log() {
 		exclude+=(
 			emacs # output problem
 			halt
+			locale-gen # don't generate incomplete locales
 			pipewire-media-session # possible x crash
 			poweroff
 			reboot
