@@ -35,13 +35,14 @@ banner() {
 	echo
 	echo "* This may crash X and lose unsaved work."
 	echo "* This may reboot the computer and with it lost unsaved work."
+	echo "* This may inadvertantly reset and regenerate incomplete settings."
 	echo "* This may stop network software or daemons."
 	echo "* It is not recommended to run this script with an unclean (or"
 	echo "     possibly compromised) computer."
 	echo
-	echo "Press Ctrl+C now to quit or wait 20 secs to proceed."
+	echo "Press Ctrl+C now to quit or wait 30 secs to proceed."
 	echo
-	sleep 20
+	sleep 30
 }
 
 gen_log() {
