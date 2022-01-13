@@ -815,11 +815,11 @@ missing symbol problem.
 The script has several environment varables to control scanning, reporting, and
 analysis and are found at the top of the script.  Example: 
 
-`ANALYSIS=1 GEN_LOG=1 CHECK_NO_ARGS=1 CHECK_HELP=0 CHECK_VERSION=0 scan-cfied-broken-binaries`
+`ANALYSIS=1 GEN_LOG=1 CHECK_NO_ARGS=1 CHECK_HELP=0 CHECK_VERSION=0 ./scan-cfied-broken-binaries`
 
 To form just analysis do:
 
-`ANALYSIS=1 GEN_LOG=0 CHECK_NO_ARGS=0 CHECK_HELP=0 CHECK_VERSION=0 scan-cfied-broken-binaries`
+`ANALYSIS=1 GEN_LOG=0 CHECK_NO_ARGS=0 CHECK_HELP=0 CHECK_VERSION=0 ./scan-cfied-broken-binaries`
 
 Some of the environment vararibles described with 0=off and 1=on:
 
