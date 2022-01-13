@@ -3,16 +3,21 @@
 # Environment variables to control this script:
 FULL_SCAN=${FULL_SCAN:=1} # Scan beyond /*bin or /usr/*bin
 ALLOW_OPT=${ALLOW_OPT:=0} # Allow the /opt folder?
-SHOW_ERRORS=${SHOW_ERRORS:=1} # Show CFI violations, CFI init problems, and missing symbols
+# Show CFI violations, CFI init problems, and missing symbols \
+SHOW_ERRORS=${SHOW_ERRORS:=1}
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
 LOGGING_INSPECT_PATH=${LOGGING_INSPECT_PATH:=/var/log/cfi-scan-inspected.log}
-ANALYSIS="${ANALYSIS:=1}" # Generate condensed report with ebuild package lookups on shared-libs and executibles.
+# Generate condensed report with ebuild package lookups on shared-libs and \
+# executables. \
+ANALYSIS="${ANALYSIS:=1}"
 GEN_LOG="${GEN_LOG:=1}" # Generate output log before analysis
-CHECK_VERSION="${CHECK_VERSION:=0}" # For --version
+CHECK_VERSION="${CHECK_VERSION:=1}" # For --version
 CHECK_NO_ARGS="${CHECK_NO_ARGS:=1}" # For normal startup
 CHECK_HELP="${CHECK_HELP:=1}" # For --help
-KILL_TIMEOUT=${KILL_TIMEOUT:=1} # Max time allowed to run each program
-SHOW_INSPECTED=${SHOW_INSPECTED:=1} # Show "Inspected ${exe_path}"
+KILL_TIMEOUT=${KILL_TIMEOUT:=1} # Max time allowed to run each program.
+# Show "Inspected ${exe_path}".  This could be useful to find the cause of \
+# restarts, paging output, or stalls. \
+SHOW_INSPECTED=${SHOW_INSPECTED:=0}
 
 decho() {
 	echo "${@}" >> "${LOGGING_PATH}"
@@ -80,7 +85,9 @@ gen_log() {
 		"CFI: CHECK failed:"
 		"__ubsan_handle"
 	)
-	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
+	local error_list=$(for l in "${error_list_[@]}" ; do \
+			echo "${l}" ; \
+		done | tr "\n" "|" | sed -e "s/|$//g")
 	# Add more search paths below if necessary.
 	local full_scan_paths=( /bin /sbin /usr/bin /usr/sbin )
 	local full_scan_paths_extra=(
@@ -118,13 +125,16 @@ gen_log() {
 			echo "Inspecting ${f}"
 			echo "Inspecting ${f}" >> "${LOGGING_INSPECT_PATH}"
 		fi
-		if timeout -s SIGKILL ${KILL_TIMEOUT} ${f} ${arg} 2>&1 | grep -q -E -e "(${error_list})" ; then
+		if timeout -s SIGKILL ${KILL_TIMEOUT} ${f} ${arg} 2>&1 \
+			| grep -q -E -e "(${error_list})" ; then
 			error_found=1
-			local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g" | tr "\n" " ")
+			local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS \
+				| sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g" | tr "\n" " ")
 			decho "Detected in ${f} (pkg_name = ${pkg_name}):"
 		fi
 		if (( ${SHOW_ERRORS} == 1 && ${error_found} == 1 )) ; then
-			timeout -s SIGKILL ${KILL_TIMEOUT} bash -c "(\"${f}\" ${arg} 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
+			timeout -s SIGKILL ${KILL_TIMEOUT} \
+				bash -c "(\"${f}\" ${arg} 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
 			dcat "${SANDBOX_DIR}/output.log"
 			decho ""
 			decho "----"
@@ -137,11 +147,13 @@ gen_log() {
 				echo "failed to allocate noreserve (${pkg_name})" >> "${LOGGING_PATH}"
 				for g in $(grep -E -e "/usr/.*" "${SANDBOX_DIR}/output.log") ; do
 					[[ "${g}" =~ ^0x ]] && continue
-					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS \
+						| sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 				done
 				for g in $(grep -E -e ".*/lib.*" "${SANDBOX_DIR}/output.log") ; do
 					[[ "${g}" =~ ^0x ]] && continue
-					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+					decho "noreserve: ${g} : "$(grep -l "${g}" /var/db/pkg/*/*/CONTENTS \
+						| sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 				done
 			fi
 		fi
@@ -155,8 +167,12 @@ find_slowpath_errors() {
 	echo
 	echo "__cfi_slowpath_diag errors from:"
 	echo
-	for f in $(grep -e "__cfi_slowpath_diag" "${LOGGING_PATH}" | grep -o -E " /.*.so[.0-9]+" | sort | uniq) ; do
-		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	for f in $(grep -e "__cfi_slowpath_diag" "${LOGGING_PATH}" \
+		| grep -o -E " /.*.so[.0-9]+" \
+		| sort \
+		| uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS \
+			| sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 	done
 	echo
 }
@@ -165,8 +181,12 @@ find_check_fail_abort_errors() {
 	echo
 	echo "__ubsan_handle_cfi_check_fail_abort errors from:"
 	echo
-	for f in $(grep -e "__ubsan_handle_cfi_check_fail_abort" "${LOGGING_PATH}" | grep -o -E " /.*.so[.0-9]+" | sort | uniq) ; do
-		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	for f in $(grep -e "__ubsan_handle_cfi_check_fail_abort" "${LOGGING_PATH}" \
+		| grep -o -E " /.*.so[.0-9]+" \
+		| sort \
+		| uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS \
+			| sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 	done
 	echo
 }
@@ -175,12 +195,22 @@ find_indirect_function_call_errors() {
 	echo
 	echo "indirect function call errors from (src):"
 	echo
-	grep -r -e "indirect function call" "${LOGGING_PATH}" | cut -f 1 -d ":" | sort | uniq
+	grep -r -e "indirect function call" "${LOGGING_PATH}" \
+		| cut -f 1 -d ":" \
+		| sort \
+		| uniq
 	echo
 	echo "indirect function call errors from (lib):"
 	echo
-	for f in $(cat "${LOGGING_PATH}" | pcregrep -M "indirect function call\n[(]" | sed -e ':a;N;$!ba;s/\n[(]/ (/g' | grep -o -e "(/.*.so.*):" | sed -r -e "s|\):||g" -e "s|\(||g" -e "s|\+0x[0-9a-z]+$||g" | sort | uniq) ; do
-		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
+	for f in $(cat "${LOGGING_PATH}" \
+		| pcregrep -M "indirect function call\n[(]" \
+		| sed -e ':a;N;$!ba;s/\n[(]/ (/g' \
+		| grep -o -e "(/.*.so.*):" \
+		| sed -r -e "s|\):||g" -e "s|\(||g" -e "s|\+0x[0-9a-z]+$||g" \
+		| sort \
+		| uniq) ; do
+		echo "${f}: "$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS \
+			| sed -r -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 	done
 	echo
 }
@@ -205,7 +235,8 @@ analysis() {
 	find_indirect_function_call_errors
 	find_noreserve_libs_errors
 	find_cfi_check_failed_errors
-	echo "Manual analysis still required because of parsing difficulty.  See ${LOGGING_PATH} for details."
+	echo "Manual analysis still required because of parsing difficulty."
+	echo "See ${LOGGING_PATH} for details."
 }
 
 cleanup() {
@@ -227,8 +258,14 @@ main() {
 	pushd "${SANDBOX_DIR}"
 	install_traps
 	banner
-	echo "" > "${LOGGING_PATH}"
-	(( ${SHOW_INSPECTED} == 1 )) && echo "" > "${LOGGING_INSPECT_PATH}"
+	if (( ${CHECK_HELP} == 1 \
+		|| ${CHECK_VERSION} == 1 \
+		|| ${CHECK_NO_ARGS} == 1 )) ; then
+		echo "" > "${LOGGING_PATH}"
+	fi
+	if (( ${SHOW_INSPECTED} == 1 )) ; then
+		echo "" > "${LOGGING_INSPECT_PATH}"
+	fi
 	local args=(
 		"--help"
 		"--version"
