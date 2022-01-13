@@ -823,11 +823,11 @@ To form just analysis do:
 
 Some of the environment vararibles described with 0=off and 1=on:
 
-ANALYSIS -- generate condensed report mapping shared-libs and the ebuilds they come from.
-GEN_LOG -- generate output log in /var/log/cfi-scan.log
-CHECK_VERSION -- run and check stderr for `program --version`
-CHECK_HELP -- run and check stderr for `program --help`
-CHECK_NO_ARGS -- run and check stderr for `program`
+* ANALYSIS -- generate condensed report mapping shared-libs and the ebuilds they come from.
+* GEN_LOG -- generate output log in /var/log/cfi-scan.log
+* CHECK_VERSION -- run and check stderr for `program --version`
+* CHECK_HELP -- run and check stderr for `program --help`
+* CHECK_NO_ARGS -- run and check stderr for `program`
 
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
