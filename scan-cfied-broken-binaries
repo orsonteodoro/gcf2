@@ -1,11 +1,18 @@
 #!/bin/bash
-FULL_SCAN=${FULL_SCAN:=1}
-ALLOW_OPT=${ALLOW_OPT:=0}
-SHOW_ERRORS=${SHOW_ERRORS:=1}
+
+# Environment variables to control this script:
+FULL_SCAN=${FULL_SCAN:=1} # Scan beyond /*bin or /usr/*bin
+ALLOW_OPT=${ALLOW_OPT:=0} # Allow the /opt folder?
+SHOW_ERRORS=${SHOW_ERRORS:=1} # Show CFI violations, CFI init problems, and missing symbols
 LOGGING_PATH=${LOGGING_PATH:=/var/log/cfi-scan.log}
-ANALYSIS="${ANALYSIS:=1}"
-GEN_LOG="${GEN_LOG:=1}"
-CHECK_VERSION="${CHECK_VERSION:=0}"
+LOGGING_INSPECT_PATH=${LOGGING_INSPECT_PATH:=/var/log/cfi-scan-inspected.log}
+ANALYSIS="${ANALYSIS:=1}" # Generate condensed report with ebuild package lookups on shared-libs and executibles.
+GEN_LOG="${GEN_LOG:=1}" # Generate output log before analysis
+CHECK_VERSION="${CHECK_VERSION:=0}" # For --version
+CHECK_NO_ARGS="${CHECK_NO_ARGS:=1}" # For normal startup
+CHECK_HELP="${CHECK_HELP:=1}" # For --help
+KILL_TIMEOUT=${KILL_TIMEOUT:=1} # Max time allowed to run each program
+SHOW_INSPECTED=${SHOW_INSPECTED:=1} # Show "Inspected ${exe_path}"
 
 decho() {
 	echo "${@}" >> "${LOGGING_PATH}"
@@ -22,6 +29,8 @@ banner() {
 	echo "Scanning system for CFI violations and breakage.  Please wait..."
 	echo
 	echo "* This may crash X and lose unsaved work."
+	echo "* This may reboot the computer and with it lost unsaved work."
+	echo "* This may stop network software or daemons."
 	echo "* It is not recommended to run this script with an unclean (or"
 	echo "     possibly compromised) computer."
 	echo
@@ -39,6 +48,30 @@ gen_log() {
 		# basename goes here
 		startx
 	)
+	if (( ${CHECK_NO_ARGS} == 1 )) && [[ "${arg}" == "" ]] ; then
+		# Add pager apps that might:
+		#  * Break output in addition apps
+		#  * Shutdown or restart the computer
+		#  * Stall progress
+		# These have to be manually inspected.
+		exclude+=(
+			emacs
+			halt
+			poweroff
+			reboot
+			screen
+			shutdown
+			vipw
+			vigr
+		)
+		for e in $(realpath /usr/bin/emacs*) ; do
+			exclude+=( $(basename "${e}") )
+		done
+	fi
+	echo
+	echo "Exclusions:"
+	echo "${exclude[@]}" | tr " " "\n"
+	echo
 	local error_list_=(
 		"control flow integrity"
 		"failed to allocate noreserve"
@@ -47,25 +80,26 @@ gen_log() {
 		"CFI: CHECK failed:"
 		"__ubsan_handle"
 	)
-	local full_scan_paths=(
+	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
+	# Add more search paths below if necessary.
+	local full_scan_paths=( /bin /sbin /usr/bin /usr/sbin )
+	local full_scan_paths_extra=(
 		# Add your custom paths here
 		$(realpath /usr/*/gcc-bin)
 		$(realpath /usr/lib*)
 	)
-	(( ${ALLOW_OPT} )) && full_scan_paths+=( /opt )
-	local error_list=$(for l in "${error_list_[@]}" ; do echo "${l}" ; done | tr "\n" "|" | sed -e "s/|$//g")
-	# Add more search paths below if necessary.
-	local full_scan_paths_=( /bin /sbin /usr/bin /usr/sbin )
+	(( ${ALLOW_OPT} )) && full_scan_paths_extra+=( /opt )
 	if (( ${FULL_SCAN} == 1 )) ; then
-		full_scan_paths_=( ${full_scan_paths_[@]} ${full_scan_paths[@]} )
-		echo "Full scan enabled:  ${full_scan_paths_[@]}"
+		full_scan_paths=( ${full_scan_paths[@]} ${full_scan_paths_extra[@]} )
+		echo "Full scan enabled:  ${full_scan_paths[@]}"
 	else
-		echo "Full scan disabled:  ${full_scan_paths_[@]}"
+		echo "Full scan disabled:  ${full_scan_paths[@]}"
 	fi
 	echo "Set FULL_SCAN=1 to scan all paths."
+	echo "Finding executables, please wait..."
 	decho "----" >> "${LOGGING_PATH}"
 	decho "" >> "${LOGGING_PATH}"
-	for f in $(find ${full_scan_paths_[@]} -executable) ; do
+	for f in $(find ${full_scan_paths[@]} -executable) ; do
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
 		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
@@ -80,14 +114,17 @@ gen_log() {
 			continue
 		fi
 		local error_found=0
-		#echo "Inspecting ${f}" >> "${LOGGING_PATH}"
-		if timeout -s SIGKILL 2 ${f} ${arg} 2>&1 | grep -q -E -e "(${error_list})" ; then
+		if (( ${SHOW_INSPECTED} == 1 )) ; then
+			echo "Inspecting ${f}"
+			echo "Inspecting ${f}" >> "${LOGGING_INSPECT_PATH}"
+		fi
+		if timeout -s SIGKILL ${KILL_TIMEOUT} ${f} ${arg} 2>&1 | grep -q -E -e "(${error_list})" ; then
 			error_found=1
 			local pkg_name=$(grep -l "${f}" /var/db/pkg/*/*/CONTENTS | sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g" | tr "\n" " ")
 			decho "Detected in ${f} (pkg_name = ${pkg_name}):"
 		fi
 		if (( ${SHOW_ERRORS} == 1 && ${error_found} == 1 )) ; then
-			timeout -s SIGKILL 2 bash -c "(\"${f}\" ${arg} 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
+			timeout -s SIGKILL ${KILL_TIMEOUT} bash -c "(\"${f}\" ${arg} 1>/dev/null 2> \"${SANDBOX_DIR}/output.log\")"
 			dcat "${SANDBOX_DIR}/output.log"
 			decho ""
 			decho "----"
@@ -108,6 +145,9 @@ gen_log() {
 				done
 			fi
 		fi
+
+		# Fix broken CRLF from `less`
+		stty sane
 	done
 }
 
@@ -188,14 +228,17 @@ main() {
 	install_traps
 	banner
 	echo "" > "${LOGGING_PATH}"
+	(( ${SHOW_INSPECTED} == 1 )) && echo "" > "${LOGGING_INSPECT_PATH}"
 	local args=(
 		"--help"
 		"--version"
 	)
 	for a in ${args[@]} ; do
 		(( ${CHECK_VERSION} != 1 )) && [[ "${a}" == "--version" ]] && continue
+		(( ${CHECK_HELP} != 1 )) && [[ "${a}" == "--help" ]] && continue
 		(( ${GEN_LOG} == 1 )) && gen_log "${a}"
 	done
+	(( "${CHECK_NO_ARGS}" )) && gen_log ""
 	(( ${ANALYSIS} == 1)) && analysis
 	popd
 	cleanup
