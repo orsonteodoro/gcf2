@@ -809,8 +809,25 @@ this outside of X to prevent crash with X.
 The script is called
 [scan-cfied-broken-binaries](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries).
 
-Use `<path> --help` AND `<path> --version` to see the violation or missing
-symbol problem.
+Use `<path> --help`, `<path> --version`, or `<exe_path>` to see the violation or
+missing symbol problem.
+
+The script has several environment varables to control scanning, reporting, and
+analysis and are found at the top of the script.  Example: 
+
+`ANALYSIS=1 GEN_LOG=1 CHECK_NO_ARGS=1 CHECK_HELP=0 CHECK_VERSION=0 scan-cfied-broken-binaries`
+
+To form just analysis do:
+
+`ANALYSIS=1 GEN_LOG=0 CHECK_NO_ARGS=0 CHECK_HELP=0 CHECK_VERSION=0 scan-cfied-broken-binaries`
+
+Some of the environment vararibles described with 0=off and 1=on:
+
+ANALYSIS -- generate condensed report mapping shared-libs and the ebuilds they come from.
+GEN_LOG -- generate output log in /var/log/cfi-scan.log
+CHECK_VERSION -- run and check stderr for `program --version`
+CHECK_HELP -- run and check stderr for `program --help`
+CHECK_NO_ARGS -- run and check stderr for `program`
 
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
