@@ -39,6 +39,9 @@ gcf_print_flags() {
 	gcf_info "FCFLAGS=${FCFLAGS}"
 	gcf_info "FFLAGS=${FFLAGS}"
 	gcf_info "LDFLAGS=${LDFLAGS}"
+	gcf_info "CGO_CFLAGS=${CGO_CFLAGS}"
+	gcf_info "CGO_CXXFLAGS=${CGO_CXXFLAGS}"
+	gcf_info "CGO_LDFLAGS=${CGO_LDFLAGS}"
 	gcf_info "DIST_MAKE=${DIST_MAKE}"
 }
 
@@ -49,6 +52,9 @@ gcf_append_flags() {
 	export FCFLAGS="${FCFLAGS} ${@}"
 	export FFLAGS="${FFLAGS} ${@}"
 	export LDFLAGS="${LDFLAGS} ${@}"
+	export CGO_CFLAGS="${CGO_CFLAGS} ${@}"
+	export CGO_CXXFLAGS="${CGO_CXXFLAGS} ${@}"
+	export CGO_LDFLAGS="${CGO_LDFLAGS} ${@}"
 
 	# For the perl-module.eclass
 	export DIST_MAKE="${DIST_MAKE} ${@}"
@@ -63,6 +69,9 @@ _gcf_replace_flag() {
 	export FCFLAGS=$(echo "${FCFLAGS}" | sed -e "s|${i}|${o}|g")
 	export FFLAGS=$(echo "${FFLAGS}" | sed -e "s|${i}|${o}|g")
 	export LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
+	export CGO_CFLAGS=$(echo "${CGO_CFLAGS}" | sed -e "s|${i}|${o}|g")
+	export CGO_CXXFLAGS=$(echo "${CGO_CXXFLAGS}" | sed -e "s|${i}|${o}|g")
+	export CGO_LDFLAGS=$(echo "${CGO_LDFLAGS}" | sed -r -e "s/(^| )${i}/${o}/g")
 
 	# For the perl-module.eclass
 	export DIST_MAKE=$(echo "${DIST_MAKE}" | sed -r -e "s/${i}/${o}/g")
@@ -506,6 +515,9 @@ gcf_lto() {
 			FCFLAGS
 			FFLAGS
 			LDFLAGS
+			CGO_CFLAGS
+			CGO_CXXFLAGS
+			CGO_LDFLAGS
 			DIST_MAKE
 		)
 		local f
@@ -723,6 +735,9 @@ echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
 	export FCFLAGS
 	export FFLAGS
 	export LDFLAGS
+	export CGO_CFLAGS
+	export CGO_CXXFLAGS
+	export CGO_LDFLAGS
 	export DIST_MAKE
 }
 
@@ -1056,6 +1071,12 @@ gcf_linker_errors_as_warnings() {
 	fi
 }
 
+gcf_errors_as_warnings() {
+	if [[ "${ERRORS_AS_WARNINGS}" == "1" ]] ; then
+		gcf_append_flags -Wno-error
+	fi
+}
+
 gcf_split_lto_unit() {
 	[[ "${DISABLE_SPLIT_LTO_UNIT}" == "1" ]] && return
 	[[ -z "${CC}" || -z "${CXX}" || "${CC}" == "gcc" || "${CXX}" == "g++" ]] && return
@@ -1202,6 +1223,7 @@ pre_pkg_setup()
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_linker_errors_as_warnings
+	gcf_errors_as_warnings
 	gcf_adjust_makeopts
 	gcf_singlefy_spaces
 	gcf_record_start_time
