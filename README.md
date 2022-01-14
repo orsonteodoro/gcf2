@@ -801,7 +801,9 @@ main "${1}"
 ### Checking for early CFI violations and missing symbols
 
 This does a simple --help and --version check.  Add any potentially dangerous
-commands in the exclude list.
+commands in the
+[exclude list](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries#L57)
+inside the script.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
