@@ -1144,7 +1144,17 @@ gcf_check_packages() {
 	fi
 }
 
-gcf_force_llvm_toolchain_in_perl_module() {
+
+gcf_force_llvm_toolchain_in_perl_module_setup() {
+	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
+		if grep -q -e "cc='clang'" $(realpath /usr/lib*/perl*/*/*/Config_heavy.pl) && [[ -z "${CC}" ]] ; then
+			gcf_warn "Forcing clang"
+			gcf_use_clang
+		fi
+	fi
+}
+
+gcf_force_llvm_toolchain_in_perl_module_configure() {
 	# When building these perl modules, they use the same CC, CFLAGS as
 	# dev-lang/perl.  This code block will override those flags with our
 	# custom flags.
@@ -1170,6 +1180,7 @@ pre_pkg_setup()
 	gcf_disable_integrated_as
 	gcf_replace_flags
 	gcf_lto
+	gcf_force_llvm_toolchain_in_perl_module_setup
 	gcf_check_packages
 	gcf_split_lto_unit
 	gcf_add_clang_cfi
@@ -1305,7 +1316,7 @@ post_src_prepare() {
 }
 
 post_src_configure() {
-	gcf_force_llvm_toolchain_in_perl_module
+	gcf_force_llvm_toolchain_in_perl_module_configure
 }
 
 pre_src_compile() {
