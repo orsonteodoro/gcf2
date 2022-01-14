@@ -1159,13 +1159,15 @@ gcf_force_llvm_toolchain_in_perl_module_configure() {
 	# dev-lang/perl.  This code block will override those flags with our
 	# custom flags.
 	[[ "${PERL_MAKEMAKER_AUTOEDIT}" == "0" ]] && return
-	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] && [[ "${CC}" =~ "clang" ]] ; then
+	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
 		gcf_info "Scanning perl module for MakeMaker Makefile"
 		for f in $(grep -l -r -e "generated automatically by MakeMaker version" "${WORKDIR}" ) ; do
-			gcf_info "Editing ${f} for GCC TC -> Clang/LLVM TC"
-			sed -i -e "s|gcc|clang|g" "${f}" || die
-			sed -i -e "s|=.*-pc-linux-gnu-ar|= llvm-ar|g" "${f}" || die
-			sed -i -e "s|=.*-pc-linux-gnu-ranlib|= llvm-ranlib|g" "${f}" || die
+			if [[ "${CC}" =~ "clang" ]] ; then
+				gcf_info "Editing ${f} for GCC TC -> Clang/LLVM TC"
+				sed -i -e "s|gcc|clang|g" "${f}" || die
+				sed -i -e "s|=.*-pc-linux-gnu-ar|= llvm-ar|g" "${f}" || die
+				sed -i -e "s|=.*-pc-linux-gnu-ranlib|= llvm-ranlib|g" "${f}" || die
+			fi
 			sed -i -E -e "s|LDDLFLAGS = (-shared)?.*|LDDLFLAGS = \1 ${CFLAGS}|" "${f}" || die
 			sed -i -e "s|LDFLAGS = .*|LDFLAGS = ${LDFLAGS}|" "${f}" || die
 			sed -i -e "s|OPTIMIZE = .*|OPTIMIZE = ${CFLAGS}|" "${f}" || die
