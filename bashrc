@@ -1011,6 +1011,7 @@ gcf_error "packages that contain .a files listed in the build.log."
 gcf_error "Use \`equery b static-lib\` to find those packages."
 			# Portage will terminate after showing this.
 	fi
+	gcf_force_llvm_toolchain_in_perl_module_check_fail
 }
 
 gcf_setup_traps() {
@@ -1144,6 +1145,14 @@ gcf_check_packages() {
 	fi
 }
 
+gcf_force_llvm_toolchain_in_perl_module_check_fail() {
+	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
+		if grep -q grep -q -e "cc='clang'" $(realpath /usr/lib*/perl*/*/*/Config_heavy.pl) \
+			-e ".o: file not recognized: file format not recognized" "${T}/build.log" ; then
+gcf_error "The package must be built with Clang LTO."
+		fi
+	fi
+}
 
 gcf_force_llvm_toolchain_in_perl_module_setup() {
 	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
