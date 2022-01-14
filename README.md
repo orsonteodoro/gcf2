@@ -471,8 +471,8 @@ Step 11 can be skipped if Clang/LLVM is installed in step 4.
 The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
 @system (in step 15) emerge is for CFI violation discovery.  The CFI volation is
 not really isolated in the @system set but can affect the @world set like with
-zlib.  To fix the violation see the
-[fixing CFI violation](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violation)
+zlib.  To fix the violation(s) see the
+[fixing CFI violations](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violations)
 section.  This discovery is done in the startup portions in step 18 in mostly
 all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
