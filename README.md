@@ -394,9 +394,9 @@ sys-devel/clang -experimental
 4. `emerge -vuDN @world`
 5. Run `./gen_pkg_lists.sh`
 6. Choose a recovery image for @system:
-  (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
-  (b) `Unpack stage 3 tarball into /bak`
-  (c) `Copy / into /bak`
+   (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
+   (b) `Unpack stage 3 tarball into /bak`
+   (c) `Copy / into /bak`
 (/bak can be any location)
 7. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
 8. `emerge -1v binutils glibc gcc`
