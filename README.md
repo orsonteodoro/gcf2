@@ -473,7 +473,8 @@ The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
 not really isolated in the @system set but can affect the @world set like with
 zlib.  To fix the violation see the
 [fixing CFI violation](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violation)
-section.  This discovery is throughly done in step 18.  See also the
+section.  This discovery is done in the startup portions in step 18 in mostly
+all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
 
@@ -829,7 +830,8 @@ main "${1}"
 This does a simple --help and --version check.  Add any potentially dangerous
 commands in the
 [exclude list](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries#L57)
-inside the script.
+inside the script.  This only tests a few code paths at start.  You may still
+encounter CFI violations from event based portions or deeper in the code.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
