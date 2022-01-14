@@ -462,7 +462,7 @@ could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
 Reasons of CFIing @system later on in steps 14 and 15 is so that Clang/LLVM is
-in @world and to not disrupt the bootstrapping process.
+in @world (in step 11) and to not disrupt the bootstrapping process.
 
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
