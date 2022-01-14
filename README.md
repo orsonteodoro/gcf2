@@ -442,17 +442,9 @@ in the oiledmachine-overlay.
 21. Run `./gen_pkg_lists.sh`
 22. `emerge -ve @world`
 
-Steps 16 and 21 are optional if no new packages were added.  It is a good
-idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
-update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
-a new package is installed.
-
 Step 2-4 again is to minimize temporarly blocks and rollbacks, and to insure
 that all installed packages are capable of being installed to weed out bad
 poor quality ebuilds.
-
-Steps 14-17 should only be used after emerging @world with clang installed,
-corresponding to step 13.
 
 Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
@@ -464,13 +456,21 @@ that caused the CFI violation, all you need to do is replace that exe or lib
 from /bak.  Also, you should have the rescue CD in case coreutils (cp) or
 bash breaks.
 
-Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
-to not disrupt the bootstrapping process.
-
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
+
+Reasons of CFIing @system later on in steps 14 and 15 is so that Clang/LLVM is
+in @world and to not disrupt the bootstrapping process.
+
+Steps 14-17 should only be used after emerging @world with clang installed,
+corresponding to step 13.
+
+Steps 16 and 21 are optional if no new packages were added.  It is a good
+idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
+update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
+a new package is installed.
 
 Steps 18-19 is required because each build (or computer) has a unique set of USE
 flags with conditionally installed packages.
