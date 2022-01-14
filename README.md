@@ -488,11 +488,11 @@ idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
 update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
 a new package is installed.
 
-Steps 18-19 is required because each build (or computer) has a unique set of USE
+Steps 18-19 are required because each build (or computer) has a unique set of USE
 flags with conditionally installed packages.  This step may be integrated in
 step 13 in regular intervals if possible.
 
-Steps 20-22 is optional, but makes the build more production ready.  Disabling
+Steps 20-22 are optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
