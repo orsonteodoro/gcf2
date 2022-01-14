@@ -433,7 +433,8 @@ in the oiledmachine-overlay.
 15. `emerge -ve @system`
 16. Run `./gen_pkg_lists.sh`
 17. `emerge -ve @world`
-18. Run `scan-cfied-broken-binaries`  (For details see that [section](https://github.com/orsonteodoro/gentoo-cflags#checking-for-early-cfi-violations-and-missing-symbols))
+18. Run `scan-cfied-broken-binaries`  (For details see that
+[section](https://github.com/orsonteodoro/gentoo-cflags#checking-for-early-cfi-violations-and-missing-symbols))
 19. Fix all CFI issues.
 20. Set `GCF_CFI_DEBUG=0` in make.conf.
 21. Run `./gen_pkg_lists.sh`
@@ -467,7 +468,8 @@ to not disrupt the bootstrapping process.
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
-`/var/log/emerge.log`.
+`/var/log/emerge.log`.  It would maybe help to run the `scan-cfied-broken-binaries`
+script in regular intervals.
 
 Steps 18-19 is required because each build (or computer) has a unique set of USE
 flags with conditionally installed packages.
