@@ -394,9 +394,9 @@ sys-devel/clang -experimental
 4. `emerge -vuDN @world`
 5. Run `./gen_pkg_lists.sh`
 6. Choose a recovery image for @system:
-  * `emerge -ve --quickpkg-direct y --root=/bak @system`
-  * `Unpack stage 3 tarball into /bak`
-  * `Copy / into /bak`
+  (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
+  (b) `Unpack stage 3 tarball into /bak`
+  (c) `Copy / into /bak`
 (/bak can be any location)
 7. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
 8. `emerge -1v binutils glibc gcc`
@@ -456,7 +456,9 @@ this /bak image.  This step can be skipped if your planning to skip CFIed
 instead of emerging @system again.  CFI will tell you the library or program
 that caused the CFI violation, all you need to do is replace that exe or lib
 from /bak.  Also, you should have the rescue CD in case coreutils (cp) or
-bash breaks.
+bash breaks.  6a and 6c have an advantage of less likely having SOVERSION (or 
+library version) compatibility issues.  6b can be used if using mostly stable
+versions and not keyworded ones.
 
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
