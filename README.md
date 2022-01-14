@@ -388,21 +388,22 @@ sys-devel/clang -experimental
 `CXX_LTO="clang++"` in make.conf.
 3. `emerge -f @world`
 4. `emerge -vuDN @world`
-5. Choose a recovery image for @system:
+5. Run `./gen_pkg_lists.sh`
+6. Choose a recovery image for @system:
   * `emerge -ve --quickpkg-direct y --root=/bak @system`
   * `Unpack stage 3 tarball into /bak`
   * `Copy / into /bak`
 (/bak can be any location)
-6. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-7. `emerge -1v binutils glibc gcc`
-8. Set up the default gcc compiler
+7. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
+8. `emerge -1v binutils glibc gcc`
+9. Set up the default gcc compiler
 ```Shell
 eselect gcc list
 eselect gcc set <newest_gcc_version>
 source /etc/profile
 ```
-9. `emerge -ve @system`
-10.  Install the Clang/LLVM toolchain:
+10. `emerge -ve @system`
+11.  Install the Clang/LLVM toolchain:
 ```Shell
 emerge -v sys-devel/binutils \
 	sys-devel/llvm:13 \
@@ -426,18 +427,29 @@ prevent symbol breakage.  Details are covered in the
 [metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
 in the oiledmachine-overlay.
 
-11. `emerge -ve @world`
-12. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
-13. `emerge -ve @system`
-14. `emerge -ve @world`
-15. Set `GCF_CFI_DEBUG=0` in make.conf.
-16. `emerge -ve @world`
+12. Run `./gen_pkg_lists.sh`
+13. `emerge -ve @world`
+14. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+15. `emerge -ve @system`
+16. Run `./gen_pkg_lists.sh`
+17. `emerge -ve @world`
+18. Set `GCF_CFI_DEBUG=0` in make.conf.
+19. Run `./gen_pkg_lists.sh`
+20. `emerge -ve @world`
 
-Step 2-4 again is to minimize temporarly blocks and rollbacks.
+Steps 16 and 19 are optional if no new packages were added.  It is a good
+idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
+update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
+a new package is installed.
 
-Steps 12-14 DO NOT USE.  STILL IN DEVELOPMENT.
+Step 2-4 again is to minimize temporarly blocks and rollbacks, and to insure
+that all installed packages are capable of being installed to weed out bad
+poor quality ebuilds.
 
-Step 5 is to make an unCFIed backup of the @system set in /bak before breaking
+Steps 14-17 should only be used after emerging @world with clang installed,
+corresponding to step 13.
+
+Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
 process.  If breakage is encountered, you can restore parts from
 this /bak image.  This step can be skipped if your planning to skip CFIed
@@ -450,12 +462,12 @@ bash breaks.
 Reasons of CFIing @system later on is so that Clang/LLVM is in @world and
 to not disrupt the bootstrapping process.
 
-It is recommended in steps 9-11 that you test your software every 10-100 emerged
+It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Steps 15-16 is optional, but makes the build more production ready.  Disabling
+Steps 18-20 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
 
