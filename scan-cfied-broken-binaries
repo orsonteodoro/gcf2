@@ -18,6 +18,10 @@ KILL_TIMEOUT=${KILL_TIMEOUT:=1} # Max time allowed to run each program.
 # Show "Inspected ${exe_path}".  This could be useful to find the cause of \
 # restarts, paging output, or stalls. \
 SHOW_INSPECTED=${SHOW_INSPECTED:=0}
+# This for extra security, but it is not guaranteed.  Disabled by default for performance.\
+ALLOW_ONLY_EMERGED="${ALLOW_ONLY_EMERGED:=0}"
+# This for extra security, but it is not guaranteed.  Disabled by default for performance.\
+ALLOW_MODDED_BINARIES="${ALLOW_MODDED_BINARIES:=0}"
 
 decho() {
 	echo "${@}" >> "${LOGGING_PATH}"
@@ -112,6 +116,7 @@ gen_log() {
 	decho "----" >> "${LOGGING_PATH}"
 	decho "" >> "${LOGGING_PATH}"
 	for f in $(find ${full_scan_paths[@]} -executable) ; do
+		[[ -d "${f}" ]] && continue
 		local is_exe=1
 		file "${f}" | grep -q -e "ELF.*shared object" && is_exe=0
 		#file "${f}" | grep -q -e "symbolic link" && is_exe=0
@@ -121,6 +126,32 @@ gen_log() {
 		for n in ${exclude[@]} ; do
 			[[ "${bn}" == "${n}" ]] && skip=1
 		done
+
+		if (( ${ALLOW_ONLY_EMERGED} == 1 )) \
+			&& ! grep -q -e " ${f} " /var/db/pkg/*/*/CONTENTS ; then
+			decho "${f} is of unknown origin"
+			skip=1
+		else
+			if (( ${ALLOW_MODDED_BINARIES} == 1 )) ; then
+				:;
+			else
+				local line
+				local md5_current
+				if [[ -L "${f}" ]] ; then
+					line=$(grep -e " $(realpath ${f}) " /var/db/pkg/*/*/CONTENTS)
+					md5_current=$(md5sum $(realpath "${f}") | cut -f 1 -d " ")
+				else
+					line=$(grep -e " ${f} " /var/db/pkg/*/*/CONTENTS)
+					md5_current=$(md5sum "${f}" | cut -f 1 -d " ")
+				fi
+				local md5_expected=$(echo "${line}" | cut -f 3 -d " ")
+				if [[ "${md5_expected}" != "${md5_current}" ]] ; then
+					decho "${f} has unmatched md5 hashes.  expected_md5=${md5_expected} current_md5=${md5_current}"
+					skip=1
+				fi
+			fi
+		fi
+
 		if (( ${skip} == 1 )) ; then
 			echo "Skipping ${f}"
 			continue

@@ -828,6 +828,9 @@ Some of the environment vararibles described with 0=off and 1=on:
 * CHECK_VERSION -- run and check stderr for `program --version`
 * CHECK_HELP -- run and check stderr for `program --help`
 * CHECK_NO_ARGS -- run and check stderr for `program`
+* ALLOW_ONLY_EMERGED -- allow only emerged files to be executed
+* ALLOW_MODDED_BINARIES -- allow modded binaries to be executed.  Otherwise,
+allow only same md5sum to be executed.
 
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
