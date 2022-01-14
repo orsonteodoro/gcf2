@@ -844,7 +844,7 @@ The script is called
 Use `<path> --help`, `<path> --version`, or `<exe_path>` to see the violation or
 missing symbol problem.
 
-The script has several environment varables to control scanning, reporting, and
+The script has several environment variables to control scanning, reporting, and
 analysis and are found at the top of the script.  Example: 
 
 `ANALYSIS=1 GEN_LOG=1 CHECK_NO_ARGS=1 CHECK_HELP=0 CHECK_VERSION=0 ./scan-cfied-broken-binaries`
