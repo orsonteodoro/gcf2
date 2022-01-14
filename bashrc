@@ -849,8 +849,7 @@ gcf_add_cfi_flags() {
 		gcf_info "Found static-libs in package.  Disabling CFI."
 	elif [[ ( "${flags}" =~ "S" || "${flags}" =~ "X" ) && ! ( "${flags}" =~ "A" ) ]] ; then
 		if gcf_is_cfiable_system ; then
-			gcf_warn "Allowing @system package to be CFIed is experimental and may break the @system toolchain"
-			gcf_error "CFIing @system is being tested.  DO NOT USE."
+			gcf_info "Allowing @system package to be CFIed"
 		fi
 		gcf_info "Adding base CFI flags"
 		gcf_append_flags -fsanitize=${CFI_BASELINE}

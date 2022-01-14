@@ -211,7 +211,7 @@ precedence to reduce the attack surface.
 * USE_CLANG_CFI -- Use Clang CFI (Uses only CFI Cross-DSO mode.  Experimental
 and unstable systemwide.  bashrc support in development.)
 * USE_CLANG_CFI_AT_SYSTEM -- Use Clang CFI for @system.  It should only be
-enabled after emerging @world.  Currently in testing.  DO NOT USE.
+enabled after emerging @world.
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
