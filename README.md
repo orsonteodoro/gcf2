@@ -361,6 +361,8 @@ sys-devel/clang -experimental
 
 ### Steps
 
+Read everything before continuing.  Some steps may be skipped or be simplified.
+
 -2. Install repo files:
    * `cp -a bashrc /etc/portage/gcf-bashrc`
    * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
@@ -464,6 +466,8 @@ could make it difficult to backtrack the broken package in
 Reasons of CFIing @system later on in steps 14 and 15 is so that Clang/LLVM is
 in @world (in step 11) and to not disrupt the bootstrapping process.
 
+Step 11 can be skipped if Clang/LLVM is installed in step 4.
+
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
 
@@ -473,7 +477,8 @@ update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
 a new package is installed.
 
 Steps 18-19 is required because each build (or computer) has a unique set of USE
-flags with conditionally installed packages.
+flags with conditionally installed packages.  This step may be integrated in
+step 13 in regular intervals if possible.
 
 Steps 20-22 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
