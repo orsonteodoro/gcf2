@@ -361,7 +361,7 @@ sys-devel/clang -experimental
 
 ### Steps
 
--1. Install repo files:
+-2. Install repo files:
    * `cp -a bashrc /etc/portage/gcf-bashrc`
    * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
    * `cp -a package.cfi_ignore /etc/portage`
@@ -371,7 +371,7 @@ sys-devel/clang -experimental
    * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
-0. Do the following edits:
+-1. Do the following edits:
 ```Shell
 # Contents of /etc/portage/package.use/clang
 sys-devel/binutils plugins gold
@@ -383,6 +383,7 @@ sys-libs/compiler-rt-sanitizers cfi ubsan
 # Contents of /etc/portage/profile/package.use.mask
 sys-devel/clang -experimental
 ```
+0. Run `./gen_pkg_lists.sh`
 1. `emerge --sync`
 2. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
 `CXX_LTO="clang++"` in make.conf.
