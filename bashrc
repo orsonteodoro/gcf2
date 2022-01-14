@@ -1159,7 +1159,7 @@ gcf_force_llvm_toolchain_in_perl_module_configure() {
 	# dev-lang/perl.  This code block will override those flags with our
 	# custom flags.
 	[[ "${PERL_MAKEMAKER_AUTOEDIT}" == "0" ]] && return
-	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
+	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] && [[ "${CC}" =~ "clang" ]] ; then
 		gcf_info "Scanning perl module for MakeMaker Makefile"
 		for f in $(grep -l -r -e "generated automatically by MakeMaker version" "${WORKDIR}" ) ; do
 			gcf_info "Editing ${f} for GCC TC -> Clang/LLVM TC"
