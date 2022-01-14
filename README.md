@@ -468,6 +468,15 @@ in @world (in step 11) and to not disrupt the bootstrapping process.
 
 Step 11 can be skipped if Clang/LLVM is installed in step 4.
 
+The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
+@system (in step 15) emerge is for CFI violation discovery.  The CFI volation is
+not really isolated in the @system set but can affect the @world set like with
+zlib.  To fix the violation see the
+[fixing CFI violation](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violation)
+section.  This discovery is throughly done in step 18.  See also the
+[Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
+section.
+
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
 
@@ -483,15 +492,6 @@ step 13 in regular intervals if possible.
 Steps 20-22 is optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.
-
-The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
-@system (in step 15) emerge is for CFI violation discovery.  The CFI volation is
-not really isolated in the @system set but can affect the @world set like with
-zlib.  To fix the violation see the
-[fixing CFI violation](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violation)
-section.  This discovery is throughly done in step 18.
-
-See also the [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting) section.
 
 ### Coverage
 
