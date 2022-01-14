@@ -442,7 +442,7 @@ in the oiledmachine-overlay.
 21. Run `./gen_pkg_lists.sh`
 22. `emerge -ve @world`
 
-Steps 16 and 19 are optional if no new packages were added.  It is a good
+Steps 16 and 21 are optional if no new packages were added.  It is a good
 idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
 update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
 a new package is installed.
