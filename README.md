@@ -499,8 +499,8 @@ even to decide if it was a miscompile or CFI itself.
 ### Coverage
 
 * Clang LTO packages qualify
-* Above the @system set only, but may allow to include some parts of @system in
-the future.
+* Both @system and @world are CFIed but not entirely.  The details covered in
+the next section.
 * Only binary executables and shared-libs are CFIed.
 * Packages that install static-libs will disable CFI for that package.  This
 problem is due to -fvisibility requirements which can cause missing symbols
