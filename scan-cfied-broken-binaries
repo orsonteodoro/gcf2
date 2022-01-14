@@ -18,9 +18,9 @@ KILL_TIMEOUT=${KILL_TIMEOUT:=1} # Max time allowed to run each program.
 # Show "Inspected ${exe_path}".  This could be useful to find the cause of \
 # restarts, paging output, or stalls. \
 SHOW_INSPECTED=${SHOW_INSPECTED:=0}
-# This for extra security, but it is not guaranteed.  Disabled by default for performance.\
+# This for extra security, but it is not guaranteed.\
 ALLOW_ONLY_EMERGED="${ALLOW_ONLY_EMERGED:=0}"
-# This for extra security, but it is not guaranteed.  Disabled by default for performance.\
+# This for extra security, but it is not guaranteed.\
 ALLOW_MODDED_BINARIES="${ALLOW_MODDED_BINARIES:=1}"
 
 decho() {
