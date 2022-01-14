@@ -21,7 +21,7 @@ SHOW_INSPECTED=${SHOW_INSPECTED:=0}
 # This for extra security, but it is not guaranteed.  Disabled by default for performance.\
 ALLOW_ONLY_EMERGED="${ALLOW_ONLY_EMERGED:=0}"
 # This for extra security, but it is not guaranteed.  Disabled by default for performance.\
-ALLOW_MODDED_BINARIES="${ALLOW_MODDED_BINARIES:=0}"
+ALLOW_MODDED_BINARIES="${ALLOW_MODDED_BINARIES:=1}"
 
 decho() {
 	echo "${@}" >> "${LOGGING_PATH}"
