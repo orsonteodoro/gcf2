@@ -857,7 +857,7 @@ Some of the environment vararibles described with 0=off and 1=on:
 * GEN_LOG -- generate output log in /var/log/cfi-scan.log
 * CHECK_VERSION -- run and check stderr for `program --version`
 * CHECK_HELP -- run and check stderr for `program --help`
-* CHECK_NO_ARGS -- run and check stderr for `program`
+* CHECK_NO_ARGS -- run and check stderr for `program` while starting it normally
 * ALLOW_ONLY_EMERGED -- allow only emerged files to be executed
 * ALLOW_MODDED_BINARIES -- allow modded binaries to be executed.  Otherwise,
 allow only same md5sum to be executed.
