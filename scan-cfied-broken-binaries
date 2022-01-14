@@ -40,6 +40,7 @@ banner() {
 	echo "* This may crash X and lose unsaved work."
 	echo "* This may reboot the computer and with it lost unsaved work."
 	echo "* This may inadvertantly reset and regenerate incomplete settings."
+	echo "* This may inadvertantly change the clock settings."
 	echo "* This may stop network software or daemons."
 	echo "* It is not recommended to run this script with an unclean (or"
 	echo "     possibly compromised) computer."
