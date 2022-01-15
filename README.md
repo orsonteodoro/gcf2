@@ -413,6 +413,11 @@ in the oiledmachine-overlay.
 2. `emerge --sync`
 3. `emerge -vuDN @world`
 4. `emerge -1v binutils glibc gcc`
+(Add ccache if you don't have it yet.)
+```Shell
+# Contents of /etc/portage/make.conf to enable ccache for faster rebuilds
+FEATURES="${FEATURES} ccache"
+```
 5. Set up the default gcc compiler
 ```Shell
 eselect gcc list
