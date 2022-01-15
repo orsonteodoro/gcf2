@@ -876,7 +876,10 @@ commands in the
 inside the script.  This only tests a few code paths at start.  You may still
 encounter CFI violations from event based portions or deeper in the code.  For
 testing some deeper code paths, add test to systemwide USE flags and systemwide
-FEATURES in make.conf.
+FEATURES in make.conf.  Preparation for the test USE flag should be done
+(in step 4 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
+early one to increase chances of an complete atomic update from beginning to
+end.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
