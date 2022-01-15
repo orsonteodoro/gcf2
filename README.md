@@ -483,9 +483,6 @@ packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-Reasons of CFIing @system later on in steps 14 and 15 is so that Clang/LLVM is
-in @world (in step 11) and to not disrupt the bootstrapping process.
-
 The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
 @system emerge (corresponding to step 15) is for CFI violation or init
 problem(s) discovery.  The CFI volation is not really isolated in the @system
@@ -510,7 +507,9 @@ executable, add or disable CFI or its schemes and `emerge -1vO <pkgname>`
 the package belonging to that shared-lib or executable then `--resume`.
 
 Steps 14-17 should only be used after emerging @world with clang installed,
-corresponding to step 13.
+corresponding to step 13.  The reasons of CFIing @system later on in steps 14
+and 15 is so that Clang/LLVM is in @world (in step 11) and to not disrupt the
+bootstrapping process.
 
 Steps 16 and 21 are optional if no new packages were added.  It is a good
 idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
