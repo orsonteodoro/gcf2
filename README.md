@@ -896,7 +896,7 @@ analysis and are found at the top of the script.  Example:
 
 `ANALYSIS=1 GEN_LOG=1 CHECK_NO_ARGS=1 CHECK_HELP=0 CHECK_VERSION=0 ./scan-cfied-broken-binaries`
 
-To form just analysis do:
+To form just analysis after the required /var/log/cfi-scan.log has been produced do:
 
 `ANALYSIS=1 GEN_LOG=0 CHECK_NO_ARGS=0 CHECK_HELP=0 CHECK_VERSION=0 ./scan-cfied-broken-binaries`
 
