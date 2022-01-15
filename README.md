@@ -450,6 +450,13 @@ poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
 from the world list or replaced with a working version or one from a different
 overlay.
 
+In step 4 in preparation for step 13, one may decide to use the test USE flag
+and test FEATURES in order possibly to increase the coverage of testing for CFI
+violations.  It is not recommended because of possibly ebuild quality issues
+that may slow down or block an atomically updated @world.  The test is enabled
+early one so the dependencies are pulled and the thest USE flag disabled for
+problematic packages.
+
 In steps 4-10, the package.env may be needed to be slightly modified so that
 packages that use clang explicitly need to temporarly use gcc.  Once the clang
 compiler is installed, you may undo the changes.
