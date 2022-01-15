@@ -377,7 +377,7 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 * Rebuild the safer CFIed @world
 * Rebuild the more dangerously risky CFIed @system then @world
 * Increase the quality of the build with scan-cfied-broken-binaries with fixes
-* Finalize and polish without debug
+* Finalize and polish without debug and test flags
 
 #### Detailed steps
 
