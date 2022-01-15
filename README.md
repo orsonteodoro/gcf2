@@ -508,7 +508,7 @@ executable, add or disable CFI or its schemes and `emerge -1vO <pkgname>`
 the package belonging to that shared-lib or executable then `--resume`.
 
 The reasons of CFIing @system later on in steps 14 and 15 is so that disruption
-is minimized in steps 3-6 and to atleast have one working compiler toolchain as
+is minimized in steps 3-6 and to at least have one working compiler toolchain as
 the fallback to fix the broken one.  It may be possible to eliminate 14 and 15
 now that the package.env is matured and tested enough for @system, but due to
 different USE flags and more dangerous it is kept disjoint.  Initially, it was
