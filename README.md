@@ -502,7 +502,7 @@ for already installed packages, app packages, or dependency less packages.
 
 In step 15, before doing repairs, preview the resume list before saving
 the copy.  After the toolchain is repaired by replacing the shared-lib or
-executable, add or disable CFI or its schemes and (`emerge -1vO <pkgname>`)
+executable, add or disable CFI or its schemes and `emerge -1vO <pkgname>`
 the package belonging to that shared-lib or executable then `--resume`.
 
 Steps 14-17 should only be used after emerging @world with clang installed,
