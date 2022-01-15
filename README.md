@@ -195,6 +195,9 @@ are used to control *FLAG filtering.
 The following can added to make.conf be applied as global defaults for the
 provided bashrc script.
 
+* ALLOW_LTO_REQUIREMENTS_NOT_MET_TRACKING -- Allow bashrc to add to
+/etc/portage/emerge-requirements-not-met.lst for packages or toolchain not
+meeting LTO requirements
 * CC_LIBC -- The C LTO compiler toolchain used to build the libc [glibc/musl]
 or @system
 * CC_LTO -- The C LTO compiler toolchain to use for @world

@@ -698,7 +698,9 @@ gcf_warn "oiledmachine-overlay.  Not doing so can weaken the security."
 			:;
 		else
 			gcf_warn "Did not meet LTO requirements."
+			if [[ "${ALLOW_LTO_REQUIREMENTS_NOT_MET_TRACKING}" == "1" ]] ; then
 echo "${CATEGORY}/${PN}" >> /etc/portage/emerge-requirements-not-met.lst
+			fi
 		fi
 
 		# It's okay to use GCC+BFD LTO or WPA-LTO for small packages,
