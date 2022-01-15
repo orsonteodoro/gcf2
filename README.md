@@ -484,7 +484,8 @@ In steps 13 and 15, it is recommended to use a personal
 not the one managed by emerge when testing packages or applying CFI an ignore
 list or exclusions.  The entries can be changed if one decides to use a
 different ebuild revision with fixes, or can be rearraged so that unmergables
-get moved to the end of the list.
+get moved to the end of the list.  Unmergeable rearragement should be done
+for already installed packages, app packages, or dependency less packages.
 
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
