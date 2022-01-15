@@ -833,6 +833,9 @@ main() {
 main "${1}"
 ```
 
+After running the script, the `--resume` arg can be used in subsequent calls 
+to `emerge`.
+
 ### Checking for early CFI violations and missing symbols
 
 This does a simple --help and --version check.  Add any potentially dangerous
