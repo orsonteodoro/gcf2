@@ -783,8 +783,9 @@ enable-perl-makemaker-autoedit.conf to control how to build the perl module
 packages.
 
 When a temporarly LTO disabled perl module fails to build, it may need to
-be manually placed in the agnostic lists (/etc/portageemerge-*-lto-agnostic.lst)
-in order to build it.
+be manually placed in one of the agnostic lists
+(/etc/portage/emerge-*-lto-agnostic.lst) and removed from the no-data list(s)
+(/etc/portage/emerge-system-no-data.lst) in order to build it.
 
 #### Runtime error: control flow integrity check
 
