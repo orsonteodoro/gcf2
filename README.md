@@ -880,7 +880,7 @@ encounter CFI violations from event based portions or deeper in the code.
 For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
 (in step 4 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
-early on to increase chances of an complete atomic update from beginning to
+early on to increase chances of a complete atomic update from beginning to
 end.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
