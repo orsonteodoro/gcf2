@@ -442,22 +442,21 @@ source /etc/profile
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
 
-9. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
+9. Run `./gen_pkg_lists.sh`
+10. Set `USE_CLANG_CFI=1`, `USE_CLANG_CFI_AT_SYSTEM=0`, `GCF_CFI_DEBUG=1`, `CC_LTO="clang"`,
 `CXX_LTO="clang++"` in make.conf.
-10. Run `./gen_pkg_lists.sh`
-11. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-12. `emerge -f @world`
-13. `emerge -ve @world`
-14. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
-15. `emerge -ve @system`
-16. Run `./gen_pkg_lists.sh`
-17. `emerge -ve @world`
-18. Run `scan-cfied-broken-binaries`  (For details see that
+11. `emerge -f @world`
+12. `emerge -ve @world`
+13. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
+14. `emerge -ve @system`
+15. Run `./gen_pkg_lists.sh`
+16. `emerge -ve @world`
+17. Run `scan-cfied-broken-binaries`  (For details see that
 [section](https://github.com/orsonteodoro/gentoo-cflags#checking-for-early-cfi-violations-and-missing-symbols))
-19. Fix all CFI issues.
-20. Set `GCF_CFI_DEBUG=0` in make.conf.
-21. Run `./gen_pkg_lists.sh`
-22. `emerge -ve @world`
+18. Fix all CFI issues.
+19. Set `GCF_CFI_DEBUG=0` in make.conf.
+20. Run `./gen_pkg_lists.sh`
+21. `emerge -ve @world`
 
 Step 3 again is to minimize temporarly blocks and rollbacks, and to insure
 that all installed packages are capable of being installed to weed out bad
@@ -471,7 +470,8 @@ and test FEATURES in order possibly to increase the coverage of testing for CFI
 violations.  It is not recommended because of possibly ebuild quality issues
 that may slow down or block an atomically updated @world.  The test is enabled
 early so the dependencies are pulled and the test USE flag disabled for
-problematic packages.
+problematic packages especially for those packages that do not provide a
+production version of the library.
 
 Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
@@ -484,13 +484,13 @@ library version) compatibility issues.  7b can be used if using mostly stable
 versions and not keyworded ones.  Also, you should have the rescue CD in case
 of failure with broken system apps (like bash).
 
-It is recommended in steps 13-17 that you test your software every 10-100 emerged
+It is recommended in steps 12-16 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
 `/var/log/emerge.log`.
 
-The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
-@system emerge (corresponding to step 15) is for CFI violation or init
+The reasons for emerging @world CFIed 2 times (in steps 12 and 16) with 1 CFIed
+@system emerge (corresponding to step 14) is for CFI violation or init
 problem(s) discovery.  The CFI volation is not really isolated in the @system
 set but can affect the @world set like with zlib.  To fix the violation(s) see
 the [fixing CFI violations](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violations)
@@ -499,7 +499,7 @@ all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
 
-In steps 13-19, it is recommended to use a personal
+In steps 12-18, it is recommended to use a personal
 [resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list)
 not the one managed by emerge when testing packages or applying CFI an ignore
 list or exclusions.  The entries can be changed if one decides to use a
@@ -507,12 +507,12 @@ different ebuild revision with fixes, or can be rearraged so that unmergables
 get moved to the end of the list.  Unmergeable rearragement should be done
 for already installed packages, app packages, or dependency less packages.
 
-In steps 13-19, before doing repairs, preview the resume list before saving
+In steps 12-18, before doing repairs, preview the resume list before saving
 the copy.  After the toolchain is repaired by replacing the shared-lib or
 executable, add or disable CFI or its schemes and `emerge -1vO <pkgname>`
 the package belonging to that shared-lib or executable then `--resume`.
 
-The reasons of CFIing @system later on in steps 14 and 15 is so that disruption
+The reasons of CFIing @system later on in steps 13-14 is so that disruption
 is minimized in steps 3-6 and to at least have one working compiler toolchain as
 the fallback to fix the broken one.  It may be possible to eliminate 14 and 15
 now that the package.env is matured and tested enough for @system, but due to
@@ -521,16 +521,16 @@ Initially, it was made optional to CFI @system, but now it's decided that it is
 working enough without problems to apply it to that set and to increase the
 mitgation further.
 
-Steps 16 and 21 are optional if no new packages were added.  It is a good
+Steps 15 and 20 are optional if no new packages were added.  It is a good
 idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
 update with `emerge -vuDN @world`.  `gen_pkg_lists.sh` is only useful after
 a new package is installed.
 
-Steps 18-19 are required because each build (or computer) has a unique set of USE
+Steps 17-18 are required because each build (or computer) has a unique set of USE
 flags with conditionally installed packages.  This step may be integrated in
-step 13 in regular intervals if possible.
+step 12 in regular intervals if possible.
 
-Steps 20-22 are optional, but makes the build more production ready.  Disabling
+Steps 20-21 are optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
 even to decide if it was a miscompile or CFI itself.  Also remove the test
 USE flag and test FEATURES from make.conf.
