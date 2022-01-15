@@ -450,6 +450,10 @@ poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
 from the world list or replaced with a working version or one from a different
 overlay.
 
+In steps 4-10, the package.env may be needed to be slightly modified so that
+packages that use clang explicitly need to temporarly use gcc.  Once the clang
+compiler is installed, you may undo the changes.
+
 Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
 process.  If breakage is encountered, you can restore parts from this /bak
