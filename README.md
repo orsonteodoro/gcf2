@@ -471,7 +471,8 @@ violations.  It is not recommended because of possibly ebuild quality issues
 that may slow down or block an atomically updated @world.  The test is enabled
 early so the dependencies are pulled and the test USE flag disabled for
 problematic packages especially for those packages that do not provide a
-production version of the library.
+production version of the library (depending on if steps 20-21 will not be
+performed).
 
 Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
