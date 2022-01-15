@@ -875,9 +875,8 @@ commands in the
 [exclude list](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries#L57)
 inside the script.  This only tests a few code paths at start.  You may still
 encounter CFI violations from event based portions or deeper in the code.  For
-testing deeper code paths, add test to systemwide USE flags and systemwide
-FEATURES in make.conf.  Note, this kind of testing doesn't actually test every
-possible code paths.
+testing some deeper code paths, add test to systemwide USE flags and systemwide
+FEATURES in make.conf.
 
 IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
