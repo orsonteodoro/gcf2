@@ -370,8 +370,8 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 
 * Perform the usual install/update as recommended by the distro handbox
 * Install scripts from this overlay
+* Update to the latest binutils, glibc, gcc
 * Update the @system toolchain
-* Build binutils, glibc, gcc
 * Rebuild @system with the latest gcc and glibc
 * Build clang and lld
 * Reconstruct black- and white-list and missing metadata with gen_pkg_lists.sh
