@@ -446,7 +446,9 @@ in the oiledmachine-overlay.
 
 Step 2-4 again is to minimize temporarly blocks and rollbacks, and to insure
 that all installed packages are capable of being installed to weed out bad
-poor quality ebuilds.
+poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
+from the world list or replaced with a working version or one from a different
+overlay.
 
 Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
