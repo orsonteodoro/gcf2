@@ -29,6 +29,7 @@ gcf_error() {
 
 gcf_append_ldflags() {
 	export LDFLAGS="${LDFLAGS} ${@}"
+	export CGO_LDFLAGS="${CGO_LDFLAGS} ${@}"
 }
 
 gcf_print_flags() {
@@ -149,6 +150,7 @@ gcf_strip_z_retpolineplt() {
 	if [[ "${DISABLE_Z_RETPOLINEPLT}" == "1" ]] ; then
 		gcf_info "Removing -Wl,-z,retpolineplt from LDFLAGS"
 		export LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
+		export CGO_LDFLAGS=$(echo "${CGO_LDFLAGS}" | sed -e "s|-Wl,-z,retpolineplt||g")
 	fi
 	if [[ -z "${USE_THINLTO}" || "${USE_THINLTO}" != "1" ]] ; then
 		_gcf_replace_flag "-Wl,-z,retpolineplt" ""
@@ -213,7 +215,7 @@ gcf_met_gcc_goldlto_requirement() {
 }
 
 gcf_use_clang() {
-	gcf_info "Auto switching to clang"
+	gcf_info "Switching to clang"
 	export CC=clang
 	export CXX=clang++
 	export CPP=clang-cpp
@@ -228,31 +230,31 @@ gcf_use_clang() {
 }
 
 gcf_use_thinlto() {
-	gcf_info "Auto switching to ThinLTO"
+	gcf_info "Switching to ThinLTO"
 	LDFLAGS="${LDFLAGS} -fuse-ld=lld"
 	gcf_append_flags "-flto=thin"
 }
 
 gcf_use_clang_goldlto() {
-	gcf_info "Auto switching to Clang Gold LTO"
+	gcf_info "Switching to Clang Gold LTO"
 	LDFLAGS="${LDFLAGS} -fuse-ld=gold"
 	gcf_append_flags "-flto=full"
 }
 
 gcf_use_gcc_goldlto() {
-	gcf_info "Auto switching to GCC Gold LTO"
+	gcf_info "Switching to GCC Gold LTO"
 	LDFLAGS="${LDFLAGS} -fuse-ld=gold"
 	gcf_append_flags "-flto"
 }
 
 gcf_use_gcc_bfdlto() {
-	gcf_info "Auto switching to GCC BFD LTO"
+	gcf_info "Switching to GCC BFD LTO"
 	LDFLAGS="${LDFLAGS} -fuse-ld=bfd"
 	gcf_append_flags "-flto"
 }
 
 gcf_use_clang_bfdlto() {
-	gcf_info "Auto switching to Clang BFD LTO"
+	gcf_info "Switching to Clang BFD LTO"
 	LDFLAGS="${LDFLAGS} -fuse-ld=bfd"
 	gcf_append_flags "-flto=full"
 }
@@ -582,9 +584,9 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 
 	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 		local pkg_flags=$(get_cfi_flags)
-		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
-			# Breaks the determinism in this closed system
-			gcf_warn "Disabling compiler switch"
+		if [[ "${USE_CLANG}" == "1" ]] ; then
+			CC="clang"
+			CXX="clang++"
 		elif [[ "${USE_GCC}" == "1" ]] ; then
 			CC="gcc"
 			CXX="g++"
@@ -654,9 +656,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 		# A reminder that you can only use one LTO implementation as the
 		# default systemwide.
 
-		if [[ "${DISABLE_LTO_COMPILER_SWITCH}" == "1" ]] ; then
-			gcf_warn "Disabling linker switch"
-		elif [[ "${linker}" == "thinlto" ]] \
+		if [[ "${linker}" == "thinlto" ]] \
 			&& gcf_met_clang_thinlto_requirement ; then
 			_gcf_strip_lto_flags
 			gcf_use_thinlto
@@ -1106,6 +1106,9 @@ gcf_singlefy_spaces() {
 		FCFLAGS
 		FFLAGS
 		LDFLAGS
+		CGO_CFLAGS
+		CGO_CXXFLAGS
+		CGO_LDFLAGS
 		DIST_MAKE
 	)
 	local f
@@ -1200,6 +1203,10 @@ gcf_force_llvm_toolchain_in_perl_module_configure() {
 	fi
 }
 
+gcf_strip_omit_frame_pointer() {
+	[[ "${REMOVE_OMIT_FRAME_POINTER}" == "1" ]] && _gcf_replace_flag "-fomit-frame-pointer" ""
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1218,6 +1225,7 @@ pre_pkg_setup()
 	gcf_strip_retpoline
 	gcf_strip_no_inline
 	gcf_strip_lossy
+	gcf_strip_omit_frame_pointer
 	gcf_use_Oz
 	gcf_use_ubsan
 	gcf_translate_no_inline
