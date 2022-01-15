@@ -728,7 +728,7 @@ unCFIed are cause of the CFI violation.  The more hints are provided, the more
 easy to fix the problem.  It is a good idea to use the GCF_CFI_DEBUG=1
 variable in the first `emerge -ev @world` pass for your own personal
 configuration and set of packages.  Then, disable the flag in subsequent
-`emerge -ev @world` passes.
+`emerge -ev @world` passes when no new additional packages will be added.
 
 Setting GCF_CFI_DEBUG may help but expect random unannounced runtime feature
 breakage as a result of enabling CFI.  You may need to disable CFI schemes
