@@ -469,10 +469,10 @@ instead of emerging @system again.  CFI will tell you the library or program
 that caused the CFI violation, all you need to do is replace that exe or lib
 from /bak.  Also, you should have the rescue CD in case of failure with broken
 system apps (like bash).  After the toolchain is repaired, add or disable
-CFI or its schemes and re-emerge the package belonging to that shared-lib or
-executable.  6a and 6c have an advantage of  less likely having SOVERSION (or
-library version) compatibility issues.  6b can be used if using mostly stable
-versions and not keyworded ones.
+CFI or its schemes and one shot re-emerge the package belonging to that
+shared-lib or executable.  6a and 6c have an advantage of  less likely having
+SOVERSION (or library version) compatibility issues.  6b can be used if using
+mostly stable versions and not keyworded ones.
 
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
