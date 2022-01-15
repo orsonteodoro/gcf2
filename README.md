@@ -476,6 +476,8 @@ library version) compatibility issues.  6b can be used if using mostly stable
 versions and not keyworded ones.  Also, you should have the rescue CD in case
 of failure with broken system apps (like bash).
 
+Step 11 can be skipped if Clang/LLVM is installed in step 4.
+
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
 could make it difficult to backtrack the broken package in
@@ -483,8 +485,6 @@ could make it difficult to backtrack the broken package in
 
 Reasons of CFIing @system later on in steps 14 and 15 is so that Clang/LLVM is
 in @world (in step 11) and to not disrupt the bootstrapping process.
-
-Step 11 can be skipped if Clang/LLVM is installed in step 4.
 
 The reasons for emerging @world CFIed 2 times (in steps 13 and 17) with 1 CFIed
 @system emerge (corresponding to step 15) is for CFI violation or init
