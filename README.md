@@ -479,7 +479,7 @@ all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
 
-In steps 13 and 15, it is recommended to use a personal resume
+In steps 13 and 15, it is recommended to use a personal
 [resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list)
 not the one managed by emerge when testing packages or applying CFI an ignore
 list or exclusions.  The entries can be changed if one decides to use a
