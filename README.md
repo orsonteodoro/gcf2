@@ -366,6 +366,21 @@ sys-devel/clang -experimental
 
 Read everything before continuing.  Some steps may be skipped or be simplified.
 
+#### Overview
+
+* Install scripts from this overlay
+* Update the @system toolchain
+* Build binutils, glibc, gcc
+* Rebuild @system with the latest gcc and glibc
+* Build clang and lld
+* Reconstruct black- and white-list and missing metadata with gen_pkg_lists.sh
+* Rebuild the safer CFIed @world
+* Rebuild the more dangerously risky CFIed @system then world
+* Increase the quality of the build with scan-cfied-broken-binaries with fixes
+* Finalize and polish without debug
+
+#### Detailed steps
+
 -2. Install repo files:
    * `cp -a bashrc /etc/portage/gcf-bashrc`
    * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
@@ -522,7 +537,8 @@ step 13 in regular intervals if possible.
 
 Steps 20-22 are optional, but makes the build more production ready.  Disabling
 CFI debug can make it difficult to determine the type of CFI violation or
-even to decide if it was a miscompile or CFI itself.
+even to decide if it was a miscompile or CFI itself.  Also remove the test
+USE flag and test FEATURES from make.conf.
 
 ### Coverage
 
