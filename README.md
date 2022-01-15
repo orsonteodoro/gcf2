@@ -375,7 +375,7 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 * Build clang and lld
 * Reconstruct black- and white-list and missing metadata with gen_pkg_lists.sh
 * Rebuild the safer CFIed @world
-* Rebuild the more dangerously risky CFIed @system then world
+* Rebuild the more dangerously risky CFIed @system then @world
 * Increase the quality of the build with scan-cfied-broken-binaries with fixes
 * Finalize and polish without debug
 
