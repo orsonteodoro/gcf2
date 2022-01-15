@@ -368,6 +368,7 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 
 #### Overview
 
+* Perform the usual install/update as recommended by the distro handbox
 * Install scripts from this overlay
 * Update the @system toolchain
 * Build binutils, glibc, gcc
@@ -381,18 +382,7 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 
 #### Detailed steps
 
--2. Install repo files:
-   * `cp -a bashrc /etc/portage/gcf-bashrc`
-   * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
-   * `cp -a package.cfi_ignore /etc/portage`
-   * `cp -a env /etc/portage`
-   * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
-   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0644`
-   * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
-   * Manually copy sections of make.conf to your personal /etc/portage/make.conf
-   * Manually copy sections of package.env to your personal /etc/portage/package.env
-
--1. Do the following edits:
+1. Do the following edits:
 ```Shell
 # Contents of /etc/portage/package.use/clang
 sys-devel/binutils plugins gold
@@ -404,52 +394,55 @@ sys-libs/compiler-rt-sanitizers cfi ubsan
 # Contents of /etc/portage/profile/package.use.mask
 sys-devel/clang -experimental
 ```
-0. Run `./gen_pkg_lists.sh`
-1. `emerge --sync`
-2. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
-`CXX_LTO="clang++"` in make.conf.
-3. `emerge -f @world`
-4. `emerge -vuDN @world`
-5. Run `./gen_pkg_lists.sh`
-6. Choose a recovery image for @system:
-   - (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
-   - (b) `Unpack stage 3 tarball into /bak`
-   - (c) `Copy / into /bak`
-(/bak can be any location)
-7. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
-8. `emerge -1v binutils glibc gcc`
-9. Set up the default gcc compiler
 ```Shell
-eselect gcc list
-eselect gcc set <newest_gcc_version>
-source /etc/profile
+# Appended contents of /var/lib/portage/world
+sys-devel/clang:14
+sys-devel/clang:13
+sys-devel/clang:10
+sys-devel/llvm:14
+sys-devel/llvm:13
+sys-devel/llvm:10
+sys-devel/lld
 ```
-10. `emerge -ve @system`
-11.  Install the Clang/LLVM toolchain:
-```Shell
-emerge -v sys-devel/binutils \
-	sys-devel/llvm:13 \
-	sys-devel/llvm:14 \
-	sys-devel/lld \
-	sys-devel/clang:13 \
-	sys-devel/clang:14 \
-	=sys-devel/clang-runtime-13* \
-	=sys-libs/compiler-rt-13* \
-	=sys-libs/compiler-rt-sanitizers-13* \
-	=sys-libs/compiler-rt-14* \
-	=sys-devel/clang-runtime-14* \
-	=sys-libs/compiler-rt-sanitizers-14* \
-	sys-devel/llvmgold
-```
-
-Any package with a 14 is optional if you don't use packages that depend on them.
+Any package with a 14 or 10 is optional if you don't use packages that depend on them.
 
 All live llvm toolchain ebuilds should have a fixed commit with exceptions to
 prevent symbol breakage.  Details are covered in the
 [metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
 in the oiledmachine-overlay.
 
-12. Run `./gen_pkg_lists.sh`
+2. `emerge --sync`
+3. `emerge -vuDN @world`
+4. `emerge -1v binutils glibc gcc`
+5. Set up the default gcc compiler
+```Shell
+eselect gcc list
+eselect gcc set <newest_gcc_version>
+source /etc/profile
+```
+6. `emerge -ve @system`
+7. Choose a recovery image for @system:
+   - (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
+   - (b) `Unpack stage 3 tarball into /bak`
+   - (c) `Copy / into /bak`
+(/bak can be any location)
+
+8. Install repo files:
+   * `cp -a bashrc /etc/portage/gcf-bashrc`
+   * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
+   * `cp -a package.cfi_ignore /etc/portage`
+   * `cp -a env /etc/portage`
+   * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
+   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0644`
+   * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
+   * Manually copy sections of make.conf to your personal /etc/portage/make.conf
+   * Manually copy sections of package.env to your personal /etc/portage/package.env
+
+9. Set `USE_CLANG_CFI=0`, `USE_CLANG_CFI_AT_SYSTEM=0`, `CC_LTO="clang"`,
+`CXX_LTO="clang++"` in make.conf.
+10. Run `./gen_pkg_lists.sh`
+11. Set `USE_CLANG_CFI=1`, `GCF_CFI_DEBUG=1` in make.conf.
+12. `emerge -f @world`
 13. `emerge -ve @world`
 14. Set `USE_CLANG_CFI_AT_SYSTEM=1` in make.conf.
 15. `emerge -ve @system`
@@ -462,36 +455,30 @@ in the oiledmachine-overlay.
 21. Run `./gen_pkg_lists.sh`
 22. `emerge -ve @world`
 
-Step 2-4 again is to minimize temporarly blocks and rollbacks, and to insure
+Step 3 again is to minimize temporarly blocks and rollbacks, and to insure
 that all installed packages are capable of being installed to weed out bad
 poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
 from the world list or replaced with a working version or one from a different
 overlay.  This is to prevent emerge from dropping a set of packages that
 should be re-emerge with new LTO/CFI flags.
 
-In step 4 in preparation for step 13, one may decide to use the test USE flag
+In step 3 in preparation for step 13, one may decide to use the test USE flag
 and test FEATURES in order possibly to increase the coverage of testing for CFI
 violations.  It is not recommended because of possibly ebuild quality issues
 that may slow down or block an atomically updated @world.  The test is enabled
 early so the dependencies are pulled and the test USE flag disabled for
 problematic packages.
 
-In steps 4-10, the package.env may be needed to be slightly modified so that
-packages that use clang explicitly need to temporarly use gcc.  Once the clang
-compiler is installed, you may undo the changes.
-
-Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
+Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
 process.  If breakage is encountered, you can restore parts from this /bak
 image.  You may also use an unpacked stage 3 tarball or a copied image of /
 instead of emerging @system again.  CFI will tell you the library or program
 that caused the CFI violation, all you need to do is replace that exe or lib
-from /bak.  6a and 6c have an advantage of  less likely having SOVERSION (or
-library version) compatibility issues.  6b can be used if using mostly stable
+from /bak.  7a and 7c have an advantage of  less likely having SOVERSION (or
+library version) compatibility issues.  7b can be used if using mostly stable
 versions and not keyworded ones.  Also, you should have the rescue CD in case
 of failure with broken system apps (like bash).
-
-Step 11 can be skipped if Clang/LLVM is installed in step 4.
 
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
@@ -508,7 +495,7 @@ all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
 
-In steps 13 and 15, it is recommended to use a personal
+In steps 13-19, it is recommended to use a personal
 [resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list)
 not the one managed by emerge when testing packages or applying CFI an ignore
 list or exclusions.  The entries can be changed if one decides to use a
@@ -516,15 +503,18 @@ different ebuild revision with fixes, or can be rearraged so that unmergables
 get moved to the end of the list.  Unmergeable rearragement should be done
 for already installed packages, app packages, or dependency less packages.
 
-In step 15, before doing repairs, preview the resume list before saving
+In steps 13-19, before doing repairs, preview the resume list before saving
 the copy.  After the toolchain is repaired by replacing the shared-lib or
 executable, add or disable CFI or its schemes and `emerge -1vO <pkgname>`
 the package belonging to that shared-lib or executable then `--resume`.
 
-Steps 14-17 should only be used after emerging @world with clang installed,
-corresponding to step 13.  The reasons of CFIing @system later on in steps 14
-and 15 is so that Clang/LLVM is in @world (in step 11) and to not disrupt the
-bootstrapping process.
+The reasons of CFIing @system later on in steps 14 and 15 is so that disruption
+is minimized in steps 3-6.  It may be possible to eliminate 14 and 15 now
+that the package.env is matured and tested enough for @system, but due to
+different USE flags and more dangerous it is kept disjoint.  Initially, it
+was made optional to CFI @system, but now it's decided that it is working
+enough without problems to apply it to that set and to increase the mitgation
+further.
 
 Steps 16 and 21 are optional if no new packages were added.  It is a good
 idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
@@ -894,7 +884,7 @@ encounter CFI violations from event based portions or deeper in the code.
 
 For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
-(in step 4 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
+(in step 3 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
 early on to increase chances of a complete atomic update from beginning to
 end.
 
