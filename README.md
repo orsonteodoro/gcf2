@@ -451,13 +451,13 @@ poor quality ebuilds.
 Step 6 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
 process.  If breakage is encountered, you can restore parts from this /bak
-image.  You may also use an unpacked stage3 tarball or copied image of / instead
-of emerging @system again.  CFI will tell you the library or program that caused
-the CFI violation, all you need to do is replace that exe or lib from /bak.
-Also, you should have the rescue CD in case coreutils (cp) or bash breaks.  6a
-and 6c have an advantage of less likely having SOVERSION (or library version)
-compatibility issues.  6b can be used if using mostly stable versions and not
-keyworded ones.
+image.  You may also use an unpacked stage 3 tarball or a copied image of /
+instead of emerging @system again.  CFI will tell you the library or program
+that caused the CFI violation, all you need to do is replace that exe or lib
+from /bak.  Also, you should have the rescue CD in case of failure with broken
+system apps (like bash).  6a and 6c have an advantage of less likely having
+SOVERSION (or library version) compatibility issues.  6b can be used if using
+mostly stable versions and not keyworded ones.
 
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
