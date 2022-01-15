@@ -369,10 +369,10 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 #### Overview
 
 * Perform the usual install/update as recommended by the distro handbox
-* Install scripts from this overlay
 * Update to the latest binutils, glibc, gcc
 * Rebuild @system with the latest gcc and glibc
 * Build clang and lld
+* Install scripts from this overlay
 * Reconstruct black- and white-list and missing metadata with gen_pkg_lists.sh
 * Rebuild the safer CFIed @world
 * Rebuild the more dangerously risky CFIed @system then @world
