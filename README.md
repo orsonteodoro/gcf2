@@ -467,12 +467,10 @@ process.  If breakage is encountered, you can restore parts from this /bak
 image.  You may also use an unpacked stage 3 tarball or a copied image of /
 instead of emerging @system again.  CFI will tell you the library or program
 that caused the CFI violation, all you need to do is replace that exe or lib
-from /bak.  Also, you should have the rescue CD in case of failure with broken
-system apps (like bash).  After the toolchain is repaired, add or disable
-CFI or its schemes and one shot re-emerge the package belonging to that
-shared-lib or executable.  6a and 6c have an advantage of  less likely having
-SOVERSION (or library version) compatibility issues.  6b can be used if using
-mostly stable versions and not keyworded ones.
+from /bak.  6a and 6c have an advantage of  less likely having SOVERSION (or
+library version) compatibility issues.  6b can be used if using mostly stable
+versions and not keyworded ones.  Also, you should have the rescue CD in case
+of failure with broken system apps (like bash).
 
 It is recommended in steps 13-17 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
@@ -501,6 +499,11 @@ list or exclusions.  The entries can be changed if one decides to use a
 different ebuild revision with fixes, or can be rearraged so that unmergables
 get moved to the end of the list.  Unmergeable rearragement should be done
 for already installed packages, app packages, or dependency less packages.
+
+In step 15, before doing repairs, preview the resume list before saving
+the copy.  After the toolchain is repaired by replacing the shared-lib or
+executable, add or disable CFI or its schemes and (`emerge -1vO <pkgname>`)
+the package belonging to that shared-lib or executable then `--resume`.
 
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
@@ -821,10 +824,15 @@ done | sort -rV
 Many times emerge is forgetful about the resume list as a result of
 one shotting too many times after trying to find fixes.
 
+Before generating the resume list, preview it to ensure that the resume
+list is the actual one.  Do not resume off the 1 to a few packages
+you are trying to repair.
+
 The following script has been added to allow you to resume emerging.  It
-requires `emerge -pv --resume | grep -e "^\[" > ~/resume.lst`  Keep the
-resume.lst updated once in a while or after emerge failure after
---resume.
+requires `emerge -pv --resume | grep -e "^\[" > ~/resume.lst` or copy
+paste the resume list and remove the header and footer only keeping the
+square bracket rows.  Keep the resume.lst updated once in a while or
+after emerge failure after --resume.
 
 ```Shell
 #!/bin/bash
