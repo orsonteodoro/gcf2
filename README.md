@@ -874,8 +874,9 @@ This does a simple --help and --version check.  Add any potentially dangerous
 commands in the
 [exclude list](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries#L57)
 inside the script.  This only tests a few code paths at start.  You may still
-encounter CFI violations from event based portions or deeper in the code.  For
-testing some deeper code paths, add test to systemwide USE flags and systemwide
+encounter CFI violations from event based portions or deeper in the code.
+
+For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
 (in step 4 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
 early one to increase chances of an complete atomic update from beginning to
