@@ -479,6 +479,13 @@ all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
 
+In steps 13 and 15, it is recommended to use a personal resume
+[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list)
+not the one managed by emerge when testing packages or applying CFI an ignore
+list or exclusions.  The entries can be changed if one decides to use a
+different ebuild revision with fixes, or can be rearraged so that unmergables
+get moved to the end of the list.
+
 Steps 14-17 should only be used after emerging @world with clang installed,
 corresponding to step 13.
 
