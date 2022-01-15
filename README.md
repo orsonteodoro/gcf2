@@ -451,7 +451,8 @@ Step 2-4 again is to minimize temporarly blocks and rollbacks, and to insure
 that all installed packages are capable of being installed to weed out bad
 poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
 from the world list or replaced with a working version or one from a different
-overlay.
+overlay.  This is to prevent emerge from dropping a set of packages that
+should be re-emerge with new LTO/CFI flags.
 
 In step 4 in preparation for step 13, one may decide to use the test USE flag
 and test FEATURES in order possibly to increase the coverage of testing for CFI
