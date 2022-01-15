@@ -782,7 +782,7 @@ disable-lto-compiler-switch.conf, disable-perl-makemaker-autoedit.conf,
 enable-perl-makemaker-autoedit.conf to control how to build the perl module
 packages.
 
-When a temporarly lto disable is placed on perl packages, it may need to
+When a temporarly LTO disabled perl module fails to build, it may need to
 be manually placed in the agnostic lists (/etc/portageemerge-*-lto-agnostic.lst)
 in order to build it.
 
