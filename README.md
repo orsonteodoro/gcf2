@@ -495,7 +495,7 @@ The reasons for emerging @world CFIed 2 times (in steps 12 and 16) with 1 CFIed
 problem(s) discovery.  The CFI volation is not really isolated in the @system
 set but can affect the @world set like with zlib.  To fix the violation(s) see
 the [fixing CFI violations](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violations)
-section.  This discovery is done in the startup portions in step 18 in mostly
+section.  This discovery is done in the startup portions in step 17 in mostly
 all executables in the system.  See also the
 [Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
 section.
