@@ -531,12 +531,13 @@ Steps 17-18 are required because each build (or computer) has a unique set of US
 flags with conditionally installed packages.  This step may be integrated in
 step 12 in regular intervals if possible.
 
-Steps 20-21 are optional for removal of CFI_DEBUG mode, but makes the build more
-production ready.  Disabling CFI debug can make it difficult to determine the
-type of CFI violation or even to decide if it was a miscompile or CFI itself.
-Also remove the test USE flag and test FEATURES from make.conf.  It is required
-that the test USE and test FEATURE flags be removed to prevent the possibility
-of dangerous fuzzed libs in the final image.
+Steps 20-21 are optional for disablement of GCF_CFI_DEBUG mode, but makes the
+build more production ready.  Disabling CFI debug can make it difficult to
+determine the type of CFI violation or even to decide if it was a miscompile or
+CFI itself.  Also remove the test USE flag and test FEATURES from make.conf.
+It is required that the test USE and test FEATURE flags be removed to prevent
+the possibility of dangerous fuzzed libs or unusable fuzzed libs in the final
+image.
 
 ### Coverage
 
