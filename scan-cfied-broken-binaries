@@ -193,6 +193,9 @@ gen_log() {
 						| sed -e "s|/var/db/pkg/||g" -e "s|/CONTENTS||g")
 				done
 			fi
+			if grep -q -i -e "Illegal instruction" "${SANDBOX_DIR}/output.log" ; then
+				decho "Illegal instruction detected (${pkg_name})"
+			fi
 		fi
 
 		# Fix broken CRLF from `less`
@@ -281,6 +284,13 @@ find_segfaults() {
 		| uniq
 }
 
+find_illegal_instruction() {
+	echo
+	echo "Illegal instruction from:"
+	echo
+	grep "Illegal instruction detected" "${LOGGING_PATH}" | sort | uniq
+}
+
 analysis() {
 	find_slowpath_errors
 	find_check_fail_abort_errors
@@ -288,6 +298,7 @@ analysis() {
 	find_noreserve_libs_errors
 	find_cfi_check_failed_errors
 	find_segfaults
+	find_illegal_instruction
 	echo "Manual analysis still required because of parsing difficulty."
 	echo "See ${LOGGING_PATH} for details."
 }
