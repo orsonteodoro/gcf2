@@ -1,0 +1,38 @@
+[cfi-icall]
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-2e3f84.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-dc5aba.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPKcE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-c1f1a6.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-68597d.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-4e05b6.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-45baf6.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPhmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-88b049.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-361d67.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPhmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-7f3938.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFPvP14png_struct_defmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-e2e87f.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPhmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-d0580a.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPhmE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/libpng-compat-1.5.30/temp/lto-llvm-c9de59.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvP14png_struct_defPhmE_align' can not be used when making a shared object
+
+# It doesn't work bugged
+#type:_ZTSFPvP14png_struct_defmE
+#type:_ZTSFvP14png_struct_defPKcE
+#type:_ZTSFvP14png_struct_defPhmE
+#type:_ZTSFvP14png_struct_defmiE
+
+# For _ZTSFPvP14png_struct_defmE
+src:*/pngmem.c
+
+# For _ZTSFvP14png_struct_defPhmE
+src:*/pngrio.c
+src:*/pngwutil.c
+src:*/pngrutil.c
+src:*/png.c
+src:*/pngwio.c
+src:*/pngpread.c
+
+# For _ZTSFvP14png_struct_defPKcE
+src:*/pngerror.c
+
+# For _ZTSFvP14png_struct_defmiE
+src:*/pngwrite.c
+src:*/pngread.c
+src:*/pngtrans.c

@@ -871,8 +871,8 @@ gcf_add_cfi_flags() {
 		gcf_info "Adding base CFI flags"
 		gcf_append_flags -fsanitize=${CFI_BASELINE}
 		# CFI_BASELINE, CFI_EXCEPTIONS, USE_CFI_IGNORE_LIST can be per package customizable.
-		if [[ -n "${USE_CFI_IGNORE_LIST}" ]] ; then
-			export FEATURES="${FEATURES} -ccache"
+		if [[ "${USE_CFI_IGNORE_LIST}" == "1" ]] ; then
+			gcf_info "FEATURES=${FEATURES}"
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}" ]] ; then
 				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}
 			fi
