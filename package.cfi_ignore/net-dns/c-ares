@@ -1,0 +1,25 @@
+[cfi-icall]
+# npx --help
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:175:3: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
+# (/lib64/libc.so.6+0x9b580): note: (unknown) defined here
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:175:3: note: check failed in /usr/lib64/libbrotlidec.so.1, destination function located in /lib64/libc.so.6
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:175:3 in 
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:176:3: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
+# (/lib64/libc.so.6+0x9b580): note: (unknown) defined here
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:176:3: note: check failed in /usr/lib64/libbrotlidec.so.1, destination function located in /lib64/libc.so.6
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_strsplit.c:176:3 in 
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2206:17: runtime error: control flow integrity check for type 'void *(void *, unsigned long)' failed during indirect function call
+# (/lib64/libc.so.6+0x9b7c0): note: (unknown) defined here
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2206:17: note: check failed in /usr/lib64/libbrotlidec.so.1, destination function located in /lib64/libc.so.6
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2206:17 in 
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:1849:7: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
+# (/lib64/libc.so.6+0x9b580): note: (unknown) defined here
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:1849:7: note: check failed in /usr/lib64/libbrotlidec.so.1, destination function located in /lib64/libc.so.6
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:1849:7 in 
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2564:3: runtime error: control flow integrity check for type 'void (void *)' failed during indirect function call
+# (/lib64/libc.so.6+0x9b580): note: (unknown) defined here
+# /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2564:3: note: check failed in /usr/lib64/libbrotlidec.so.1, destination function located in /lib64/libc.so.6
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /var/tmp/portage/net-dns/c-ares-1.18.1/work/c-ares-1.18.1/src/lib/ares_init.c:2564:3 in 
+# npm exec
+src:*/ares_strsplit.c
+src:*/ares_init.c

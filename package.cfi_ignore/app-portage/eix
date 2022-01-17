@@ -1,0 +1,17 @@
+[cfi-unrelated-cast|cfi-derived-cast]
+#
+# Triggered when doing eix-layman --help:
+#
+# /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: runtime error: control flow integrity check for type 'Mask' failed during cast to unrelated type (vtable address 0x000000000000)
+# 0x000000000000: note: invalid vtable
+# <memory cannot be printed>
+# /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: note: check failed in /usr/bin/eix, vtable located in (unknown)
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16 in 
+# /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: runtime error: control flow integrity check for type 'SetMask' failed during cast to unrelated type (vtable address 0x000000000000)
+# 0x000000000000: note: invalid vtable
+# <memory cannot be printed>
+# /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: note: check failed in /usr/bin/eix, vtable located in (unknown)
+# SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /usr/lib/gcc/*-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16 in 
+# /usr/bin/eix-layman: illegal option -- -
+type:Mask
+type:SetMask
