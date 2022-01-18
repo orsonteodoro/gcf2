@@ -194,7 +194,7 @@ gen_log() {
 				done
 			fi
 			if grep -q -i -e "Illegal instruction" "${SANDBOX_DIR}/output.log" ; then
-				decho "Illegal instruction detected (${pkg_name})"
+				decho "Illegal instruction detected (pkgname = ${pkg_name}  bin = ${f})"
 			fi
 		fi
 
