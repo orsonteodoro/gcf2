@@ -1029,6 +1029,11 @@ gcf_error "Use \`equery b static-lib\` to find those packages."
 			# Portage will terminate after showing this.
 	fi
 	gcf_force_llvm_toolchain_in_perl_module_check_fail
+	if grep -q -e "clang.*: error: unknown argument" "${T}/build.log" ; then
+gcf_error "Add this package with use-gcc.conf to /etc/portage/package.env or"
+gcf_error "manually categorize lto in /etc/portage/emerge*.lst with the latter"
+gcf_error "preferred."
+	fi
 }
 
 gcf_setup_traps() {
