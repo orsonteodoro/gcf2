@@ -970,8 +970,8 @@ main
 
 ```
 
-If you do not have logging, you may try `./show_cfied.sh > temp.lst` and then
-`cat temp.lst | grep "not-cfied" | cut -f 2 -d " "` to generate a list of
+If you do not have logging, you may try
+`./show_cfied.sh | grep "not-cfied" | cut -f 2 -d " "` to generate a list of
 not-cfied packages feed in the script above.
 
 ### Checking for early CFI violations and missing symbols
