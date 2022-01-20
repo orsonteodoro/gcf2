@@ -920,6 +920,43 @@ main "${1}"
 After running the script, the `--resume` arg can be used in subsequent calls 
 to `emerge`.
 
+### Re-emerging new packages that were temporarly LTO disabled
+
+It is important to re-emerge these packages so some of these can be CFI
+protected.  This can be achieved if logging is enabled.
+
+1. First, grab the packages that were temporary LTO disabled:
+
+```Shell
+#!/bin/bash
+main() {
+	for f in $(grep -r -l -e "Stripping LTO flags for blacklisted, missing install file list" /var/log/emerge/build-logs/) ; do
+		local b=$(basename "${f}" | cut -f 1-2 -d ":" | sed -e "s|:|/|g")
+		echo "${b}"
+	done | sort | uniq
+}
+
+main
+```
+
+2. Copy paste the list into the following while removing old revisions,
+old versions, or disable by commenting out (#) packages you want to process
+later:
+
+```Shell
+#!/bin/bash
+main() {
+	local LST=(
+		<INSERT LIST HERE>
+	)
+	
+	emerge --ask -1vO ${LST[@]/#/=}
+}
+
+main
+
+```
+
 ### Checking for early CFI violations and missing symbols
 
 This does a simple --help and --version check.  Add any potentially dangerous
