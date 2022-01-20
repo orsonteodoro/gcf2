@@ -1232,8 +1232,8 @@ gcf_use_libcxx() {
 		else
 			gcf_warn "Auto switching to libstdcxx -> libc++ (EXPERIMENTAL, UNTESTED SYSTEMWIDE)"
 			gcf_append_flags -stdlib=libc++
-			append-ldflags -lc++
-			# append-ldflags -static-libstdc++ # for CFI Basic mode only
+			gcf_append_ldflags -lc++
+			# gcf_append_ldflags -static-libstdc++ # for CFI Basic mode only
 		fi
 	fi
 }
