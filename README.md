@@ -217,8 +217,8 @@ and unstable systemwide.  bashrc support in development.)
 enabled after emerging @world.
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 * USE_LIBCXX_AS_DEFAULT -- Use libc++ instead of libstdc++ as the default
-if C++ files are detected.  Was going to use primarly for Clang CFI.  (UNTESTED
-SYSTEMWIDE, EXPERIMENTAL)
+if C++ files are detected.  It was going to be used primarly for Clang CFI.
+(UNTESTED SYSTEMWIDE, EXPERIMENTAL)
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
 The bashrc will prioritize ThinLTO over GoldLTO.  This can be controlled with
