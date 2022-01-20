@@ -464,6 +464,13 @@ emerge -1v \
    * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
+   * Enable logging
+
+```Shell
+# Contents of make.conf:
+FEATURES="${FEATURES} binpkg-logs"
+PORTAGE_LOGDIR="/var/log/emerge/build-logs"
+```
 
 9. Run `./gen_pkg_lists.sh`
 10. Set `USE_CLANG_CFI=1`, `USE_CLANG_CFI_AT_SYSTEM=0`, `GCF_CFI_DEBUG=1`, `CC_LTO="clang"`,
@@ -512,6 +519,11 @@ from /bak.  7a and 7c have an advantage of  less likely having SOVERSION (or
 library version) compatibility issues.  7b can be used if using mostly stable
 versions and not keyworded ones.  Also, you should have the rescue CD in case
 of failure with broken system apps (like bash).
+
+In step 8, logging is enabled for helper scripts.  If you have a very fast
+computer and do `emerge -e @world` frequently, you may disable it.  For older
+computers, logging should be enabled for making it easier to rebuild new
+packages.
 
 In step 10, USE_LIBCXX_AS_DEFAULT=1 could be used at that time, but it has not
 been tested systemwide.  It may require to disable it with
