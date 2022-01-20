@@ -434,17 +434,18 @@ AND
 
 ```Shell
 # Rebuild the highest installed slot
-sys-devel/llvm:14
-sys-devel/clang:14
-=sys-devel/clang-common-14*
-=sys-devel/clang-runtime-14*
-=sys-devel/lld-14*
-=sys-libs/compiler-rt-14*
-=sys-libs/compiler-rt-sanitizers-14*
-=sys-libs/libomp-14*
-=sys-devel/llvmgold-14*
-=sys-libs/libcxxabi-14*
-=sys-libs/libcxx-14*
+emerge -1v \
+	sys-devel/llvm:14 \
+	sys-devel/clang:14 \
+	=sys-devel/clang-common-14* \
+	=sys-devel/clang-runtime-14* \
+	=sys-devel/lld-14* \
+	=sys-libs/compiler-rt-14* \
+	=sys-libs/compiler-rt-sanitizers-14* \
+	=sys-libs/libomp-14* \
+	=sys-devel/llvmgold-14* \
+	=sys-libs/libcxxabi-14* \
+	=sys-libs/libcxx-14*
 ```
 
 Replacing 14 (latest) or 13 (stable) with the preferred version as the primary CFI / LTO compiler.
