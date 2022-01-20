@@ -975,7 +975,8 @@ main
 If you do not have logging, you may try
 `./show_cfied.sh | grep "not-cfied" | cut -f 2 -d " "` to generate a list of
 not-cfied packages to feed in the script above.  This alternative way is not
-recommended since more than 50% of the packages will be re-emerged.
+recommended since more than 50% of the packages will be re-emerged.  The
+O passed to emerge may need be removed to take in account correct merge order.
 
 ### Checking for early CFI violations and missing symbols
 
