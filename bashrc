@@ -501,11 +501,6 @@ gcf_error "gen_pkg_lists.sh to generate a compatible list."
 	fi
 }
 
-gcf_lto_no_strip_with_iuse() {
-	[[ "${CATEGORY}/${PN}" != "net-misc/networkmanager" ]] && return 0
-	[[ "${CATEGORY}/${PN}" != "dev-lang/networkmanager" ]] && return 0
-}
-
 gcf_lto() {
 	[[ "${DISABLE_GCF_LTO}" == "1" ]] && return
 
