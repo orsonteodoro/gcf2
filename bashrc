@@ -1225,7 +1225,7 @@ gcf_use_libcxx() {
 		-o -iname "*.hpp" \
 		-o -iname "*.hxx" \
 		2>/dev/null | wc -l)
-	if (( ${nfiles} > 0 )) && [[ "${USE_LIBCXX_AS_DEFAULT}" == "1" && "${CXX}" == "clang" ]] ; then
+	if (( ${nfiles} > 0 )) && [[ "${USE_LIBCXX_AS_DEFAULT}" == "1" && "${CXX}" =~ "clang++" ]] ; then
 		gcf_warn "Auto switching to libstdcxx -> libc++ (EXPERIMENTAL, UNTESTED SYSTEMWIDE)"
 		gcf_append_flags -stdlib=libc++
 		append-ldflags -lc++
