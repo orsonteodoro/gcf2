@@ -523,7 +523,8 @@ of failure with broken system apps (like bash).
 In step 8, logging is enabled for helper scripts.  If you have a very fast
 computer and do `emerge -e @world` frequently, you may disable it.  For older
 computers, logging should be enabled for making it easier to rebuild new
-packages.
+packages.  The folder /var/log/emerge/build-logs should be cleared before
+`emerge -e @world` or `emerge -e @system`.
 
 In step 10, USE_LIBCXX_AS_DEFAULT=1 could be used at that time, but it has not
 been tested systemwide.  It may require to disable it with
