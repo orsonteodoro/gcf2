@@ -513,11 +513,11 @@ library version) compatibility issues.  7b can be used if using mostly stable
 versions and not keyworded ones.  Also, you should have the rescue CD in case
 of failure with broken system apps (like bash).
 
-In step 10, USE_LIBCXX_AS_DEFAULT=1 could be used at that time but not tested
-systemwide.  It may require to disable it with disable-libcxx-as-default.conf
-for some packages.  The flags have been used in other ebuilds without problems,
-but may result in two standard C++ libraries being used which has been observed
-with ldd.
+In step 10, USE_LIBCXX_AS_DEFAULT=1 could be used at that time, but it has not
+been tested systemwide.  It may require to disable it with
+disable-libcxx-as-default.conf for some packages.  The flags have been used in
+other ebuilds without problems, but may result in two standard C++ libraries
+being used which has been observed with ldd.
 
 It is recommended in steps 12-16 that you test your software every 10-100 emerged
 packages to find runtime CFI violations instead of waiting too long.  Long waits
