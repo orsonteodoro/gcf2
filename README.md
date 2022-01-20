@@ -433,7 +433,7 @@ source /etc/profile
 AND
 
 ```Shell
-# Rebuild the highest installed slot
+# Rebuild the highest installed slot replacing or keeping 14
 emerge -1v \
 	sys-devel/llvm:14 \
 	sys-devel/clang:14 \
