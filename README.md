@@ -499,10 +499,10 @@ problematic packages especially for those packages that do not provide a
 production version of the library (depending on if steps 20-21 will not be
 performed) but install the designed to fail fuzzed one.
 
-After step 6, it's recommended to re-build at least the highest slot of the
-clang toolchain only if clang hasn't been built against the latest gcc and glibc
-yet.  This is because LLVM references gcc and glibc packages in ldd for some
-reason.
+After step 6, it's recommended to re-build at least the highest installed slot
+of the clang toolchain only if clang hasn't been built against the latest gcc
+and glibc yet.  This is because LLVM references gcc and glibc packages in ldd
+for some reason.
 
 Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
