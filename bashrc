@@ -1254,7 +1254,6 @@ pre_pkg_setup()
 	gcf_strip_omit_frame_pointer
 	gcf_use_Oz
 	gcf_use_ubsan
-	gcf_use_libcxx
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_linker_errors_as_warnings
@@ -1372,6 +1371,7 @@ gcf_warn "you may skip this recommendation.  See docs for additional info."
 
 post_src_unpack() {
 	gcf_check_external_linkage_for_cfi
+	gcf_use_libcxx
 }
 
 post_src_prepare() {
