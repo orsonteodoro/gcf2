@@ -448,8 +448,6 @@ emerge -1v \
 	=sys-libs/libcxx-14*
 ```
 
-Replacing 14 (latest) or 13 (stable) with the preferred version as the primary CFI / LTO compiler.
-
 7. Choose a recovery image for @system:
    - (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
    - (b) `Unpack stage 3 tarball into /bak`
