@@ -1214,6 +1214,25 @@ gcf_strip_omit_frame_pointer() {
 	[[ "${REMOVE_OMIT_FRAME_POINTER}" == "1" ]] && _gcf_replace_flag "-fomit-frame-pointer" ""
 }
 
+gcf_use_libcxx() {
+	local nfiles=$(find "${WORKDIR}" \
+		-iname "*.c++" \
+		-o -iname "*.cc" \
+		-o -iname "*.cpp" \
+		-o -iname "*.cxx" \
+		-o -iname "*.h++" \
+		-o -iname "*.hh" \
+		-o -iname "*.hpp" \
+		-o -iname "*.hxx" \
+		2>/dev/null | wc -l)
+	if (( ${nfiles} > 0 )) && [[ "${USE_LIBCXX_AS_DEFAULT}" == "1" && "${CXX}" == "clang" ]] ; then
+		gcf_warn "Auto switching to libstdcxx -> libc++ (EXPERIMENTAL, UNTESTED SYSTEMWIDE)"
+		gcf_append_flags -stdlib=libc++
+		append-ldflags -lc++
+		# append-ldflags -static-libstdc++ # for CFI Basic mode only
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1235,6 +1254,7 @@ pre_pkg_setup()
 	gcf_strip_omit_frame_pointer
 	gcf_use_Oz
 	gcf_use_ubsan
+	gcf_use_libcxx
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_linker_errors_as_warnings

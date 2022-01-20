@@ -216,6 +216,9 @@ and unstable systemwide.  bashrc support in development.)
 * USE_CLANG_CFI_AT_SYSTEM -- Use Clang CFI for @system.  It should only be
 enabled after emerging @world.
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
+* USE_LIBCXX_AS_DEFAULT -- Use libc++ instead of libstdc++ as the default
+if C++ files are detected.  Was going to use primarly for Clang CFI.  (UNTESTED
+SYSTEMWIDE, EXPERIMENTAL)
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
 The bashrc will prioritize ThinLTO over GoldLTO.  This can be controlled with
@@ -240,6 +243,7 @@ bashrc:
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
 ebuild itself or the build scripts may forcefully switch compilers.
 * disable-cfi-at-system.conf -- Disable CFIing this package in the @system set
+* disable-libcxx-as-default.conf -- Use libstdc++ instead of libc++
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
