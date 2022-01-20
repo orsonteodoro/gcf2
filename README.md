@@ -708,6 +708,8 @@ The above percents are relative to the @world.
 (Disabled CFI schemes is being used currently for reasons to get a working
 system up as fast as possible.  Difficulties with ignore lists disincentivize
 using them.)
+* Rebuild with USE_LIBCXX_AS_DEFAULT=1 with package.env exceptions if necessary
+to increase CFI coverage -- on hold
 
 ### Troubleshooting
 
