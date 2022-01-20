@@ -429,6 +429,26 @@ eselect gcc set <newest_gcc_version>
 source /etc/profile
 ```
 6. `emerge -ve @system`
+
+AND
+
+```Shell
+# Rebuild the highest installed slot
+sys-devel/llvm:14
+sys-devel/clang:14
+=sys-devel/clang-common-14*
+=sys-devel/clang-runtime-14*
+=sys-devel/lld-14*
+=sys-libs/compiler-rt-14*
+=sys-libs/compiler-rt-sanitizers-14*
+=sys-libs/libomp-14*
+=sys-devel/llvmgold-14*
+=sys-libs/libcxxabi-14*
+=sys-libs/libcxx-14*
+```
+
+Replacing 14 (latest) or 13 (stable) with the preferred version as the primary CFI / LTO compiler.
+
 7. Choose a recovery image for @system:
    - (a) `emerge -ve --quickpkg-direct y --root=/bak @system`
    - (b) `Unpack stage 3 tarball into /bak`
@@ -477,6 +497,11 @@ early so the dependencies are pulled and the test USE flag disabled for
 problematic packages especially for those packages that do not provide a
 production version of the library (depending on if steps 20-21 will not be
 performed) but install the designed to fail fuzzed one.
+
+After step 6, it's recommended to re-build at least the highest slot of the
+clang toolchain only if clang hasn't been built against the latest gcc and glibc
+yet.  This is because LLVM references gcc and glibc packages in ldd for some
+reason.
 
 Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
