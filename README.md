@@ -481,7 +481,7 @@ emerge -1v \
 20. Run `./gen_pkg_lists.sh`
 21. `emerge -ve @world`
 
-Step 3 again is to minimize temporarly blocks and rollbacks, and to insure
+Step 3 again is to minimize temporarly blocks and rollbacks, and to ensure
 that all installed packages are capable of being installed to weed out bad
 poor quality ebuilds.  The unmergable poor quality ebuilds should be removed
 from the world list or replaced with a working version or one from a different
