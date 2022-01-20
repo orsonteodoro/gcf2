@@ -1031,8 +1031,8 @@ gcf_error "Use \`equery b static-lib\` to find those packages."
 	gcf_force_llvm_toolchain_in_perl_module_check_fail
 	if grep -q -e "clang.*: error: unknown argument" "${T}/build.log" ; then
 gcf_error "Add this package with use-gcc.conf to /etc/portage/package.env or"
-gcf_error "manually categorize lto in /etc/portage/emerge*.lst with the latter"
-gcf_error "preferred."
+gcf_error "manually categorize this package in both CFI and LTO in"
+gcf_error "/etc/portage/emerge*.lst with the latter preferred."
 	fi
 }
 
