@@ -91,7 +91,7 @@ cores on your system.
 processing.  For those using bullet for scientific purposes, consider removing 
 fast-math (or applying [[1]](#footnote1)).
 * -fopt-info-vec -- show SIMD optimized loops [[3]](#footnote3)
-* -flto -- used primarly for reduction of binary size and cache use
+* -flto -- used primarily for reduction of binary size and cache use
 efficiency [[4]](#footnote4)
 
 For Spectre mitigation virtually all packages were filtered with Retpoline
@@ -217,7 +217,7 @@ and unstable systemwide.  bashrc support in development.)
 enabled after emerging @world.
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 * USE_LIBCXX_AS_DEFAULT -- Use libc++ instead of libstdc++ as the default
-if C++ files are detected.  It's used primarly for being CFI protected.
+if C++ files are detected.  It's used primarily for being CFI protected.
 (UNTESTED SYSTEMWIDE, EXPERIMENTAL)
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
