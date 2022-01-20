@@ -938,7 +938,9 @@ to `emerge`.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. First, grab the packages that were temporary LTO disabled:
+1. First run `./gen_pkg_lists.sh`
+
+2. Next, grab the packages that were temporary LTO disabled:
 
 ```Shell
 #!/bin/bash
@@ -952,7 +954,7 @@ main() {
 main
 ```
 
-2. Copy paste the list into the following while removing old revisions,
+3. Copy-paste the list into the following while removing old revisions,
 old versions, or disable by commenting out (#) packages you want to process
 later:
 
