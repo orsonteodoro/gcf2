@@ -437,9 +437,9 @@ AND
 emerge -1v \
 	sys-devel/llvm:14 \
 	sys-devel/clang:14 \
+	=sys-devel/lld-14* \
 	=sys-devel/clang-common-14* \
 	=sys-devel/clang-runtime-14* \
-	=sys-devel/lld-14* \
 	=sys-libs/compiler-rt-14* \
 	=sys-libs/compiler-rt-sanitizers-14* \
 	=sys-libs/libomp-14* \
