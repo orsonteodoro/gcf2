@@ -446,6 +446,7 @@ emerge -1v \
 	=sys-devel/llvmgold-14* \
 	=sys-libs/libcxxabi-14* \
 	=sys-libs/libcxx-14*
+# Also any slotted use-clang-*.conf overrides in package.env should be re-emerged
 ```
 
 7. Choose a recovery image for @system:
@@ -507,7 +508,9 @@ performed) but install the designed to fail fuzzed one.
 After step 6, it's recommended to re-build at least the highest installed slot
 of the clang toolchain only if clang hasn't been built against the latest gcc
 and glibc yet.  This is because LLVM references gcc and glibc packages in ldd
-for some reason.
+for some reason.  Any packages that use specific slot of clang/llvm (e.g.
+use-clang-12.conf or others) should also be re-emerged since *DEPENDs does not
+take in account package.env overrides.
 
 Step 7 is to make an unCFIed backup of the @system set in /bak before breaking
 it with CFI violations that will likely cause an interruption in the build
