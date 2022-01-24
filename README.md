@@ -1028,6 +1028,9 @@ emerge to be executed.
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
 
+This tool will not detect a stall, or lack of progression when executing a program.
+Manual inspection is required for this kind of error.
+
 ## Required re-emerges
 
 If any of the undefined symbols is encountered, it requires a rebuild:
@@ -1038,6 +1041,10 @@ If any of the undefined symbols is encountered, it requires a rebuild:
 (with no-cfi-icall.conf) or more.)
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
+
+Update: In Jan 23, 2023, x11-libs/libva should be re-emerged since 
+scan-cfied-broken-binaries will not detect __ubsan_handle_cfi_check_fail_abort
+missing symbol but stall with vainfo instead.
 
 This requires bashrc be updated to commit `ed89cbf` or newer before emerging
 the list below.
@@ -1076,6 +1083,7 @@ emerge -1vO \
 	net-libs/libasyncns \
 	net-libs/libndp \
 	net-libs/libsoup \
+	x11-libs/libva \
 	x11-libs/gtk+ \
 	x11-libs/gtksourceview \
 	x11-libs/pango \
