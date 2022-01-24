@@ -1028,7 +1028,7 @@ emerge to be executed.
 The `equery b <path>` is slow.  Use `grep -l "<path>" /var/db/pkg/*/*/CONTENTS`
 instead.
 
-This tool will not detect a stall, or lack of progression when executing a program.
+This tool will not detect a stall or lack of progression when executing a program.
 Manual inspection is required for this kind of error.
 
 ## Required re-emerges
