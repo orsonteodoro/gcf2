@@ -1425,7 +1425,7 @@ gcf_verify_cfi() {
 		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
 
 		if (( ${is_so} == 1 )) ; then
-			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(__cfi_init|__cfi_check_fail)" ; then
+			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail)" ; then
 				:;
 			else
 gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"

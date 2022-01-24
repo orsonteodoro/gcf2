@@ -19,7 +19,7 @@ show_cfi_set() {
 		if [[ -e "/var/db/pkg/${p}/CONTENTS" ]] ; then
 			for f in $(cat /var/db/pkg/${p}/CONTENTS | cut -f 2 -d " ") ; do
 				readelf -Ws "${f}" 2>/dev/null \
-					| grep -q -E -e "(__cfi_init|__cfi_check_fail)" 2>/dev/null \
+					| grep -q -E -e "(cfi_bad_type|cfi_check_fail)" 2>/dev/null \
 					&& is_cfied=1 && break
 			done
 		fi
