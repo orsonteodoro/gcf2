@@ -668,21 +668,21 @@ a static-lib.
 
 ##### CFI only actual
 
-Last updated Jan 10, 2022
+Last updated Jan 23, 2022
 
 * Set sizes
-  * @world:  788
-  * @world - @system:  493
-  * @system:  295
+  * @world:  815
+  * @world - @system:  550
+  * @system:  265
 
 * CFIed:
-  * @world:  261 (33.121827411167516 %_rel_world)
-  * @world - @system:  164 (33.2657200811359 %_rel_world_minus_system, 20.812182741116754 %_rel_world)
-  * @system:  97 (32.88135593220339 %_rel_system, 12.30964467005076 %_rel_world)
+  * @world:  345 (42.331288343558285 %_rel_world)
+  * @world - @system:  238 (43.27272727272727 %_rel_world_minus_system, 29.20245398773006 %_rel_world)
+  * @system:  107 (40.37735849056604 %_rel_system, 13.12883435582822 %_rel_world)
 * NOT CFIed:
-  * @world:  527 (66.87817258883248 %_rel_world)
-  * @world - @system:  329 (66.73427991886409 %_rel_world_minus_system, 41.75126903553299 %_rel_world)
-  * @system:  198 (67.11864406779661 %_rel_system, 25.12690355329949 %_rel_world)
+  * @world:  470 (57.668711656441715 %_rel_world)
+  * @world - @system:  312 (56.72727272727273 %_rel_world_minus_system, 38.282208588957054 %_rel_world)
+  * @system:  158 (59.62264150943396 %_rel_system, 19.38650306748466 %_rel_world)
 
 @system numbers are a WIP (Work In Progress) and may change.
 
