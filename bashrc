@@ -1271,7 +1271,7 @@ gcf_report_peak_mem() {
 	local nseconds_light_swapping=0
 	local nseconds_severe_swapping=0
 	for l in $(cat "${GCF_MEASURE_PEAK_MEM_LOG}") ; do
-		[[ -n "${l}" ]] && continue
+		[[ -z "${l}" ]] && continue
 		if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
 			nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
 		elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
