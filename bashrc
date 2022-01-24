@@ -1233,6 +1233,86 @@ gcf_use_libcxx() {
 	fi
 }
 
+gcf_measure_peak_mem() {
+	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
+	#gcf_info "Sampled peak memory"
+
+	# Removed outliers.  For some reason size will spike to ~67118676.
+	local a=($(ps -o size --sort rss -p $(pgrep -G portage) 2>/dev/null \
+                | sed -r -e "s|[ ]+|\t|g" | sed -e "s|SIZE|0|g" | sort -h | sed -e "/^$/d"))
+
+	local _a=$(echo "${a[@]}" | tr " " ",")
+	local avg_mean=$(python -c "import statistics;print(statistics.mean([${_a}]))")
+	local sd=$(python -c "import statistics;print(statistics.stdev([${_a}]))")
+	# Trim outside 99.7% (or 3 standard deviations)
+	local a2=$(python -c \
+"
+avg_mean=${avg_mean};
+sd=${sd};
+a=[${_a}];
+a1=[x for x in a  if (x > avg_mean - 3 * sd)];
+a2=[x for x in a1 if (x < avg_mean + 3 * sd)];
+print(a2)
+" \
+	)
+	total_all=$(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g" | tr " " "\n" | tail -n 1)
+
+	echo "${total_all}" >> "${GCF_MEASURE_PEAK_MEM_LOG}"
+}
+
+gcf_report_peak_mem() {
+	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
+	rm -rf "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
+	sleep 1
+	local peak_memory=$(cat "${GCF_MEASURE_PEAK_MEM_LOG}" \
+		| sort -V \
+		| tail -n 1)
+	gcf_info "Peak memory:  ${peak_memory} KiB"
+	local nseconds_light_swapping=0
+	local nseconds_severe_swapping=0
+	for l in $(cat "${GCF_MEASURE_PEAK_MEM_LOG}") ; do
+		[[ -n "${l}" ]] && continue
+		if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
+			nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
+		elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
+			nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
+		fi
+	done
+
+	# Used to adjust makeopts on future runs.  Grep the logs for these
+	# messages in /var/log/emerge/build-logs.
+	#
+	# It doesn't matter when asleep or when unattended, but it will matter
+	# when multitasking while building.
+	if (( ${nseconds_severe_swapping} > ${NSEC_FREEZE} )) ; then
+gcf_error "Detected more than ${NSEC_FREEZE} seconds of severe swapping.  Try"
+gcf_error "makeopts-severe-swapping.conf"
+	elif (( ${nseconds_light_swapping} > ${NSEC_LAG} )) ; then
+gcf_warn "Detected more than ${NSEC_LAG} seconds of light swapping.  Try"
+gcf_warn "makeopts-swappy.conf"
+	fi
+}
+
+_gcf_start_measure_peak_mem_proc() {
+	while [[ -e "${GCF_MEASURE_PEAK_MEM_LOG}-activated" ]] ; do
+		gcf_measure_peak_mem
+		sleep 1
+	done
+}
+
+gcf_init_measure_peak_mem() {
+	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
+	export GCF_MEASURE_PEAK_MEM_LOG="${T}/measured-peak-mem"
+	echo "" > "${GCF_MEASURE_PEAK_MEM_LOG}"
+	echo "" > "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
+}
+
+gcf_start_measure_peak_mem() {
+	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
+	gcf_info "Starting to measure peak memory"
+	_gcf_start_measure_peak_mem_proc &
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1265,6 +1345,7 @@ pre_pkg_setup()
 	gcf_use_slotted_compiler
 	gcf_print_compiler
 	gcf_print_path
+	gcf_init_measure_peak_mem
 }
 
 gcf_check_Ofast_safety()
@@ -1385,6 +1466,7 @@ post_src_configure() {
 pre_src_compile() {
 	gcf_info "Running pre_src_compile()"
 	gcf_check_ebuild_compiler_override
+	gcf_start_measure_peak_mem
 }
 
 post_src_compile() {
@@ -1440,5 +1522,6 @@ gcf_error "DISABLE_CFI_VERIFY=1."
 post_src_install() {
 	gcf_info "Running post_src_install()"
 	gcf_report_emerge_time
+	gcf_report_peak_mem
 	gcf_verify_cfi
 }
