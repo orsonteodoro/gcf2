@@ -1183,7 +1183,8 @@ gcf_force_llvm_toolchain_in_perl_module_check_fail() {
 	if [[ "${CATEGORY}" == "dev-perl" || "${CATEGORY}" == "perl-core" || "${PERL_MAKEMAKER_AUTOEDIT}" == "1" ]] ; then
 		if grep -q grep -q -e "cc='clang'" $(realpath /usr/lib*/perl*/*/*/Config_heavy.pl) \
 			-e ".o: file not recognized: file format not recognized" "${T}/build.log" ; then
-gcf_error "The package must be built with Clang LTO."
+gcf_error "The package must be built with Clang LTO and if CFI is enabled with"
+gcf_error " CFI edits on in /etc/portage/emerge*lst."
 		fi
 	fi
 }
