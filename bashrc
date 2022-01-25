@@ -1253,13 +1253,13 @@ gcf_measure_peak_mem() {
 	local _a=$(echo "${a[@]}" | tr " " ",")
 	local avg_mean=$(python -c "import statistics;print(statistics.mean([${_a}]))")
 	local sd=$(python -c "import statistics;print(statistics.stdev([${_a}]))")
-	# Trim outside 99.7% (or 3 standard deviations)
+	# Trim outside 95% (or 2 standard deviations)
 	local a2=$(python -c \
 "
 avg_mean=${avg_mean};
 sd=${sd};
 a=[${_a}];
-a1=[x for x in a if (x > avg_mean - 3 * sd and x < avg_mean + 3 * sd)];
+a1=[x for x in a if (x > avg_mean - 2 * sd and x < avg_mean + 2 * sd)];
 print(a1)
 " \
 	)
