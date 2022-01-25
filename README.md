@@ -732,6 +732,7 @@ system up as fast as possible.  Difficulties with ignore lists disincentivize
 using them.)
 * Rebuild with USE_LIBCXX_AS_DEFAULT=1 with package.env exceptions if necessary
 to increase CFI coverage -- on hold
+* LTO/CFI rust programs -- on hold
 
 ### Troubleshooting
 
