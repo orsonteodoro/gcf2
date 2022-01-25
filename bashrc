@@ -1255,7 +1255,11 @@ a2=[x for x in a1 if (x < avg_mean + 3 * sd)];
 print(a2)
 " \
 	)
-	total_all=$(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g" | tr " " "\n" | tail -n 1)
+	local a_trimmed=$(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g")
+	local total_all=0
+	for x in ${a_trimmed} ; do
+		total_all=$((${total_all} + ${x}))
+	done
 
 	echo "${total_all}" >> "${GCF_MEASURE_PEAK_MEM_LOG}"
 }
