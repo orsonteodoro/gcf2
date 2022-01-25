@@ -557,7 +557,9 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 		gcf_error "Stripping LTO flags for blacklisted, missing install file list"
 		_gcf_strip_lto_flags
 		if has lto ${IUSE_EFFECTIVE} && use lto ; then
-gcf_error "Possible IR incompatibility.  Please disable the lto USE flag."
+gcf_error "Possible IR incompatibility.  Please disable the lto USE flag, or"
+gcf_error "re-categorize or add the package to /etc/portage/emerge*lst for LTO"
+gcf_error "(and CFI)."
 			die
 		fi
 	fi
