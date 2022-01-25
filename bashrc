@@ -554,6 +554,12 @@ gcf_warn "The plugins USE flag must be enabled in sys-devel/binutils for LTO to 
 	if gcf_is_package_in_lto_blacklists \
 		|| gcf_is_package_lto_unknown \
 		|| gcf_is_package_missing_in_lto_lists ; then
+		# Design notes:
+		# The dev-perl/* packages are known to fail.  It was decided
+		# that auto enabled LTO for temp packages will not be supported
+		# because this script may rely on grepping the emerge*cfi*lst
+		# parts.  Also, if auto enabled, this may cause these packages
+		# to be unCFIed AND LTOed which may be a security risk.
 		gcf_error "Stripping LTO flags for blacklisted, missing install file list"
 		_gcf_strip_lto_flags
 		if has lto ${IUSE_EFFECTIVE} && use lto ; then
