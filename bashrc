@@ -1250,9 +1250,8 @@ gcf_measure_peak_mem() {
 avg_mean=${avg_mean};
 sd=${sd};
 a=[${_a}];
-a1=[x for x in a  if (x > avg_mean - 3 * sd)];
-a2=[x for x in a1 if (x < avg_mean + 3 * sd)];
-print(a2)
+a1=[x for x in a if (x > avg_mean - 3 * sd and x < avg_mean + 3 * sd)];
+print(a1)
 " \
 	)
 	local a_trimmed=$(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g")
