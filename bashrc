@@ -1251,7 +1251,7 @@ gcf_measure_peak_mem() {
                 | sed -r -e "s|[ ]+|\t|g" | sed -e "s|SIZE|0|g" | sort -h | sed -e "/^$/d"))
 
 	local total_all=0
-	for x in ${a} ; do
+	for x in ${a[@]} ; do
 		total_all=$((${total_all} + ${x}))
 	done
 
