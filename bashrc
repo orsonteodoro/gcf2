@@ -1246,9 +1246,30 @@ gcf_measure_peak_mem() {
 	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
 	#gcf_info "Sampled peak memory"
 
-	# Removed outliers.  For some reason size will spike to ~67118676.
+	# For some reason size will spike to ~67118676.
 	local a=($(ps -o size --sort rss -p $(pgrep -G portage) 2>/dev/null \
                 | sed -r -e "s|[ ]+|\t|g" | sed -e "s|SIZE|0|g" | sort -h | sed -e "/^$/d"))
+
+	local total_all=0
+	for x in ${a_trimmed} ; do
+		total_all=$((${total_all} + ${x}))
+	done
+
+	# Raw total including outliers
+	echo "${total_all}" >> "${GCF_MEASURE_PEAK_MEM_LOG}"
+}
+
+gcf_report_peak_mem() {
+	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
+	rm -rf "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
+	sleep 1
+	local peak_memory=$(cat "${GCF_MEASURE_PEAK_MEM_LOG}" \
+		| sort -V \
+		| tail -n 1)
+	gcf_info "Peak memory:  ${peak_memory} KiB"
+	local nseconds_light_swapping=0
+	local nseconds_severe_swapping=0
+	local a=($(cat "${GCF_MEASURE_PEAK_MEM_LOG}"))
 
 	local _a=$(echo "${a[@]}" | tr " " ",")
 	local avg_mean=$(python -c "import statistics;print(statistics.mean([${_a}]))")
@@ -1263,26 +1284,9 @@ a1=[x for x in a if (x > avg_mean - 2 * sd and x < avg_mean + 2 * sd)];
 print(a1)
 " \
 	)
-	local a_trimmed=$(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g")
-	local total_all=0
-	for x in ${a_trimmed} ; do
-		total_all=$((${total_all} + ${x}))
-	done
+	local a_trimmed=($(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g"))
 
-	echo "${total_all}" >> "${GCF_MEASURE_PEAK_MEM_LOG}"
-}
-
-gcf_report_peak_mem() {
-	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
-	rm -rf "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
-	sleep 1
-	local peak_memory=$(cat "${GCF_MEASURE_PEAK_MEM_LOG}" \
-		| sort -V \
-		| tail -n 1)
-	gcf_info "Peak memory:  ${peak_memory} KiB"
-	local nseconds_light_swapping=0
-	local nseconds_severe_swapping=0
-	for l in $(cat "${GCF_MEASURE_PEAK_MEM_LOG}") ; do
+	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
 		if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
 			nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
