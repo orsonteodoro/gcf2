@@ -1263,12 +1263,7 @@ gcf_report_peak_mem() {
 	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
 	rm -rf "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
 	sleep 1
-	local peak_memory=$(cat "${GCF_MEASURE_PEAK_MEM_LOG}" \
-		| sort -V \
-		| tail -n 1)
-	# This logged info could be used to autoscale makeopts in future runs
-	# with a few changes to this bashrc to avoid trashing.
-	gcf_info "Peak memory:  ${peak_memory} KiB"
+
 	local nseconds_light_swapping=0
 	local nseconds_severe_swapping=0
 	local a=($(cat "${GCF_MEASURE_PEAK_MEM_LOG}"))
@@ -1287,6 +1282,11 @@ print(a1)
 " \
 	)
 	local a_trimmed=($(echo "${a2}" | sed -e "s|,||g" -e "s|\[||g" -e "s|\]||g"))
+
+	local peak_memory=$(echo "${a_trimmed[@]}" | tr " " "\n" | sort -h | tail -n 1)
+	# This logged info could be used to autoscale makeopts in future runs
+	# with a few changes to this bashrc to avoid trashing.
+	gcf_info "Peak memory:  ${peak_memory} KiB"
 
 	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
