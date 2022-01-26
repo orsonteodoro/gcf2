@@ -1295,10 +1295,20 @@ print(a1)
 		# swapping happens during ~700 MiB free memory remaining.  This
 		# means if the emerge total is > ~2 GiB, swapping could happen
 		# on a 4 GiB of RAM machine while browsing.
-		if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
-			nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
-		elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
-			nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
+		if which bc 2>/dev/null ; then
+			# Faster load time.
+			if (( ${l} > $(echo "${NCORES} * 2 * ${GIB_PER_CORE} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
+			elif (( ${l} > $(echo "${NCORES} * ${GIB_PER_CORE} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
+			fi
+		else
+			# Slower load time.
+			if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
+				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
+			elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
+				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
+			fi
 		fi
 	done
 
