@@ -1326,7 +1326,8 @@ _gcf_start_measure_peak_mem_proc() {
 gcf_init_measure_peak_mem() {
 	[[ "${DISABLE_SWAP_REPORT}" == "1" ]] && return
 	export GCF_MEASURE_PEAK_MEM_LOG="${T}/measured-peak-mem"
-	echo "" > "${GCF_MEASURE_PEAK_MEM_LOG}"
+	echo "0" > "${GCF_MEASURE_PEAK_MEM_LOG}"
+	echo "0" >> "${GCF_MEASURE_PEAK_MEM_LOG}"
 	echo "" > "${GCF_MEASURE_PEAK_MEM_LOG}-activated"
 }
 
