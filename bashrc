@@ -1266,6 +1266,8 @@ gcf_report_peak_mem() {
 	local peak_memory=$(cat "${GCF_MEASURE_PEAK_MEM_LOG}" \
 		| sort -V \
 		| tail -n 1)
+	# This logged info could be used to autoscale makeopts in future runs
+	# with a few changes to this bashrc to avoid trashing.
 	gcf_info "Peak memory:  ${peak_memory} KiB"
 	local nseconds_light_swapping=0
 	local nseconds_severe_swapping=0
@@ -1288,6 +1290,11 @@ print(a1)
 
 	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
+		# The conditional expressions may need to be adjusted to be more
+		# accurate.  The browser takes around 1 GiB RSS (RAM), but
+		# swapping happens during ~700 MiB free memory remaining.  This
+		# means if the emerge total is > ~2 GiB, swapping could happen
+		# on a 4 GiB of RAM machine while browsing.
 		if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
 			nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
 		elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
