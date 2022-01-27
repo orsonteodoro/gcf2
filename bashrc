@@ -1295,7 +1295,7 @@ print(a1)
 		# swapping happens during ~700 MiB free memory remaining.  This
 		# means if the emerge total is > ~2 GiB, swapping could happen
 		# on a 4 GiB of RAM machine while browsing.
-		if which bc 2>/dev/null ; then
+		if which bc 2>/dev/null 1>/dev/null ; then
 			# Faster load time.
 			if (( ${l} > $(echo "${NCORES} * 2 * ${GIB_PER_CORE} * 1048576" | bc | cut -f 1 -d ".") )) ; then
 				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
