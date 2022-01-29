@@ -1368,8 +1368,8 @@ print(a1)
 
 	local ram_size=$((${NCORES} * ${GIB_PER_CORE}))
 
-	local light_swap_margin="${ram_size} - 1.7"
-	local heavy_swap_margin="${ram_size} * 1.5"
+	local light_swap_margin="${ram_size} - 1.3" # 1.3 comes from total memory under X + used free
+	local heavy_swap_margin="${ram_size} * 1.5" # 1.5 comes from (6 GiB of all compiler instances while freezing or not responsive window switching) / 4 GiB RAM
 
 	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
