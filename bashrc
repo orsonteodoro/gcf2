@@ -789,18 +789,39 @@ gcf_replace_freorder_blocks_algorithm()
 	fi
 }
 
-gcf_adjust_makeopts()
-{
-	if [[ -z "${NCORES}" ]] ; then
-gcf_error "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
-gcf_error "not multiplying the threads per core."
-		die
+_gcf_adjust_makeopts_gcc() {
+	if [[ "${MAKEOPTS_MODE_GCC:=normal}" == "normal" ]] ; then
+		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
+		(( ${n} <= 0 )) && n=1
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "swappy" ]] ; then
+		n=$((${NCORES} / 2))
+		(( ${n} <= 0 )) && n=1
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "plain" ]] ; then
+		n=${NCORES}
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "oom" \
+		|| "${MAKEOPTS_MODE_GCC}" == "broken" \
+		|| "${MAKEOPTS_MODE_GCC}" == "severe-swapping" ]] ; then
+		n=1
 	fi
-	if [[ -z "${MPROCS}" ]] ; then
-gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
-		die
+}
+
+_gcf_adjust_makeopts_clang() {
+	if [[ "${MAKEOPTS_MODE_CLANG:=normal}" == "normal" ]] ; then
+		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
+		(( ${n} <= 0 )) && n=1
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "swappy" ]] ; then
+		n=$((${NCORES} / 2))
+		(( ${n} <= 0 )) && n=1
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "plain" ]] ; then
+		n=${NCORES}
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "oom" \
+		|| "${MAKEOPTS_MODE_CLANG}" == "broken" \
+		|| "${MAKEOPTS_MODE_CLANG}" == "severe-swapping" ]] ; then
+		n=1
 	fi
-	local n=1
+}
+
+_gcf_adjust_makeopts_any() {
 	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
 		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
@@ -814,6 +835,61 @@ gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
 		|| "${MAKEOPTS_MODE}" == "severe-swapping" ]] ; then
 		n=1
 	fi
+}
+
+has_defined_makeopts_gcc() {
+	if [[ "${MAKEOPTS_MODE_GCC}" == "normal" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "swappy" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "plain" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_GCC}" == "oom" \
+		|| "${MAKEOPTS_MODE_GCC}" == "broken" \
+		|| "${MAKEOPTS_MODE_GCC}" == "severe-swapping" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
+has_defined_makeopts_clang() {
+	if [[ "${MAKEOPTS_MODE_CLANG}" == "normal" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "swappy" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "plain" ]] ; then
+		return 0
+	elif [[ "${MAKEOPTS_MODE_CLANG}" == "oom" \
+		|| "${MAKEOPTS_MODE_CLANG}" == "broken" \
+		|| "${MAKEOPTS_MODE_CLANG}" == "severe-swapping" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
+gcf_adjust_makeopts()
+{
+	if [[ -z "${NCORES}" ]] ; then
+gcf_error "Set NCORES in the /etc/portage/make.conf.  Set the number of CPU cores"
+gcf_error "not multiplying the threads per core."
+		die
+	fi
+	if [[ -z "${MPROCS}" ]] ; then
+gcf_error "Set MPROCS in the /etc/portage/make.conf.  2 is recommended."
+		die
+	fi
+	local n=1
+	if [[ -z "${CC}" ]] ; then
+		CC="gcc"
+		CXX="g++"
+	fi
+	if [[ "${CC}" == "gcc" ]] && has_defined_makeopts_gcc ; then
+		_gcf_adjust_makeopts_gcc
+	elif [[ "${CC}" == "clang" ]] && has_defined_makeopts_clang ; then
+		_gcf_adjust_makeopts_clang
+	else
+		_gcf_adjust_makeopts_any
+	fi
 	export MAKEOPTS="-j${n}"
 	export MAKEFLAGS="-j${n}"
 	gcf_info "MAKEOPTS_MODE is ${MAKEOPTS_MODE} (-j${n})"
@@ -822,6 +898,8 @@ gcf_warn "Please close all web browsers, downloaders, and large programs to"
 gcf_warn "speed up linking time."
 	fi
 }
+
+
 
 gcf_strip_retpoline()
 {
