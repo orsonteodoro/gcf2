@@ -1366,25 +1366,25 @@ print(a1)
 	# with a few changes to this bashrc to avoid trashing.
 	gcf_info "Peak memory:  ${peak_memory} KiB"
 
+	local ram_size=$((${NCORES} * ${GIB_PER_CORE}))
+
+	local light_swap_margin="${ram_size} - 2"
+	local heavy_swap_margin="${ram_size} * 1.5"
+
 	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
-		# The conditional expressions may need to be adjusted to be more
-		# accurate.  The browser takes around 1 GiB RSS (RAM), but
-		# swapping happens during ~700 MiB free memory remaining.  This
-		# means if the emerge total is > ~2 GiB, swapping could happen
-		# on a 4 GiB of RAM machine while browsing.
 		if which bc 2>/dev/null 1>/dev/null ; then
 			# Faster load time.
-			if (( ${l} > $(echo "${NCORES} * 2 * ${GIB_PER_CORE} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+			if (( ${l} > $(echo "${heavy_swap_margin} * 1048576" | bc | cut -f 1 -d ".") )) ; then
 				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
-			elif (( ${l} > $(echo "${NCORES} * ${GIB_PER_CORE} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+			elif (( ${l} > $(echo "${light_swap_margin} * 1048576" | bc | cut -f 1 -d ".") )) ; then
 				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
 			fi
 		else
 			# Slower load time.
-			if (( ${l} > $(python -c "print(int(${NCORES} * 2 * ${GIB_PER_CORE} * 1048576))") )) ; then
+			if (( ${l} > $(python -c "print(int(${heavy_swap_margin} * 1048576))") )) ; then
 				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
-			elif (( ${l} > $(python -c "print(int(${NCORES} * ${GIB_PER_CORE} * 1048576))") )) ; then
+			elif (( ${l} > $(python -c "print(int(${light_swap_margin} * 1048576))") )) ; then
 				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
 			fi
 		fi
