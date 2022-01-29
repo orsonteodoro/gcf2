@@ -1368,7 +1368,7 @@ print(a1)
 
 	local ram_size=$((${NCORES} * ${GIB_PER_CORE}))
 
-	local light_swap_margin="${ram_size} - 2"
+	local light_swap_margin="${ram_size} - 1.7"
 	local heavy_swap_margin="${ram_size} * 1.5"
 
 	for l in ${a_trimmed[@]} ; do
