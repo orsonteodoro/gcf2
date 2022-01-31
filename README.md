@@ -363,6 +363,9 @@ disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 It also requires the removal of the hard mask for the package's
 experimental USE flag.
+* A sys-apps/portage patch to prevent stripping of CFI symbols.  (This is
+optional, but better than the alternative of a die after cfi post verify after
+merging.  You can use either this per-package patch or the nostrip.conf.)
 
 Changes required for modded clang ebuild:
 
@@ -466,6 +469,7 @@ emerge -1v \
    * `! grep -q -e "source /etc/portage/gcf-bashrc" && echo "source /etc/portage/gcf-bashrc" >> /etc/portage/bashrc` (Do only once)
    * `cp -a package.cfi_ignore /etc/portage`
    * `cp -a env /etc/portage`
+   * `cp -a patches /etc/portage`
    * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
    * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0644`
    * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
