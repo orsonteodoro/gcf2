@@ -363,9 +363,10 @@ disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 It also requires the removal of the hard mask for the package's
 experimental USE flag.
-* A sys-apps/portage patch to prevent stripping of CFI symbols.  (This is
-optional, but better than the alternative of a die after cfi post verify after
-merging.  You can use either this per-package patch or the nostrip.conf.)
+* A sys-apps/portage [patch](https://github.com/orsonteodoro/gentoo-cflags/blob/master/patches/sys-apps/portage/no-stripping-cfi-symbols.patch)
+to prevent stripping of CFI symbols.  (This is optional, but better than the
+alternative of a die after cfi post verify after merging.  You can use either
+this per-package patch or the nostrip.conf.)
 
 Changes required for modded clang ebuild:
 
