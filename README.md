@@ -471,9 +471,9 @@ emerge -1v \
    * `cp -a package.cfi_ignore /etc/portage`
    * `cp -a env /etc/portage`
    * `cp -a patches /etc/portage`
-   * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc}`
-   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc} -type f -print0 | xargs -0 chmod 0644`
-   * `find /etc/portage/{env,package.cfi_ignore} -type d -print0 | xargs -0 chmod 0755`
+   * `chown -R root:root /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc,patches}`
+   * `find /etc/portage/{env,package.cfi_ignore,gcf-bashrc,bashrc,patches} -type f -print0 | xargs -0 chmod 0644`
+   * `find /etc/portage/{env,package.cfi_ignore,patches} -type d -print0 | xargs -0 chmod 0755`
    * Manually copy sections of make.conf to your personal /etc/portage/make.conf
    * Manually copy sections of package.env to your personal /etc/portage/package.env
    * Enable logging
