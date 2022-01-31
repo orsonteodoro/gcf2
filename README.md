@@ -784,11 +784,11 @@ Steps to resolve in order with one re-emerge per case:
 temporarly blocked.
 3. Try disabling all CFI flags first, and if it works then converge
 towards the minimal CFI exception set for this package.
-4. Disable CFI for this package.    UBSan may still need to be linked.
-It's discussed several sections below.
-5. Switch back to GCC if all clang flags were all disabled.  It could
+4. Switch back to GCC if all clang flags were all disabled.  It could
 be a clang bug or source code incompatibility with clang.
-6. If this package is has a noreserve or CFI init problem
+5. Disable CFI for this package.    UBSan may still need to be linked.
+It's discussed several sections below.
+If this package is has a noreserve or CFI init problem
 corresponding to [Err 7] and [Err 13] in package.env, disable CFI
 in each named dependency temporary until this package is emerged
 then re-emerge back the dependencies with CFI.
@@ -817,7 +817,7 @@ or completely disable CFI to fix these types of bugs.
 hours to be restored back in minutes.  Details are covered in the
 [wiki](https://wiki.gentoo.org/wiki/Ccache).
 
-##### Resolving the case 4 error
+##### Resolving the case 5 error
 
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered with a list of shared libraries:
