@@ -773,10 +773,10 @@ ccache needs to temporarly be disabled in FEATURES when reverting being CFIed.
 Before rolling back, please create a
 [resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list) first.
 
-Currently no automated way to avoid the above problem, but some cases the
-wrapper technique does not work because the executable is being forced to link
-with the GCC toolchain but needs to link against the ubsan library mentioned
-above.
+Currently there are no automated ways to avoid the above problem, but some cases
+the wrapper technique does not work because the executable is being forced to
+link with the GCC toolchain but needs to link against the ubsan library
+mentioned above.
 
 Some rollback to remove CFI of the dependencies may be required.
 
