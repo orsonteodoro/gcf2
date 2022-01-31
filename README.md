@@ -893,10 +893,13 @@ category/bar10 disable-clang-cfi.conf # <- causes noreserve bug
 # {bar1, bar2, bar3, bar5, bar8, bar9} get full CFI mitigations.
 # {bar4, bar6, bar7, bar10} are CFI unprotected.
 
+# Move these lines into the disable CFI section or your section of choice.
 category/bar4 disable-clang-cfi.conf 
 category/bar6 disable-clang-cfi.conf 
 category/bar7 disable-clang-cfi.conf 
 category/bar10 disable-clang-cfi.conf
+
+# You may also do `emerge -1vO bar1 ... bar10` at this point.
 ```
 
 Not taking good notes or not properly re-emerging can result in a
