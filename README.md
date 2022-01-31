@@ -786,14 +786,18 @@ temporarly blocked.
 towards the minimal CFI exception set for this package.
 4. Switch back to GCC if all clang flags were all disabled.  It could
 be a clang bug or source code incompatibility with clang.
-5. Disable CFI for this package.    UBSan may still need to be linked.
+5. UBSan may still need to be linked in dependencies of the package
+that have missing symbols.  Re-emerge these dependency packages
+using step 1.
+6. Disable CFI for this package.    UBSan may still need to be linked.
 If this package is has a noreserve or CFI init problem
 corresponding to [Err 7] and [Err 13] in package.env, disable CFI
 in each named dependency temporary until this package is emerged
-then re-emerge back the dependencies with CFI.  Resolution is also discussed
-in [the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-5-error).
+then re-emerge back the dependencies with CFI.   When you rollback,
+this may cause CFI missing symbols.  Resolution is also discussed in
+[the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-5-error).
 
-For case 5 use \`equery b libfile\` to determine the package
+For case 6 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 
@@ -817,7 +821,7 @@ or completely disable CFI to fix these types of bugs.
 hours to be restored back in minutes.  Details are covered in the
 [wiki](https://wiki.gentoo.org/wiki/Ccache).
 
-##### Resolving the case 5 error
+##### Resolving the case 6 error
 
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered with a list of shared libraries:
