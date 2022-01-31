@@ -870,11 +870,11 @@ category/bar10 disable-clang-cfi.conf
 
 # S2:  Undo step
 # Roll back in multiples of M with `emerge -1vO bar_i bar_i-1 bar_i-3 ... bar_i-4`
-# If M=5, undo 10, 9, 8, 7, 6 as chunk1; then 5, 4, 3, 2, 1 as chunk2.  If a
+# If M=5, undo 10, 9, 8, 7, 6 as partition1; then 5, 4, 3, 2, 1 as partition2.  If a
 # batch fails, then undoing or reapplying individually 1 at a time the emerge of
 # disable-clang-cfi.conf.  Anytime, you apply or unapply disable-clang-cfi.conf,
 # you need to `emerge -1vO bar_i`.  The goal is to min set of
-# disable-clang-cfi.conf per chunk.
+# disable-clang-cfi.conf per partition.
 
 # Testing:
 #category/bar1 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
