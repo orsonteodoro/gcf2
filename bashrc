@@ -1609,6 +1609,7 @@ gcf_report_emerge_time() {
 	fi
 }
 
+# Verify in ${ED} when it is not stripped
 gcf_verify_cfi() {
 	[[ "${DISABLE_CFI_VERIFY}" == "1" ]] && return
 	[[ "${GCF_CFI}" == "1" ]] || return
@@ -1616,7 +1617,9 @@ gcf_verify_cfi() {
 	# Strip may interfere with CFI
 	for f in $(find "${ED}" -name "*.so*") ; do
 		local is_so=0
+		local is_exe=0
 		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
+		file "${f}" | grep -q -e "ELF.*executable" && is_exe=1
 
 		if (( ${is_so} == 1 )) ; then
 			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
@@ -1628,6 +1631,51 @@ gcf_error "DISABLE_CFI_VERIFY=1."
 				die
 			fi
 		fi
+		# Some exes may or may not be CFIed.  This is why it is currently optional.
+		if (( ${is_exe} == 1 )) ; then
+			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
+				:;
+			else
+gcf_ewarn "${f} is not Clang CFI protected."
+			fi
+		fi
+	done
+}
+
+# Verify after strip, post.
+gcf_verify_cfi_post() {
+	[[ "${DISABLE_CFI_VERIFY}" == "1" ]] && return
+	[[ "${GCF_CFI}" == "1" ]] || return
+
+	# Strip may interfere with CFI
+	for f in $(cat /var/db/pkg/${CATEGORY}/${PN}-${PVR}/CONTENTS | cut -f 2 -d " ") ; do
+		local is_so=0
+		local is_exe=0
+		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
+		file "${f}" | grep -q -e "ELF.*executable" && is_exe=1
+
+		if (( ${is_so} == 1 )) ; then
+			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
+				:;
+			else
+gcf_error "${f} is not Clang CFI protected.  nostrip must be added to"
+gcf_error "per-package FEATURES.  You may disable this check by adding"
+gcf_error "DISABLE_CFI_VERIFY=1."
+gcf_error
+gcf_error "This check is performed after merge, which means it is"
+gcf_error "considered installed.  It needs a re-emerge with nostrip"
+gcf_error "to fix this issue."
+				die
+			fi
+		fi
+		# Some exes may or may not be CFIed.  This is why it is currently optional.
+		if (( ${is_exe} == 1 )) ; then
+			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
+				:;
+			else
+gcf_ewarn "${f} is not Clang CFI protected."
+			fi
+		fi
 	done
 }
 
@@ -1636,4 +1684,9 @@ post_src_install() {
 	gcf_report_emerge_time
 	gcf_report_peak_mem
 	gcf_verify_cfi
+}
+
+pre_pkg_postinst() {
+	gcf_info "Running pre_pkg_postinst()"
+	gcf_verify_cfi_post
 }
