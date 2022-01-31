@@ -770,6 +770,9 @@ ccache needs to temporarly be disabled in FEATURES when reverting being CFIed.
 
 #### Depenency rollback(s) without CFI
 
+Before rolling back, please create a
+[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list) first.
+
 Currently no automated way to avoid the above problem, but some cases the
 wrapper technique does not work because the executable is being forced to link
 with the GCC toolchain but needs to link against the ubsan library mentioned
@@ -821,6 +824,9 @@ hours to be restored back in minutes.  Details are covered in the
 [wiki](https://wiki.gentoo.org/wiki/Ccache).
 
 ##### Resolving the case 6 error
+
+Before rolling back, please create a
+[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list) first.
 
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered with a list of shared libraries:
