@@ -616,7 +616,7 @@ applying the -fsanitize-cfi-cross-dso to object files for static-libs.
 #### Stats
 
 These proportions will differ from your @world set.  This is a stat snapshot
-for Jan 7, 2022.
+for Jan 30, 2022.
 
 * Skips are due to a lack of binaries because they are either purely
 metapackages, header only packages, non C-family, art assets (fonts, graphics),
@@ -631,25 +631,27 @@ failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)".
 
 ###### Set sizes
 
-* @world:  788 (100 %)
-* @world - @system:  493 (62.56345177664975 %)
-* @system:  295 (37.43654822335025 %)
+* @world:  816 (100 %)
+* @world - @system:  551 (67.52450980392157 %)
+* @system:  265 (32.47549019607843 %)
 
 ###### LTO only estimates
 
-* LTO agnostic:  436 (55.32994923857868 %)
-   * @world - @system:  310 (39.340101522842644 %)
-   * @system:  126 (15.989847715736042 %)
-* LTO restricted:  29 (4.187817258883249 %)
-   * @world - @system: 29 (4.187817258883249 %)
-   * @system: 0 (0 %)
-* LTO disallowed:  13 (1.6624040920716114 %)
-   * @world - @system: 0 (0 %)
-   * @system: 13 (1.6624040920716114 %)
-* LTO skip:  296 (37.56345177664975 %)
-   * @world - @system:  145 (18.401015228426395 %)
-   * @system:  151 (19.16243654822335 %)
-* No data:  0 (0.0 %)
+* LTO agnostic:  447 (54.779411764705884 %)
+   * @world - @system:  323 (39.58333333333333 %)
+   * @system:  124 (15.196078431372548 %)
+* LTO restricted:  27 (3.308823529411765 %)
+   * @world - @system:  27 (3.308823529411765 %)
+   * @system:  0 (0 %)
+* LTO disallowed:  14 (1.715686274509804 %)
+   * @world - @system:  0 (0 %)
+   * @system:  14 (1.715686274509804 %)
+* LTO skip:  309 (37.86764705882353 %)
+   * @world - @system:  187 (22.916666666666664 %)
+   * @system:  122 (14.950980392156863 %)
+* No data:  0 (0 %)
+   * @world - @system:  0 (0 %)
+   * @system:  0 (0 %)
 
 The above percents are relative to the @world.
 
@@ -657,18 +659,18 @@ Multi slots are reduced to one.
 
 ###### CFI only estimates
 
-* CFIable:  464 (58.88324873096447 %)
-   * @world - @system:  338 (42.89340101522843 %)
-   * @system:  126 (15.989847715736042 %)
-* Allowable cfi-icall candidates:  232 (29.441624365482234 %)
-   * @world - @system: 141 (17.893401015228427 %)
-   * @system: 91 (11.548223350253807 %)
-* CFI restricted: 29 (3.6802030456852792)
-   * @world - @system: 29 (3.6802030456852792 %)
-   * @system: 0 (0 %)
-* Not CFIable:  14 (1.7766497461928936 %)
-* CFI skippable:  296 (37.56345177664975 %)
-* No Data:  0 (0.0 %)
+* CFIable:  473 (57.96568627450981 %)
+   * @world - @system:  349 (42.76960784313725 %)
+   * @system:  124 (15.196078431372548 %)
+* Allowable cfi-icall candidates:  180 (22.058823529411764 %)
+   * @world - @system:  154 (18.872549019607842 %)
+   * @system:  26 (3.1862745098039214 %)
+* CFI restricted:  33 (4.044117647058823 %)
+   * @world - @system:  33 (4.044117647058823 %)
+   * @system:  0 (0 %)
+* Not CFIable:  15 (1.8382352941176472 %)
+* CFI skippable:  309 (37.86764705882353 %)
+* No Data:  0 (0 %)
 
 The above percents are relative to the @world.
 
@@ -679,7 +681,7 @@ a static-lib.
 
 ##### CFI only actual
 
-Last updated Jan 30, 2022
+Last updated Jan 31, 2022
 
 * Set sizes
   * @world:  816
@@ -690,6 +692,7 @@ Last updated Jan 30, 2022
   * @world:  351 (43.01470588235294 %_rel_world)
   * @world - @system:  243 (44.1016333938294 %_rel_world_minus_system, 29.77941176470588 %_rel_world)
   * @system:  108 (40.75471698113208 %_rel_system, 13.23529411764706 %_rel_world)
+
 * NOT CFIed:
   * @world:  465 (56.98529411764706 %_rel_world)
   * @world - @system:  308 (55.898366606170605 %_rel_world_minus_system, 37.745098039215684 %_rel_world)
@@ -699,24 +702,24 @@ Last updated Jan 30, 2022
 
 ##### Misc
 
-Last updated Jan 10, 2022
+Last updated Jan 31, 2022
 
-* 47 marked with disable-clang-cfi.conf (5.964467005076142 %)
-* 22 marked with use-gcc.conf (2.7918781725888326 %)
-* 104 marked with no-cfi-icall.conf (13.19796954314721 %)
-* 6 marked with no-cfi-vcall.conf (0.7614213197969544 %)
-* 8 marked with no-cfi-cast.conf (1.015228426395939 %)
-* 8 marked with no-cfi-nvcall.conf (1.015228426395939 %)
+* 68 marked with disable-clang-cfi.conf (8.333333333333332 %)
+* 28 marked with use-gcc.conf (3.431372549019608 %)
+* 121 marked with no-cfi-icall.conf (14.82843137254902 %)
+* 7 marked with no-cfi-vcall.conf (0.857843137254902 %)
+* 9 marked with no-cfi-cast.conf (1.1029411764705883 %)
+* 9 marked with no-cfi-nvcall.conf (1.1029411764705883 %)
 * 0 marked with no-cfi-mfcall.conf (0 %)
-* 13 marked with remove-lto.conf (1.6497461928934012 %)
-* 10 marked with remove-gcc-lto.conf (1.2690355329949239 %)
-* 26 marked with skipless.conf (3.2994923857868024 %)
-* 3 marked with no-strip.conf (0.3807106598984772 %)
-* 118 marked with prefetch-loop-arrays.conf (14.974619289340103 %)
-* 4 marked with stc.conf (0.5076142131979695 %)
-* 1 marked with no-cfi-canonical-jump-tables.conf (0.12690355329949238 %)
-* Max package build time:  87526 seconds ( 1 days 0 hours 18 minutes 46 seconds )
-* Min package build time:  4 seconds
+* 14 marked with remove-lto.conf (1.715686274509804 %)
+* 11 marked with remove-gcc-lto.conf (1.3480392156862746 %)
+* 26 marked with skipless.conf (3.1862745098039214 %)
+* 4 marked with no-strip.conf (0.49019607843137253 %)
+* 118 marked with prefetch-loop-arrays.conf (14.460784313725492 %)
+* 4 marked with stc.conf (0.49019607843137253 %)
+* 1 marked with no-cfi-canonical-jump-tables.conf (0.12254901960784313 %)
+* Max package build time: 128295 seconds ( 1 days 11 hours 38 minutes 15 seconds )
+* Min package build time: 3 seconds
 
 The no-cfi-icall.conf numbers is higher because it does not count the auto
 applied -fno-sanitize=cfi-icall which is around maybe 232 unique packages
