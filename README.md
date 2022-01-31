@@ -698,8 +698,6 @@ Last updated Jan 31, 2022
   * @world - @system:  308 (55.898366606170605 %_rel_world_minus_system, 37.745098039215684 %_rel_world)
   * @system:  157 (59.24528301886792 %_rel_system, 19.240196078431374 %_rel_world)
 
-@system numbers are a WIP (Work In Progress) and may change.
-
 ##### Misc
 
 Last updated Jan 31, 2022
