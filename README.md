@@ -873,7 +873,7 @@ category/bar10 disable-clang-cfi.conf
 # If M=5, undo 10, 9, 8, 7, 6 as partition1; then 5, 4, 3, 2, 1 as partition2.  If a
 # batch fails, then undoing or reapplying individually 1 at a time the emerge of
 # disable-clang-cfi.conf.  Anytime, you apply or unapply disable-clang-cfi.conf,
-# you need to `emerge -1vO bar_i`.  The goal is to min set of
+# you need to `emerge -1vO bar_i`.  The goal is to find the min set of
 # disable-clang-cfi.conf per partition.
 
 # Testing:
