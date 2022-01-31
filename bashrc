@@ -1613,7 +1613,7 @@ _gcf_verify_src() {
 	local location="${1}"
 	if [[ "${location}" == "ED" ]] ; then
 		# Verify in ${ED} when it is not stripped
-		find "${ED}" -name "*.so*"
+		find "${ED}" -executable
 	elif [[ "${location}" == "EROOT" ]] ; then
 		# Verify after strip in ${EROOT}
 		cat /var/db/pkg/${CATEGORY}/${PN}-${PVR}/CONTENTS | cut -f 2 -d " "
