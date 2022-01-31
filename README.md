@@ -874,7 +874,7 @@ category/bar10 disable-clang-cfi.conf
 
 #category/bar1 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
 #category/bar2 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
-category/bar3 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+#category/bar3 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
 category/bar4 disable-clang-cfi.conf # <- causes noreserve bug
 #category/bar5 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
 category/bar6 disable-clang-cfi.conf # <- causes noreserve bug
@@ -885,7 +885,7 @@ category/bar10 disable-clang-cfi.conf # <- causes noreserve bug
 
 # S3: Final image, the min_cfi_disabled({bar1, bar2, bar3, ..., bar10}) results
 # in a functioning category/foo with max possible CFI coverage.
-# {bar1, bar2, bar5, bar8, bar9} get full CFI mitigations.
+# {bar1, bar2, bar3, bar5, bar8, bar9} get full CFI mitigations.
 # {bar4, bar6, bar7, bar10} are CFI unprotected.
 
 category/bar4 disable-clang-cfi.conf 
