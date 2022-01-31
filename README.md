@@ -844,7 +844,8 @@ reduce the attack surface and to increase mitigation.
 
 During the rollback search, it is very important that you log every package that
 was rolled back in the package.env with comments (#).  When the process is done
-the final will be created and then delete the commented failures.  Example:
+the final set will be created and then delete the commented rows with packages
+with default ON with CFI.  For, example:
 
 ```Shell
 # The 3 images (or states) of /etc/portage/package.env.
