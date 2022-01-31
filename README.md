@@ -790,12 +790,8 @@ It's discussed several sections below.
 6. If this package is placed in the no-data LTO list, disable CFI
 in each named dependency temporary until this package is emerged
 then re-emerge back the dependencies with CFI.
-7. If this package is permenently blacklisted (because it contains
-a static-lib or other), the dependencies need to be re-emerged
-without CFI depending on the importance of the executable in this
-package.
 
-For cases 6 and 7 use \`equery b libfile\` to determine the package
+For case 6 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 

@@ -1084,12 +1084,8 @@ gcf_error "(5) Switch back to GCC."
 gcf_error "(6) If this package is placed in the no-data LTO list, disable CFI"
 gcf_error "in each named dependency temporary until this package is emerged"
 gcf_error "then re-emerge back the dependencies with CFI."
-gcf_error "(7) If this package is permenently blacklisted (because it contains"
-gcf_error "a static-lib or other), the dependencies need to be re-emerged"
-gcf_error "without CFI depending on how importance of the executable in this"
-gcf_error "package."
 gcf_error
-gcf_error "For cases 6 and 7 use \`equery b libfile\` to determine the package"
+gcf_error "For case 6 use \`equery b libfile\` to determine the package"
 gcf_error "and \`emerge -1vO depend_pkg_name\` to revert with package.env"
 gcf_error "changes"
 			# Portage will terminate after showing this.
