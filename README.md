@@ -789,12 +789,11 @@ be a clang bug or source code incompatibility with clang.
 5. UBSan may still need to be linked in dependencies of the package
 that have missing symbols.  Re-emerge these dependency packages
 using step 1.
-6. Disable CFI for this package.    UBSan may still need to be linked.
-If this package is has a noreserve or CFI init problem
-corresponding to [Err 7] and [Err 13] in package.env, disable CFI
-in each named dependency temporary until this package is emerged
-then re-emerge back the dependencies with CFI.   When you rollback,
-this may cause CFI missing symbols.  Resolution is also discussed in
+6. Disable CFI for this package.  If this package is has a noreserve or CFI init
+problem corresponding to [Err 7] and [Err 13] in package.env, disable CFI in
+each named dependency temporary until this package is emerged then re-emerge
+back the dependencies with CFI.   When you rollback, this may cause CFI missing
+symbols.  Resolution is also discussed in
 [the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-5-error).
 
 For case 6 use \`equery b libfile\` to determine the package
