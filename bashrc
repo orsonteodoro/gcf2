@@ -1080,8 +1080,10 @@ gcf_error "temporarly blocked."
 gcf_error "(3) Try disabling all CFI flags first, and if it works then converge"
 gcf_error "towards the minimal CFI exception set for this package."
 gcf_error "(4) Disable CFI for this package.  UBSan may still need to be linked."
-gcf_error "(5) Switch back to GCC."
-gcf_error "(6) If this package is placed in the no-data LTO list, disable CFI"
+gcf_error "(5) Switch back to GCC if all clang flags were all disabled.  It"
+gcf_error "could be a clang bug or source code incompatibility with clang."
+gcf_error "(6) If this package is has a noreserve or CFI init problem"
+gcf_error "corresponding to [Err 7] and [Err 13] in package.env, disable CFI"
 gcf_error "in each named dependency temporary until this package is emerged"
 gcf_error "then re-emerge back the dependencies with CFI."
 gcf_error
@@ -1110,6 +1112,7 @@ gcf_error "Use \`equery b static-lib\` to find those packages."
 gcf_error "Add this package either with use-gcc.conf to /etc/portage/package.env"
 gcf_error "or manually categorize this package in both CFI and LTO in"
 gcf_error "/etc/portage/emerge*.lst with the latter preferred."
+			# Portage will terminate after showing this.
 	fi
 }
 

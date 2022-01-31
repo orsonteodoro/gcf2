@@ -786,12 +786,14 @@ temporarly blocked.
 towards the minimal CFI exception set for this package.
 4. Disable CFI for this package.    UBSan may still need to be linked.
 It's discussed several sections below.
-5. Switch back to GCC.
-6. If this package is placed in the no-data LTO list, disable CFI
+5. Switch back to GCC if all clang flags were all disabled.  It could
+be a clang bug or source code incompatibility with clang.
+6. If this package is has a noreserve or CFI init problem
+corresponding to [Err 7] and [Err 13] in package.env, disable CFI
 in each named dependency temporary until this package is emerged
 then re-emerge back the dependencies with CFI.
 
-For case 6 use \`equery b libfile\` to determine the package
+For case 5 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
 changes"
 
