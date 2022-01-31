@@ -842,6 +842,61 @@ Once, the message goes away, try to re-emerge back the max set of CFIed
 packages with CFI that were not responsible for triggering that message to
 reduce the attack surface and to increase mitigation.
 
+During the rollback search, it is very important that you log every package that
+was rolled back in the package.env with comments (#).  When the process is done
+the final will be created and then delete the commented failures.  Example:
+
+```Shell
+# The 3 images (or states) of /etc/portage/package.env.
+
+start -> S1 -> S2 -> S3 -> end
+
+# S1:  Start of search
+# bar1, bar2, bar3, ..., bar10 are dependencies of category/foo with all
+# dependencies CFI disabled resulting in a working program.
+
+category/bar1 disable-clang-cfi.conf 
+category/bar2 disable-clang-cfi.conf
+category/bar3 disable-clang-cfi.conf
+category/bar4 disable-clang-cfi.conf
+category/bar5 disable-clang-cfi.conf
+category/bar6 disable-clang-cfi.conf
+category/bar7 disable-clang-cfi.conf
+category/bar8 disable-clang-cfi.conf
+category/bar9 disable-clang-cfi.conf
+category/bar10 disable-clang-cfi.conf
+
+# S2:  Undo step
+# Roll back in multiples of M with `emerge -1vO bar_i bar_i-1 bar_i-3 ... bar_i-4`
+# If M=5, undo 10, 9, 8, 7, 6; then 5, 4, 3, 2, 1.  If a batch fails, then
+# undoing individually 1 at a time the emerge of disable-clang-cfi.conf.  Anytime,
+# you apply or unapply disable-clang-cfi.conf, you need to `emerge -1vO bar_i`
+
+#category/bar1 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+#category/bar2 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+category/bar3 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+category/bar4 disable-clang-cfi.conf # <- causes noreserve bug
+#category/bar5 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+category/bar6 disable-clang-cfi.conf # <- causes noreserve bug
+category/bar7 disable-clang-cfi.conf # <- causes noreserve bug
+#category/bar8 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+#category/bar9 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
+category/bar10 disable-clang-cfi.conf # <- causes noreserve bug
+
+# S3: Final image, the min_cfi_disabled({bar1, bar2, bar3, ..., bar10}) results
+# in a functioning category/foo with max possible CFI coverage.
+# {bar1, bar2, bar5, bar8, bar9} get full CFI mitigations.
+# {bar4, bar6, bar7, bar10} are CFI unprotected.
+
+category/bar4 disable-clang-cfi.conf 
+category/bar6 disable-clang-cfi.conf 
+category/bar7 disable-clang-cfi.conf 
+category/bar10 disable-clang-cfi.conf
+```
+
+Not taking good notes or not properly re-emerging can result in a
+non-functioning app or a reduction in mitigation.
+
 #### Linking a disabled CFI app package to other CFI shared libraries
 
 When you completely disable CFI on the app package, you may encounter
