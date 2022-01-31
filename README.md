@@ -855,6 +855,7 @@ start -> S1 -> S2 -> S3 -> end
 # bar1, bar2, bar3, ..., bar10 are dependencies of category/foo with all
 # dependencies CFI disabled resulting in a working program.
 
+# Testing:
 category/bar1 disable-clang-cfi.conf 
 category/bar2 disable-clang-cfi.conf
 category/bar3 disable-clang-cfi.conf
@@ -872,6 +873,7 @@ category/bar10 disable-clang-cfi.conf
 # undoing individually 1 at a time the emerge of disable-clang-cfi.conf.  Anytime,
 # you apply or unapply disable-clang-cfi.conf, you need to `emerge -1vO bar_i`
 
+# Testing:
 #category/bar1 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
 #category/bar2 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
 #category/bar3 disable-clang-cfi.conf # <- the test exe works with full CFI flags (delete row)
