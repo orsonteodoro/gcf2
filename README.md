@@ -899,7 +899,7 @@ category/bar10 disable-clang-cfi.conf
 Not taking good notes or not properly re-emerging can result in a
 non-functioning app or a reduction in mitigation.  The word apparent is
 presented that there is a possibility that one hidden package of the working set
-(for example bar3) may need to be disabled or a CFI scheme disabled if an
+(for example bar3) that may need to be disabled or a CFI scheme disabled if an
 undesirable bug is encountered later on as a result of CFI flags.
 
 #### Linking a disabled CFI app package to other CFI shared libraries
