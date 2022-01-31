@@ -853,7 +853,7 @@ start -> S1 -> S2 -> S3 -> end
 
 # S1:  Start of search
 # bar1, bar2, bar3, ..., bar10 are dependencies of category/foo with all
-# dependencies CFI disabled resulting in a working program.
+# dependencies being CFI disabled resulting in a working program.
 
 # Testing:
 category/bar1 disable-clang-cfi.conf 
