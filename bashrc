@@ -1642,7 +1642,7 @@ gcf_ewarn "${f} is not Clang CFI protected."
 	done
 }
 
-# Verify after strip, post.
+# Verify after strip in ${EROOT}
 gcf_verify_cfi_post() {
 	[[ "${DISABLE_CFI_VERIFY}" == "1" ]] && return
 	[[ "${GCF_CFI}" == "1" ]] || return
