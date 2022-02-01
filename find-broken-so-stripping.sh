@@ -20,7 +20,7 @@ gcf_verify_loading_lib() {
                 file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
                 if (( ${is_so} == 1 )) ; then
                         if ldd "${f}" | grep -q -e "not a dynamic executable" ; then
-				echo "Found:  ${f} from ${p}"
+				echo "Found broken ${f} from ${p}"
                         fi
                 fi
         done
