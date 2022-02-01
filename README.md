@@ -214,15 +214,15 @@ precedence to reduce the attack surface.
 * GIB_PER_CORE -- Number of gigabytes (GiB) per core used to check swap
 condition.  It can be in decimal (e.g. 1.5).
 * HEAVY_SWAP_MARGIN -- The amount in GiB that the computer freezes.  When it
-reaches this level for a period of time it will recommend applying
+accumulates NSEC_FREEZE ticks at or above this level, it will recommend applying
 makeopts-severe-swapping.conf to the package.  To measure it use the one liner
 in make.conf and divide the GiB by total RAM and change the factor.
 * LIGHT_SWAP_MARGIN -- The amount in GiB that the hard drive light on the
-computer is always on or starts to delay.  When it reaches the level in a period
-of time it will recommend applying makeopts-swappy.conf to the package.  One
-way to measure ahead of time is to calculate the typical total RSS load in GiB
-when not emerging subtract it out of RAM.  The one-liner is provided in
-make.conf.
+computer is always on or starts to delay.  When accumulates NSEC_LAG ticks at or
+above this level, it will recommend applying makeopts-swappy.conf to the
+package.  One way to measure ahead of time is to calculate the typical total RSS
+load in GiB when not emerging subtract it out of RAM.  The one-liner is provided
+in make.conf.
 * MPROCS -- The number of compiler/linker processes per CPU core
 * NCORES -- The number of CPU Cores
 * NSEC_FREEZE -- The number of tolerable seconds for freeze (aka severe swap).
