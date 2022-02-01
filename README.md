@@ -797,7 +797,7 @@ problem corresponding to [Err 7] and [Err 13] in package.env, disable CFI in
 each named dependency temporary until this package is emerged then re-emerge
 back the dependencies with CFI.   When you rollback, this may cause CFI missing
 symbols.  Resolution is also discussed in
-[the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-5-error).
+[the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-6-error).
 
 For case 6 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
