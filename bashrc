@@ -1369,12 +1369,12 @@ print(a1)
 	# with a few changes to this bashrc to avoid trashing.
 	gcf_info "Peak memory:  ${peak_memory} KiB"
 
-	local ram_size=$((${NCORES} * ${GIB_PER_CORE}))
-
-	local light_swap_margin="(${ram_size} - 1.6)" # in GiB, 1.6 comes from total RSS (from one liner below) while not emerging with browser playing 1 tab of video
+	local light_swap_margin=${LIGHT_SWAP_MARGIN:="${NCORES} * ${GIB_PER_CORE} - 1.6"} # \
+	# in GiB, 1.6 comes from total RSS (from one liner below) while not emerging with browser playing 1 tab of video
 	# t=0; for x in $(ps -A -o rss --sort rss); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
 
-	local heavy_swap_margin="(${ram_size} * 1.5)" # in GiB, 1.5 comes from (6 GiB of all compiler instances while freezing or not responsive window switching) / 4 GiB RAM
+	local heavy_swap_margin=${HEAVY_SWAP_MARGIN:="${NCORES} * ${GIB_PER_CORE} * 1.5"} # \
+	# in GiB, 1.5 comes from (6 GiB of all compiler instances while freezing or not responsive window switching) / 4 GiB RAM
 	# You can also obtain the number from the one liner below.
 	# t=0; for x in $(ps -o size --sort size $(pgrep -G portage)); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
 
@@ -1382,16 +1382,16 @@ print(a1)
 		[[ -z "${l}" ]] && continue
 		if which bc 2>/dev/null 1>/dev/null ; then
 			# Faster load time.
-			if (( ${l} > $(echo "${heavy_swap_margin} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+			if (( ${l} > $(echo "(${heavy_swap_margin}) * 1048576" | bc | cut -f 1 -d ".") )) ; then
 				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
-			elif (( ${l} > $(echo "${light_swap_margin} * 1048576" | bc | cut -f 1 -d ".") )) ; then
+			elif (( ${l} > $(echo "(${light_swap_margin}) * 1048576" | bc | cut -f 1 -d ".") )) ; then
 				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
 			fi
 		else
 			# Slower load time.
-			if (( ${l} > $(python -c "print(int(${heavy_swap_margin} * 1048576))") )) ; then
+			if (( ${l} > $(python -c "print(int((${heavy_swap_margin}) * 1048576))") )) ; then
 				nseconds_severe_swapping=$(( ${nseconds_severe_swapping} + 1 ))
-			elif (( ${l} > $(python -c "print(int(${light_swap_margin} * 1048576))") )) ; then
+			elif (( ${l} > $(python -c "print(int((${light_swap_margin}) * 1048576))") )) ; then
 				nseconds_light_swapping=$(( ${nseconds_light_swapping} + 1 ))
 			fi
 		fi
