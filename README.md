@@ -1120,6 +1120,12 @@ This tool will not detect a stall or lack of progression when executing a progra
 Manual inspection is required for this kind of error.  The stall could be caused
 by a missing symbol problem.
 
+### Checking for broken stripped shared-libs
+
+The script `find-broken-so-stripping.sh` has been provided to scan for
+unloadable libs as a result of stripping.  These packages require
+`no-strip.conf` if a list of libs are not able to be produced with `lld`.
+
 ## Required re-emerges
 
 If any of the undefined symbols is encountered, it requires a rebuild:
