@@ -254,10 +254,10 @@ bashrc:
 unprotected CFI security holes
 * disable-clang-cfi.conf -- Turn off use of Clang CFI
 * disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
+* disable-gold.conf -- Turn off use of Gold LTO
 * disable-libcxx-as-default.conf -- Use libstdc++ instead of libc++
 * disable-lto-compiler-switch.conf -- Disables LTO compiler switching
 * disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
-* disable-gold.conf -- Turn off use of Gold LTO
 * disable-thinlto.conf -- Turn off use of ThinLTO
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
 ebuild itself or the build scripts may forcefully switch compilers.
@@ -270,8 +270,8 @@ ebuild itself or the build scripts may forcefully switch compilers.
 * no-cfi-icall.conf -- Turn off Clang CFI icall
 * no-cfi-nvcall.conf -- Turn off Clang CFI nvcall
 * no-cfi-vcall.conf -- Turn off Clang CFI vcall (i.e. Forward Edge CFI, disable as a last resort)
-* remove-no-inline.conf -- Removes -fno-inline
 * remove-lto.conf -- Removes the -flto flag
+* remove-no-inline.conf -- Removes -fno-inline
 * remove-split-lto-unit.conf -- Disables auto applying of -fsplit-lto-unit
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
