@@ -239,17 +239,19 @@ bashrc:
 
 * bypass-fallow-store-data-races-check.conf -- disables -Ofast or
 -fallow-store-data-races safety check
-* disable-cfi-verify.conf
+* disable-cfi-at-system.conf -- Disable CFIing this package in the @system set
+* disable-cfi-verify.conf -- Disable checking .so and exes for CFI symbols for
+unprotected CFI security holes
 * disable-clang-cfi.conf -- Turn off use of Clang CFI
 * disable-gcf-lto.conf -- Disables use of the LTO module in the bashrc
+* disable-libcxx-as-default.conf -- Use libstdc++ instead of libc++
 * disable-lto-compiler-switch.conf -- Disables LTO compiler switching
 * disable-lto-stripping.conf -- Disables auto removal of LTO *FLAGS
 * disable-gold.conf -- Turn off use of Gold LTO
 * disable-thinlto.conf -- Turn off use of ThinLTO
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
 ebuild itself or the build scripts may forcefully switch compilers.
-* disable-cfi-at-system.conf -- Disable CFIing this package in the @system set
-* disable-libcxx-as-default.conf -- Use libstdc++ instead of libc++
+* disable-so-load-verify.conf -- Disable checking .so files for broken stripping
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC

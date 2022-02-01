@@ -1656,6 +1656,22 @@ gcf_ewarn "${f} is not Clang CFI protected."
 	done
 }
 
+gcf_verify_loading_lib() {
+	# Check if .so is unbroken after stripping
+	[[ "${DISABLE_SO_LOAD_VERIFY}" == "1" ]] && return
+	for f in $(_gcf_verify_src "${location}") ; do
+		local is_so=0
+		file "${f}" | grep -q -e "ELF.*shared object" && is_so=1
+		if (( ${is_so} == 1 )) ; then
+			if ldd "${f}" | grep -q -e "not a dynamic executable" ; then
+gcf_error "${f} is an unloadable.  Disable stripping (no-strip.conf) to fix"
+gcf_error "ldd check."
+				die
+			fi
+		fi
+	done
+}
+
 post_src_install() {
 	gcf_info "Running post_src_install()"
 	gcf_report_emerge_time
@@ -1666,4 +1682,5 @@ post_src_install() {
 pre_pkg_postinst() {
 	gcf_info "Running pre_pkg_postinst()"
 	gcf_verify_cfi "EROOT"
+	gcf_verify_loading_lib "EROOT"
 }
