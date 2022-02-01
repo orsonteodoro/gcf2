@@ -1124,7 +1124,7 @@ by a missing symbol problem.
 
 The script `find-broken-so-stripping.sh` has been provided to scan for
 unloadable libs as a result of stripping.  These packages require
-`no-strip.conf` if a list of libs are not able to be produced with `lld`.
+`no-strip.conf` if a list of libs are not able to be produced with `ldd`.
 
 ## Required re-emerges
 
