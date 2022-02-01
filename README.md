@@ -221,7 +221,7 @@ in make.conf and divide the GiB by total RAM and change the factor.
 computer is always on or starts to delay.  When it reaches the level in a period
 of time it will recommend applying makeopts-swappy.conf to the package.  One
 way to measure ahead of time is to calculate the typical total RSS load in GiB
-when not emerging subtracted by the RAM.  The one-liner is provided in
+when not emerging subtract it out of RAM.  The one-liner is provided in
 make.conf.
 * MPROCS -- The number of compiler/linker processes per CPU core
 * NCORES -- The number of CPU Cores
