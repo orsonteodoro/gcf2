@@ -1376,7 +1376,7 @@ print(a1)
 
 	local heavy_swap_margin="(${ram_size} * 1.5)" # in GiB, 1.5 comes from (6 GiB of all compiler instances while freezing or not responsive window switching) / 4 GiB RAM
 	# You can also obtain the number from the one liner below.
-	# t=0; for x in $(ps -o rss --sort rss $(pgrep -G portage)); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
+	# t=0; for x in $(ps -o size --sort size $(pgrep -G portage)); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
 
 	for l in ${a_trimmed[@]} ; do
 		[[ -z "${l}" ]] && continue
