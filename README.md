@@ -209,6 +209,8 @@ or @system
 * FORCE_PREFETCH_LOOP_ARRAYS -- Force use of GCC so that -fprefetch-loop-arrays
 is utilized.  It is mutually exclusive with USE_CLANG_CFI which has a higher
 precedence to reduce the attack surface.
+* GCF_BOLT_PREP -- Prepares packages with static-libs for use with the BOLT
+post-link optimizer used to optimize app packages.  (EXPERIMENTAL)
 * GCF_CFI_DEBUG -- Sets to print Clang CFI violations.  Disable in production.
 * GCF_SHOW_FLAGS -- Display the contents of all *FLAGS
 * GIB_PER_CORE -- Number of gigabytes (GiB) per core used to check swap
@@ -247,6 +249,8 @@ BFD LTO (for LTO agnostic only), or no LTO in that order.
 The following can be added to the package.env per package-wise to control
 bashrc:
 
+* bolt-app.conf -- Change flags for a BOLT optimized app package.  (For build
+failure only)
 * bypass-fallow-store-data-races-check.conf -- disables -Ofast or
 -fallow-store-data-races safety check
 * disable-cfi-at-system.conf -- Disable CFIing this package in the @system set

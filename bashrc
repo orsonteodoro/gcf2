@@ -259,6 +259,21 @@ gcf_use_clang_bfdlto() {
 	gcf_append_flags "-flto=full"
 }
 
+gcf_is_package_no_lto() {
+	local emerge_set
+	local p
+	local type
+	for emerge_set in system world ; do
+		for type in no-lto ; do
+			local L=($(cat /etc/portage/emerge-${emerge_set}-${type}.lst))
+			for p in ${L[@]} ; do
+				[[ "${p}" == "${CATEGORY}/${PN}" ]] && return 0
+			done
+		done
+	done
+	return 1
+}
+
 gcf_is_package_missing_in_lto_lists() {
 	local emerge_set
 	local p
@@ -779,6 +794,23 @@ gcf_use_Oz()
 	if [[ ( "${CC}" == "gcc" || "${CXX}" == "g++" || ( -z "${CC}" && -z "${CXX}" ) ) && "${CFLAGS}" =~ "-Oz" ]] ; then
 		gcf_info "Detected gcc.  Converting -Oz -> -Os"
 		_gcf_replace_flag "-Oz" "-Os"
+	fi
+}
+
+gcf_has_static_lib() {
+	if gcf_is_package_lto_restricted || gcf_is_package_no_lto ; then
+		return 0
+	fi
+	return 1
+}
+
+gcf_bolt_prepare() {
+	if ( gcf_has_static_lib && [[ "${GCF_BOLT_PREP}" == "1" ]] ) || [[ "${BOLT_OPTIMIZED_APP}" == "1" ]] ; then
+		# See https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements for status
+		_gcf_replace_flag "-freorder-blocks-and-partition" ""
+		_gcf_replace_flag "-freorder-blocks-algorithm=simple" ""
+		_gcf_replace_flag "-freorder-blocks-algorithm=stc" ""
+		gcf_append_flags -fno-reorder-blocks-and-partition
 	fi
 }
 
@@ -1455,6 +1487,7 @@ pre_pkg_setup()
 	gcf_use_ubsan
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
+	gcf_bolt_prepare
 	gcf_linker_errors_as_warnings
 	gcf_errors_as_warnings
 	gcf_adjust_makeopts
