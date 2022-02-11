@@ -1010,12 +1010,6 @@ gcf_add_cfi_flags() {
 		export CCACHE_EXTRAFILES=$(echo "${CCACHE_EXTRAFILES}" \
 			| sed -r -e 's|[:]+|:|g' -e "s|^:||" -e 's|:$||') # trim and simplify
 
-		# Print to verify ccache determinism with path args with variant data.
-		# Any missed -f...=<path> when path is not added to hash
-		# calculation can cause repeat build failures.
-		# TODO autoverify this is populated when sanitizers with non CFI ignorelists
-		gcf_info "CCACHE_EXTRAFILES:  ${CCACHE_EXTRAFILES}"
-
 		local cfi_exceptions=()
 		[[ "${CFI_CAST_STRICT}" == "1" ]] && gcf_append_flags -fsanitize=cfi-cast-strict
 		[[ -n "${CFI_EXCEPTIONS}" ]] && cfi_exceptions+=( ${CFI_EXCEPTIONS} )
@@ -1483,9 +1477,40 @@ gcf_start_measure_peak_mem() {
 	_gcf_start_measure_peak_mem_proc &
 }
 
+_gcf_add_system_ignorelist() {
+	local name="${1}"
+	# The FORCE_ADD_SYSTEMWIDE_IGNORELIST is a per-package environment variable.
+	if ( has ${name} ${IUSE_EFFECTIVE} && use ${name} ) \
+		|| [[ "${FORCE_ADD_SYSTEMWIDE_IGNORELIST:=none}" == "${name}" ]] ; then
+		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
+		local p="/usr/lib/clang/${clang_v}/share/${name}_ignorelist.txt"
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
+	fi
+}
+
+gcf_setup_ccache() {
+	# Fix flaws with this ccache
+	# As a precaution, add the systewide ignore lists if use flag activated.
+	_gcf_add_system_ignorelist "asan"
+	_gcf_add_system_ignorelist "dfsan"
+	_gcf_add_system_ignorelist "hwasan"
+	_gcf_add_system_ignorelist "msan"
+	export CCACHE_EXTRAFILES=$(echo "${CCACHE_EXTRAFILES}" \
+		| sed -r -e 's|[:]+|:|g' -e "s|^:||" -e 's|:$||') # trim and simplify
+}
+
+gcf_print_ccache_extrafiles() {
+	# Print to verify ccache determinism with path args with variant data.
+	# Any missed -f...=<path> when path is not added to hash
+	# calculation can cause repeat build failures.
+	# TODO autoverify this is populated when sanitizers with non CFI ignorelists
+	gcf_info "CCACHE_EXTRAFILES:  ${CCACHE_EXTRAFILES}"
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
+	gcf_setup_ccache
 	gcf_setup_traps
 	gcf_disable_integrated_as
 	gcf_replace_flags
@@ -1516,6 +1541,7 @@ pre_pkg_setup()
 	gcf_use_slotted_compiler
 	gcf_print_compiler
 	gcf_print_path
+	gcf_print_ccache_extrafiles
 	gcf_init_measure_peak_mem
 }
 
