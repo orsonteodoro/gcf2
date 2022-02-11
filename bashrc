@@ -1003,6 +1003,19 @@ gcf_add_cfi_flags() {
 			fi
 		fi
 
+		# As a precaution, add the systewide ignore list.
+		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
+		local p="/usr/lib/clang/${clang_v}/share/cfi_ignorelist.txt"
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
+		export CCACHE_EXTRAFILES=$(echo "${CCACHE_EXTRAFILES}" \
+			| sed -r -e 's|[:]+|:|g' -e "s|^:||" -e 's|:$||') # trim and simplify
+
+		# Print to verify ccache determinism with path args with variant data.
+		# Any missed -f...=<path> when path is not added to hash
+		# calculation can cause repeat build failures.
+		# TODO autoverify this is populated when sanitizers with non CFI ignorelists
+		gcf_info "CCACHE_EXTRAFILES:  ${CCACHE_EXTRAFILES}"
+
 		local cfi_exceptions=()
 		[[ "${CFI_CAST_STRICT}" == "1" ]] && gcf_append_flags -fsanitize=cfi-cast-strict
 		[[ -n "${CFI_EXCEPTIONS}" ]] && cfi_exceptions+=( ${CFI_EXCEPTIONS} )
