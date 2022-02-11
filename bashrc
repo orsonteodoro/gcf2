@@ -987,13 +987,19 @@ gcf_add_cfi_flags() {
 		if [[ "${USE_CFI_IGNORE_LIST}" == "1" ]] ; then
 			gcf_info "FEATURES=${FEATURES}"
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}" ]] ; then
-				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}
+				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}"
+				gcf_append_flags -fsanitize-ignorelist=${p}
+				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}" ]] ; then
-				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}
+				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}"
+				gcf_append_flags -fsanitize-ignorelist=${p}
+				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}" ]] ; then
-				gcf_append_flags -fsanitize-ignorelist=/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}
+				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}"
+				gcf_append_flags -fsanitize-ignorelist=${p}
+				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 		fi
 
