@@ -39,6 +39,9 @@ package, you have to fix the CFI problems yourself which is preferred or send an
 issue request.  Enough documentation in this readme and in the code comments of
 this repo to solve CFI related problems.
 
+Souper flags support has been added, but currently disabled until it passes
+unit testing.
+
 ## The default make.conf *FLAGS:
 
 * CFLAGS="-march=native -Os -fno-inline -freorder-blocks-algorithm=simple
