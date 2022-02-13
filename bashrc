@@ -1287,6 +1287,10 @@ gcf_use_slotted_compiler() {
 		export PATH="${_PATH}"
 		[[ -z "${CC}" ]] && gcf_use_clang
 		gcf_info "Switched to clang:${USE_CLANG_SLOT}"
+		# Add lld path
+		local s_lld=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
+		s_lld=$(ver_cut 1 "${s_lld}")
+		export PATH+=":/usr/lib/llvm/${s_lld}/bin"
 	fi
 	gcf_info "CC=${CC}"
 	gcf_info "CPP=${CPP}"
