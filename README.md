@@ -237,6 +237,10 @@ enabled after emerging @world.
 * USE_LIBCXX_AS_DEFAULT -- Use libc++ instead of libstdc++ as the default
 if C++ files are detected.  It's used primarily for being CFI protected.
 (UNTESTED SYSTEMWIDE, EXPERIMENTAL)
+* USE_SOUPER -- Add flags for systemwide Souper for code reduction (EXPERIMENTAL)
+* USE_SOUPER_SIZE -- Add static profile counters in relation to size reduction
+* USE_SOUPER_SPEED -- Add dynamic profile counters in relation to execution
+speed
 * USE_THINLTO -- Use ThinLTO as the default LTO linker for @world
 
 The bashrc will prioritize ThinLTO over GoldLTO.  This can be controlled with
@@ -266,6 +270,7 @@ unprotected CFI security holes
 * disable-override-compiler-check.conf -- Disables CC/CXX override checks.  The
 ebuild itself or the build scripts may forcefully switch compilers.
 * disable-so-load-verify.conf -- Disable checking .so files for broken stripping
+* disable-souper.conf -- Diable Souper
 * force-translate-clang-retpoline.conf -- Converts the retpoline flags as Clang
  *FLAGS
 * force-translate-gcc-retpoline.conf -- Converts the retpoline flags as GCC
@@ -285,7 +290,10 @@ LTOing systemwide
 applied to audio/video packages that do decoding playback.)
 * split-lto-unit.conf -- Enables LTO splitting.  It should be applied
 to packages that Clang LTOed static-libs.  It is implied in CFIed packages.
+* souper-size.conf -- Adds static profile counters in relation to size reduction
+* souper-speed.conf -- Adds dynamic profile counters in relation to execution speed
 * use-gold.conf -- Turn on use of Gold LTO
+* use-souper.conf -- Turn on Souper
 * use-thinlto.conf -- Turn on use of ThinLTO
 
 Some .conf files may contain additional information about the flag or the

@@ -1511,6 +1511,48 @@ gcf_print_ccache_extrafiles() {
 	gcf_info "CCACHE_EXTRAFILES:  ${CCACHE_EXTRAFILES}"
 }
 
+gcf_use_souper() {
+	if [[ "${USE_SOUPER}" == "1" ]] ; then
+		if has_version "sys-devel/souper" \
+			&& has_version "sys-devel/llvm[souper]" ; then
+			:;
+		else
+			gcf_warn "Souper requirements not met.  Skipping."
+			return
+		fi
+		if [[ "${CC}" =~ "gcc" ]] ; then
+			gcf_warn "Use Clang in order to use Souper.  Skipping."
+			return
+		fi
+		local s_llvm
+		if [[ -n "${USE_CLANG_SLOT}" ]] ; then
+			s_llvm="${USE_CLANG_SLOT}"
+		else
+			s_llvm=$(clang --version | grep "clang version" \
+				| cut -f 3 -d " " | cut -f 1 -d ".")
+		fi
+		gcf_append_flags "-Xclang -load -Xclang "$(realpath /usr/lib/souper/${s_llvm}/*/libsouperPass.so)
+		if [[ "${USE_SOUPER_SIZE}" ]] \
+			&& has_version "sys-devel/souper[redis]" \
+			&& has_version "dev-db/redis" ; then
+			gcf_append_flags -mllvm -souper-static-profile
+		elif [[ "${USE_SOUPER_SIZE}" ]] \
+			&& has_version "sys-devel/souper" ; then
+gcf_warn "Missing sys-devel/souper[redis].  Skipping static profile flags for"
+gcf_warn "size reduction counting."
+		fi
+		if [[ "${USE_SOUPER_SPEED}" ]] \
+			&& has_version "sys-devel/souper[redis]" \
+			&& has_version "dev-db/redis" ; then
+			gcf_append_flags -g -mllvm -souper-dynamic-profile
+		elif [[ "${USE_SOUPER_SPEED}" ]] \
+			&& has_version "sys-devel/souper" ; then
+gcf_warn "Missing sys-devel/souper[redis].  Skipping dynamic profile flags for"
+gcf_warn "execution speed counting."
+		fi
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1536,6 +1578,7 @@ pre_pkg_setup()
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
 	gcf_bolt_prepare
+	gcf_use_souper
 	gcf_linker_errors_as_warnings
 	gcf_errors_as_warnings
 	gcf_adjust_makeopts
