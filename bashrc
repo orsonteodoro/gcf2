@@ -1536,8 +1536,7 @@ gcf_use_souper() {
 			&& has_version "sys-devel/souper[redis]" \
 			&& has_version "dev-db/redis" ; then
 			gcf_append_flags -mllvm -souper-static-profile
-		elif [[ "${USE_SOUPER_SIZE}" ]] \
-			&& has_version "sys-devel/souper" ; then
+		elif [[ "${USE_SOUPER_SIZE}" ]] ; then
 gcf_warn "Missing sys-devel/souper[redis].  Skipping static profile flags for"
 gcf_warn "size reduction counting."
 		fi
@@ -1545,8 +1544,7 @@ gcf_warn "size reduction counting."
 			&& has_version "sys-devel/souper[redis]" \
 			&& has_version "dev-db/redis" ; then
 			gcf_append_flags -g -mllvm -souper-dynamic-profile
-		elif [[ "${USE_SOUPER_SPEED}" ]] \
-			&& has_version "sys-devel/souper" ; then
+		elif [[ "${USE_SOUPER_SPEED}" ]] ; then
 gcf_warn "Missing sys-devel/souper[redis].  Skipping dynamic profile flags for"
 gcf_warn "execution speed counting."
 		fi
