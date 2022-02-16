@@ -1545,7 +1545,7 @@ gcf_warn "size reduction counting."
 			&& has_version "dev-db/redis" ; then
 			gcf_append_flags -g -mllvm -souper-dynamic-profile
 		elif [[ "${USE_SOUPER_SPEED}" ]] ; then
-gcf_warn "Missing sys-devel/souper[redis].  Skipping dynamic profile flags for"
+gcf_warn "Missing sys-devel/souper[external-cache].  Skipping dynamic profile flags for"
 gcf_warn "execution speed counting."
 		fi
 	fi
