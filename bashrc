@@ -1777,7 +1777,7 @@ gcf_error "DISABLE_CFI_VERIFY=1."
 			if readelf -Ws "${f}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
 				:;
 			else
-gcf_ewarn "${f} is not Clang CFI protected."
+gcf_warn "${f} is not Clang CFI protected."
 			fi
 		fi
 	done
