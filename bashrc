@@ -214,7 +214,26 @@ gcf_met_gcc_goldlto_requirement() {
 	return 1
 }
 
+gcf_is_clang_ready() {
+	which clang 2>/dev/null 1>/dev/null || return 1
+	which clang --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	return 0
+}
+
+gcf_is_clang_slot_ready() {
+	local slot="${1}"
+	which clang-${slot} 2>/dev/null 1>/dev/null || return 1
+	which clang-${slot} --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	return 0
+}
+
+gcf_is_cc_lto_ready() {
+	which "${CC_LTO}" 2>/dev/null 1>/dev/null || return 1
+	which "${CC_LTO}" --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	return 0
+}
 gcf_use_clang() {
+	gcf_is_clang_ready || return
 	gcf_info "Switching to clang"
 	export CC=clang
 	export CXX=clang++
@@ -488,7 +507,9 @@ gcf_error "Disabling Clang CFI support."
                 		        && has_version ">=sys-devel/llvmgold-${s}" ) \
 			) \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
-			&& has_version "sys-devel/llvm:${s}" ) ; then
+			&& has_version "sys-devel/llvm:${s}" \
+			&& gcf_is_clang_slot_ready "${s}" \
+		) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
@@ -602,7 +623,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 
 	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 		local pkg_flags=$(get_cfi_flags)
-		if [[ "${USE_CLANG}" == "1" ]] ; then
+		if [[ "${USE_CLANG}" == "1" ]] && gcf_is_clang_ready ; then
 			CC="clang"
 			CXX="clang++"
 		elif [[ "${USE_GCC}" == "1" ]] ; then
@@ -629,7 +650,7 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 			# Disallow compiler autodetect
 			CC="${CC_LIBC:=gcc}"
 			CXX="${CXX_LIBC:=g++}"
-		elif gcf_is_package_lto_restricted_world || gcf_is_package_lto_agnostic_world ; then
+		elif ( gcf_is_package_lto_restricted_world || gcf_is_package_lto_agnostic_world ) && gcf_is_cc_lto_ready ; then
 			CC="${CC_LTO}"
 			CXX="${CXX_LTO}"
 		else
@@ -1074,7 +1095,7 @@ gcf_add_clang_cfi() {
 		gcf_warn "Skipping CFI because it requires LTO."
 		return
 	fi
-
+	gcf_is_clang_ready || return
 	local llvm_v=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 
 	if ! has_version "=sys-libs/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
@@ -1180,7 +1201,7 @@ gcf_use_ubsan() {
 	[[ "${GCF_UBSAN_LINKED}" == "1" ]] && return # Already linked
 
 	local has_ubsan=0
-	which clang 2>/dev/null 1>/dev/null || return
+	gcf_is_clang_ready || return
 	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
 
@@ -1281,7 +1302,7 @@ gcf_use_slotted_compiler() {
 		export CXX=$(basename /usr/bin/g++-${USE_GCC_SLOT}*)
 		gcf_info "Switched to gcc:${USE_GCC_SLOT}"
 	fi
-	if [[ -n "${USE_CLANG_SLOT}" ]] ; then
+	if [[ -n "${USE_CLANG_SLOT}" ]] && gcf_is_clang_slot_ready "${USE_CLANG_SLOT}" ; then
 		local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
 		_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${USE_CLANG_SLOT}/bin" | tr "\n" ":")
 		export PATH="${_PATH}"
@@ -1486,6 +1507,7 @@ _gcf_add_system_ignorelist() {
 	# The FORCE_ADD_SYSTEMWIDE_IGNORELIST is a per-package environment variable.
 	if ( has ${name} ${IUSE_EFFECTIVE} && use ${name} ) \
 		|| [[ "${FORCE_ADD_SYSTEMWIDE_IGNORELIST:=none}" == "${name}" ]] ; then
+		gcf_is_clang_ready || return
 		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
 		local p="/usr/lib/clang/${clang_v}/share/${name}_ignorelist.txt"
 		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
@@ -1524,6 +1546,7 @@ gcf_use_souper() {
 			gcf_warn "Use Clang in order to use Souper.  Skipping."
 			return
 		fi
+		gcf_is_clang_ready || return
 		local s_llvm
 		if [[ -n "${USE_CLANG_SLOT}" ]] ; then
 			s_llvm="${USE_CLANG_SLOT}"
