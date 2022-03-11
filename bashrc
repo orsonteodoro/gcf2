@@ -1589,7 +1589,7 @@ gcf_warn "execution speed counting."
 
 gcf_check_compiler() {
 	if [[ "${CC}" == "clang" ]] && ! gcf_is_clang_ready ; then
-gcf_ewarn "The clang compiler is broken and needs to be recompiled."
+gcf_error "The clang compiler is broken and needs to be recompiled."
 		die
 	fi
 	if [[ "${CC}" == "gcc" ]] && ! gcf_is_gcc_ready ; then
