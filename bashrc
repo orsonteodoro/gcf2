@@ -210,20 +210,20 @@ gcf_met_gcc_goldlto_requirement() {
 
 gcf_is_clang_ready() {
 	which clang 2>/dev/null 1>/dev/null || return 1
-	which clang --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	which clang --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 
 gcf_is_clang_slot_ready() {
 	local slot="${1}"
 	which clang-${slot} 2>/dev/null 1>/dev/null || return 1
-	which clang-${slot} --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	which clang-${slot} --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 
 gcf_is_cc_lto_ready() {
 	which "${CC_LTO}" 2>/dev/null 1>/dev/null || return 1
-	which "${CC_LTO}" --help 2>&1 | grep -q -e "symbol lookup error" || return 1
+	which "${CC_LTO}" --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 gcf_use_clang() {
