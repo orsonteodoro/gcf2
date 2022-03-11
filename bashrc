@@ -1593,7 +1593,10 @@ gcf_error "The clang compiler is broken and needs to be recompiled."
 		die
 	fi
 	if [[ "${CC}" == "gcc" ]] && ! gcf_is_gcc_ready ; then
+gcf_error "Error:"
+		gcc --version || true
 gcf_error "Detected an error with the gcc toolchain.  Fix the dependency first."
+gcf_error "See the Troubleshooting > undefined symbol section in the README.md."
 		die
 	fi
 }
