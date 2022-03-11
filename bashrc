@@ -90,13 +90,7 @@ _gcf_translate_to_clang_retpoline() {
 }
 
 gcf_retpoline_translate() {
-	if [[ "${USE_CLANG}" == "1" ]] ; then
-		# explicit
-		_gcf_translate_to_clang_retpoline
-	elif [[ "${USE_GCC}" == "1" ]] ; then
-		# explicit
-		_gcf_translate_to_gcc_retpoline
-	elif [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
+	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
 		&& [[ "${CFLAGS}" =~ "-mindirect-branch=thunk" \
 			|| "${CXXFLAGS}" =~ "-mindirect-branch=thunk" ]] ; then
 		# implicit
@@ -623,6 +617,11 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 
 	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 		local pkg_flags=$(get_cfi_flags)
+
+		if [[ "${USE_CLANG}" == "1" ]] && ! gcf_is_clang_ready ; then
+gcf_info "The clang compiler is broken and needs to be recompiled."
+		fi
+
 		if [[ "${USE_CLANG}" == "1" ]] && gcf_is_clang_ready ; then
 			CC="clang"
 			CXX="clang++"
