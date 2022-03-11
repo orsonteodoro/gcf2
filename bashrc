@@ -160,7 +160,7 @@ gcf_met_clang_thinlto_requirement() {
 		if ( has_version "sys-devel/llvm:${s}" \
 			&& has_version "sys-devel/clang:${s}" \
 			&& has_version ">=sys-devel/lld-${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
@@ -175,7 +175,7 @@ gcf_met_clang_goldlto_requirement() {
 		if ( ( has_version "sys-devel/llvm:${s}[gold]" || has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
 			&& has_version "sys-devel/binutils[plugins,gold]" \
 			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
@@ -208,6 +208,13 @@ gcf_met_gcc_goldlto_requirement() {
 	return 1
 }
 
+gcf_is_gcc_ready() {
+	which gcc 2>/dev/null 1>/dev/null || return 1
+	gcc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	cc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	return 0
+}
+
 gcf_is_clang_ready() {
 	which clang 2>/dev/null 1>/dev/null || return 1
 	clang --help 2>&1 | grep -q -e "symbol lookup error" && return 1
@@ -226,6 +233,13 @@ gcf_is_cc_lto_ready() {
 	"${CC_LTO}" --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
+
+gcf_is_cc_libc_ready() {
+	which "${CC_LIBC}" 2>/dev/null 1>/dev/null || return 1
+	"${CC_LIBC}" --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	return 0
+}
+
 gcf_use_clang() {
 	gcf_is_clang_ready || return
 	gcf_info "Switching to clang"
@@ -504,7 +518,7 @@ gcf_error "Disabling Clang CFI support."
 			&& has_version "sys-devel/llvm:${s}" \
 			&& gcf_is_clang_slot_ready "${s}" \
 		) ; then
-			(( ${s} <= ${LLVM_MAX_SLOT:=${GCF_LLVM_MAX}} )) && found=0
+			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
 	return ${found}
@@ -564,8 +578,8 @@ gcf_lto() {
 		# binaries.
 gcf_info "Skipping package for LTO"
 		if [[ -z "${CC}" || -z "${CXX}" ]] ; then
-			export CC="${CC_LIBC:=gcc}"
-			export CXX="${CXX_LIBC:=g++}"
+			export CC="${CC_LIBC:-gcc}"
+			export CXX="${CXX_LIBC:-g++}"
 		fi
 		_gcf_strip_lto_flags
 		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
@@ -617,11 +631,6 @@ gcf_info "Removing -flto from *FLAGS.  Using the USE flag setting instead."
 
 	if [[ "${CFLAGS}" =~ "-flto" ]] || ( has lto ${IUSE_EFFECTIVE} && use lto ) ; then
 		local pkg_flags=$(get_cfi_flags)
-
-		if [[ "${USE_CLANG}" == "1" ]] && ! gcf_is_clang_ready ; then
-gcf_info "The clang compiler is broken and needs to be recompiled."
-		fi
-
 		if [[ "${USE_CLANG}" == "1" ]] && gcf_is_clang_ready ; then
 			CC="clang"
 			CXX="clang++"
@@ -647,14 +656,14 @@ gcf_info "The clang compiler is broken and needs to be recompiled."
 			CXX="g++"
 		elif gcf_is_package_lto_agnostic_system ; then
 			# Disallow compiler autodetect
-			CC="${CC_LIBC:=gcc}"
-			CXX="${CXX_LIBC:=g++}"
+			CC="${CC_LIBC:-gcc}"
+			CXX="${CXX_LIBC:-g++}"
 		elif ( gcf_is_package_lto_restricted_world || gcf_is_package_lto_agnostic_world ) && gcf_is_cc_lto_ready ; then
 			CC="${CC_LTO}"
 			CXX="${CXX_LTO}"
 		else
-			CC="${CC_LIBC:=gcc}"
-			CXX="${CXX_LIBC:=g++}"
+			CC="${CC_LIBC:-gcc}"
+			CXX="${CXX_LIBC:-g++}"
 		fi
 		[[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] && gcf_use_clang
 	fi
@@ -842,7 +851,7 @@ gcf_replace_freorder_blocks_algorithm()
 }
 
 _gcf_adjust_makeopts_gcc() {
-	if [[ "${MAKEOPTS_MODE_GCC:=normal}" == "normal" ]] ; then
+	if [[ "${MAKEOPTS_MODE_GCC:-normal}" == "normal" ]] ; then
 		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
 	elif [[ "${MAKEOPTS_MODE_GCC}" == "swappy" ]] ; then
@@ -858,7 +867,7 @@ _gcf_adjust_makeopts_gcc() {
 }
 
 _gcf_adjust_makeopts_clang() {
-	if [[ "${MAKEOPTS_MODE_CLANG:=normal}" == "normal" ]] ; then
+	if [[ "${MAKEOPTS_MODE_CLANG:-normal}" == "normal" ]] ; then
 		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
 	elif [[ "${MAKEOPTS_MODE_CLANG}" == "swappy" ]] ; then
@@ -874,7 +883,7 @@ _gcf_adjust_makeopts_clang() {
 }
 
 _gcf_adjust_makeopts_any() {
-	if [[ "${MAKEOPTS_MODE:=normal}" == "normal" ]] ; then
+	if [[ "${MAKEOPTS_MODE:-normal}" == "normal" ]] ; then
 		n=$(python -c "import math;print(int(round(${NCORES} * ${MPROCS})))")
 		(( ${n} <= 0 )) && n=1
 	elif [[ "${MAKEOPTS_MODE}" == "swappy" ]] ; then
@@ -1443,11 +1452,11 @@ print(a1)
 	# with a few changes to this bashrc to avoid trashing.
 	gcf_info "Peak memory:  ${peak_memory} KiB"
 
-	local light_swap_margin=${LIGHT_SWAP_MARGIN:="${NCORES} * ${GIB_PER_CORE} - 1.6"} # \
+	local light_swap_margin=${LIGHT_SWAP_MARGIN:-"${NCORES} * ${GIB_PER_CORE} - 1.6"} # \
 	# in GiB, 1.6 comes from total RSS (from one liner below) while not emerging with browser playing 1 tab of video
 	# t=0; for x in $(ps -A -o rss --sort rss); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
 
-	local heavy_swap_margin=${HEAVY_SWAP_MARGIN:="${NCORES} * ${GIB_PER_CORE} * 1.5"} # \
+	local heavy_swap_margin=${HEAVY_SWAP_MARGIN:-"${NCORES} * ${GIB_PER_CORE} * 1.5"} # \
 	# in GiB, 1.5 comes from (6 GiB of all compiler instances while freezing or not responsive window switching) / 4 GiB RAM
 	# You can also obtain the number from the one liner below.
 	# t=0; for x in $(ps -o size --sort size $(pgrep -G portage)); do t=$((${t}+${x})); done ; echo "${t}" # in KiB
@@ -1510,7 +1519,7 @@ _gcf_add_system_ignorelist() {
 	local name="${1}"
 	# The FORCE_ADD_SYSTEMWIDE_IGNORELIST is a per-package environment variable.
 	if ( has ${name} ${IUSE_EFFECTIVE} && use ${name} ) \
-		|| [[ "${FORCE_ADD_SYSTEMWIDE_IGNORELIST:=none}" == "${name}" ]] ; then
+		|| [[ "${FORCE_ADD_SYSTEMWIDE_IGNORELIST:-none}" == "${name}" ]] ; then
 		gcf_is_clang_ready || return
 		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
 		local p="/usr/lib/clang/${clang_v}/share/${name}_ignorelist.txt"
@@ -1578,6 +1587,17 @@ gcf_warn "execution speed counting."
 	fi
 }
 
+gcf_check_compiler() {
+	if [[ "${CC}" == "clang" ]] && ! gcf_is_clang_ready ; then
+gcf_ewarn "The clang compiler is broken and needs to be recompiled."
+		die
+	fi
+	if [[ "${CC}" == "gcc" ]] && ! gcf_is_gcc_ready ; then
+gcf_error "Detected an error with the gcc toolchain.  Fix the dependency first."
+		die
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1610,6 +1630,7 @@ pre_pkg_setup()
 	gcf_singlefy_spaces
 	gcf_record_start_time
 	gcf_print_flags
+	gcf_check_compiler
 	gcf_use_slotted_compiler
 	gcf_print_compiler
 	gcf_print_path
