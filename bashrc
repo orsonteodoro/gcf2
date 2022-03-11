@@ -1599,6 +1599,11 @@ gcf_error "Detected an error with the gcc toolchain.  Fix the dependency first."
 gcf_error "See the Troubleshooting > undefined symbol section in the README.md."
 		die
 	fi
+	if [[ "${USE_SOUPER}" == "1" || "${USE_CLANG_CFI}" == "1" \
+		|| "${USE_CLANG}" == "1" ]] && ! gcf_is_clang_ready ; then
+gcf_warn "The clang compiler is broken and needs to be recompiled.  Using"
+gcf_warn "fallback instead."
+	fi
 }
 
 pre_pkg_setup()
