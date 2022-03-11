@@ -1094,7 +1094,12 @@ gcf_add_clang_cfi() {
 		gcf_warn "Skipping CFI because it requires LTO."
 		return
 	fi
-	gcf_is_clang_ready || return
+	if ! gcf_is_clang_ready ; then
+		# Symbol error.  It is assumed that the person will fix this problem immediately.
+		# All new or upgraded dependencies need to be rebuilt after clang is rebuilt.
+		gcf_warn "Skipping CFI because the clang compiler needs to be rebuilt."
+		return
+	fi
 	local llvm_v=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 
 	if ! has_version "=sys-libs/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
