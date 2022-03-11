@@ -215,6 +215,15 @@ gcf_is_gcc_ready() {
 	return 0
 }
 
+gcf_is_gcc_slot_ready() {
+	local slot="${1}"
+	local slot_=$(basename /usr/bin/gcc-${USE_GCC_SLOT}* | cut -f 2 -d "-")
+	which gcc-${slot_} 2>/dev/null 1>/dev/null || return 1
+	gcc-${slot_} --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	cc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	return 0
+}
+
 gcf_is_clang_ready() {
 	which clang 2>/dev/null 1>/dev/null || return 1
 	clang --help 2>&1 | grep -q -e "symbol lookup error" && return 1
@@ -1309,11 +1318,14 @@ gcf_print_path() {
 }
 
 gcf_use_slotted_compiler() {
-	if [[ -n "${USE_GCC_SLOT}" ]] ; then
+	if [[ -n "${USE_GCC_SLOT}" ]] && gcf_is_gcc_slot_ready "${USE_GCC_SLOT}" ; then
 		export CC=$(basename /usr/bin/gcc-${USE_GCC_SLOT}*)
 		export CPP=$(basename /usr/bin/cpp-${USE_GCC_SLOT}*)
 		export CXX=$(basename /usr/bin/g++-${USE_GCC_SLOT}*)
 		gcf_info "Switched to gcc:${USE_GCC_SLOT}"
+	elif [[ -n "${USE_GCC_SLOT}" ]] && ! gcf_is_gcc_slot_ready "${USE_GCC_SLOT}" ; then
+		gcf_error "Failed to switch to gcc:${USE_GCC_SLOT} because is is missing or broken."
+		die
 	fi
 	if [[ -n "${USE_CLANG_SLOT}" ]] && gcf_is_clang_slot_ready "${USE_CLANG_SLOT}" ; then
 		local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
@@ -1325,6 +1337,9 @@ gcf_use_slotted_compiler() {
 		local s_lld=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
 		s_lld=$(ver_cut 1 "${s_lld}")
 		export PATH+=":/usr/lib/llvm/${s_lld}/bin"
+	elif [[ -n "${USE_CLANG_SLOT}" ]] && ! gcf_is_clang_slot_ready "${USE_CLANG_SLOT}" ; then
+		gcf_error "Failed to switch to clang:${USE_CLANG_SLOT} because it is missing or broken."
+		die
 	fi
 	gcf_info "CC=${CC}"
 	gcf_info "CPP=${CPP}"
