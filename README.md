@@ -795,6 +795,17 @@ work.
 
 ccache needs to temporarly be disabled in FEATURES when reverting being CFIed.
 
+#### undefined symbol: __cfi_slowpath_diag with isl
+
+This error will actually break both clang and gcc.  To fix this, you need
+to find libisl.so.23 or the one with the same number (23) and architecture.
+You will not find this in the stage 3 tarball but you can obtain this from a
+trusted distro or another computer with Gentoo on your LAN.  This library
+should not be CFIed.  This is why you should have a backup copy of /
+that hasn't been CFIed before doing systemwide CFI.
+
+You can use rpm2tgz to convert the rpm and replace the library temporarly.
+
 #### Depenency rollback(s) without CFI
 
 Before rolling back, please create a
