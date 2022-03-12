@@ -210,7 +210,9 @@ gcf_met_gcc_goldlto_requirement() {
 
 gcf_is_gcc_ready() {
 	which gcc 2>/dev/null 1>/dev/null || return 1
+	gcc --help 2>&1 >/dev/null || return 1
 	gcc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	cc --help 2>&1 >/dev/null || return 1
 	cc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
@@ -219,13 +221,16 @@ gcf_is_gcc_slot_ready() {
 	local slot="${1}"
 	local slot_=$(basename /usr/bin/gcc-${USE_GCC_SLOT}* | cut -f 2 -d "-")
 	which gcc-${slot_} 2>/dev/null 1>/dev/null || return 1
+	gcc-${slot_} --help 2>&1 >/dev/null || return 1
 	gcc-${slot_} --help 2>&1 | grep -q -e "symbol lookup error" && return 1
+	cc --help 2>&1 >/dev/null || return 1
 	cc --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 
 gcf_is_clang_ready() {
 	which clang 2>/dev/null 1>/dev/null || return 1
+	clang --help 2>&1 >/dev/null || return 1
 	clang --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
@@ -233,18 +238,21 @@ gcf_is_clang_ready() {
 gcf_is_clang_slot_ready() {
 	local slot="${1}"
 	which clang-${slot} 2>/dev/null 1>/dev/null || return 1
+	clang-${slot} --help 2>&1 >/dev/null || return 1
 	clang-${slot} --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 
 gcf_is_cc_lto_ready() {
 	which "${CC_LTO}" 2>/dev/null 1>/dev/null || return 1
+	"${CC_LTO}" --help 2>&1 >/dev/null || return 1
 	"${CC_LTO}" --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
 
 gcf_is_cc_libc_ready() {
 	which "${CC_LIBC}" 2>/dev/null 1>/dev/null || return 1
+	"${CC_LIBC}" --help 2>&1 >/dev/null || return 1
 	"${CC_LIBC}" --help 2>&1 | grep -q -e "symbol lookup error" && return 1
 	return 0
 }
