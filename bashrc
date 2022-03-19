@@ -1326,6 +1326,7 @@ gcf_print_path() {
 }
 
 gcf_use_slotted_compiler() {
+	# In both toolchains, use the basenames name in /usr/lib/ccache/bin/ to take advantage of CCACHE.
 	if [[ -n "${USE_GCC_SLOT}" ]] && gcf_is_gcc_slot_ready "${USE_GCC_SLOT}" ; then
 		export CC=$(basename /usr/bin/gcc-${USE_GCC_SLOT}*)
 		export CPP=$(basename /usr/bin/cpp-${USE_GCC_SLOT}*)
@@ -1345,6 +1346,9 @@ gcf_use_slotted_compiler() {
 		local s_lld=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
 		s_lld=$(ver_cut 1 "${s_lld}")
 		export PATH+=":/usr/lib/llvm/${s_lld}/bin"
+		export CC=clang-${USE_CLANG_SLOT}
+		export CPP=clang-cpp
+		export CXX=clang++-${USE_CLANG_SLOT}
 	elif [[ -n "${USE_CLANG_SLOT}" ]] && ! gcf_is_clang_slot_ready "${USE_CLANG_SLOT}" ; then
 		gcf_error "Failed to switch to clang:${USE_CLANG_SLOT} because it is missing or broken."
 		die
@@ -1590,6 +1594,7 @@ gcf_use_souper() {
 			s_llvm=$(clang --version | grep "clang version" \
 				| cut -f 3 -d " " | cut -f 1 -d ".")
 		fi
+		gcf_info "Souper activated"
 		gcf_append_flags "-Xclang -load -Xclang "$(realpath /usr/lib/souper/${s_llvm}/*/libsouperPass.so)
 		if [[ "${USE_SOUPER_SIZE}" ]] \
 			&& has_version "sys-devel/souper[external-cache]" \
