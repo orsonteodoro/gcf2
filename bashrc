@@ -1797,8 +1797,51 @@ post_src_unpack() {
 	gcf_use_libcxx
 }
 
+gcf_patch_libtool() {
+cat <<EOF > "${T}/libtool-2.4.6-load.patch"
+--- a/libtool.orig	2022-03-20 20:56:51.620464379 -0700
++++ b/libtool	2022-03-20 21:04:41.993218494 -0700
+@@ -8230,6 +8230,9 @@ func_mode_link ()
+ 	  fi
+ 	  continue
+ 	  ;;
++        -load)
++	  continue
++	  ;;
+ 	-l*)
+ 	  if test lib != "$linkmode" && test prog != "$linkmode"; then
+ 	    func_warning "'-l' is ignored for archives/objects"
+EOF
+cat <<EOF > "${T}/libtool-2.4.6-ltmain-load.patch"
+--- a/ltmain.sh.orig	2020-11-08 09:15:16.000000000 -0800
++++ b/ltmain.sh	2022-03-20 21:30:54.147528368 -0700
+@@ -7719,6 +7719,9 @@ func_mode_link ()
+ 	  fi
+ 	  continue
+ 	  ;;
++	-load)
++	  continue
++	  ;;
+ 	-l*)
+ 	  if test lib != "$linkmode" && test prog != "$linkmode"; then
+ 	    func_warning "'-l' is ignored for archives/objects"
+EOF
+	for f in $(find "${WORKDIR}" -name "libtool") ; do
+		einfo "Fixing libtool for Souper"
+		pushd $(dirname "${f}") || die
+			patch -p1 -i "${T}/libtool-2.4.6-load.patch"
+		popd
+	done
+	for f in $(find "${WORKDIR}" -name "ltmain.sh") ; do
+		einfo "Fixing ltmain.sh for Souper"
+		pushd $(dirname "${f}") || die
+			patch -p1 -i "${T}/libtool-2.4.6-ltmain-load.patch"
+		popd
+	done
+}
+
 post_src_prepare() {
-	:;
+	gcf_patch_libtool
 }
 
 post_src_configure() {
