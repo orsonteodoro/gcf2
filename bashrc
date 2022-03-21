@@ -1586,8 +1586,25 @@ gcf_print_ccache_extrafiles() {
 	gcf_info "CCACHE_EXTRAFILES:  ${CCACHE_EXTRAFILES}"
 }
 
+gcf_count_abis() {
+	local n=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
+	echo "{n}"
+}
+
+gcf_has_multilib_eclass() {
+	local n=$(echo "${IUSE_EFFECTIVE}" | tr " " "\n" | grep "abi_"| wc -l)
+	(( ${n} > 1 )) && return 0
+	return 1
+}
+
 gcf_use_souper() {
 	if [[ "${USE_SOUPER}" == "1" ]] ; then
+		if (( $(gcf_count_abis) > 1 )) ; then
+			# Lack of multilib hooks or inner hook prevents multilib Souper.
+gcf_warn "Only the native ABI is supported with the Souper ebuild-package."
+gcf_warn "Skipping the Souper optimization pass."
+			return
+		fi
 		if has_version "sys-devel/souper" \
 			&& has_version "sys-devel/llvm[souper]" ; then
 			:;
