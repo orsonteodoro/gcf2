@@ -61,6 +61,19 @@ gcf_append_flags() {
 	export DIST_MAKE="${DIST_MAKE} ${@}"
 }
 
+gcf_append_flags_unit() {
+	export COMMON_FLAGS="${COMMON_FLAGS} ${@}"
+	export CFLAGS="${CFLAGS} ${@}"
+	export CXXFLAGS="${CXXFLAGS} ${@}"
+	export FCFLAGS="${FCFLAGS} ${@}"
+	export FFLAGS="${FFLAGS} ${@}"
+	export CGO_CFLAGS="${CGO_CFLAGS} ${@}"
+	export CGO_CXXFLAGS="${CGO_CXXFLAGS} ${@}"
+
+	# For the perl-module.eclass
+	export DIST_MAKE="${DIST_MAKE} ${@}"
+}
+
 _gcf_replace_flag() {
 	local i="${1}"
 	local o="${2}"
@@ -1595,11 +1608,11 @@ gcf_use_souper() {
 				| cut -f 3 -d " " | cut -f 1 -d ".")
 		fi
 		gcf_info "Souper activated"
-		gcf_append_flags "-Xclang -load -Xclang "$(realpath /usr/lib/souper/${s_llvm}/*/libsouperPass.so)
+		gcf_append_flags_unit -Xclang -load -Xclang $(realpath /usr/lib/souper/${s_llvm}/*/libsouperPass.so)
 		if [[ "${USE_SOUPER_SIZE}" ]] \
 			&& has_version "sys-devel/souper[external-cache]" \
 			&& has_version "dev-db/redis" ; then
-			gcf_append_flags -mllvm -souper-static-profile
+			gcf_append_flags_unit -mllvm -souper-static-profile
 		elif [[ "${USE_SOUPER_SIZE}" ]] ; then
 gcf_warn "Missing sys-devel/souper[external-cache].  Skipping static profile flags for"
 gcf_warn "size reduction counting."
@@ -1607,10 +1620,13 @@ gcf_warn "size reduction counting."
 		if [[ "${USE_SOUPER_SPEED}" ]] \
 			&& has_version "sys-devel/souper[external-cache]" \
 			&& has_version "dev-db/redis" ; then
-			gcf_append_flags -g -mllvm -souper-dynamic-profile
+			gcf_append_flags_unit -g -mllvm -souper-dynamic-profile
 		elif [[ "${USE_SOUPER_SPEED}" ]] ; then
 gcf_warn "Missing sys-devel/souper[external-cache].  Skipping dynamic profile flags for"
 gcf_warn "execution speed counting."
+		fi
+		if [[ -n "${SOUPER_ARGS}" ]] ; then
+			gcf_append_flags_unit "${SOUPER_ARGS}"
 		fi
 	fi
 }
