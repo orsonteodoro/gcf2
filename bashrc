@@ -1625,7 +1625,8 @@ gcf_warn "Skipping the Souper optimization pass."
 				| cut -f 3 -d " " | cut -f 1 -d ".")
 		fi
 		gcf_info "Souper activated"
-		gcf_append_flags_unit -Xclang -load -Xclang $(realpath /usr/lib/souper/${s_llvm}/*/libsouperPass.so)
+		gcf_append_flags_unit -Xclang -load -Xclang $(realpath /usr/lib/souper/${s_llvm}/$(get_libdir)/libsouperPass.so)
+		gcf_append_ldflags -Wl,-lLLVM-${s_llvm} -Wl,-rpath=/usr/lib/souper/${s_llvm}/$(get_libdir) -Wl,-rpath=/usr/lib/llvm/${s_llvm}/$(get_libdir)
 		if [[ "${USE_SOUPER_SIZE}" ]] \
 			&& has_version "sys-devel/souper[external-cache]" \
 			&& has_version "dev-db/redis" ; then
