@@ -1648,6 +1648,15 @@ gcf_warn "execution speed counting."
 		fi
 		if has_version "sys-devel/souper[usockets]" ; then
 			gcf_append_flags_unit -mllvm -souper-external-cache-unix
+		elif has_version "sys-devel/souper[tcp]" ; then
+			# Only one ABI is supported until the wrapper is fixed.
+			local tcp_port=""
+			for f in $(source /etc/conf.d/souper; echo "${SOUPER_TCP_PORTS}") ; do
+				[[ "${f}" =~ "${DEFAULT_ABI}" ]] && tcp_port="${f#*:}"
+			done
+			if [[ -n "${tcp_port}" ]] ; then
+				gcf_append_flags_unit -mllvm -souper-redis-port=${tcp_port}
+			fi
 		fi
 	fi
 }
