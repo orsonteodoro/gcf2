@@ -1588,7 +1588,7 @@ gcf_print_ccache_extrafiles() {
 
 gcf_count_abis() {
 	local n=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
-	echo "{n}"
+	echo "${n}"
 }
 
 gcf_has_multilib_eclass() {
