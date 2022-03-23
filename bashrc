@@ -1646,6 +1646,9 @@ gcf_warn "execution speed counting."
 		if [[ -n "${SOUPER_ARGS}" ]] ; then
 			gcf_append_flags_unit "${SOUPER_ARGS}"
 		fi
+		if has_version "sys-devel/souper[usockets]" ; then
+			gcf_append_flags_unit -mllvm -souper-external-cache-unix
+		fi
 	fi
 }
 
