@@ -1,0 +1,6 @@
+[cfi-nvcall|cfi-vcall]
+type:*basic_stringstream*
+type:*basic_streambuf*
+type:*basic_ostream*
+type:*basic_ostringstream*
+type:*ios_base*
