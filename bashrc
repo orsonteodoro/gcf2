@@ -1040,6 +1040,7 @@ gcf_add_cfi_flags() {
 		if gcf_is_cfiable_system ; then
 			gcf_info "Allowing @system package to be CFIed"
 		fi
+		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
 		gcf_info "Adding base CFI flags"
 		gcf_append_flags -fsanitize=${CFI_BASELINE}
 		# CFI_BASELINE, CFI_EXCEPTIONS, USE_CFI_IGNORE_LIST can be per package customizable.
@@ -1047,23 +1048,34 @@ gcf_add_cfi_flags() {
 			gcf_info "FEATURES=${FEATURES}"
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}" ]] ; then
 				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}"
-				gcf_append_flags -fsanitize-ignorelist=${p}
+				if ( [[ -n ${USE_CLANG_SLOT} ]] && (( ${USE_CLANG_SLOT} <= 12 )) ) || ver_test ${clang_v%%.*} -le 12 ; then
+					gcf_append_flags -fsanitize-blacklist=${p}
+				else
+					gcf_append_flags -fsanitize-ignorelist=${p}
+				fi
 				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}" ]] ; then
 				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PV}"
-				gcf_append_flags -fsanitize-ignorelist=${p}
+				if ( [[ -n ${USE_CLANG_SLOT} ]] && (( ${USE_CLANG_SLOT} <= 12 )) ) || ver_test ${clang_v%%.*} -le 12 ; then
+					gcf_append_flags -fsanitize-blacklist=${p}
+				else
+					gcf_append_flags -fsanitize-ignorelist=${p}
+				fi
 				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 			if [[ -e "/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}" ]] ; then
 				local p="/etc/portage/package.cfi_ignore/${CATEGORY}/${PN}-${PVR}"
-				gcf_append_flags -fsanitize-ignorelist=${p}
+				if ( [[ -n ${USE_CLANG_SLOT} ]] && (( ${USE_CLANG_SLOT} <= 12 )) ) || ver_test ${clang_v%%.*} -le 12 ; then
+					gcf_append_flags -fsanitize-blacklist=${p}
+				else
+					gcf_append_flags -fsanitize-ignorelist=${p}
+				fi
 				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 			fi
 		fi
 
 		# As a precaution, add the systewide ignore list.
-		local clang_v=$(clang --version | head -n 1 | cut -f 3 -d " ")
 		local p="/usr/lib/clang/${clang_v}/share/cfi_ignorelist.txt"
 		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${p}" # add to hash calculation
 		export CCACHE_EXTRAFILES=$(echo "${CCACHE_EXTRAFILES}" \
@@ -1828,6 +1840,7 @@ post_src_unpack() {
 }
 
 gcf_patch_libtool() {
+	[[ "${USE_SOUPER}" != "1" ]] && return
 cat <<EOF > "${T}/libtool-2.4.6-load.patch"
 --- a/libtool.orig	2022-03-20 20:56:51.620464379 -0700
 +++ b/libtool	2022-03-20 21:04:41.993218494 -0700
@@ -1857,12 +1870,14 @@ cat <<EOF > "${T}/libtool-2.4.6-ltmain-load.patch"
  	    func_warning "'-l' is ignored for archives/objects"
 EOF
 	for f in $(find "${WORKDIR}" -name "libtool") ; do
+		grep -q -e "ignored for archives/objects" || continue
 		einfo "Fixing libtool for Souper"
 		pushd $(dirname "${f}") || die
 			patch -p1 -i "${T}/libtool-2.4.6-load.patch"
 		popd
 	done
 	for f in $(find "${WORKDIR}" -name "ltmain.sh") ; do
+		grep -q -e "ignored for archives/objects" || continue
 		einfo "Fixing ltmain.sh for Souper"
 		pushd $(dirname "${f}") || die
 			patch -p1 -i "${T}/libtool-2.4.6-ltmain-load.patch"
