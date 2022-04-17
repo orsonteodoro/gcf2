@@ -1388,10 +1388,10 @@ gcf_disable_integrated_as() {
 }
 
 gcf_check_packages() {
-	if ! has_version "dev-libs/libgcrypt[O-flag-munging]" \
+	if [[ "${CATEGORY}/${PN}" == "dev-libs/libgcrypt" ]] \
 		&& [[ "${CC}" =~ "clang" \
 			&& "${CATEGORY}/${PN}" == "dev-libs/libgcrypt" ]] ; then
-		die "You must enable dev-libs/libgcrypt[O-flag-munging]"
+		gcf_warn "You must enable dev-libs/libgcrypt with O-flag-munging"
 	fi
 }
 
