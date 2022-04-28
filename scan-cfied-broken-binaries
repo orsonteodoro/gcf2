@@ -182,6 +182,7 @@ gen_log() {
 			fi
 			# The report will show the process memory map with noreserve error on top.
 			# Each row of noreserve after is the result of the look up from library to ebuild-package-name.
+			# As explained in the README.md, some of these libs or packages should be unCFIed to unbreak it.
 			if grep -q -e "failed to allocate noreserve" "${SANDBOX_DIR}/output.log" ; then
 				echo "failed to allocate noreserve (${pkg_name})" >> "${LOGGING_PATH}"
 				for g in $(grep -E -e "/usr/.*" "${SANDBOX_DIR}/output.log") ; do
