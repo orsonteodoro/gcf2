@@ -180,7 +180,8 @@ gen_log() {
 			if grep -q -e "CFI: CHECK failed" "${SANDBOX_DIR}/output.log" ; then
 				decho "CFI: CHECK failed: (${pkg_name})"
 			fi
-			# Do a lookup from library to ebuild-package-name
+			# The report will show the process memory map with noreserve error on top.
+			# Each row of noreserve after is the result of the look up from library to ebuild-package-name.
 			if grep -q -e "failed to allocate noreserve" "${SANDBOX_DIR}/output.log" ; then
 				echo "failed to allocate noreserve (${pkg_name})" >> "${LOGGING_PATH}"
 				for g in $(grep -E -e "/usr/.*" "${SANDBOX_DIR}/output.log") ; do
