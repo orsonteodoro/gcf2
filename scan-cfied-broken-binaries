@@ -180,6 +180,7 @@ gen_log() {
 			if grep -q -e "CFI: CHECK failed" "${SANDBOX_DIR}/output.log" ; then
 				decho "CFI: CHECK failed: (${pkg_name})"
 			fi
+			# Do a lookup from library to ebuild-package-name
 			if grep -q -e "failed to allocate noreserve" "${SANDBOX_DIR}/output.log" ; then
 				echo "failed to allocate noreserve (${pkg_name})" >> "${LOGGING_PATH}"
 				for g in $(grep -E -e "/usr/.*" "${SANDBOX_DIR}/output.log") ; do
@@ -330,6 +331,8 @@ main() {
 	if (( ${SHOW_INSPECTED} == 1 )) ; then
 		echo "" > "${LOGGING_INSPECT_PATH}"
 	fi
+	# Some programs with implement only --help xor --version or both
+	# This is why the scan is done twice.
 	local args=(
 		"--help"
 		"--version"
