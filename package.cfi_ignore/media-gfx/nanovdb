@@ -1,0 +1,6 @@
+[cfi-unrelated-cast]
+type:RenderLauncherCpu
+type:RenderLauncherCpuMT
+type:RenderLauncherC99
+type:RenderLauncherGL
+type:RenderLauncherCL
