@@ -37,10 +37,10 @@ show_cfi_set() {
 
 main() {
 	if [[ ! -e "/etc/portage/emerge-cfi-skip.lst" ]] ; then
-		echo "Missing emerge-cfi-skip.lst.  Run gen_pkg_lists.sh"
+		echo "[warn] Missing emerge-cfi-skip.lst.  Run gen_pkg_lists.sh"
 	fi
 	if [[ ! -e "/etc/portage/emerge-cfi-no-cfi.lst" ]] ; then
-		echo "Missing emerge-cfi-no-cfi.lst.  Run gen_pkg_lists.sh"
+		echo "[warn] Missing emerge-cfi-no-cfi.lst.  Run gen_pkg_lists.sh"
 	fi
 	for s in system world ; do
 		show_cfi_set "${s}"

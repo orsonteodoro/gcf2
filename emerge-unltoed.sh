@@ -40,10 +40,10 @@ show_lto_set() {
 main() {
 	for x in world system ; do
 		if [[ ! -e "/etc/portage/emerge-${x}-lto-skip.lst" ]] ; then
-			echo "Missing emerge-${x}-lto-skip.lst.  Run gen_pkg_lists.sh"
+			echo "[warn] Missing emerge-${x}-lto-skip.lst.  Run gen_pkg_lists.sh"
 		fi
 		if [[ ! -e "/etc/portage/emerge-${x}-no-lto.lst" ]] ; then
-			echo "Missing emerge-${x}-no-lto.lst.  Run gen_pkg_lists.sh"
+			echo "[warn] Missing emerge-${x}-no-lto.lst.  Run gen_pkg_lists.sh"
 		fi
 	done
 	for s in system world ; do
