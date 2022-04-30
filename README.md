@@ -1076,43 +1076,9 @@ protected.  This can be achieved if logging is enabled.
 
 1. First run `./gen_pkg_lists.sh`
 
-2. Next, grab the packages that were temporary LTO disabled:
+2. Next, run `emerge-uncfied.sh`
 
-```Shell
-#!/bin/bash
-main() {
-	for f in $(grep -r -l -e "Stripping LTO flags for blacklisted, missing install file list" /var/log/emerge/build-logs/) ; do
-		local b=$(basename "${f}" | cut -f 1-2 -d ":" | sed -e "s|:|/|g")
-		echo "${b}"
-	done | sort | uniq
-}
-
-main
-```
-
-3. Copy-paste the list into the following while removing old revisions,
-old versions, or disable by commenting out (#) packages you want to process
-later:
-
-```Shell
-#!/bin/bash
-main() {
-	local LST=(
-		<INSERT LIST HERE>
-	)
-	
-	emerge --ask -1vO ${LST[@]/#/=}
-}
-
-main
-
-```
-
-If you do not have logging, you may try
-`./show_cfied.sh | grep "not-cfied" | cut -f 2 -d " "` to generate a list of
-not-cfied packages to feed in the script above.  This alternative way is not
-recommended since more than 50% of the packages will be re-emerged.  The
-O passed to emerge may need be removed to take in account correct merge order.
+Use the resume-emerge-lst script or --skipfirst to skip unmergable.
 
 ### Checking for early CFI violations and missing symbols
 
