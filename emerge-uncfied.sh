@@ -46,8 +46,11 @@ main() {
 		show_cfi_set "${s}"
 	done
 	L_SKIP=($(\
-		for x in $(cat /etc/portage/emerge-cfi-skip.lst /etc/portage/emerge-cfi-no-cfi.lst) ; do \
-				echo "${x/:}" ; \
+		for x in $(cat \
+			/etc/portage/emerge-cfi-skip.lst \
+			/etc/portage/emerge-cfi-no-cfi.lst \
+		) ; do \
+			echo "${x/:}" ; \
 		done \
 	))
 	PKGS=()
@@ -65,3 +68,4 @@ main() {
 }
 
 main
+

@@ -1069,7 +1069,20 @@ main "${1}"
 After running the script, the `--resume` arg can be used in subsequent calls 
 to `emerge`.
 
-### Re-emerging new packages that were temporarly LTO disabled
+### Re-emerging new packages that were not LTOed
+
+It is important to re-emerge these packages so some of these can be CFI
+protected.  This can be achieved if logging is enabled.
+
+1. First run `./gen_pkg_lists.sh`
+
+2. Next, run `emerge-unltoed.sh`
+
+Use the resume-emerge-lst script or --skipfirst to skip unmergable.
+
+The script can be modified to add additional options for emerge.
+
+### Re-emerging new packages that were not CFIed
 
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
@@ -1079,6 +1092,8 @@ protected.  This can be achieved if logging is enabled.
 2. Next, run `emerge-uncfied.sh`
 
 Use the resume-emerge-lst script or --skipfirst to skip unmergable.
+
+The script can be modified to add additional options for emerge.
 
 ### Checking for early CFI violations and missing symbols
 
