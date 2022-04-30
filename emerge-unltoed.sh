@@ -13,7 +13,7 @@ show_lto_set() {
 	local p
 	echo "LTOed packages:"
 	local n_total=0
-	local n_cfied=0
+	local n_ltoed=0
 	for p in ${L[@]} ; do
 		p=$(echo "${p}" | sed -e "s|:.*||g" | sed -e "s|^<||g")
 		local is_ltoed=0
@@ -28,7 +28,7 @@ show_lto_set() {
 		fi
 		if (( ${is_ltoed} == 1 )) ; then
 			echo "[ltoed] ${p}"
-			n_cfied=$((${n_cfied} + 1))
+			n_ltoed=$((${n_ltoed} + 1))
 		else
 			T_PKGS+=( "=${p}" )
 			echo "[not-ltoed] ${p}"
