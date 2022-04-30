@@ -1074,7 +1074,7 @@ to `emerge`.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. Resolve all merge conflicts and unmasked packages before preceeding to increase coverage.
+1. Resolve all merge conflicts and keyword/unmasked packages before preceeding to increase coverage.
 
 2. Run `./gen_pkg_lists.sh`
 
@@ -1089,7 +1089,7 @@ The script can be modified to add additional options for emerge.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. Resolve all merge conflicts and unmasked packages before preceeding to increase coverage.
+1. Resolve all merge conflicts and keyword/unmasked packages before preceeding to increase coverage.
 
 2. Run `./gen_pkg_lists.sh`
 
