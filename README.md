@@ -1074,9 +1074,11 @@ to `emerge`.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. First run `./gen_pkg_lists.sh`
+1. Resolve all merge conflicts and unmasked packages before preceeding to increase coverage.
 
-2. Next, run `emerge-unltoed.sh`
+2. Run `./gen_pkg_lists.sh`
+
+3. Run `emerge-unltoed.sh`
 
 Use the resume-emerge-lst script or --skipfirst to skip unmergable.
 
@@ -1087,9 +1089,11 @@ The script can be modified to add additional options for emerge.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. First run `./gen_pkg_lists.sh`
+1. Resolve all merge conflicts and unmasked packages before preceeding to increase coverage.
 
-2. Next, run `emerge-uncfied.sh`
+2. Run `./gen_pkg_lists.sh`
+
+3. Run `emerge-uncfied.sh`
 
 Use the resume-emerge-lst script or --skipfirst to skip unmergable.
 
