@@ -1,5 +1,6 @@
 #!/bin/bash
 T_PKGS=()
+PACKAGE_ENV_PATH="${PACKAGE_ENV_PATH:-/etc/portage/package.env}"
 show_lto_set() {
 	local s="${1}"
 	echo "Getting ${s} list please wait"
@@ -46,6 +47,14 @@ main() {
 			echo "[warn] Missing emerge-${x}-no-lto.lst.  Run gen_pkg_lists.sh"
 		fi
 	done
+	local exclude_pkgs=()
+	if [[ -e "${PACKAGE_ENV_PATH}" ]] ; then
+		if grep -q -E -e "(^[^#]).*remove-lto.conf" "${PACKAGE_ENV_PATH}" ; then
+			exclude_pkgs=($(grep -E -e "(^[^#]).*remove-lto.conf" "${PACKAGE_ENV_PATH}" | cut -f 1 -d " "))
+		else
+			echo "[warn] Did not find package.env rules with remove-lto.conf.  Set PACKAGE_ENV_PATH path to the path containing remove-lto.conf rules."
+		fi
+	fi
 	for s in system world ; do
 		show_lto_set "${s}"
 	done
@@ -63,7 +72,7 @@ main() {
 	for p in ${T_PKGS[@]} ; do
 		[[ "${p}" =~ ^"#" ]] && continue
 		local can_skip=0
-		for p_skip in ${L_SKIP[@]} ; do
+		for p_skip in ${L_SKIP[@]} ${exclude_pkgs[@]} ; do
 			if [[ "${p}" =~ "${p_skip}" ]] ; then
 				can_skip=1
 			fi
