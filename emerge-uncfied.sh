@@ -1,5 +1,9 @@
 #!/bin/bash
 T_PKGS=()
+PACKAGE_ENV_PATH="${PACKAGE_ENV_PATH:-/etc/portage/package.env}"
+
+is_exclude()
+
 show_cfi_set() {
 	local s="${1}"
 	echo "Getting ${s} list please wait"
@@ -42,6 +46,16 @@ main() {
 	if [[ ! -e "/etc/portage/emerge-cfi-no-cfi.lst" ]] ; then
 		echo "[warn] Missing emerge-cfi-no-cfi.lst.  Run gen_pkg_lists.sh"
 	fi
+
+	local exclude_pkgs=()
+	if [[ -e "${PACKAGE_ENV_PATH}" ]] ; then
+		if grep -q -E -e "(^[^#]).*disable-clang-cfi.conf" "${PACKAGE_ENV_PATH}" ; then
+			exclude_pkgs=($(grep -E -e "(^[^#]).*disable-clang-cfi.conf" /etc/portage/package.env | cut -f 1 -d " "))
+		else
+			echo "[warn] Did not find package.env rules with disable-clang-cfi.conf.  Set PACKAGE_ENV_PATH path to the path containing disable-clang-cfi.conf rules."
+		fi
+	fi
+
 	for s in system world ; do
 		show_cfi_set "${s}"
 	done
@@ -57,7 +71,8 @@ main() {
 	for p in ${T_PKGS[@]} ; do
 		[[ "${p}" =~ ^"#" ]] && continue
 		local can_skip=0
-		for p_skip in ${L_SKIP[@]} ; do
+		for p_skip in ${L_SKIP[@]} ${exclude_pkgs[@]} ; do
+			[[ "${p_skip}" =~ ^("<"|">"|"=") ]] && continue
 			if [[ "${p}" =~ "${p_skip}" ]] ; then
 				can_skip=1
 			fi
