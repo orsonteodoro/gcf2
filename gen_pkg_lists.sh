@@ -155,7 +155,7 @@ echo "     LTO must be disabled unless LTO compiler matches the same one used"
 echo "     by libc."
 echo
 echo "lto-agnostic - Data is stored in /etc/portage/emerge-${emerge_set}-lto-agnostic.lst."
-echo "     No IR incompatibilities with static-libs.  Any compiler will work."
+echo "     No IR incompatibilities with binaries in the package.  Any compiler will work."
 echo
 echo "lto-skip - Data is stored in /etc/portage/emerge-${emerge_set}-lto-skip.lst."
 echo "     No LTO is required."
