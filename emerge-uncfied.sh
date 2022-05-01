@@ -50,7 +50,7 @@ main() {
 	local exclude_pkgs=()
 	if [[ -e "${PACKAGE_ENV_PATH}" ]] ; then
 		if grep -q -E -e "(^[^#]).*disable-clang-cfi.conf" "${PACKAGE_ENV_PATH}" ; then
-			exclude_pkgs=($(grep -E -e "(^[^#]).*disable-clang-cfi.conf" /etc/portage/package.env | cut -f 1 -d " "))
+			exclude_pkgs=($(grep -E -e "(^[^#]).*disable-clang-cfi.conf" "${PACKAGE_ENV_PATH}" | cut -f 1 -d " "))
 		else
 			echo "[warn] Did not find package.env rules with disable-clang-cfi.conf.  Set PACKAGE_ENV_PATH path to the path containing disable-clang-cfi.conf rules."
 		fi
