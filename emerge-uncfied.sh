@@ -2,8 +2,6 @@
 T_PKGS=()
 PACKAGE_ENV_PATH="${PACKAGE_ENV_PATH:-/etc/portage/package.env}"
 
-is_exclude()
-
 show_cfi_set() {
 	local s="${1}"
 	echo "Getting ${s} list please wait"
