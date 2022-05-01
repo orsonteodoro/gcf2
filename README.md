@@ -1074,7 +1074,8 @@ to `emerge`.
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. Resolve all merge conflicts and keyword/unmasked packages before preceeding to increase coverage.
+1. Resolve all merge conflicts and keyword/unmasked packages before preceeding
+to increase coverage.
 
 2. Run `./gen_pkg_lists.sh`
 
@@ -1084,12 +1085,16 @@ Use the resume-emerge-lst script or --skipfirst to skip unmergable.
 
 The script can be modified to add additional options for emerge.
 
+The PACKAGE_ENV_PATH environment variable may be set to change the location of
+remove-lto.conf exceptions.
+
 ### Re-emerging new packages that were not CFIed
 
 It is important to re-emerge these packages so some of these can be CFI
 protected.  This can be achieved if logging is enabled.
 
-1. Resolve all merge conflicts and keyword/unmasked packages before preceeding to increase coverage.
+1. Resolve all merge conflicts and keyword/unmasked packages before preceeding
+to increase coverage.
 
 2. Run `./gen_pkg_lists.sh`
 
@@ -1098,6 +1103,9 @@ protected.  This can be achieved if logging is enabled.
 Use the resume-emerge-lst script or --skipfirst to skip unmergable.
 
 The script can be modified to add additional options for emerge.
+
+The PACKAGE_ENV_PATH environment variable may be set to change the location of
+disable-clang-cfi.conf exceptions.
 
 ### Checking for early CFI violations and missing symbols
 
