@@ -1129,6 +1129,7 @@ gcf_add_clang_cfi() {
 	[[ "${CC}" == "clang" && "${CXX}" == "clang++" ]] || return
 	if ! gcf_is_clang_cfi_ready ; then
 		gcf_error "Skipping CFI because missing toolchain support."
+		gcf_error "Bump the version number for GCF_LLVM_MAX in bashrc."
 		return
 	fi
 	if ! which clang 2>/dev/null 1>/dev/null ; then
