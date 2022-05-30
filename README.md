@@ -1182,6 +1182,9 @@ missing symbol but stall with vainfo instead.
 Update: In Jan 24, 2022, app-text/libpaper should be re-emerged with the same
 problems as above.
 
+Update: In May 29, 2022, dev-libs/jemalloc should be re-emerged if an app
+that uses the package hangs.
+
 This requires bashrc be updated to commit `ed89cbf` or newer before emerging
 the list below.
 
