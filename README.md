@@ -1298,3 +1298,5 @@ chroot /mnt/gentoo /bin/bash
 source /etc/profile
 env-update
 </pre>
+
+The alternative is to do a clean install saving etc, home, the world file
