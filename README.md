@@ -1278,8 +1278,6 @@ Before replacing the image, move the etc folder so that it doesn't get replaced.
 # Steps:
 # Use the rescue cd
 # Mount the partition
-# Mount everything described in
-# https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Mounting_the_necessary_filesystems
 mv etc etc.bak
 mkdir stage3-unpacked
 pushd stage3-unpacked
@@ -1294,4 +1292,9 @@ mv etc.bak etc
 # https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable
 # https://wiki.gentoo.org/wiki/CHOST
 # Update the make.profile if using selective restore for etc
+# Mount everything described in
+# https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Mounting_the_necessary_filesystems
+chroot /mnt/gentoo /bin/bash
+source /etc/profile
+env-update
 </pre>
