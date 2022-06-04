@@ -235,7 +235,7 @@ in make.conf.
 * USE_CLANG_CFI -- Use Clang CFI (Uses only CFI Cross-DSO mode.  Experimental
 and unstable systemwide.  bashrc support in development.)
 * USE_CLANG_CFI_AT_SYSTEM -- Use Clang CFI for @system.  It should only be
-enabled after emerging @world.
+enabled after emerging @world. (EXPERIMENTAL)
 * USE_GOLDLTO -- Use Gold as the default LTO linker for @system and/or @world
 * USE_LIBCXX_AS_DEFAULT -- Use libc++ instead of libstdc++ as the default
 if C++ files are detected.  It's used primarily for being CFI protected.
@@ -1255,3 +1255,15 @@ emerge -1vO $(grep -r -l -E -e "Package flags:" /var/log/emerge/build-logs/ \
 3. Use `scan-cfied-broken-binaries` to list __ubsan_handle_cfi_check_fail_abort
 missing symbol and others.  Re-emerge all packages listed.
 4. `emerge -ve world`
+
+#### Updating minor versions of gcc with USE_CLANG_CFI_AT_SYSTEM
+
+This issue is currently under investigation as of Jun 4, 2022.  The usual
+version scheme is major.minor.patch.  Do not update between gcc 11.2 and 11.3 or
+between minor versions.  It is related to all packages linking to libgcc_s.so
+and libubsan.so.
+
+There is due to an undesireable slotting issue which breaks entire @system
+because it unemerges the minor inadvertantly making it unsafe to emerge
+@system.  It may be considered more safe to update between major gcc versions
+(e.g. 11 -> 12).
