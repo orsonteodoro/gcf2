@@ -1267,3 +1267,23 @@ There is due to an undesireable slotting issue which breaks entire @system
 because it unemerges the minor inadvertantly making it unsafe to emerge
 @system.  It may be considered more safe to update between major gcc versions
 (e.g. 11 -> 12).
+
+If your @system is completely borked because of this, you can replace the whole
+@system with a stage3 tarball.  Don't forget to restore the
+/etc/portage/make.conf and CHOST variable in the same file.
+
+<pre>
+# Steps:
+# Use the rescue cd
+# Mount the partition
+# Mount everything described in
+# https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Mounting_the_necessary_filesystems
+mkdir stage3-unpacked
+cd stage3-unpacked
+wget <url>
+tar -xvf stage3*
+yes | cp -af * <dest>
+# Read and perform instructions for setting CHOST at
+# https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable
+# https://wiki.gentoo.org/wiki/CHOST
+</pre>
