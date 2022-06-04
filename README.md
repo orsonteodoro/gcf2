@@ -1272,18 +1272,26 @@ If your @system is completely borked because of this, you can replace the whole
 @system with a stage3 tarball.  Don't forget to restore the
 /etc/portage/make.conf and CHOST variable in the same file.
 
+Before replacing the image, move the etc folder so that it doesn't get replaced.
+
 <pre>
 # Steps:
 # Use the rescue cd
 # Mount the partition
 # Mount everything described in
 # https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Mounting_the_necessary_filesystems
+mv etc etc.bak
 mkdir stage3-unpacked
-cd stage3-unpacked
+pushd stage3-unpacked
 wget <url>
 tar -xvf stage3*
+mv etc etc.new
 yes | cp -af * <dest>
+popd
+# Restore the etc with the old backup copy not the etc.new
+mv etc.bak etc
 # Read and perform instructions for setting CHOST at
 # https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable
 # https://wiki.gentoo.org/wiki/CHOST
+# Update the make.profile if using selective restore for etc
 </pre>
