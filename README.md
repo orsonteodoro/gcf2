@@ -14,33 +14,51 @@ to differences in package versions or hardware configuration.
 
 ### Development mode progress
 
+Plans for June 2022 and beyond:  Currently this project repo is on freeze,
+but will be continue as new project(s).  The plan is to keep this one
+around for users still interested in CFI and systemwide LTO but new repo(s)
+may be made based partly on the Aug 26, 2021 design with more simpler
+package.env.
+
+The new repo will continuation of Aug 26, 2021 design and will have a
+new package.env will be more simple.  The project URL will be announced
+later.  There will be more emphasis on build time (-O0) and sparing use of
+-O{1,2,3} optimization compiler flags based on observed severe dips on
+performance.  This new project may be named gcf-game-perf and be more gamer and
+content creator centered as in again fast installs and performance required in
+observed execution performance degration scenarios or heavy time cost scenarios.
+There will be no LTO/CFI in this new project.  This new primary project will
+de-emphasize premature optimization and so the package.env will be more
+selective and dramatically small.
+
+Another project may be spawned called gcf-infer.  This will use generator
+scripts to generate a package.env based on ebuild contents.  This will be more
+secondary since it is premature optimization.  The scripts will guess the
+packages to optimize based on keyword search on DESCRIPTION and with *DEPENDs.
+No LTO/CFI again this time.
+
+This current repo state is more focused on both security and stable
+performance flags.  It may be renamed gcf-adv.
+
+Gist of pre June:
+
 LTO with CFI is mostly working and on par with a basic www setup.  Current
 development is focused on systemwide CFI.  Performance degration with CFI is
-indiscernible mostly maybe except for loading times.
+indiscernible mostly maybe except for loading times and build times.  CFI
+coverage is not complete which is why it is not recommended for use
+from this repo.  With a disabled CFI @system, the benefits also diminish
+by maybe 15% around 8% required CFI disabled due to noreserve bug so
+around 23% unprotected for production safe configuration.
 
-Systemwide Clang CFI support has been applied for many packages but there
-are still a lot of important packages that are not able to be CFIed due to the
-"failed to allocate noreserve 0x0 (0) bytes of CFI shadow" problem.
-
-The bashrc with the latest package.env has processed 786 packages with
-2 unmerged left with systemwide LTO and CFI ON.
-
-Also, there is an issue with the stats for CFI shown sections below.  Using
-systemwide CFI is not recommended with my bashrc and package.env until the
-percent difference is fixed or a good reason to justify the discrepancy.
-Currently the percent difference is around 25.7% but taking in account the
-noreserve problem it is around 11.4%.
-
-So, if you want to use development mode, it is fine to use systemwide LTO.
-Systemwide CFI can be used but it is better to wait for the above problems to get
-fixed first to avoid a possible mandatory rebuild @world if the fix for this
-build is found.  If you choose to try systemwide CFI and I haven't tested the
-package, you have to fix the CFI problems yourself which is preferred or send an
-issue request.  Enough documentation in this readme and in the code comments of
-this repo to solve CFI related problems.
-
-Souper flags support has been added, but currently disabled until it passes
-unit testing.
+* CFIing @world excluding @system should be safe and easy to recover if
+problematic.
+* CFIing @system is not safe due to KEYWORD and slot issues that can break
+the entire @system set with minor gcc updates.  It is not recommeded to CFI
+@system.
+* Souper flags support has been added, but currently disabled until it passes
+unit testing.  It not recommended since upstream claims research grade
+quality and the file sizes were more or less the same with much worst
+compile time from my own initial testing.
 
 ## The default make.conf *FLAGS:
 
@@ -1261,7 +1279,11 @@ missing symbol and others.  Re-emerge all packages listed.
 This issue is currently under investigation as of Jun 4, 2022.  The usual
 version scheme is major.minor.patch.  Do not update between gcc 11.2 and 11.3 or
 between minor versions.  It is related to all packages linking to libgcc_s.so
-and libubsan.so.
+and libubsan.so.  If the compiler switch is not successful, one may need to
+manually run `env-update && source /etc/profile` but it may be difficult
+if bash is borked and the @system may need to be restored back to vanilla
+state.  The real cause of the gcc update breakage and complete @system fail
+is unknown.
 
 There is due to an undesireable slotting issue which breaks entire @system
 because it unemerges the minor inadvertantly making it unsafe to emerge
@@ -1269,34 +1291,14 @@ because it unemerges the minor inadvertantly making it unsafe to emerge
 (e.g. 11 -> 12).
 
 If your @system is completely borked because of this, you can replace the whole
-@system with a stage3 tarball.  Don't forget to restore the
-/etc/portage/make.conf and CHOST variable in the same file.
+@system with a stage3 tarball with with a backup of /etc, /var/lib/portage/world,
+/home, /root, local repos, etc.
 
 Before replacing the image, move the etc folder so that it doesn't get replaced.
 
-<pre>
-# Steps:
-# Use the rescue cd
-# Mount the partition
-mv etc etc.bak
-mkdir stage3-unpacked
-pushd stage3-unpacked
-wget <url>
-tar -xvf stage3*
-mv etc etc.new
-yes | cp -af * <dest>
-popd
-# Restore the etc with the old backup copy not the etc.new
-mv etc.bak etc
-# Read and perform instructions for setting CHOST at
-# https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable
-# https://wiki.gentoo.org/wiki/CHOST
-# Update the make.profile if using selective restore for etc
-# Mount everything described in
-# https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Mounting_the_necessary_filesystems
-chroot /mnt/gentoo /bin/bash
-source /etc/profile
-env-update
-</pre>
+Three proposed solutions for fixing completely borked @system:
 
-The alternative is to do a clean install saving /etc, /root, /home, the /var/lib/portage/world file
+1. Stage3 tarball on top of existing
+2. Backup and clean install
+3. Move old installation in a new folder, copy stage3 in /, and replace stage3
+tarball defaults /etc.
