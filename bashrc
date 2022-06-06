@@ -1693,6 +1693,12 @@ gcf_warn "fallback instead."
 	fi
 }
 
+gcf_no_allow_store_data_races() {
+	if [[ "${NO_ALLOW_STORE_DATA_RACES_CHECK}" == "1" && ( "${CC}" == "gcc" || "${CXX}" == "g++" ) ]] ; then
+		gcf_append_flags "-fno-allow-store-data-races"
+	fi
+}
+
 pre_pkg_setup()
 {
 	gcf_info "Running pre_pkg_setup()"
@@ -1714,6 +1720,7 @@ pre_pkg_setup()
 	gcf_strip_lossy
 	gcf_strip_omit_frame_pointer
 	gcf_use_Oz
+	gcf_no_allow_store_data_races
 	gcf_use_ubsan
 	gcf_translate_no_inline
 	gcf_replace_freorder_blocks_algorithm
@@ -1735,7 +1742,8 @@ pre_pkg_setup()
 
 gcf_check_Ofast_safety()
 {
-	[[ "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
+	[[ "${DISABLE_FALLOW_STORE_DATA_RACES_CHECK}" == "1" || "${NO_ALLOW_STORE_DATA_RACES_CHECK}" == "1" ]] && return
+	[[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] && return
 	if [[ "${OPT_LEVEL}" == "-Ofast" && -e "${T}/build.log" ]] ; then
 		if grep -q -E -e "(-lboost_thread|-lgthread|-lomp|-pthread|-lpthread|-ltbb)" "${T}/build.log" ; then
 gcf_error "Detected thread use.  Disable -Ofast or add DISABLE_FALLOW_STORE_DATA_RACES_CHECK=1 as a per-package envvar."
