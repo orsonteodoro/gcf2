@@ -40,7 +40,7 @@ No LTO/CFI again this time.
 This current repo state is more focused on both security and stable
 performance flags.  It may be renamed gcf-adv.
 
-Gist of pre June:
+Gist of pre June 2022:
 
 LTO with CFI is mostly working and on par with a basic www setup.  Current
 development is focused on systemwide CFI.  Performance degration with CFI is
