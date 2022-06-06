@@ -1286,20 +1286,30 @@ This issue is currently under investigation as of Jun 4, 2022.  The usual
 version scheme is major.minor.patch.  Do not update between gcc 11.2 and 11.3 or
 between minor versions.
 
-A walkthrough of the experience... what happens is the ebuild maintainer
-decides to KEYWORD stable gcc.  I or you update gcc to a newer minor version
-within the same slot.  When the ebuild system unemerges the older minor
-version, bash or env-update both will break because it cannot find libgcc_s.so.1
-or maybe libubsan.so after unCFIing some coreutil programs.  The dyanmic loader
-claims the lib is missing because the older minor version was unemerged.  The
-source of the problem is unknown at this point.  I attempted to run
-`env-update` and `source /etc/profile` and `gcc-config` to fix path issues but
-I still ran into the missing lib problem.  It maybe due to either a hardcoded
-RPATH (not likely) or stale /etc/ld.so.cache, but libgcc_s.so.1 does exist in
-the just installed newer version of gcc but cannot search that new path yet, or
-maybe CFIed parts landed in libgcc_s.so.1 that shouldn't been there that make
-it unusable.  As of now it is strongly not recommended to CFI @system until
-the gcc update issue is eliminated.
+A walkthrough of the experience... what happens is the ebuild maintainer decides
+to KEYWORD stable gcc.  I or you update gcc to a newer minor version within the
+same slot.  When the ebuild system unemerges the older minor version, bash or
+env-update both will break because it cannot find libgcc_s.so.1 or maybe
+libubsan.so after unCFIing some coreutils programs.  Yes ls from coreutils
+broke, so did env-update dependencies.  The dyanmic loader claimed the lib is
+missing because the older minor version was unemerged.  The source of the
+problem is unknown at this point.  I attempted to run `env-update` and
+`source /etc/profile` and `gcc-config` to fix path issues but I still ran into
+the missing lib problem.  It maybe due to either a hardcoded RPATH (not likely)
+or stale /etc/ld.so.cache, but libgcc_s.so.1 does exist in the just installed
+newer version of gcc but cannot search that new path yet, or maybe CFIed parts
+landed in libgcc_s.so.1 that shouldn't been there that make it unusable. Since
+env-update dependencies broke, it was likley why env-update likely failed and
+likely never properly updated ld.so.cache to the new gcc installation.  So
+knowing this, one may choose to disable CFI for portage, coreutils, python,
+etc, but there may be more packages related to prevent this from happening again
+but not enough data collected to have confidence that minimal set of packages
+responsible or to confirm that unCFIing them is the correct solution.  More
+time would be needed to replicate and test more of @system that needed to be
+unCFIed for production safe CFIed @system.
+
+As of now it is strongly not recommended to CFI @system until the gcc
+update issue is eliminated.
 
 One may try the LD_PRELOAD trick to attempt to have the dynamic
 loader find libgcc_s.so.1.
