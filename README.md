@@ -1304,19 +1304,18 @@ the gcc update issue is eliminated.
 One may try the LD_PRELOAD trick to attempt to have the dynamic
 loader find libgcc_s.so.1.
 
-There is due to an undesireable slotting issue which breaks entire @system
+This problem is due to an undesireable slotting issue which breaks entire @system
 because it unemerges the minor inadvertantly making it unsafe to emerge
 @system.  It may be considered more safe to update between major gcc versions
 (e.g. 11 -> 12).
 
 If your @system is completely borked because of this, you can replace the whole
 @system with a stage3 tarball with with a backup of /etc, /var/lib/portage/world,
-/home, /root, local repos, and other importange files in order to restore @system
-to vanilla.
+/home, /root, local repos, and other important files before restoring @system
+to vanilla, corresponding to dirty solution 2 below.  You will find the that
+proposals 1 and 2 are the better ones below.
 
-Before replacing the image, move the etc folder so that it doesn't get replaced.
-
-Three proposed solutions for fixing completely borked @system:
+Here are the three proposed solutions for fixing a completely borked @system:
 
 1. Move old installation in a new folder, copy stage3 in /, and replace stage3
 tarball parts restoring backups (e.g. /etc, /home, ...).
