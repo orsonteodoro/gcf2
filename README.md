@@ -631,17 +631,7 @@ mitgation further.
 In step 13, if one decides to continue CFIing @system, one needs to hardmask
 newer versions of gcc but unmask selectively newer major versions so both old
 and new versions exist simultaneously.  Umasking patch versions of gcc may be
-safe.  It is not clear what is at fault.  What happens is ebuild maintainer
-decides to KEYWORD stable gcc.  I or you update gcc to a newer minor version
-within the same slot.  When the ebuild system unemerges the older minor
-version, bash or env-update both will break because it cannot find libgcc_s.so.1
-and the dyanmic loader claims it missing because the older minor version was
-unemerged.  The source of the problem is unknown at this point.  It maybe due
-to either a hardcoded RPATH (not likely) or stale /etc/ld.so.cache, but
-libgcc_s.so.1 does exist in the just installed newer version of gcc but cannot
-search that new path yet, or maybe CFIed parts landed in libgcc_s.so.1 that
-shouldn't been there that make it unusable.  As of now it is strongly not
-recommended to CFI @system until the gcc update issue is eliminated.  See also
+safe.  For details about why the issue exists, see
 [Updating minor versions of gcc with USE_CLANG_CFI_AT_SYSTEM](https://github.com/orsonteodoro/gentoo-cflags#updating-minor-versions-of-gcc-with-use_clang_cfi_at_system)
 
 Steps 15 and 20 are optional if no new packages were added.  It is a good
@@ -1294,12 +1284,24 @@ missing symbol and others.  Re-emerge all packages listed.
 
 This issue is currently under investigation as of Jun 4, 2022.  The usual
 version scheme is major.minor.patch.  Do not update between gcc 11.2 and 11.3 or
-between minor versions.  It is related to all packages linking to libgcc_s.so.1
-and libubsan.so.  If the compiler switch is not successful, one may need to
-manually run `env-update && source /etc/profile` but it may be difficult
-if bash is borked and the @system may need to be restored back to vanilla
-state.  The real cause of the gcc update breakage and complete @system fail
-is unknown.  One may try the LD_PRELOAD trick to attempt to have the dynamic
+between minor versions.
+
+A walkthrough of the experience... what happens is the ebuild maintainer
+decides to KEYWORD stable gcc.  I or you update gcc to a newer minor version
+within the same slot.  When the ebuild system unemerges the older minor
+version, bash or env-update both will break because it cannot find libgcc_s.so.1
+or maybe libubsan.so after unCFIing some coreutil programs.  The dyanmic loader
+claims the lib is missing because the older minor version was unemerged.  The
+source of the problem is unknown at this point.  I attempted to run
+`env-update` and `source /etc/profile` and `gcc-config` to fix path issues but
+I still ran into the missing lib problem.  It maybe due to either a hardcoded
+RPATH (not likely) or stale /etc/ld.so.cache, but libgcc_s.so.1 does exist in
+the just installed newer version of gcc but cannot search that new path yet, or
+maybe CFIed parts landed in libgcc_s.so.1 that shouldn't been there that make
+it unusable.  As of now it is strongly not recommended to CFI @system until
+the gcc update issue is eliminated.
+
+One may try the LD_PRELOAD trick to attempt to have the dynamic
 loader find libgcc_s.so.1.
 
 There is due to an undesireable slotting issue which breaks entire @system
@@ -1309,13 +1311,15 @@ because it unemerges the minor inadvertantly making it unsafe to emerge
 
 If your @system is completely borked because of this, you can replace the whole
 @system with a stage3 tarball with with a backup of /etc, /var/lib/portage/world,
-/home, /root, local repos, etc.
+/home, /root, local repos, and other importange files in order to restore @system
+to vanilla.
 
 Before replacing the image, move the etc folder so that it doesn't get replaced.
 
 Three proposed solutions for fixing completely borked @system:
 
-1. Stage3 tarball on top of existing
-2. Backup and clean install
-3. Move old installation in a new folder, copy stage3 in /, and replace stage3
-tarball defaults /etc.
+1. Move old installation in a new folder, copy stage3 in /, and replace stage3
+tarball parts restoring backups (e.g. /etc, /home, ...).
+2. Stage3 tarball on top of existing. (This may not work for everyone if the
+stage3 tarball doesn't contain the same gcc major.minor release.)
+3. Backup and clean install.
