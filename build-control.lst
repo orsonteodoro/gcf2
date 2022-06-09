@@ -1,0 +1,71 @@
+# Clang built
+dev-lang/spidermonkey clang-retpoline.conf remove-gcc-flags.conf
+dev-libs/icu clang-retpoline.conf remove-gcc-flags.conf
+sys-libs/zlib clang-retpoline.conf remove-gcc-flags.conf
+media-libs/libaom clang-retpoline.conf remove-gcc-flags.conf
+media-libs/libjpeg-turbo clang-retpoline.conf remove-gcc-flags.conf
+media-libs/libvpx clang-retpoline.conf remove-gcc-flags.conf
+media-libs/flac clang-retpoline.conf remove-gcc-flags.conf
+media-libs/mesa clang-retpoline.conf remove-gcc-flags.conf
+media-video/ffmpeg clang-retpoline.conf remove-gcc-flags.conf
+sys-libs/compiler-rt clang-retpoline.conf remove-gcc-flags.conf
+sys-libs/compiler-rt-sanitizers clang-retpoline.conf remove-gcc-flags.conf
+sys-libs/libcxx clang-retpoline.conf remove-gcc-flags.conf
+sys-libs/libcxxabi clang-retpoline.conf remove-gcc-flags.conf
+
+# The two sets below are mutually exclusive.  Choose and uncomment only one set below.
+
+# Use below for clang.  -fno-plt is unsupported with lazy binding, so add -Wl,-z,retpolineplt to linker
+x11-base/xorg-server use-clang.conf use-lld.conf remove-fno-plt.conf z-retpolineplt.conf
+x11-drivers/* use-clang.conf use-wc-lld.conf use-lld.conf remove-fno-plt.conf z-retpolineplt.conf
+
+# Use below for gcc.  -fno-plt is unsupported with lazy binding, so add -Wl,-z,retpolineplt to linker
+#x11-base/xorg-server use-gcc.conf remove-fno-plt.conf z-retpolineplt.conf
+#x11-drivers/* use-gcc.conf remove-fno-plt.conf z-retpolineplt.conf
+
+sys-kernel/*-sources disable-gcf-lto.conf
+sys-kernel/gentoo-kernel-bin disable-gcf-lto.conf
+sys-kernel/vanilla-kernel disable-gcf-lto.conf
+
+# TODO: This list is currently under construction
+dev-libs/libaio remove-gcc-lto.conf
+media-libs/alsa-lib remove-gcc-lto.conf
+media-libs/x264 remove-gcc-lto.conf
+sys-devel/clang remove-gcc-lto.conf # long linking times
+sys-devel/llvm remove-gcc-lto.conf # it takes unusally a long time to complete a .c file
+sys-libs/compiler-rt remove-gcc-lto.conf
+sys-libs/compiler-rt-sanitizers remove-gcc-lto.conf
+sys-libs/glibc remove-gcc-lto.conf
+sys-libs/libapparmor remove-gcc-lto.conf
+sys-libs/libomp remove-gcc-lto.conf
+
+net-libs/libtorrent disable-thinlto.conf use-gold.conf
+
+# Compiler switch check false positives:
+dev-games/enigma disable-override-compiler-check.conf # Uses libstdc++
+dev-lang/rust-bin disable-override-compiler-check.conf # Binary only
+dev-libs/boost disable-override-compiler-check.conf # From build script side
+dev-qt/qtgui disable-override-compiler-check.conf # Searches headers with gcc in the path
+media-libs/flac disable-override-compiler-check.conf # Links to non-LTO from gcc .o file from a path string containing gcc
+media-libs/libaom disable-override-compiler-check.conf # Filename
+media-libs/libvpx disable-override-compiler-check.conf # From build script side
+media-video/ffmpeg disable-override-compiler-check.conf # only enable this if you are not using static-libs for this package
+sys-libs/compiler-rt disable-override-compiler-check.conf # Contains files named gcc
+sys-libs/compiler-rt-sanitizers disable-override-compiler-check.conf # Packages linked with non-LTOed -lgcc_s
+sys-libs/libcxxabi disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
+sys-libs/libcxx disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
+sys-libs/llvm-libunwind disable-override-compiler-check.conf # links to -lgcc_s and filenames containing gcc
+
+#sys-devel/lld use-gcc.conf # Use this to rebuild without CFI when running into CFI cast check bugs.  Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
+sys-devel/lld no-cfi-cast.conf # Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
+
+# Do not strip CFI in .so files
+media-libs/libaom no-strip.conf
+media-libs/libvpx no-strip.conf
+media-libs/openxr no-strip.conf
+sys-libs/libcxxabi no-strip.conf
+
+# Optional
+# The below line should be commented (prefixed with #) if clang is not built yet.
+dev-lang/python use-clang.conf
+dev-lang/perl use-clang.conf # force clang so that modules can use same CC for CFIed

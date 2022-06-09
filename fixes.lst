@@ -1,0 +1,85 @@
+# Fixes
+app-containers/runc use-gcc.conf # Build time failure:  clang-14: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+app-containers/containerd use-gcc.conf # Build time failure:  clang-14: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+app-containers/docker use-gcc.conf # Build time failure:  clang-14: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+app-containers/docker-proxy use-gcc.conf # Build time failure:  clang-14: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+app-crypt/pesign pesign.conf # redefined macro function
+app-editors/emacs remove-lto.conf # 27.2 supports lto but experimental but not added to ebuild yet.  Wait for ebuild fork.
+app-portage/portage-utils remove-no-inline.conf # Build time failure
+app-text/opensp remove-lto.conf # Build uses strip-flags
+dev-haskell/aeson use-gcc.conf remove-lto.conf # Configure time tests use gcc, disable IR warning
+dev-haskell/diff use-gcc.conf remove-lto.conf # Configure time tests use gcc, disable IR warning
+dev-lang/ghc use-gcc.conf # Configure time test use gcc
+dev-lang/lua use-gcc.conf # gcc: error: unrecognized argument to '-fsanitize=' option: 'cfi'
+dev-lang/mono remove-lto.conf # Breaks with clang lto
+dev-lang/rust rust.conf
+dev-libs/dotconf use-gcc.conf # Breaks on clang lto
+dev-libs/elfutils use-gcc.conf remove-lto.conf # ebuild strips -flto
+#dev-libs/gmp use-gcc.conf # configure time test failure with clang 12 and compiler-rt-sanitizers.  Uncomment if you see the problem below: \
+# libclang_rt.cfi-i386.a(cfi.cpp.o): TLS transition from R_386_TLS_LDM to R_386_TLS_LE_32 against `_ZN5__cfi9in_loaderE' at 0x7a1 in section `.text' failed
+dev-libs/isl use-gcc.conf # Prevent missing symbol [Err 9] and possibly borking toolchains (both gcc and clang)
+#dev-libs/jemalloc # It requires a re-emerge if the app that depends on it hangs.
+dev-libs/libffi use-gcc.conf # Clang LTO breaks build
+dev-libs/libgcrypt split-lto-unit.conf disable-integrated-as.conf # Breaks when building asm files
+dev-libs/nss remove-lto.conf # libsqlite3.so: undefined reference to trunc ; and other libm functions
+dev-python/shiboken2 disable-thinlto.conf use-gold.conf # ld.lld: error: /usr/lib/llvm/14/bin/../lib/libclang.so is incompatible with elf* \
+# It requires an -O1 patch to fix segfaults to build pyside2 from the oiledmachine-overlay
+dev-qt/qtcore use-gcc.conf remove-lto.conf O1.conf remove-no-inline.conf  # _mm_crc32_* broken on clang on older machines \
+# error: always_inline function '_mm_crc32_u64' requires target feature 'crc32', but would be inlined into function 'crc32' that is compiled without support for 'crc32'
+#dev-perl/Socket6 use-gcc.conf disable-perl-makemaker-autoedit.conf # use this if you built perl with gcc or in the earlier steps of bootstrapping.
+dev-util/bazel no-ccache.conf # sandbox violation
+dev-util/dialog use-gcc.conf # Uses both clang and gcc.
+dev-util/shellcheck use-gcc.conf remove-lto.conf # Build time breakage with clang
+gnome-base/librsvg remove-lto.conf link-ubsan.conf # TODO: Apply lto to both rust and c.  error: LLVM gold plugin: inconsistent LTO Unit splitting (recompile with -fsplit-lto-unit)
+media-libs/alsa-lib use-gcc.conf # Errors: \
+# Build time failure (with ldd thinlto): ld.lld: error: <inline asm>:1:1: default version symbol snd_dlopen@@ALSA_1.1.6 must be defined; \
+# Build time failure (with goldlto): function __cfi_check_fail: error: undefined reference to '__ubsan_handle_cfi_check_fail_abort'
+media-libs/x264 use-gcc.conf # clang lto breaks in configure endian test.
+net-libs/libsoup remove-lto.conf # libsqlite3.so: undefined reference to trunc ; and other libm functions
+#net-libs/nodejs use-gcc.conf use-gcc-10.conf # Use the ebuilds from the oiledmachine-overlay instead for LTO fixes
+sys-apps/acl remove-lto.conf # Stripped by ebuild
+sys-apps/attr remove-lto.conf # Stripped by ebuild
+sys-apps/sandbox remove-lto.conf # Stripped by ebuild
+sys-auth/pam-python use-clang.conf # Apply only if Python is built with clang.  Python embeds *FLAGS for distfiles packages.
+sys-block/parted use-gcc.conf remove-lto.conf # lto-llvm-411b91.o: relocation R_X86_64_8 against hidden symbol `__typeid__ZTSFP14_PedFileSystemP12_PedGeometryE_align' can not be used when making a shared object
+sys-boot/grub use-gcc.conf grub.conf # Configure time problems
+sys-devel/clang use-gcc.conf # Build time breakage. FAILED: lib/Tooling/ASTNodeAPI.json ; segfaults with clang-ast-dump reported from dmesg
+sys-devel/gdb use-gcc.conf # Build time failure
+sys-devel/lld remove-lto.conf # Configure time problem because it expects lld for lto when none exists.
+sys-devel/llvm split-lto-unit.conf # Build time failure in clang package
+sys-devel/llvm remove-lto.conf remove-split-lto-unit.conf # \
+# Build time failure using llvm:13 static-libs that have been Clang LTOed, and \
+# static-libs linked with a clang built with the gcc compiler: \
+# /usr/lib/llvm/13/lib/libLLVMSupport.a: error adding symbols: file format not recognized
+sys-fs/extundelete extundelete.conf
+sys-libs/binutils-libs use-gcc.conf remove-lto.conf
+sys-process/numactl use-gcc.conf remove-lto.conf # ebuild strips -flto
+x11-misc/wmname wmname.conf disable-thinlto.conf use-gold.conf
+x11-wm/xpra use-gcc.conf # Build fails with clang
+
+# bashrc fixes
+dev-cpp/tbb disable-lto-stripping.conf
+dev-lang/python disable-lto-stripping.conf python.conf
+media-libs/opencv disable-lto-stripping.conf
+net-libs/nodejs disable-lto-stripping.conf
+net-misc/networkmanager disable-lto-stripping.conf
+sys-fs/e2fsprogs disable-lto-stripping.conf
+
+# media-libs/libglvnd # Build time failure: ld.lld: error: undefined symbol: entrypointFunctions
+# See oiledmachine-overlay for LTO patch which is necessary for CFIed package.
+
+# Fixes for packages that use both gcc and clang but cannot happen with -flto=thin
+# It may be acceptable to use both if the build parts are independent and with gold or bfd only.
+dev-libs/libtomcrypt use-gcc.conf # Uses gcc and clang which gcc doesn't understand -flto=thin
+sys-libs/libapparmor use-gcc.conf # Errors: \
+# Uses gcc and clang \
+# ld.lld: warning: attempt to reassign symbol 'parse_record' of version 'APPARMOR_1.0' to version 'APPARMOR_1.1'
+
+#dev-libs/openssl use-bfd.conf # not necessary if curl is built with curl_ssl_gnutls
+net-misc/curl use-bfd.conf
+
+# Bug:  internal compiler error: maximum number of LRA assignment passes is achieved (30)
+# -O2 broken with both gcc 10.3.0, 11.2.0 when building clang
+# Using -fno-schedule-insns will not help
+# -O1 or -Os works
+sys-devel/clang Os.conf # Build time breakage.

@@ -1,0 +1,261 @@
+# Assembly-like code, parsers
+#app-emulation/* O2.conf
+app-shells/* O2.conf
+dev-*/* O2.conf
+#games-emulation/* O2.conf
+net-libs/* O2.conf
+net-wireless/* O2.conf
+sys-devel/* O2.conf
+sys-fs/* O2.conf
+x11-base/* O2.conf
+x11-drivers/* O2.conf
+x11-libs/* O2.conf
+
+# Compression algs and libs
+app-arch/* O2.conf
+dev-libs/c-blosc O2.conf
+dev-libs/lzo O2.conf
+sys-libs/zlib O2.conf
+
+# Containing crypto ciphers and hash algorithms
+# Unrollable means that you need a per-package patch to unroll the specific functions.
+# See unroll-loops.conf for code generation time tradeoff details.
+# -O2 because data is not independent.
+app-arch/arj # unrollable
+# app-arch/cabextract # md5 unrolled already
+app-arch/lrzip # unrollable
+app-arch/p7zip # unrollable
+app-arch/unace # unrollable
+app-arch/unrar # unrollable
+app-arch/unzip
+app-arch/zip # unrollable
+app-crypt/* O2.conf
+app-crypt/rhash # unrollable
+#app-emulation/wine-staging
+#app-emulation/wine-vanilla
+dev-cpp/abseil-cpp
+dev-lang/perl
+dev-lang/php
+dev-lang/python
+dev-lang/ruby
+dev-lang/rust
+dev-libs/apr-util
+dev-libs/glib
+dev-libs/libgcrypt # unrollable
+#dev-libs/libgit2 # sha1 already unrolled
+dev-libs/libsodium # unrollable
+#dev-libs/libtomcrypt
+dev-libs/nettle # unrollable
+dev-libs/nss # unrollable
+dev-libs/openssl # unrollable
+dev-libs/xxhash # unrollable
+dev-vcs/git O2.conf # unrollable
+media-libs/libdvdread # unrollable
+#net-libs/libtorrent # unrolled already.
+net-libs/nodejs
+net-libs/mbedtls # unrollable
+net-misc/curl O2.conf # unrollable
+#net-misc/cgminer O2.conf
+#net-misc/bfgminer O2.conf
+net-misc/wget O2.conf # already unrolled
+#net-p2p/* O2.conf
+sci-misc/boinc O2.conf
+#sys-fs/loop-aes
+sys-kernel/ot-sources O3.conf
+sys-libs/glibc O2.conf # unrollable
+x11-wm/xpra O2.conf # unrollable
+
+# 3D, computational geometry algorithms, graphics / drawing algorithms
+app-text/ghostscript-gpl O3.conf
+dev-games/* O3.conf fast-math.conf
+dev-libs/boost O3.conf
+dev-libs/isl O3.conf
+dev-python/numpy O3.conf
+games-engines/* O3.conf fast-math.conf
+games-fps/* O3.conf fast-math.conf
+media-libs/freeglut prefetch-loop-arrays.conf
+media-libs/glu prefetch-loop-arrays.conf
+media-tv/v4l-utils O3.conf
+sci-physics/bullet O3.conf fast-math.conf
+x11-misc/xscreensaver O3.conf fast-math.conf
+
+# Mass data processing
+sci-libs/* O3.conf
+
+# Media or graphics libs
+media-gfx/* O3.conf
+media-gfx/blender fast-math.conf
+media-libs/* O3.conf
+media-libs/libvisual fast-math.conf
+media-plugins/libvisual-plugins fast-math.conf
+media-plugins/libvisual-projectm fast-math.conf
+media-sound/* O3.conf
+media-video/* O3.conf
+x11-libs/cairo O3.conf
+x11-libs/gdk-pixbuf O3.conf
+x11-libs/pango O3.conf
+x11-libs/pixman O3.conf #multicoreloops.conf
+
+# Sound processing
+# Disable section if lossless preferred
+media-libs/libsamplerate fast-math.conf prefetch-loop-arrays.conf
+media-sound/libsndfile fast-math.conf prefetch-loop-arrays.conf
+
+# DAW (digital audio workstations)
+# Disable section if lossless preferred
+media-sound/ardour fast-math.conf
+media-sound/audacity fast-math.conf
+media-sound/lmms fast-math.conf
+
+# non-turn based games
+games-action/* O2.conf
+games-arcade/* O2.conf
+games-simulation/* O2.conf
+games-strategy/* O2.conf
+games-sports/* O2.conf
+
+# Contains codecs
+www-client/firefox O3.conf prefetch-loop-arrays.conf skipless.conf
+
+# Contains codecs.  The two lines are mutually exclusive.  Choose only one
+#www-client/chromium O3.conf prefetch-loop-arrays.conf skipless.conf # Remove # if using GCC
+www-client/chromium O3.conf # Remove # if using Clang CFI
+
+# Sequential processing (matrices)
+# Eigen, a header only matrix lib, may benefit?  See also
+# `grep --exclude-dir=distfiles --exclude=*Manifest --exclude-dir=metadata --exclude-dir=.git -l -i -r -e "eigen" /usr/portage`
+# We don't unroll these below but prefer autopar instead through O3.
+# dev-cpp/eigen # is header only
+# dev-libs/boost # ublas is header only
+dev-libs/isl prefetch-loop-arrays.conf
+dev-python/numpy prefetch-loop-arrays.conf
+media-libs/ilmbase prefetch-loop-arrays.conf
+#media-libs/graphene # just elementary operations, already unrolled
+media-libs/lcms prefetch-loop-arrays.conf
+media-libs/libmypaint prefetch-loop-arrays.conf
+media-libs/zimg prefetch-loop-arrays.conf
+sci-libs/gsl prefetch-loop-arrays.conf
+x11-libs/cairo prefetch-loop-arrays.conf
+x11-libs/pango prefetch-loop-arrays.conf
+x11-libs/pixman prefetch-loop-arrays.conf
+
+# Sequential processing (media containers)
+media-libs/libmatroska prefetch-loop-arrays.conf skipless.conf
+media-libs/libmp4v2 prefetch-loop-arrays.conf skipless.conf
+media-libs/libogg prefetch-loop-arrays.conf skipless.conf
+
+# Sequential processing (video, image)
+gnome-base/librsvg prefetch-loop-arrays.conf
+media-libs/dav1d prefetch-loop-arrays.conf skipless.conf
+media-libs/freetype prefetch-loop-arrays.conf
+media-libs/giflib prefetch-loop-arrays.conf
+media-libs/imlib2 prefetch-loop-arrays.conf
+media-libs/jbig2dec prefetch-loop-arrays.conf
+media-libs/kvazaar prefetch-loop-arrays.conf
+media-libs/libaom prefetch-loop-arrays.conf skipless.conf
+media-libs/libbluray prefetch-loop-arrays.conf
+media-libs/libde265 prefetch-loop-arrays.conf skipless.conf
+media-libs/libheif prefetch-loop-arrays.conf
+media-libs/libjpeg-turbo prefetch-loop-arrays.conf
+media-libs/libmng prefetch-loop-arrays.conf
+media-libs/libmpeg2 prefetch-loop-arrays.conf skipless.conf
+media-libs/libpng prefetch-loop-arrays.conf
+media-libs/libpng-compat prefetch-loop-arrays.conf
+media-libs/libspng prefetch-loop-arrays.conf
+media-libs/libtheora prefetch-loop-arrays.conf skipless.conf
+media-libs/libvpx prefetch-loop-arrays.conf skipless.conf
+media-libs/libwebp prefetch-loop-arrays.conf
+media-libs/libwmf prefetch-loop-arrays.conf
+media-libs/mozjpeg prefetch-loop-arrays.conf
+media-libs/opencv prefetch-loop-arrays.conf
+media-libs/openexr prefetch-loop-arrays.conf
+#media-libs/openh264 prefetch-loop-arrays.conf skipless.conf
+media-libs/openjpeg prefetch-loop-arrays.conf
+media-libs/tiff prefetch-loop-arrays.conf
+media-libs/x264 prefetch-loop-arrays.conf
+media-libs/x265 prefetch-loop-arrays.conf
+media-libs/xvid prefetch-loop-arrays.conf skipless.conf
+media-gfx/alembic prefetch-loop-arrays.conf
+media-gfx/graphicsmagick prefetch-loop-arrays.conf
+media-gfx/imagemagick prefetch-loop-arrays.conf
+media-gfx/optipng prefetch-loop-arrays.conf
+media-gfx/pngquant prefetch-loop-arrays.conf
+media-video/dirac prefetch-loop-arrays.conf skipless.conf
+media-video/ffmpeg prefetch-loop-arrays.conf skipless.conf
+media-video/handbrake prefetch-loop-arrays.conf
+media-video/mjpegtools prefetch-loop-arrays.conf
+media-video/mplayer prefetch-loop-arrays.conf
+media-video/vlc prefetch-loop-arrays.conf
+x11-libs/gdk-pixbuf prefetch-loop-arrays.conf
+
+# Sequential processing (sound)
+media-libs/chromaprint prefetch-loop-arrays.conf
+media-libs/faac prefetch-loop-arrays.conf
+media-libs/faad2 prefetch-loop-arrays.conf skipless.conf
+media-libs/flac prefetch-loop-arrays.conf skipless.conf
+media-libs/fdk-aac prefetch-loop-arrays.conf skipless.conf
+media-libs/libmad prefetch-loop-arrays.conf skipless.conf
+media-libs/libmodplug prefetch-loop-arrays.conf skipless.conf
+media-libs/libofa prefetch-loop-arrays.conf
+media-libs/libsamplerate prefetch-loop-arrays.conf
+media-libs/libsndfile prefetch-loop-arrays.conf skipless.conf
+media-libs/libsoundtouch prefetch-loop-arrays.conf
+media-libs/libvorbis prefetch-loop-arrays.conf skipless.conf
+media-libs/opus prefetch-loop-arrays.conf skipless.conf
+media-libs/soxr prefetch-loop-arrays.conf
+media-libs/speex prefetch-loop-arrays.conf skipless.conf
+media-libs/speexdsp prefetch-loop-arrays.conf
+media-libs/vo-aacenc prefetch-loop-arrays.conf
+media-libs/vo-amrwbenc prefetch-loop-arrays.conf
+media-sound/lame prefetch-loop-arrays.conf
+media-sound/mpg123 prefetch-loop-arrays.conf skipless.conf
+media-sound/toolame prefetch-loop-arrays.conf
+media-sound/twolame prefetch-loop-arrays.conf
+media-sound/wavpack prefetch-loop-arrays.conf skipless.conf
+sci-libs/fftw prefetch-loop-arrays.conf
+
+# Sequential processing (strings)
+sys-apps/grep prefetch-loop-arrays.conf
+
+# Sequential processing (compression)
+dev-libs/c-blosc prefetch-loop-arrays.conf
+dev-libs/lzo prefetch-loop-arrays.conf
+app-arch/arj prefetch-loop-arrays.conf
+app-arch/brotli prefetch-loop-arrays.conf
+app-arch/bzip2 prefetch-loop-arrays.conf
+app-arch/cabextract prefetch-loop-arrays.conf
+app-arch/cpio prefetch-loop-arrays.conf
+app-arch/gzip prefetch-loop-arrays.conf
+app-arch/lcab prefetch-loop-arrays.conf
+app-arch/lha prefetch-loop-arrays.conf
+app-arch/lrzip prefetch-loop-arrays.conf
+app-arch/lz4 prefetch-loop-arrays.conf
+app-arch/lz5 prefetch-loop-arrays.conf
+app-arch/lzip prefetch-loop-arrays.conf
+app-arch/lzma prefetch-loop-arrays.conf
+app-arch/lzop prefetch-loop-arrays.conf
+app-arch/ncompress prefetch-loop-arrays.conf
+app-arch/p7zip prefetch-loop-arrays.conf
+app-arch/pbzip2 prefetch-loop-arrays.conf
+app-arch/pigz prefetch-loop-arrays.conf
+#app-arch/rar # binary only ; rar format contains encryption support
+app-arch/snappy prefetch-loop-arrays.conf
+# app-arch/stormlib prefetch-loop-arrays.conf # not in use
+app-arch/tar prefetch-loop-arrays.conf
+app-arch/unace prefetch-loop-arrays.conf
+app-arch/unrar prefetch-loop-arrays.conf
+app-arch/unzip prefetch-loop-arrays.conf
+app-arch/xz-utils prefetch-loop-arrays.conf
+app-arch/zip prefetch-loop-arrays.conf
+app-arch/zopfli prefetch-loop-arrays.conf
+app-arch/zstd prefetch-loop-arrays.conf
+app-crypt/libb2 prefetch-loop-arrays.conf
+sys-libs/zlib prefetch-loop-arrays.conf
+
+# Optimize branching
+# This section is for monotaskers, requiring all CPU and IO resources and
+# no multitasking.
+media-libs/libaom stc.conf
+media-libs/libvpx stc.conf
+media-libs/x264 stc.conf
+media-video/ffmpeg stc.conf

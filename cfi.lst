@@ -1,0 +1,254 @@
+# Adding exceptions will increase the attack surface.
+# The minimal exception set or -fsanitize-ignore list must be used.
+# This list is incomplete.  It is implied that -fno-sanitize=icall
+# is added to packages with dlopen() present in any binary which bashrc
+# script adds due to the high build failure ratio.
+# TODO: Eliminate and convert [Err 6, Err 5, Err 8] into -fsanitize-ignorelist=
+app-arch/cpio no-cfi-icall.conf # Breaks unpacking with rpm2tar
+app-arch/zstd no-cfi-icall.conf # Configure time check problem [Err 6] when building dev-libs/mpc
+app-crypt/gpgme no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # Build time failures: [Err 1]
+app-crypt/rhash no-cfi-icall.conf # [Err 6] with whirlpool-hash --help
+app-portage/eix cfi-ignore-list.conf # Non-fatal [Err 5] eix-layman --help
+app-shells/bash no-cfi-icall.conf # Runtime problems [Err 6]
+app-text/qpdf no-cfi-cast.conf # [Err 5] with fix-qdf --help
+dev-dotnet/libgdiplus no-cfi-icall.conf # Build time [Err 1]
+dev-lang/vala no-cfi-icall.conf # Build time failure when building libsoup [Err 6]
+dev-libs/expat no-cfi-icall.conf # [Err 9] when starting firefox-bin
+dev-libs/fribidi no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/gmp no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # Build time failure [Err 3, Err 1]
+dev-libs/icu no-cfi-icall.conf no-cfi-nvcall.conf # Build time breakage.  Illegal instruction
+dev-libs/libaio no-cfi-icall.conf # Build time failures: [Err 2]
+dev-libs/libassuan no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/libatasmart no-cfi-icall.conf # Build time error [Err 1]
+dev-libs/libbsd no-cfi-icall.conf # Build time failures: [Err 2]
+#dev-libs/libev no-cfi-icall.conf # [Err 9] when building nghttp2 with CFI disabled
+dev-libs/libgcrypt no-cfi-icall.conf # Non fatal runtime error [Err 6] when starting keepassxc
+dev-libs/libgpg-error no-cfi-icall.conf # Build time [Err 9] when building dev-libs/libksba
+dev-libs/libinput no-cfi-icall.conf # Error when running startx [Err 6]
+dev-libs/libksba no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/libpcre2 no-cfi-icall.conf # [Err 9] with /usr/bin/vte-2.91 --help
+dev-libs/libpipeline no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/libsodium no-cfi-icall.conf  # [Err 9] when building with keepassxc without CFI.  Line removal possible with keepassxc with CFI.
+dev-libs/libunistring no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/libusb no-cfi-icall.conf # [Err 9] with gpsctl --help
+dev-libs/libxslt no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/libyaml no-cfi-icall.conf # [Err 9] when building dev-libs/appstream-glib without CFI
+dev-libs/lzo no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/mpc no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # [Err 9] during configure time test for gmp
+dev-libs/mpfr no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # [Err 9] during configure time test for gmp
+dev-libs/npth no-cfi-icall.conf # Segfaults gpg-agent (from gnupg) when building gpgme
+dev-libs/nettle no-cfi-icall.conf # Non-fatal runtime error [Err 6] in geany
+dev-libs/newt no-cfi-icall.conf # [Err 6] in nmtui
+dev-libs/oniguruma no-cfi-icall.conf # Build time failures: [Err 1]
+dev-libs/popt no-cfi-icall.conf # Non-fatal [Err 6] with rpmsign --help
+dev-python/cython no-cfi-icall.conf # Build time failure in dev-python/lxml [Err 12]
+dev-python/dbus-python no-cfi-icall.conf # [Err 9] with jack_control --help
+dev-python/lxml no-cfi-icall.conf # Build time failure while building elogind: [Err 6]
+dev-python/pygobject no-cfi-icall.conf # Build time failure [Err 6] while building networkmanager
+dev-util/ccache cfi-ignore-list.conf # Breaks during setup phase of other packages with [Err 5, Err 8].  To repair, you must disable ccache in FEATURES when re-emerging to avoid CFI error.
+dev-util/cppunit no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf # Build time failures: [Err 1, Err 3 when no-cfi-cast.conf removed]
+dev-util/geany no-cfi-icall.conf # Load time error [Err 6]
+dev-util/pkgconf no-cfi-icall.conf # Build time failures: [Err 1]
+dev-vcs/subversion no-cfi-icall.conf # Build time failures: [Err 1]
+gnome-base/gconf no-cfi-icall.conf # Build time failures: [Err 1]
+gnome-base/gnome-desktop no-cfi-icall.conf # Build time failures: [Err 6, Err 4 (non-fatal from libxfconf-0.so.3, libdbus-glib-1.so.2)]
+gnome-base/gnome-keyring no-cfi-icall.conf # Build time failures: [Err 1]
+gnome-base/libgnome-keyring no-cfi-icall.conf # Build time failures: [Err 1]
+gui-libs/libhandy no-cfi-icall.conf # Runtime failure [Err 6] with starting gnome-calculator
+media-libs/audiofile no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # Build time failure
+media-libs/flac no-cfi-icall.conf  # undefined symbol: __cfi_slowpath with pulseaudio -k, Breaks CEF
+media-libs/freetype no-cfi-icall.conf # Build time failures: [Err 1]
+media-libs/lcms no-cfi-icall.conf # Build time failures: [Err 1]
+media-libs/libaom no-cfi-icall.conf # Prevent Illegal instruction with /usr/bin/aomdec --help
+media-libs/libass no-cfi-icall.conf # Build time failures: [Err 1]
+media-libs/libexif no-cfi-icall.conf # [Err 9] when building eog
+media-libs/libjpeg-turbo no-cfi-icall.conf # Breaks precompiled CEF based apps.  Illegal instruction
+media-libs/libmms no-cfi-icall.conf # Build time failures: [Err 1]
+media-libs/libogg no-cfi-icall.conf # Breaks precompiled CEF based apps, alsa-plugins
+media-libs/libpng-compat cfi-ignore-list.conf # Build time failures: [Err 1]
+media-libs/libsndfile no-cfi-icall.conf # [Err 9] with pulseaudio -k when pulseaudio built without CFI.  Breaks YT audio with Firefox.
+media-libs/libvorbis no-cfi-icall.conf # Breaks playing yt in firefox-bin
+media-libs/libvpx no-cfi-icall.conf # Prevent illegal instruction with vpxenc --help
+media-libs/openusd cfi-ignore-list.conf # [Err 8] when starting blender.
+media-libs/opus cfi-ignore-list.conf # Build time failures: [Err 1]
+media-libs/speexdsp no-cfi-icall.conf # [Err 9] with pulseaudio -k when pulseaudio built without CFI.  Breaks audio on Firefox.
+media-gfx/nanovdb cfi-ignore-list.conf # [Err 5] with nanovdb_viewer without args.
+media-gfx/qrencode no-cfi-icall.conf # Build time failures: [Err 1]
+media-video/ffmpeg no-cfi-icall.conf # ffprobe problems
+net-dns/c-ares no-cfi-icall.conf # Non-fatal error [Err 6] with npx --help.  [Err 9] when building dev-games/enigma
+net-libs/libmnl no-cfi-icall.conf # Build time failures: [Err 1]
+net-libs/libndp no-cfi-icall.conf # Build time failures: [Err 1]
+net-libs/libnsl no-cfi-icall.conf # Build time failure [Err 9]
+net-libs/libtirpc no-cfi-icall.conf # Build time failures: [Err 1]
+net-libs/libtorrent no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # Build time failures: [Err 3]
+net-libs/nghttp2 no-cfi-icall.conf # Non-fatal error [Err 6] when running cef
+net-misc/curl no-cfi-icall.conf # Non-fatal error [Err 6] when running cef
+net-misc/networkmanager no-cfi-icall.conf # Build time failure [Err 6]
+sys-apps/apparmor cfi-ignore-list.conf # Runtime error [Err 8], invalid vtable
+sys-apps/dbus no-cfi-icall.conf # Non fatal runtime error [Err 6] when starting keepassxc
+sys-apps/file no-cfi-icall.conf # Build time failures: [Err 1]
+sys-apps/kmod no-cfi-icall.conf # Build time failure [Err 9]
+sys-apps/man-db no-cfi-icall.conf # Non-fatal error [Err 6] after closing "man emerge"
+sys-apps/pciutils no-cfi-icall.conf # Build time failure error: unable to execute command: Segmentation fault
+sys-apps/systemd-tmpfiles no-cfi-icall.conf # Non-fatal [Err 6] after installing sys-apps/man-db
+sys-apps/util-linux no-cfi-icall.conf # Build time failures: [Err 1]
+sys-devel/bison no-cfi-icall.conf # Build time error [Err 6] when building libxkbcommon
+sys-devel/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
+sys-devel/gettext no-cfi-icall.conf # Build time failures: [Err 1]
+sys-libs/db no-cfi-icall.conf # Build time failures: [Err 1]
+sys-libs/gdbm no-cfi-icall.conf # [Err 9] when building python
+sys-libs/libcxx no-cfi-icall.conf # Build time failures: Illegal instruction in icu package
+sys-libs/libseccomp no-cfi-icall.conf # Build time failures: [Err 1]
+sys-libs/libxcrypt no-cfi-icall.conf # Build time failure
+sys-libs/ncurses no-cfi-icall.conf # Non-fatal run time failure [Err 6] when pressing ctrl+c in less
+sys-libs/readline no-cfi-icall.conf # Should not close tab when ctrl+c is being used in xfce4-terminal
+sys-fs/udev no-cfi-icall.conf # Non-fatal error [Err 6] after emerging sys-apps/hwids
+# Run time failure [Err 9] /usr/libexec/udisks2/udisksd without args \
+sys-fs/udisks no-cfi-icall.conf # Build time failure: [Err 1]
+sys-process/audit no-cfi-icall.conf # Build time failures: [Err 1]
+x11-drivers/xf86-video-amdgpu no-cfi-icall.conf # Build time failures: [Err 1]
+x11-drivers/xf86-video-dummy cfi-ignore-list.conf # Build time failures: [Err 1]
+x11-libs/libfontenc no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libICE no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libSM no-cfi-icall.conf # Runtime error [Err 9] when starting xterm
+x11-libs/libXaw no-cfi-icall.conf # Runtime error [Err 9] when starting xterm
+x11-libs/libXcursor no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXext no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXfont2 no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXft no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXinerama no-cfi-icall.conf # [Err 9] with openbox --help
+x11-libs/libxkbfile no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXmu no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXpm no-cfi-icall.conf # Build time failures: [Err 1]
+x11-libs/libXres no-cfi-icall.conf # [Err 9] with xfwm4-workspace-settings --help
+x11-libs/libXt no-cfi-icall.conf # Build error [Err 9] when building xterm
+x11-libs/libXtst no-cfi-icall.conf # [Err 9] with steam.  testing
+x11-libs/libXv no-cfi-icall.conf # [Err 9] with xvinfo --help
+x11-libs/libXxf86vm no-cfi-icall.conf # [Err 9] with xdpyinfo --help
+x11-libs/xcb-util-renderutil no-cfi-icall.conf # [Err 9] when building dev-qt/qtgui
+x11-themes/gtk-engines-adwaita no-cfi-icall.conf # Build time failures: [Err 1]
+x11-themes/gtk-engines-murrine no-cfi-icall.conf # Build time failures: [Err 1]
+xfce-base/garcon no-cfi-icall.conf # [Err 9] with xfce4-appfinder --help
+xfce-base/libxfce4ui no-cfi-icall.conf # [Err 9] xfwm4-tweaks-settings --help.  Build time failure when building xfce-base/xfwm4.
+xfce-base/libxfce4util no-cfi-canonical-jump-tables.conf # Build time failure: [Err 11]
+
+# Split group because some may be non-fatal depending on config and use case if disabled line.
+dev-libs/dbus-glib no-cfi-icall.conf # firefox-bin: [Err 9 (fatal)]
+media-libs/fontconfig no-cfi-icall.conf # firefox-bin: [Err 9 (fatal)]
+x11-libs/libxcb no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXcomposite no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXdamage no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXfixes no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXi no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXrandr no-cfi-icall.conf # CEF, firefox-bin: [Err 6 (non-fatal), Err 9 (fatal)]
+x11-libs/libXrender no-cfi-icall.conf # firefox-bin: [Err 6 (non-fatal), Err 4 (fatal), Err 9 (fatal)]
+x11-libs/libXScrnSaver no-cfi-icall.conf # firefox-bin: [Err 6 (non-fatal)]
+xfce-base/xfconf no-cfi-icall.conf # firefox-bin: [Err 9 (non-fatal)]
+
+# [Err 1]: lto-llvm-[a-z0-9]+.o: relocation .* against hidden symbol `__typeid__.*_align' can not be used when making a shared object
+# [Err 2]: ld.lld: error: <inline asm>:[0-9]+:[0-9]+: default version symbol .* must be defined
+# [Err 3]: ld-temp.o:(.text.startup+0x20): undefined reference to `__dso_handle'
+#	   lto-llvm-[a-z0-9]+.o: relocation .* against undefined hidden symbol `__dso_handle' can not be used when making a shared object
+# [Err 4]: # undefined symbol: __ubsan_handle_cfi_check_fail_abort
+# [Err 5]: runtime error: control flow integrity check for type '.*' failed during cast to unrelated type (vtable address 0x[0-9a-z]+)
+# [Err 6]: runtime error: control flow integrity check for type '.*' failed during indirect function call
+# [Err 7]: ==558==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
+# [Err 8]: control flow integrity check for type '.*' failed during non-virtual call (vtable address 0x[0-9a-z]+)
+# [Err 9]: undefined symbol: __cfi_slowpath_diag
+# [Err 10]: undefined symbol: __ubsan_handle_type_mismatch_v1_abort
+# [Err 11]: .*.c:83:1: runtime error: control flow integrity check for type '.*' failed during indirect function call
+#	    AND
+#	    (/usr/lib.*/.*.so.*\+[0-9a-z]+): note: .* defined here
+# [Err 12]: runtime error: control flow integrity check for type '.*' failed during indirect function call
+#	    AND
+#	    (/usr/lib/python.*/site-packages/.*.so+0x[0-9a-z]+): note: (unknown) defined here
+# [Err 13]: CFI: CHECK failed: cfi.cpp:311 "((0)) == ((GetShadow()))" (0x0, 0x7f80f06ce000) (tid=5959)
+
+# Disable Clang CFI Cross-DSO
+# Anything that breaks CFI bootstrapping or clang live ebuilds should go here so
+# it doesn't bork the system or toolchain.
+# Packages that use g-ir-scanner (from gobject-introspection) may have to have disable-clang-cfi.conf
+app-accessibility/at-spi2-atk disable-clang-cfi.conf # Breaks chrome [Err 7]
+app-accessibility/at-spi2-core disable-clang-cfi.conf # Build time failure: [Err 7]
+app-admin/keepassxc disable-clang-cfi.conf # Ebuild strips -flto, [Err 3, Err 9]
+app-admin/sudo disable-clang-cfi.conf # [Err 13] with sudo echo
+app-arch/zstd disable-clang-cfi.conf # IMPORTANT:  Emerge isl without CFI first.  [Err 7] when building the linux kernel 4.14 with gcc
+app-crypt/argon2 disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+app-i18n/uchardet disable-clang-cfi.conf # Breaks mpv [Err 7]
+app-misc/geoclue disable-clang-cfi.conf # Build time error [Err 7]
+app-text/poppler disable-clang-cfi.conf # Build time failure [Err 7]
+=dev-cpp/tbb-2021* disable-clang-cfi.conf # [Err 7] when starting blender.
+dev-games/enigma disable-clang-cfi.conf # Build does not add additional CFLAGs
+dev-lang/perl disable-clang-cfi.conf # Build time failure [Err 13]
+dev-lang/python disable-clang-cfi.conf # Build time error [Err 13].
+dev-libs/appstream-glib disable-clang-cfi.conf # [Err 13] with appstream-builder
+dev-libs/atk disable-clang-cfi.conf # Build time failures [Err 7]
+dev-libs/glib disable-clang-cfi.conf # Build time failures in gobject-introspection [Err 7]
+dev-libs/gobject-introspection disable-clang-cfi.conf # Build time failure: [Err 7, Err 4]
+dev-libs/fribidi disable-clang-cfi.conf # [Err 7] with g-ir-scanner when building x11-libs/gtksourceview
+dev-libs/icu disable-clang-cfi.conf # Build time failure [Err 7] when building vte
+dev-libs/json-glib disable-clang-cfi.conf # Build time failures [Err 7]
+dev-libs/libnl disable-clang-cfi.conf # Breaks all linkers and wpa_supplicant, Build time failures: [Err 1]
+dev-libs/libpeas disable-clang-cfi.conf # Build time error [Err 7]
+dev-libs/nspr disable-clang-cfi.conf # Breaks chrome [Err 7]
+dev-libs/nss disable-clang-cfi.conf # Broken build time [Err 7]
+dev-libs/wayland disable-clang-cfi.conf # Runtime error [Err 7] with obs-studio
+dev-qt/qtconcurrent disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+dev-qt/qtdbus disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+dev-qt/qtnetwork disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+dev-qt/qtsvg disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+dev-qt/qtwidgets disable-clang-cfi.conf # Breaks keepassxc [Err 7]
+dev-qt/qtxml disable-clang-cfi.conf # Runtime error [Err 7] with obs-studio
+dev-util/vulkan-tools disable-clang-cfi.conf # Runtime error [Err 13] with *-pc-linux-gnu-vulkaninfo
+gnome-base/gvfs disable-clang-cfi.conf # [Err 7] with gvfsd-dav --help
+media-gfx/eog disable-clang-cfi.conf # Build time error [Err 7, Err 4]
+media-gfx/graphite2 disable-clang-cfi.conf # Build time failure when building harfbuzz [Err 7].  Line removal conditioned on the existence of media-libs/harfbuzz line
+media-libs/gst-plugins-bad disable-clang-cfi.conf # Build time failure [Err 7]
+media-libs/gst-plugins-base disable-clang-cfi.conf # Build time failure [Err 7]
+media-libs/gstreamer disable-clang-cfi.conf # Build time failure [Err 7]
+media-libs/harfbuzz disable-clang-cfi.conf # Build time failure [Err 7] # Non fatal errors from dev-libs/dbus-glib and xfce-base/xfconf.
+media-libs/libepoxy disable-clang-cfi.conf # Breaks gtk+ during build time [Err 7]
+media-libs/libglvnd disable-clang-cfi.conf # Causes segfault when starting startx and mpv
+media-libs/mesa disable-clang-cfi.conf # Runtime error when running startx [Err 13]
+media-libs/openal disable-clang-cfi.conf # Runtime failure [Err 7] with openal-info --version
+media-libs/openusd disable-clang-cfi.conf # [Err 7] with sdfdump --help
+media-libs/vulkan-loader disable-clang-cfi.conf # [Err 7] when running vkcube
+media-libs/webrtc-audio-processing disable-clang-cfi.conf # [Err 9] when building pulseaudio.  Line removal depends on pulseaudio with disabled CFI
+media-plugins/alsa-plugins disable-clang-cfi.conf # [Err 9] when building
+media-sound/pulseaudio disable-clang-cfi.conf # Breaks YT sound on Firefox with with UBSan
+media-video/obs-studio disable-clang-cfi.conf # Runtime error [Err 7]
+net-libs/cef-bin disable-clang-cfi.conf # CFI Cross-DSO breaks with [Err 7] with cefsimple, cefclient
+net-libs/libproxy disable-clang-cfi.conf # [Err 13] with proxy --help
+net-libs/libsoup disable-clang-cfi.conf # Build time failure [Err 7, Err 4]
+net-misc/dhcpcd disable-clang-cfi.conf # Runtime failure [Err 13]
+net-misc/rsync disable-clang-cfi.conf # Configure time failure: error: Failed to find ACL support ; \
+# Build time failure:  main.c:247:32: error: a function declaration without a prototype is deprecated in all versions of C
+net-print/cups disable-clang-cfi.conf # Breaks chrome [Err 7]
+sys-apps/openrc disable-clang-cfi.conf # [Err 7] when running xpra proxy
+sys-auth/elogind disable-clang-cfi.conf # Build time failure
+sys-fs/e2fsprogs disable-clang-cfi.conf # [Err 7] with /sbin/debugfs
+sys-libs/e2fsprogs-libs disable-clang-cfi.conf # [Err 7] with ktutil --help
+sys-libs/efivar disable-clang-cfi.conf # [Err 7] with authvar (from pesign)
+sys-libs/libcap disable-clang-cfi.conf # [Err 7] with starting pulseaudio without args
+sys-libs/libomp disable-clang-cfi.conf # Build time failure
+sys-libs/libutempter disable-clang-cfi.conf # Runtime error [Err 7] when starting xterm
+sys-libs/ncurses disable-clang-cfi.conf # Breaks when starting top [Err 7]
+sys-libs/readline disable-clang-cfi.conf # [Err 7] with gdb --help
+sys-libs/zlib use-gcc.conf disable-clang-cfi.conf # breaks pngfix,  Prevents loading of precompiled www browser
+www-client/firefox disable-clang-cfi.conf # clang-13: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+x11-libs/gdk-pixbuf disable-clang-cfi.conf # Build time breakage with [Err 7]
+x11-libs/gtksourceview disable-clang-cfi.conf # Build time error [Err 7]
+x11-libs/libdrm disable-clang-cfi.conf # Error when running startx [Err 7]
+x11-libs/libva disable-clang-cfi.conf # [Err 7] when running mpv
+x11-libs/libvdpau disable-clang-cfi.conf # [Err 7] with vdpauinfo
+x11-libs/libX11 disable-clang-cfi.conf # Causes segfault when using startx
+x11-libs/libxcvt disable-clang-cfi.conf # Runtime error [Err 7] when running Xorg
+x11-libs/pango disable-clang-cfi.conf # Build time error [Err 7]
+x11-libs/pixman disable-clang-cfi.conf # [Err 7] when running xorg
+x11-libs/vte disable-clang-cfi.conf # Build time error [Err 7].
+x11-terms/xterm disable-clang-cfi.conf # Runtime error [Err 7]
+
+# Binary only packages.  The libs may use CFI Basic mode instead of CFI Cross-DSO mode.
+media-sound/spotify disable-cfi-verify.conf
+media-video/obs-studio disable-cfi-verify.conf # uses cef-bin parts
+www-client/google-chrome disable-cfi-verify.conf

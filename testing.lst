@@ -1,0 +1,4 @@
+# Testing (Flags are in testing or not final)
+# If blender fails, uncomment the entire group below.
+# CFIed blender hasn't been tested yet.
+#media-gfx/blender use-clang.conf remove-lto.conf disable-clang-cfi.conf # [Err 7] still in dependencies while disable-clang-cfi.conf is applied to the blender package
