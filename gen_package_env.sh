@@ -191,7 +191,7 @@ header() {
 	fi
 }
 
-gen_static_package_env() {
+gen_package_env() {
 	echo
 	echo "Generating package.env"
 	echo
@@ -209,6 +209,12 @@ gen_static_package_env() {
 		# Search only downloaded
 		gen_ssa_autosanitize_list_v1
 	fi
+	gen_math_list
+	gen_linear_math_list
+	gen_opengl_list
+	gen_asm_list
+	gen_simd_list
+#	gen_crypto_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env
@@ -233,13 +239,7 @@ main()
 	return
 	header
 	autofetch_tarballs
-	gen_static_package_env
-	gen_math_list
-	gen_linear_math_list
-	gen_opengl_list
-	gen_asm_list
-	gen_simd_list
-#	gen_crypto_list
+	gen_package_env
 	footer
 }
 
