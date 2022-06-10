@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DISTDIR=${DISTDIR:-"/var/cache/distfiles"}
-CRYPTO_CHEAP_OPT_CFG=${CRYPTO_CHEAP_OPT_CFG:-"O1.conf"}
-CRYPTO_EXPENSIVE_OPT_CFG=${CRYPTO_EXPENSIVE_OPT_CFG:-"O3.conf"}
-CRYPTO_ASYM_OPT_CFG=${CRYPTO_ASYM_OPT_CFG:-"Ofast-ts.conf"} # Based on benchmarks, expensive
+CRYPTO_CHEAP_OPT_CFG="${CRYPTO_CHEAP_OPT_CFG:-O1.conf}"
+CRYPTO_EXPENSIVE_OPT_CFG="${CRYPTO_EXPENSIVE_OPT_CFG:-O3.conf}"
+CRYPTO_ASYM_OPT_CFG="${CRYPTO_ASYM_OPT_CFG:-Ofast-ts.conf}" # Based on benchmarks, expensive
+DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 EXPENSIVE_ALGS=(
 	25519
 	"curve.*25519"
@@ -20,20 +20,44 @@ EXPENSIVE_ALGS=(
 	# number of rounds is very large
 	sha3
 )
+LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
+WOPT=${WOPT:-"20"}
+WPKG=${WPKG:-"50"}
+PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
 
-gen_pn() {
-	local path="${1}"
-	local pn
-	pn=$(basename "${path}")
-	pn="${pn,,}"
-	pn=$(echo "${pn}" | sed -r -e "s/tzdata/timezone-data-/g")
-	pn=$(echo "${pn}" | sed -r -e "s/tzcode/timezone-data-/g")
-	pn=$(echo "${pn}" | sed -r -e "s/(\.|_|-)v?[0-9].*//g")
-	pn=$(echo "${pn}" | sed -r -e "s/[0-9]+\.(tar.*|zip)//g")
-	pn=$(echo "${pn}" | sed -r -e "s/-everywhere-opensource-src(-|)//g")
-	pn=$(echo "${pn}" | sed -r -e "s/\./-/g")
-	pn=$(echo "${pn}" | sed -r -e "s/bin_x86/bin/g")
-	echo "${pn}"
+get_path_pkg_idx() {
+	local manifest_path="${1}"
+	echo $(ls "${manifest_path}" | grep -o -e "/" | wc -l)
+}
+
+gen_overlay_paths() {
+	local _overlay_paths=(
+		${PORTAGE_DIR}
+		/usr/local/oiledmachine-overlay
+		$(find "${LAYMAN_BASEDIR}" -maxdepth 1 -type d -name "profiles" -o -name "metadata" \
+			| sed -r -e "s/(metadata|profiles)//g" \
+			| sed -e "s|/$||g" \
+			| sort \
+			| uniq)
+	)
+	export OVERLAY_PATHS="${_overlay_paths[@]}"
+}
+
+get_pn() {
+	local tarball_path="${1}"
+	for op in ${OVERLAY_PATHS[@]} ; do
+		for path_manifest in $(find "${op}" -name "Manifest") ; do
+			if grep "${tarball_path}" "${path_manifest}" ; then
+				local tarball_fn=$(basename "${path_manifest}")
+				local idx_pn=$(get_path_pkg_idx "${path}")
+				local pn=$(grep -l "${pn}" "${path_manifest}" | cut -f ${idx_pn} -d "/")
+				if [[ -n "${pn}" ]] ; then
+					echo "${pn}"
+					return
+				fi
+			fi
+		done
+	done
 }
 
 has_single_dh() {
@@ -56,6 +80,7 @@ has_expensive_crypto() {
 }
 
 search() {
+	gen_overlay_paths
 	local asym_algs=(
 		25519
 		"curve.*25519"
@@ -124,7 +149,7 @@ search() {
 		if echo "${paths[@]}" \
 			| grep -i -E -q -e "(${alg_s}).*(\.c|\.cpp|\.cxx|\.h|\.hxx)"
 		then
-			found+=("${x}")
+			found+=("${x}") # tarball path
 			local s=""
 			for a in ${algs[@]} ; do
 				if echo -e "${paths[@]}" \
@@ -138,7 +163,7 @@ search() {
 		if echo "${paths[@]}" \
 			| grep -i -E -q -e "(${asym_alg_s}).*(\.c|\.cpp|\.cxx|\.h|\.hxx)"
 		then
-			found_asym+=("${x}")
+			found_asym+=("${x}") # tarball path
 			local s=""
 			for a in ${asym_algs[@]} ; do
 				if echo -e "${paths[@]}" \
@@ -151,15 +176,15 @@ search() {
 		fi
 	done
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
-		local pn=$(gen_pn "${x}")
+		local pn=$(get_pn "${x}")
 		local hc=$(echo "${x}" | sha1sum | cut -f 1 -d " ")
 		if (( ${#asym_cryptlst[${hc}]} > 0 )) ; then
 			has_single_dh && return
-			printf "%-3s%-10s %s\n" "*/${pn}" "${CRYPTO_ASYM_OPT_CFG}" "# Contains ${asym_cryptlst[${hc}]} (expensive)"
+			printf "%-${WPKG}s%-${WOPT}s %s\n" "*/${pn}" "${CRYPTO_ASYM_OPT_CFG}" "# Contains ${asym_cryptlst[${hc}]} (expensive)"
 		elif (( ${#cryptlst[${hc}]} > 0 )) && has_expensive_crypto "${#cryptlst[${hc}]}" ; then
-			printf "%-30s%-10s %s\n" "*/${pn}" "${CRYPTO_EXPENSIVE_OPT_CFG}" "# Contains ${cryptlst[${hc}]} (expensive)"
+			printf "%-${WPKG}s%-${WOPT}s %s\n" "*/${pn}" "${CRYPTO_EXPENSIVE_OPT_CFG}" "# Contains ${cryptlst[${hc}]} (expensive)"
 		elif (( ${#cryptlst[${hc}]} > 0 )) ; then
-			printf "%-30s%-10s %s\n" "*/${pn}" "${CRYPTO_CHEAP_OPT_CFG}" "# Contains ${cryptlst[${hc}]} (cheap)"
+			printf "%-${WPKG}s%-${WOPT}s %s\n" "*/${pn}" "${CRYPTO_CHEAP_OPT_CFG}" "# Contains ${cryptlst[${hc}]} (cheap)"
 		fi
 	done
 }
