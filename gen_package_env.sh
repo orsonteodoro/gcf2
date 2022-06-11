@@ -328,12 +328,12 @@ gen_package_env() {
 
 #	gen_ssa_opt_list
 #	gen_float_math_list
-	gen_linear_math_list
-	gen_opengl_list
-	gen_asm_list
-	gen_simd_list
-#	gen_crypto_list
-	gen_loc_list
+#	gen_linear_math_list
+#	gen_opengl_list
+#	gen_asm_list
+#	gen_simd_list
+	gen_crypto_list
+#	gen_loc_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env

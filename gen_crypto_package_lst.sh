@@ -12,8 +12,8 @@ CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expen
 DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 EXPENSIVE_ALGS=(
 	25519
-	"curve[^1259]+25519"
-	"curve[^48]+448"
+	"curve[^0-9]*25519"
+	"curve[^0-9]*448"
 	dh
 	dsa
 	elgamal
@@ -119,8 +119,8 @@ search() {
 	gen_tarball_to_p_dict
 	local asym_algs=(
 		25519
-		"curve[^1259]+25519"
-		"curve[^48]+448"
+		"curve[^0-9]*25519"
+		"curve[^0-9]*448"
 		dh
 		dsa
 		"ec(dsa|dh|rdsa)"
@@ -137,11 +137,11 @@ search() {
 		argon2
 		"blake(|2|2b|2s)"
 		camellia
-		"cast[^12568]+(5|6|128|256)"
+		"cast[^0-9]*(5|6|128|256)"
 		"chacha(|8|12|20)"
 		"crypt(|o)"
-		"curve[^1259]+25519"
-		"curve[^48]+448"
+		"curve[^0-9]*25519"
+		"curve[^0-9]*448"
 		des
 		dh
 		dsa
@@ -156,7 +156,7 @@ search() {
 		rc6
 		rijndael
 		ripemd
-		"rmd[^0123568]+(128|160|256|320)"
+		"rmd[^0-9]*(128|160|256|320)"
 		rsa
 		"(|x)salsa(|20)"
 		seed
