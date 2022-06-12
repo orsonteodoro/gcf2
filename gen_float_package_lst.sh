@@ -42,7 +42,7 @@ get_cat_p() {
 # This is very expensive to do a lookup
 gen_tarball_to_p_dict() {
 	unset A_TO_P
-	declare -Ax A_TO_P
+	declare -Ag A_TO_P
 	local cache_path="${DIR_SCRIPT}/a_to_p.cache"
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
@@ -68,9 +68,12 @@ gen_tarball_to_p_dict() {
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			grep -q -e "DIST" "${path}" || continue
-			local a=$(grep -e "DIST" "${path}" | cut -f 2 -d " ")
-			local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
-			A_TO_P[${hc}]="${cat_p}"
+			local line
+			for line in $(grep -e "DIST" "${path}") ; do
+				local a=$(echo "${line}" | cut -f 2 -d " ")
+				local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
+				A_TO_P[${hc}]="${cat_p}"
+			done
 		done
 	done
 	# Pickle it
@@ -94,8 +97,9 @@ search() {
 		fi
 		echo "Processing ${x}"
 		local paths
-		[[ "${x}" =~ "zip"$ ]] && paths=($(unzip -l "${x}" | sed -r -e "s|[0-9]{2}:[0-9]{2}   |;|g" | grep ";" | cut -f 2 -d ";" 2>/dev/null))
+		[[ "${x}" =~ "zip"$ ]] && paths=($(unzip -l "${x}" | sed -r -e "s|[0-9]{2}:[0-9]{2}[ ]+|;|g" | grep ";" | cut -f 2 -d ";" 2>/dev/null))
 		[[ "${x}" =~ "tar" ]] && paths=($(tar -tf "${x}" 2>/dev/null))
+		[[ "${x}" =~ "__download__" ]] && continue
 		for fpath in ${paths[@]} ; do
 			[[ "${fpath}" =~ (\.c|\.cpp|\.C|\.h)$ ]] || continue
 			if [[ "${x}" =~ "tar" ]] && tar -xOf "${x}" "${fpath}" | grep -i -q -E -e "(float|double)" ; then

@@ -326,14 +326,14 @@ gen_package_env() {
 
 	cat package_env-header.txt >> package.env
 
-#	gen_ssa_opt_list
-#	gen_float_math_list
-#	gen_linear_math_list
-#	gen_opengl_list
-#	gen_asm_list
-#	gen_simd_list
+	gen_ssa_opt_list
+	gen_float_math_list
+	gen_linear_math_list
+	gen_opengl_list
+	gen_asm_list
+	gen_simd_list
 	gen_crypto_list
-#	gen_loc_list
+	gen_loc_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env
@@ -380,7 +380,7 @@ gen_overlay_paths() {
 # This is very expensive to do a lookup
 gen_tarball_to_p_dict() {
 	unset A_TO_P
-	declare -Ax A_TO_P
+	declare -Ag A_TO_P
 	local cache_path="${DIR_SCRIPT}/a_to_p.cache"
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
@@ -406,9 +406,12 @@ gen_tarball_to_p_dict() {
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			grep -q -e "DIST" "${path}" || continue
-			local a=$(grep -e "DIST" "${path}" | cut -f 2 -d " ")
-			local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
-			A_TO_P[${hc}]="${cat_p}"
+			local line
+			for line in $(grep -e "DIST" "${path}") ; do
+				local a=$(echo "${line}" | cut -f 2 -d " ")
+				local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
+				A_TO_P[${hc}]="${cat_p}"
+			done
 		done
 	done
 	# Pickle it
