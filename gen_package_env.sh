@@ -11,14 +11,14 @@ ARGV="${@}"
 export ASM_OPT="O3.conf"
 export ARCHIVES_AUTOFETCH=1 # Also called tarballs
 export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
-export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
-#export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-1000000}
+#export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
+export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-1000000}
 export CODE_PCT="0.3882814715311033" # Average among small sample
 export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
 export CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
 export DATA_COMPRESSION_RATIO="6.562980063720293" # average among small sample ; DATA_COMPRESSION_RATIO = UNCOMPRESSED_SIZE / COMPRESSED_SIZE
-export DEVELOPER_MODE="1"
+export MAINTENANCE_MODE="1"
 export DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 export FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
 export FMATH_UNSAFE_CFG="${FMATH_UNSAFE_CFG:-no-fast-math.conf}"
@@ -341,14 +341,14 @@ gen_package_env() {
 
 	cat package_env-header.txt >> package.env
 
-#	gen_ssa_opt_list
+	gen_ssa_opt_list
 	gen_float_math_list
-#	gen_linear_math_list
-#	gen_opengl_list
-#	gen_asm_list
-#	gen_simd_list
-#	gen_crypto_list
-#	gen_loc_list
+	gen_linear_math_list
+	gen_opengl_list
+	gen_asm_list
+	gen_simd_list
+	gen_crypto_list
+	gen_loc_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env
@@ -450,7 +450,7 @@ gen_tarball_to_p_dict() {
 
 main()
 {
-	if [[ "${DEVELOPER_MODE}" != "1" ]] ; then
+	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
 		echo "${SCRIPT_NAME} is under construction"
 		echo "Do not use yet!"
 		return
