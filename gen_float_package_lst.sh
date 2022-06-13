@@ -112,24 +112,24 @@ search() {
 	echo -n "" > package.env.t
 
 	local op="[\[\]<>=()+\\%-]"
-	local m="([${op}]|[\s])"
-	local fcast="[\s)]*\((float|double)\)[\s)]*"
+	local m="([${op}]|[[:space:]])"
+	local fcast="[[:space:])]*\((float|double)\)[[:space:])]*"
 
-	local fz="[(\s]*(0[.0]*e[+-]*[0]+[fFlL]?|0\.[0]+[fFlL]?)[\s)]*"
-	local id="[(\s]*[a-zA-Z_][a-zA-Z0-9_]*[)\s]*"
+	local fz="[([:space:]]*(0[.0]*e[+-]*[0]+[fFlL]?|0\.[0]+[fFlL]?)[[:space:])]*"
+	local id="[([:space:]]*[a-zA-Z_][a-zA-Z0-9_]*[)[:space:]]*"
 
 #		"(\u221E|\\u221E|\u221e|\\u221e)" # infinity symbol
 #		"(\U0000221E|\\U0000221E|\U0000221e|\\U0000221e)" # infinity symbol
 	local infinite=(
 		"${m}NAN${m}"
-		"${m}nan(|l|f)[\s]*\("
+		"${m}nan(|l|f)[[:space:]]*\("
 
 		# Possible NaN
 		"${m}${fz}${m}*/${m}*${id}${m}"
 		"${m}${fcast}${fz}${m}/${m}*${id}${m}"
 
 		"${m}INFINITY${m}"
-		"infinity[\s]*\("
+		"infinity[[:space:]]*\("
 
 	)
 	local infinite_s=$(echo "${infinite[@]}" | tr " " "|")
@@ -159,23 +159,28 @@ search() {
 	local signed_zeros_s=$(echo "${signed_zeros[@]}" | tr " " "|")
 
 	local trapping_math=(
-		"signal.*SIGFPE${m}"
+		"signal[[:space:]]*\([[:space:]]*SIGFPE${m}"
 	)
 	local trapping_math_s=$(echo "${trapping_math[@]}" | tr " " "|")
 
 	local errno_fns=(
-		"${m}expf[\s]*\("
-		"${m}exp2f[\s]*\("
-		"${m}exp10f[\s]*\("
-		"${m}pow[\s]*\("
-		"${m}powf[\s]*\("
-		"${m}sincosf[\s]*\("
+		"${m}expf[[:space:]]*\("
+		"${m}exp2f[[:space:]]*\("
+		"${m}exp10f[[:space:]]*\("
+		"${m}pow[[:space:]]*\("
+		"${m}powf[[:space:]]*\("
+		"${m}sincosf[[:space:]]*\("
 
 		# Not required if using sse2?
-		"${m}sinf[\s]*\("
-		"${m}cosf[\s]*\("
+		"${m}sinf[[:space:]]*\("
+		"${m}cosf[[:space:]]*\("
 	)
 	local errno_fns_s=$(echo "${errno_fns[@]}" | tr " " "|")
+
+	local unsafe_math=(
+		# TODO
+	)
+	local unsafe_math_s=$(echo "${unsafe_math[@]}" | tr " " "|")
 
 	unset fprop # Package float properities
 	declare -A fprop
@@ -185,10 +190,12 @@ echo
 echo "Found violation for -ffast-math in ${x} for ${assumed_violation}"
 echo "This has been fixed with ${solution}"
 echo
+		if [[ -n "${regex_s}" ]] ; then
 echo "Context:"
 echo
 cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep --color=always -E -z -e "(${regex_s})"
 echo
+		fi
 	}
 
 	for x in $(find "${DISTDIR}" -maxdepth 1 -type f \( -name "*tar.*" -o -name "*.zip" \)) ; do
@@ -290,6 +297,15 @@ echo
 			[[ "${fprop[${cat_p}]}" =~ "${TRAPPING_MATH_ON_CFG}" ]] \
 				|| fprop["${cat_p}"]+=" ${TRAPPING_MATH_ON_CFG}"
 			msg_fast_math_violation
+		fi
+
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${unsafe_math_s})" ; then
+			assumed_violation="-funsafe-math-optimizations"
+			solution="-fno-unsafe-math-optimizations"
+			regex_s="${trapping_math_s}"
+			#[[ "${fprop[${cat_p}]}" =~ "${UNSAFE_MATH_OPT_OFF_CFG}" ]] \
+			#	|| fprop["${cat_p}"]+=" ${UNSAFE_MATH_OPT_OFF_CFG}"
+			#msg_fast_math_violation
 		fi
 	done
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
