@@ -243,7 +243,7 @@ echo
 			solution="-ferrno-math"
 			regex_s="${errno_fns_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${ERRNO_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${ERRNO_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${ERRNO_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -252,7 +252,7 @@ echo
 			solution="-fno-finite-math-only"
 			regex_s="${infinite_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${INFINITE_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${INFINITE_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${INFINITE_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -261,7 +261,7 @@ echo
 			solution="-frounding-math"
 			regex_s="${rounding_math_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${ROUNDING_MATH_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${ROUNDING_MATH_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${ROUNDING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -270,7 +270,7 @@ echo
 			solution="-fsignaling-nans"
 			regex_s="${signaling_nans_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${SIGNALING_NANS_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${SIGNALING_NANS_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${SIGNALING_NANS_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -279,7 +279,7 @@ echo
 			solution="-fsigned-zeros"
 			regex_s="${signed_zeros_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${SIGNED_ZEROS_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${SIGNED_ZEROS_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${SIGNED_ZEROS_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -288,7 +288,7 @@ echo
 			solution="-ftrapping-math"
 			regex_s="${trapping_math_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${TRAPPING_MATH_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]=" ${TRAPPING_MATH_ON_CFG}"
+				|| fprop["${cat_p}"]+=" ${TRAPPING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
 	done
