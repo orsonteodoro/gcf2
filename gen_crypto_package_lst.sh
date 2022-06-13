@@ -179,8 +179,20 @@ gen_tarball_to_p_dict() {
 			done
 		done
 	done
-	# Pickle it
+	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
+	sed -i -e "s|declare -A |declare -Ag |g" "${cache_path}"
+}
+
+is_pkg_skippable() {
+	[[ "${cat_p}" =~ "-bin"$ ]] && return 0
+	[[ "${cat_p}" =~ "-data"$ ]] && return 0
+	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
+	[[ "${cat_p}" =~ "firmware" ]] && return 0
+	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_p}" =~ "virtual/" ]] && return 0
+	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
+	return 1
 }
 
 search() {
@@ -195,11 +207,15 @@ search() {
 	local x
 	echo -n "" > package.env.t
 	for x in $(find "${DISTDIR}" -maxdepth 1 -type f \( -name "*tar.*" -o -name "*.zip" \)) ; do
+		[[ "${x}" =~ "__download__" ]] && continue
+		[[ "${x}" =~ ".portage_lockfile" ]] && continue
+		local cat_p=$(get_cat_p "${x}")
+		is_pkg_skippable && continue
 		echo "S1: Processing ${x}"
 		if [[ "${ARCHIVES_SKIP_LARGE}" == "1" ]] \
 			&& (( $(stat -c "%s" ${x} ) >= ${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE} )) ; then
 			echo "[warn : search crypto] Skipped large tarball for ${x}"
-			local cat_p=$(get_cat_p "${x}")
+			[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
 			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "# skipped" "# Reason: Large tarball" >> package.env.t
 			continue
 		fi
@@ -208,9 +224,8 @@ search() {
 		local paths
 		[[ "${x}" =~ "zip"$ ]] && paths=($(unzip -l "${x}" | sed -r -e "s|[0-9]{2}:[0-9]{2}[ ]+|;|g" | grep ";" | cut -f 2 -d ";" 2>/dev/null))
 		[[ "${x}" =~ "tar" ]] && paths=($(tar -tf "${x}" 2>/dev/null))
-		[[ "${x}" =~ "__download__" ]] && continue
 		if echo "${paths[@]}" \
-			| grep -i -E -q -e "[/](${algs_s}).*(\.c|\.cpp|\.cxx|\.h|\.hxx)($| |\n)"
+			| grep -i -E -q -e "[/](${algs_s}).*(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)($| |\n)"
 		then
 			found+=("${x}") # tarball path
 			local s=""
@@ -227,6 +242,7 @@ search() {
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
 		echo "S2: Processing ${x}"
 		local cat_p=$(get_cat_p "${x}")
+		[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
 		local a=$(basename "${x}")
 		local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
 		local s="${cryptlst[${hc}]}"

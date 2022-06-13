@@ -8,6 +8,40 @@ SCRIPT_NAME=$(basename "$0")
 DIR_SCRIPT=$(dirname "$0")
 ARGV="${@}"
 
+export ASM_OPT="O3.conf"
+export ARCHIVES_AUTOFETCH=1 # Also called tarballs
+export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
+export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
+#export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-1000000}
+export CODE_PCT="0.3882814715311033" # Average among small sample
+export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
+export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
+export CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
+export DATA_COMPRESSION_RATIO="6.562980063720293" # average among small sample ; DATA_COMPRESSION_RATIO = UNCOMPRESSED_SIZE / COMPRESSED_SIZE
+export DEVELOPER_MODE="1"
+export DISTDIR="${DISTDIR:-/var/cache/distfiles}"
+export FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
+export FMATH_UNSAFE_CFG="${FMATH_UNSAFE_CFG:-no-fast-math.conf}"
+export HEAVY_LOC_OPT="O1.conf" # Optimize for build speed instead.  Often it is the data size not the code that is the problem.
+export HEAVY_LOC_SIZE=${HEAVY_LOC_SIZE:-10000000} # 10M ELOC ; Match the number for 8 hr builds
+export LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
+export LINEAR_MATH_OPT="O3.conf"
+export LOCB_RATIO="0.030879526993880038" # average of Python and C/C++ ratios of below formula \
+#  LOC = Lines Of Code \
+#  MLOC = Million Lines Of Code \
+#  LOCB_RATIO = LINES_OF_CODE / T_SOURCE_CODE_BYTES \
+#  Python LOCB ratio:  0.034346428375619575 \
+#  C/C++ LOCB ratio:  0.027412625612140498 \
+export OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
+export OPENGL_OPT="O3.conf"
+export PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
+export SIMD_OPT="O3.conf"
+export SKIP_INTRO_PAUSE=0
+export SSA_SIZE=${SSA_SIZE:-1000000} # 1M ELOC (Estimated Lines Of Code)
+export SSA_OPT="O1.conf"
+export WOPT=${WOPT:-"20"}
+export WPKG=${WPKG:-"50"}
+
 show_help() {
 echo
 echo "${SCRIPT_NAME} [options]"
@@ -39,43 +73,22 @@ parse_command_line_args() {
 	done
 }
 
-ASM_OPT="O3.conf"
-ARCHIVES_AUTOFETCH=1 # Also called tarballs
-ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
-ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
-CODE_PCT="0.3882814715311033" # Average among small sample
-CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
-CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
-CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
-DATA_COMPRESSION_RATIO="6.562980063720293" # average among small sample ; DATA_COMPRESSION_RATIO = UNCOMPRESSED_SIZE / COMPRESSED_SIZE
-DEVELOPER_MODE="0"
-DISTDIR="${DISTDIR:-/var/cache/distfiles}"
-FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
-HEAVY_LOC_OPT="O1.conf" # Optimize for build speed instead.  Often it is the data size not the code that is the problem.
-HEAVY_LOC_SIZE=${HEAVY_LOC_SIZE:-10000000} # 10M ELOC ; Match the number for 8 hr builds
-LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
-LINEAR_MATH_OPT="O3.conf"
-LOCB_RATIO="0.030879526993880038" # average of Python and C/C++ ratios of below formula \
-#  LOC = Lines Of Code \
-#  MLOC = Million Lines Of Code \
-#  LOCB_RATIO = LINES_OF_CODE / T_SOURCE_CODE_BYTES \
-#  Python LOCB ratio:  0.034346428375619575 \
-#  C/C++ LOCB ratio:  0.027412625612140498 \
-OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
-OPENGL_OPT="O3.conf"
-PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
-SIMD_OPT="O3.conf"
-SKIP_INTRO_PAUSE=0
-SSA_SIZE=${SSA_SIZE:-1000000} # 1M ELOC (Estimated Lines Of Code)
-SSA_OPT="O1.conf"
-WOPT=${WOPT:-"20"}
-WPKG=${WPKG:-"50"}
-
 # See also gen_overlay_paths
 
 get_path_pkg_idx() {
 	local manifest_path="${1}"
 	echo $(ls "${manifest_path}" | grep -o -e "/" | wc -l)
+}
+
+is_pkg_skippable() {
+	[[ "${cat_p}" =~ "-bin"$ ]] && return 0
+	[[ "${cat_p}" =~ "-data"$ ]] && return 0
+	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
+	[[ "${cat_p}" =~ "firmware" ]] && return 0
+	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_p}" =~ "virtual/" ]] && return 0
+	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
+	return 1
 }
 
 gen_ssa_opt_list() {
@@ -95,12 +108,11 @@ gen_ssa_opt_list() {
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			local on=$(basename "${op}")
 			echo "SSA:  Processing ${cat_p}::${on}"
 			local filesize=$(grep -e "DIST" "${path}" | cut -f 3 -d " " | sort -n | tail -n 1)
-			[[ "${pn}" =~ "-bin"$ ]] && continue
-			[[ "${cat_p}" =~ "virtual/" ]] && continue
 			[[ -z "${filesize}" ]] && continue
 			local loc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_PCT})" | cut -f 1 -d ".")
 			local mloc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_PCT}/1000000)")
@@ -159,6 +171,7 @@ gen_opengl_list() {
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
 			[[ "${cat_p}" =~ "virtual/" ]] && continue
@@ -189,6 +202,7 @@ gen_simd_list() {
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
 			[[ "${cat_p}" =~ "virtual/" ]] && continue
@@ -219,6 +233,7 @@ gen_asm_list() {
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
 			[[ "${cat_p}" =~ "virtual/" ]] && continue
@@ -265,8 +280,7 @@ gen_linear_math_list() {
 			local idx_cat=$(( ${idx_pn} - 1 ))
 			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
-			[[ "${pn}" =~ "-bin"$ ]] && continue
-			[[ "${cat_p}" =~ "virtual/" ]] && continue
+			is_pkg_skippable && continue
 			local on=$(basename "${op}")
 			echo "LMATH:  Processing ${cat_p}::${on}"
 			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_p}" "${LINEAR_MATH_OPT}" >> package.env.t
@@ -291,6 +305,7 @@ header() {
 	echo "CRYPTO_ASYM_OPT=${CRYPTO_ASYM_OPT}"
 	echo "DISTDIR=${DISTDIR}"
 	echo "FMATH_OPT=${FMATH_OPT}"
+	echo "FMATH_UNSAFE_CFG=${FMATH_UNSAFE_CFG}"
 	echo "HEAVY_LOC_OPT=${HEAVY_LOC_OPT}"
 	echo "HEAVY_LOC_SIZE=${HEAVY_LOC_SIZE}"
 	echo "LAYMAN_BASEDIR=${LAYMAN_BASEDIR}"
@@ -326,14 +341,14 @@ gen_package_env() {
 
 	cat package_env-header.txt >> package.env
 
-	gen_ssa_opt_list
+#	gen_ssa_opt_list
 	gen_float_math_list
-	gen_linear_math_list
-	gen_opengl_list
-	gen_asm_list
-	gen_simd_list
-	gen_crypto_list
-	gen_loc_list
+#	gen_linear_math_list
+#	gen_opengl_list
+#	gen_asm_list
+#	gen_simd_list
+#	gen_crypto_list
+#	gen_loc_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env
@@ -344,12 +359,16 @@ gen_package_env() {
 }
 
 footer() {
-	echo "All work completed!"
+echo "All work completed!"
 
-	echo
-	echo "NOTE:"
-	echo "The crypto list needs to be manually edited."
-	echo
+echo
+echo "NOTES:"
+echo
+echo "The crypto list needs to be manually edited."
+echo
+echo "The ffast-math with enabled flags list needs to be manually inspected and"
+echo "edited.  Review the logs to see if the optimizations are safe."
+echo
 }
 
 setup() {
@@ -361,7 +380,12 @@ setup() {
 
 cleanups() {
 	echo "cleanup() called"
-	rm -rf package.env.t*
+	rm -rf "${DIR_SCRIPT}/package.env.t"*
+	rm -rf "${DIR_SCRIPT}/sandbox"
+	rm -rf "${DIR_SCRIPT}/dump.txt"
+
+	# It still loops even though I told it to stop with CTRL+C
+	killall -9 gen_package_env
 }
 
 gen_overlay_paths() {
@@ -414,8 +438,9 @@ gen_tarball_to_p_dict() {
 			done
 		done
 	done
-	# Pickle it
+	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
+	sed -i -e "s|declare -A |declare -Ag |g" "${cache_path}"
 }
 
 main()
