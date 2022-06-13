@@ -141,7 +141,7 @@ search() {
 
 	local signaling_nans=(
 		"signaling_NaN"
-		"[a-zA-Z_][a-zA-Z0-9_]*[\s]+[\s]*/[\s]*${fz}"
+		"${id}/${fz}"
 	)
 	local signaling_nans_s=$(echo "${signaling_nans[@]}" | tr " " "|")
 
@@ -150,7 +150,7 @@ search() {
 		"${fcast}[+-]${fz}${m}"
 
 		"[+-]${fz}${m}-${id}${m}"
-		"${fcast}[+-]${fz}-[\s]*${id}"
+		"${fcast}[+-]${fz}-${id}"
 
 		# Same as Possible NaN
 		"${m}${fz}/${id}${m}"
