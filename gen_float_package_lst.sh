@@ -250,7 +250,7 @@ search() {
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${infinite_s})" ; then
 			has_unsafe=1
-			assumed_violation="-fno-finite-math-only"
+			assumed_violation="-ffinite-math-only"
 			solution="-fno-finite-math-only"
 			regex_s="${infinite_s}"
 			[[ "${fprop[${cat_p}]}" =~ "${INFINITE_ON_CFG}" ]] \
