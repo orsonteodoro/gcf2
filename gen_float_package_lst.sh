@@ -181,16 +181,14 @@ search() {
 	declare -A fprop
 
 	msg_fast_math_violation() {
-		if (( ${has_unsafe} == 1 )) ; then
-			echo
-			echo "Found violation for -ffast-math in ${x} for ${assumed_violation}"
-			echo "This has been fixed with ${solution}"
-			echo
-			echo "Context:"
-			echo
-			cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep --color=always -P -z -e "(${regex_s})"
-			echo
-		fi
+echo
+echo "Found violation for -ffast-math in ${x} for ${assumed_violation}"
+echo "This has been fixed with ${solution}"
+echo
+echo "Context:"
+echo
+cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep --color=always -P -z -e "(${regex_s})"
+echo
 	}
 
 	for x in $(find "${DISTDIR}" -maxdepth 1 -type f \( -name "*tar.*" -o -name "*.zip" \)) ; do
@@ -218,14 +216,16 @@ search() {
 		fi
 
 		local targets=()
-		find "${DIR_SCRIPT}/sandbox" -type f -regextype 'posix-extended' -regex ".*(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)$" -print0 > "${DIR_SCRIPT}/dump.txt"
+		find "${DIR_SCRIPT}/sandbox" \
+			-type f \
+			-regextype 'posix-extended' \
+			-regex ".*(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)$" \
+			-print0 > "${DIR_SCRIPT}/dump.txt"
 		[[ -e "${DIR_SCRIPT}/dump.txt" ]] || continue
 		(( $(wc -c "${DIR_SCRIPT}/dump.txt" | cut -f 1 -d " ") == 0 )) && continue
 		# Not all -ffast-math patterns will be scanned.  -funsafe-math-optimizations must be inspected manually.
 		# Reason why is because the properties of the variables is unknown.
 		# +0 and -0 requires manual inspection due to false positives
-
-		local has_unsafe=0
 
 		local regex_s=""
 		local assumed_violation=""
@@ -239,7 +239,6 @@ search() {
 		fi
 
 		if ( cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${errno_fns_s})" ) ; then
-			has_unsafe=1
 			assumed_violation="-fno-errno-math"
 			solution="-ferrno-math"
 			regex_s="${errno_fns_s}"
@@ -249,7 +248,6 @@ search() {
 		fi
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${infinite_s})" ; then
-			has_unsafe=1
 			assumed_violation="-ffinite-math-only"
 			solution="-fno-finite-math-only"
 			regex_s="${infinite_s}"
@@ -259,7 +257,6 @@ search() {
 		fi
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${rounding_math_s})" ; then
-			has_unsafe=1
 			assumed_violation="-fno-rounding-math"
 			solution="-frounding-math"
 			regex_s="${rounding_math_s}"
@@ -269,7 +266,6 @@ search() {
 		fi
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${signaling_nans_s})" ; then
-			has_unsafe=1
 			assumed_violation="-fno-signaling-nans"
 			solution="-fsignaling-nans"
 			regex_s="${signaling_nans_s}"
@@ -279,7 +275,6 @@ search() {
 		fi
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${signed_zeros_s})" ; then
-			has_unsafe=1
 			assumed_violation="-fno-signed-zeros"
 			solution="-fsigned-zeros"
 			regex_s="${signed_zeros_s}"
@@ -289,7 +284,6 @@ search() {
 		fi
 
 		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${trapping_math_s})" ; then
-			has_unsafe=1
 			assumed_violation="-fno-trapping-math"
 			solution="-ftrapping-math"
 			regex_s="${trapping_math_s}"
