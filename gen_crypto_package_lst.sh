@@ -33,8 +33,7 @@ WPKG=${WPKG:-"50"}
 
 ASYM_ALGS=(
 	"25519"
-	"curve.*25519"
-	"curve.*448"
+	"curve.*(448|25519)"
 	"dh"
 	"dsa"
 	"ec(dsa|dh|rdsa)"
