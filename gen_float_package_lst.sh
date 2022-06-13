@@ -187,7 +187,7 @@ echo "This has been fixed with ${solution}"
 echo
 echo "Context:"
 echo
-cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep --color=always -P -z -e "(${regex_s})"
+cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep --color=always -E -z -e "(${regex_s})"
 echo
 	}
 
@@ -231,14 +231,14 @@ echo
 		local assumed_violation=""
 		local solution=""
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(float|double)" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(float|double)" ; then
 			found+=( "${x}" )
 			echo "Found float in ${x}"
 		else
 			continue
 		fi
 
-		if ( cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${errno_fns_s})" ) ; then
+		if ( cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${errno_fns_s})" ) ; then
 			assumed_violation="-fno-errno-math"
 			solution="-ferrno-math"
 			regex_s="${errno_fns_s}"
@@ -247,7 +247,7 @@ echo
 			msg_fast_math_violation
 		fi
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${infinite_s})" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${infinite_s})" ; then
 			assumed_violation="-ffinite-math-only"
 			solution="-fno-finite-math-only"
 			regex_s="${infinite_s}"
@@ -256,7 +256,7 @@ echo
 			msg_fast_math_violation
 		fi
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${rounding_math_s})" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${rounding_math_s})" ; then
 			assumed_violation="-fno-rounding-math"
 			solution="-frounding-math"
 			regex_s="${rounding_math_s}"
@@ -265,7 +265,7 @@ echo
 			msg_fast_math_violation
 		fi
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${signaling_nans_s})" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${signaling_nans_s})" ; then
 			assumed_violation="-fno-signaling-nans"
 			solution="-fsignaling-nans"
 			regex_s="${signaling_nans_s}"
@@ -274,7 +274,7 @@ echo
 			msg_fast_math_violation
 		fi
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${signed_zeros_s})" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${signed_zeros_s})" ; then
 			assumed_violation="-fno-signed-zeros"
 			solution="-fsigned-zeros"
 			regex_s="${signed_zeros_s}"
@@ -283,7 +283,7 @@ echo
 			msg_fast_math_violation
 		fi
 
-		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -P -z -q -e "(${trapping_math_s})" ; then
+		if cat "${DIR_SCRIPT}/dump.txt" | xargs -0 grep -E -z -q -e "(${trapping_math_s})" ; then
 			assumed_violation="-fno-trapping-math"
 			solution="-ftrapping-math"
 			regex_s="${trapping_math_s}"
