@@ -376,6 +376,11 @@ setup() {
 	trap cleanups INT
 	trap cleanups SIGTERM
 	trap cleanups EXIT
+
+	if ! ( grep --help | grep -q -F -e "--perl-regexp" ) ; then
+echo "Rebuild sys-apps/grep with the pcre USE flag enabled."
+		exit 1
+	fi
 }
 
 cleanups() {
