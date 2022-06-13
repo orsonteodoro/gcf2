@@ -116,7 +116,7 @@ search() {
 	local fcast="[\s)]*\((float|double)\)[\s)]*"
 
 	local fz="[(\s]*(0[.0]*e[+-]*[0]+[fFlL]?|0\.[0]+[fFlL]?)[\s)]*"
-	local id="[(\s]*[a-zA-Z_][a-zA-Z_]*[)\s]*"
+	local id="[(\s]*[a-zA-Z_][a-zA-Z0-9_]*[)\s]*"
 
 #		"(\u221E|\\u221E|\u221e|\\u221e)" # infinity symbol
 #		"(\U0000221E|\\U0000221E|\U0000221e|\\U0000221e)" # infinity symbol
