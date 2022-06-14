@@ -15,16 +15,15 @@ EXPENSIVE_ALGS=(
 	"curve[_-]*(448|25519)"
 	"dh"
 	"dsa"
-	"elgamal"
 	"ec(dsa|dh)"
 	"ed[_-]*25519"
-	"sm2"
+	"elgamal"
+	"sm[_-]*2"
 
 	# Add your custom list here
 	# Maybe you should add the name of the algorithm when keysize > native word size
 	#   or
 	# number of rounds is very large
-	"sha3"
 )
 LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
 OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
@@ -42,6 +41,8 @@ ASYM_ALGS=(
 	"elgamal"
 )
 # Entries maybe commented out if too ambiguous to reduce false positives.
+# Some regexes need to be decomposed in order for EXPENSIVE_ALGS
+# to target a specific variation.
 ALL_ALGS=(
 	"(blow|two|three)fish"
 	"25519"
@@ -86,7 +87,8 @@ ALL_ALGS=(
 	"serpent"
 	"sha[_-]*(1|2|3|256|512)"
 	"shacal[_-]*[12]?"
-	"sm[_-]*(2|3|4)"
+	"sm[_-]*2"
+	"sm[_-]*(3|4)"
 	"shake[_-]*(128|256)"
 	"skipjack"
 	"streebog"
@@ -123,23 +125,23 @@ get_cat_p() {
 }
 
 has_asym_alg() {
-	local x_algs="${@}"
-	if echo "${x_algs}" \
-		| grep -i -E -q -e "(${ASYM_ALGS_S})"
-	then
-		return 0
-	fi
+	local args="${@}"
+	local a
+	for a in ${ASYM_ALGS[@]} ; do
+		if echo "${args}" | grep -q -F -e "${a}" ; then
+			return 0
+		fi
+	done
 	return 1
 }
 
 has_expensive_crypto() {
-	local A=($(echo "${@}" | sed -e "s|,| |g"))
+	local args="${@}"
 	local a
-	local b
-	for a in ${A[@]} ; do
-		for b in ${EXPENSIVE_ALGS[@]} ; do
-			[[ "${x}" =~ "${a}" ]] && return 0
-		done
+	for a in ${EXPENSIVE_ALGS[@]} ; do
+		if echo "${args}" | grep -q -F -e "${a}" ; then
+			return 0
+		fi
 	done
 	return 1
 }
@@ -270,7 +272,7 @@ echo
 		local s="${cryptlst[${hc}]}"
 		if (( ${#cryptlst[${hc}]} > 0 )) && has_asym_alg "${s}" ; then
 			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_ASYM_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t
-		elif (( ${#cryptlst[${hc}]} > 0 )) && has_expensive_crypto "${#cryptlst[${hc}]}" ; then
+		elif (( ${#cryptlst[${hc}]} > 0 )) && has_expensive_crypto "${s}" ; then
 			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_EXPENSIVE_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t
 		elif (( ${#cryptlst[${hc}]} > 0 )) ; then
 			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_CHEAP_OPT}" "# Contains ${cryptlst[${hc}]} (cheap)${mreason}" >> package.env.t
