@@ -12,11 +12,12 @@ CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expen
 DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 EXPENSIVE_ALGS=(
 	"25519"
-	"curve.*(448|25519)"
+	"curve[_-]*(448|25519)"
 	"dh"
 	"dsa"
 	"elgamal"
 	"ec(dsa|dh)"
+	"ed[_-]*25519"
 	"sm2"
 
 	# Add your custom list here
@@ -33,56 +34,68 @@ WPKG=${WPKG:-"50"}
 
 ASYM_ALGS=(
 	"25519"
-	"curve.*(448|25519)"
+	"curve[_-]*(448|25519)"
 	"dh"
 	"dsa"
 	"ec(dsa|dh|rdsa)"
+	"ed[_-]*25519"
 	"elgamal"
 )
 # Entries maybe commented out if too ambiguous to reduce false positives.
 ALL_ALGS=(
 	"(blow|two|three)fish"
 	"25519"
+	"aria"
 	"aes"
 	"aegis"
 	"anubis"
-	"arc4"
+	"arc(4|four)"
 	"argon2"
-	"blake(|2|2b|2s)"
+	"bear"
+	"blake[_-]*(|2|2b|2s)"
 	"camellia"
-	"cast.*(5|6|128|256)"
-	"chacha(|8|12|20)"
+	"cast[_-]*(5|6|128|256)"
+	"chacha[_-]*(|8|12|20)"
 	"cipher"
 	"crypt(|o)"
-	"curve.*(448|25519)"
-	"des"
+	"curve[_-]*(448|25519)"
+	"(triple)?[_-]?des"
 	"dh"
 	"dsa"
 	"ec(dh|dsa|rdsa)"
+	"ed[_-]*25519"
 	"elgamal"
-	"gf128"
+	"gf[_-]*128"
 	"gost"
+	"idea"
+	"kasumi"
 	"keccak"
 	"khazad"
-	"md(4|5)"
+	"lion"
+	"md(2|4|5)"
+	"noekeon"
 	"poly1305"
 	"rc6"
+	"rfc2268"
 	"rijndael"
-	"ripemd"
-	"rmd.*(128|160|256|320)"
+	"ripemd[_-]*(160)?"
+	"rmd[_-]*(128|160|256|320)"
 	"rsa"
 	"(|x)salsa(|20)"
 	"seed"
-	"sha(1|2|3|256|512)"
 	"serpent"
-	"sm(2|3|4)"
+	"sha[_-]*(1|2|3|256|512)"
+	"shacal[_-]*[12]?"
+	"sm[_-]*(2|3|4)"
+	"shake[_-]*(128|256)"
+	"skipjack"
 	"streebog"
+	"tiger"
 	"(x|)tea"
 	"whirlpool"
 	"wp512"
 	"xxhash"
 )
-
 
 get_path_pkg_idx() {
 	local manifest_path="${1}"
@@ -107,14 +120,6 @@ get_cat_p() {
 	local a=$(basename "${tarball_path}")
 	local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
 	echo ${A_TO_P[${hc}]}
-}
-
-has_single_dh() {
-	local len=$(echo "${@}" | grep -o -e "," | wc -l)
-	[[ -z "${len}" ]] && len=0
-	[[ "${@}" =~ "dh" ]] || return 1
-	(( "${len}" == 1 )) && return 0
-	return 1
 }
 
 has_asym_alg() {
@@ -187,13 +192,33 @@ is_pkg_skippable() {
 	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
 	[[ "${cat_p}" =~ "firmware" ]] && return 0
 	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
 	[[ "${cat_p}" =~ "virtual/" ]] && return 0
 	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
 	return 1
 }
 
 search() {
+	if [[ -n "${GREP_HAS_PCRE}" ]] ; then
+		echo "GREP_HAS_PCRE=${GREP_HAS_PCRE} (from env)"
+	elif echo "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
+		export GREP_HAS_PCRE=1
+	else
+echo
+echo "[warn] Using grep without pcre USE flag.  Expect more false positives."
+echo
+	fi
+
+	local grep_args
+	local delim
 	export ASYM_ALGS_S=$(echo "${ASYM_ALGS[@]}" | tr " " "|")
+	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
+		grep_args="-P"
+		delim="(?<!random|bench|test)[/_-]"
+	else
+		grep_args="-E"
+		delim="[/_-]"
+	fi
 	gen_overlay_paths
 	gen_tarball_to_p_dict
 	unset cryptlst
@@ -222,13 +247,13 @@ search() {
 		[[ "${x}" =~ "zip"$ ]] && paths=($(unzip -l "${x}" | sed -r -e "s|[0-9]{2}:[0-9]{2}[ ]+|;|g" | grep ";" | cut -f 2 -d ";" 2>/dev/null))
 		[[ "${x}" =~ "tar" ]] && paths=($(tar -tf "${x}" 2>/dev/null))
 		if echo "${paths[@]}" \
-			| grep -i -E -q -e "[/](${algs_s}).*(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)($| |\n)"
+			| grep -q ${grep_args} -i -e "${delim}(${algs_s})(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)($| |\n)"
 		then
 			found+=("${x}") # tarball path
 			local s=""
 			for a in ${ALL_ALGS[@]} ; do
 				if echo -e "${paths[@]}" \
-					| grep -i -q -e "${a}" ; then
+					| grep ${grep_args} -q -i -e "${delim}${a}\." ; then
 					s+="${a}, "
 				fi
 			done
@@ -244,7 +269,6 @@ search() {
 		local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
 		local s="${cryptlst[${hc}]}"
 		if (( ${#cryptlst[${hc}]} > 0 )) && has_asym_alg "${s}" ; then
-			has_single_dh && continue # Prevent false positives
 			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_ASYM_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t
 		elif (( ${#cryptlst[${hc}]} > 0 )) && has_expensive_crypto "${#cryptlst[${hc}]}" ; then
 			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_EXPENSIVE_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t

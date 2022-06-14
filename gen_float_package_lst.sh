@@ -98,12 +98,23 @@ is_pkg_skippable() {
 	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
 	[[ "${cat_p}" =~ "firmware" ]] && return 0
 	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
 	[[ "${cat_p}" =~ "virtual/" ]] && return 0
 	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
 	return 1
 }
 
 search() {
+	if [[ -n "${GREP_HAS_PCRE}" ]] ; then
+		echo "GREP_HAS_PCRE=${GREP_HAS_PCRE} (from env)"
+	elif echo "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
+		export GREP_HAS_PCRE=1
+	else
+echo
+echo "[warn] Using grep without pcre USE flag.  Expect more false positives."
+echo
+	fi
+
 	gen_overlay_paths
 	gen_tarball_to_p_dict
 	local found=()

@@ -85,6 +85,7 @@ is_pkg_skippable() {
 	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
 	[[ "${cat_p}" =~ "firmware" ]] && return 0
 	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
 	[[ "${cat_p}" =~ "virtual/" ]] && return 0
 	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
 	return 1
@@ -376,10 +377,13 @@ setup() {
 	trap cleanups SIGTERM
 	trap cleanups EXIT
 
-#	if ! ( grep --help | grep -q -F -e "--perl-regexp" ) ; then
-#echo "Rebuild sys-apps/grep with the pcre USE flag enabled."
-#		exit 1
-#	fi
+	if echo "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
+		export GREP_HAS_PCRE=1
+	else
+echo
+echo "[warn] Using grep without pcre USE flag.  Expect more false positives."
+echo
+	fi
 }
 
 cleanups() {
