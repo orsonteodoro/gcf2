@@ -4,6 +4,8 @@
 #*_OPT acceptable values O1.conf, O1.conf, O2.conf, O3.conf, O4.conf, Oz.conf, Os.conf, Ofast.conf Ofast-mt.conf
 # You may add additional settings as follows FMATH_OPT="march-native.conf O1.conf ffast-math.conf"
 
+# TODO: make gen_float_math_list respect previous generators selection
+
 SCRIPT_NAME=$(basename "$0")
 DIR_SCRIPT=$(dirname "$0")
 ARGV="${@}"
@@ -12,6 +14,9 @@ export ASM_OPT="O3.conf"
 export ARCHIVES_AUTOFETCH=1 # Also called tarballs
 export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
 export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
+#export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-10000000} # Testing only
+export CACHE_DURATION="${CACHE_DURATION:-86400}"
+#export CACHE_DURATION="${CACHE_DURATION:-432000}" # Testing only
 export CODE_PCT="0.3882814715311033" # Average among small sample
 export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
@@ -246,6 +251,13 @@ gen_asm_list() {
 	echo "" >> package.env
 }
 
+get_cat_p() {
+	local tarball_path="${@}"
+	local a=$(basename "${tarball_path}")
+	local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
+	echo ${A_TO_P[${hc}]}
+}
+
 gen_float_math_list() {
 	echo "Processing FMATH"
 	echo "" >> package.env
@@ -300,6 +312,7 @@ archives_autofetch() {
 header() {
 	echo "ASM_OPT=${ASM_OPT}"
 	echo "ARCHIVES_AUTOFETCH=${ARCHIVES_AUTOFETCH}"
+	echo "CACHE_DURATION=${CACHE_DURATION}"
 	echo "CRYPTO_CHEAP_OPT=${CRYPTO_CHEAP_OPT}"
 	echo "CRYPTO_EXPENSIVE_OPT=${CRYPTO_EXPENSIVE_OPT}"
 	echo "CRYPTO_ASYM_OPT=${CRYPTO_ASYM_OPT}"
@@ -342,13 +355,13 @@ gen_package_env() {
 	cat package_env-header.txt >> package.env
 
 	gen_ssa_opt_list
-	gen_float_math_list
 	gen_linear_math_list
 	gen_opengl_list
 	gen_asm_list
 	gen_simd_list
 	gen_crypto_list
 	gen_loc_list
+	gen_float_math_list
 
 	cat fixes.lst >> package.env
 	cat static-opts.lst >> package.env
@@ -377,7 +390,7 @@ setup() {
 	trap cleanups SIGTERM
 	trap cleanups EXIT
 
-	if echo "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
+	if echo -e "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
 		export GREP_HAS_PCRE=1
 	else
 echo
@@ -417,7 +430,7 @@ gen_tarball_to_p_dict() {
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
 		local now=$(date +"%s")
-		if (( ${ts} + 86400 >= ${now} )) ; then # Expire in 1 day
+		if (( ${ts} + ${CACHE_DURATION} >= ${now} )) ; then # Expire in 1 day
 			echo "Using cached A_TO_P hashmap.  Delete it after emerge --sync."
 			eval "$(cat ${cache_path})"
 			if ! declare -p A_TO_P 2>&1 > /dev/null ; then

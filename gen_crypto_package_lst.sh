@@ -6,6 +6,8 @@ DIR_SCRIPT=$(dirname "$0")
 
 ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
 ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
+CACHE_DURATION="${CACHE_DURATION:-86400}"
+#CACHE_DURATION="${CACHE_DURATION:-432000}" # Testing only
 CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
 CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
 CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
@@ -154,7 +156,7 @@ gen_tarball_to_p_dict() {
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
 		local now=$(date +"%s")
-		if (( ${ts} + 86400 >= ${now} )) ; then # Expire in 1 day
+		if (( ${ts} + ${CACHE_DURATION} >= ${now} )) ; then # Expire in 1 day
 			echo "Using cached A_TO_P hashmap.  Delete it after emerge --sync."
 			eval "$(cat ${cache_path})"
 			if ! declare -p A_TO_P 2>&1 > /dev/null ; then
@@ -203,7 +205,7 @@ is_pkg_skippable() {
 search() {
 	if [[ -n "${GREP_HAS_PCRE}" ]] ; then
 		echo "GREP_HAS_PCRE=${GREP_HAS_PCRE} (from env)"
-	elif echo "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
+	elif echo -e "hello1\nhello2" | grep -q -P 'hello(?=1)' ; then
 		export GREP_HAS_PCRE=1
 	else
 echo
