@@ -12,11 +12,9 @@ ARGV="${@}"
 
 export ASM_OPT="O3.conf"
 export ARCHIVES_AUTOFETCH=1 # Also called tarballs
-export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
+export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-0}
 export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
-#export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-10000000} # Testing only
 export CACHE_DURATION="${CACHE_DURATION:-86400}"
-#export CACHE_DURATION="${CACHE_DURATION:-432000}" # Testing only
 export CODE_PCT="0.3882814715311033" # Average among small sample
 export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
@@ -45,6 +43,14 @@ export SSA_SIZE=${SSA_SIZE:-1000000} # 1M ELOC (Estimated Lines Of Code)
 export SSA_OPT="O1.conf"
 export WOPT=${WOPT:-"20"}
 export WPKG=${WPKG:-"50"}
+
+if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
+# Testing only
+export CACHE_DURATION="2592000"
+export ARCHIVES_AUTOFETCH=0
+export SKIP_INTRO_PAUSE=1
+export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-10000000}
+fi
 
 show_help() {
 echo

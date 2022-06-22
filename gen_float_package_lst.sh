@@ -4,10 +4,9 @@
 
 DIR_SCRIPT=$(dirname "$0")
 
-ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-1}
+ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-0}
 ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
 CACHE_DURATION="${CACHE_DURATION:-86400}"
-#CACHE_DURATION="${CACHE_DURATION:-432000}" # Testing only
 DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
 FMATH_UNSAFE_CFG="${FMATH_UNSAFE_CFG:-no-fast-math.conf}"
@@ -115,20 +114,39 @@ exclude_results() {
 # This function tries to eliminate many non float based contexts (e.g. printing, memory, file access) as possible.
 exclude_false_search_matches() {
 	local ARG=$(</dev/stdin)
+	local extra=""
+	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
+		extra=\
+"|${sp}\(${sp}unsigned${sp}\)${sp}\((${regex_s})\)"\
+"|${sp}unsigned${sp}"'(?!(float|double))'"${sp}"
+	else
+		extra=\
+"|${sp}\(${sp}unsigned${sp}\)${sp}\((${regex_s})\)"
+	fi
+
 	echo -e -n "${ARG}" | grep ${grep_arg} -v -e "\[.*(${regex_s})" \
 	| grep ${grep_arg} -v -e "\"[^\"]*(${regex_s})[^\"]*\"" \
+	| grep -E -v -e "(>>|<<)" \
+	| grep -E -v -e "[a-zA-Z]+[${_sp}]+[a-zA-Z]+" \
 	| grep ${grep_arg} -v -e \
 "("\
-"fgets"\
+"${sp}"'[|&^]'"=${sp}"\
+"|display_ratio"\
+"|fgets"\
+"|hexdump_data"\
+"|SWAP_FLAGS"\
+"|[0-9A-Za-z]+UL${sp}"\
 "|${sp}[a-z_]*printf"\
 "|${sp}[a-z_]*str[nl]*(cpy|len|str|dup)[a-z_]*"\
 "|${sp}stpncpy"\
+"|${sp}f(seek|tell)o"\
 "|${sp}(read|write)_string"\
 "|${sp}[a-z_]*mem(set|cpy|move|chr|mem)"\
-"|${sp}(const)?${sp}(unsigned)?${sp}(u)?(bool|char|int|short|short int|long|long int|long long|long long int|off|(s)?size)(_t)?"\
+"|${sp}(${sp}const${sp})?${sp}(${sp}unsigned${sp})?${sp}(u)?(bool|char|int|short|short int|long|long int|long long|long long int|off|(s)?size)(_t)?"\
 "|${sp}[a-z0-9_]*(u)?int32[a-z0-9_]*${sp}\("\
 "|${sp}[_]*(u|s)(8|16|32|64|128)"\
 "|${sp}U(32|64)${sp}"\
+"${extra}"\
 ")"\
 ".*(${regex_s})" \
 	| grep -v -E -e "#include" \
@@ -158,9 +176,16 @@ echo
 	echo "Scanning..."
 	echo -n "" > package.env.t
 
-	local sp="[[:space:]]*"
-	local op="[<>=()*/+-]" # Don't match % which implies int context
-	local s="([${op}])" # Separators
+
+	local _sp="[:space:]"
+	local sp="[${_sp}]*"
+	local op
+	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
+		op="((?!-)[>]|[<=()*/+-])" # Don't match % which implies int context
+	else
+		op="[<>=()*/+-]" # Don't match % which implies int context
+	fi
+	local s="(${op})" # Separators
 	local fcast="${sp}\((float|double)\)${sp}"
 
 	# Spaced operators
@@ -185,13 +210,12 @@ echo
 	local si="${sp}([0-9]*i|[0-9][.0-9]*[fFlL]?if)"
 	local lparen
 	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
-		fz="${sp}(0[.0]*(?![1-9]+)e[+-]*[0]+(?![1-9]+)[fFlL]?|0\.[0]+(?![1-9]+)[fFlL]?)${sp}" # ex. 0.0
-		f1="${sp}(1[.0]*(?![1-9]+)e[+-]*[0]+(?![1-9]+)[fFlL]?|1\.[0]+(?![1-9]+)[fFlL]?)${sp}" # ex. 1.0
+		fz="${sp}(0[.0]*"'(?![1-9]+)'"e[+-]*[0]+"'(?![1-9]+)'"[fFlL]?|0\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 0.0
+		f1="${sp}(1[.0]*"'(?![1-9]+)'"e[+-]*[0]+"'(?![1-9]+)'"[fFlL]?|1\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 1.0
 		v="${sp}[a-z_][a-z0-9_]*${sp}" # Variables
-		v="${sp}[a-z_][a-z0-9_]*${sp}" # Variables
-		C="${sp}(?<![a-z])*[A-Z_][A-Z0-9_]*(?![a-z])*${sp}" # Constants
+		C="${sp}"'(?<![a-z])*'"[A-Z_][A-Z0-9_]*"'(?![a-z])*'"${sp}" # Constants
 		grep_arg="-P"
-		lparen="(?<![A-Za-z_])\("
+		lparen='(?<![A-Za-z_])\('
 	else
 		fz="${sp}(0[.0]*e[+-]*[0]+[fFlL]?|0\.[0]+[fFlL]?)${sp}"
 		f1="${sp}(1[.0]*e[+-]*[0]+[fFlL]?|1\.[0]+[fFlL]?)${sp}"
@@ -210,14 +234,13 @@ echo
 		"${s}${fz}${sdiv}${v}${s}"
 		"${s}${fcast}${fz}${sdiv}${v}${s}"
 
-		"([${op}]|[[:space:]]|:)infinity${sp}\("
-
+		"(${op}|[${_sp}]|:)infinity${sp}\("
 	)
 
 	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
 		infinite+=(
-			"${s}(?<!define)${sp}NAN${s}"
-			"${s}(?<!define)${sp}INFINITY${s}"
+			"${s}"'(?<!define)'"${sp}NAN${s}"
+			"${s}"'(?<!define)'"${sp}INFINITY${s}"
 		)
 	else
 		infinite+=(
@@ -248,8 +271,8 @@ echo
 		"${fcast}${ssign}${fz}${ssub}${v}${s}" # from me
 
 #		Below are duplicate cases of "${ssign}${fz}${s}" and "${fcast}${ssign}${fz}${s}"
-#		"${ssign}${v}${sneg}${fz}${s}"
-#		"${fcast}${ssign}${v}${sneg}${fz}"
+		"${ssign}${v}${sneg}${fz}${s}"
+		"${fcast}${ssign}${v}${sneg}${fz}"
 
 		# Same as Possible NaN
 		"${s}${fz}${sdiv}${v}${s}"
@@ -277,13 +300,24 @@ echo
 
 	local errno_fns_s=$(echo "${errno_fns[@]}" | tr " " "|")
 
-	local reciprocal_math=(
-		# This is a maybe if the reciprocal can be eliminated.
-		"${s}${v}${sdiv}${v}${s}"
+	local reciprocal_math
+	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
+		reciprocal_math=(
+			# This is a maybe if the reciprocal can be eliminated.
+			"${s}${v}${sdiv}${v}${s}"
 
-		# Only if C is odd
-#		"${s}${v}${sdiv}${C}${s}"
-	)
+			# Only if C is odd
+#			"${s}${v}${sdiv}${C}${s}"
+		)
+	else
+		reciprocal_math=(
+			# This is a maybe if the reciprocal can be eliminated.
+			"${s}${v}${sdiv}${v}${s}"
+
+			# Only if C is odd
+#			"${s}${v}${sdiv}${C}${s}"
+		)
+	fi
 	local reciprocal_math_s=$(echo "${reciprocal_math[@]}" | tr " " "|")
 
 	# Validility of unsafe_math is by context.
@@ -309,9 +343,9 @@ echo
 	)
 	local unsafe_math_s=$(echo "${unsafe_math[@]}" | tr " " "|")
 
-	local t0="\(${sreal}*${sreal}${sadd}${si}*${si}\)"
+	local t0="\(${sreal}[*]${sreal}${sadd}${si}*${si}\)"
 	local cx_limited_range=(
-		"${lparen}\(${sp}\(${sreal}${smul}${sreal}${sadd}${si}${smul}${si}\)${sdiv}${t0}\)${sadd}${si}\(${sp}\(${si}${smul}${sreal}${ssub}${sreal}*${si}\)${sdiv}${t0}\)"
+		"${lparen}\(${sp}\(${sreal}${smul}${sreal}${sadd}${si}${smul}${si}\)${sdiv}${t0}\)${sadd}${si}\(${sp}\(${si}${smul}${sreal}${ssub}${sreal}[*]${si}\)${sdiv}${t0}\)"
 	)
 	local cx_limited_range_s=$(echo "${cx_limited_range[@]}" | tr " " "|")
 
@@ -342,11 +376,11 @@ echo
 		[[ "${x}" =~ "__download__" ]] && continue
 		[[ "${x}" =~ ".portage_lockfile" ]] && continue
 		local cat_p=$(get_cat_p "${x}")
+		[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
 		is_pkg_skippable && continue
 		if [[ "${ARCHIVES_SKIP_LARGE}" == "1" ]] \
 			&& (( $(stat -c "%s" ${x} ) >= ${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE} )) ; then
 			echo "[warn : search float] Skipped large tarball for ${x}"
-			[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
 			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "# skipped" "# Reason: Large tarball" >> package.env.t
 			continue
 			exit 1
@@ -393,10 +427,28 @@ echo
 		if (( ${nlines} > 0 )) ; then
 			found+=( "${x}" )
 			echo "Found float in ${x}"
+			# This just tells it exist in the package but...
 		else
 			continue
 		fi
-		unset regex_s
+
+		# ...we now need to inspect every file for floats and delete lines that don't have em.
+
+		echo -n > "${DIR_SCRIPT}/dump2.txt" || exit 1
+		IFS=
+		local p
+		while read -r -d $'' p ; do
+			if grep -q ${grep_arg} -e "(${regex_s})" "${p}" ; then
+				echo -e -n "${p}\0" >> "${DIR_SCRIPT}/dump2.txt" || exit 1
+			fi
+		done < <(cat "${DIR_SCRIPT}/dump.txt")
+		IFS=$' \n\t'
+		mv "${DIR_SCRIPT}/dump2.txt" "${DIR_SCRIPT}/dump.txt" || exit 1
+
+		local size=$(stat -c "%s" "${DIR_SCRIPT}/dump.txt")
+		size=$((${size} - 1))
+		(( ${size} < 0 )) && size=0
+		truncate -s ${size} "${DIR_SCRIPT}/dump.txt" || exit 1
 
 		regex_s="${errno_fns_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -413,7 +465,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${ERRNO_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${infinite_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -429,7 +480,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${INFINITE_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${rounding_math_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -445,7 +495,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${ROUNDING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${signaling_nans_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -461,7 +510,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${SIGNALING_NANS_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${signed_zeros_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -477,7 +525,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${SIGNED_ZEROS_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${trapping_math_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -493,7 +540,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${TRAPPING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${unsafe_math_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -509,7 +555,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${UNSAFE_MATH_OPT_OFF_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
 		regex_s="${cx_limited_range_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
@@ -525,12 +570,12 @@ echo
 				|| fprop["${cat_p}"]+=" ${CX_LIMITED_RANGE_OFF_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 
+		# Regex modified for grep --never because ambiguity with path
 		regex_s="${reciprocal_math_s}"
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
 			| xargs -0 \
-			  grep ${grep_arg} --color=never -n -e "(${regex_s})" \
+			  grep ${grep_arg} --color=never -n -e ":[0-9]+:.*(${regex_s})" \
 			| exclude_false_search_matches \
 			| grep ${grep_arg} --color=always -n -e "(${regex_s})" \
 			| wc -l)
@@ -541,7 +586,6 @@ echo
 				|| fprop["${cat_p}"]+=" ${RECIPROCAL_MATH_OFF_CFG}"
 			msg_fast_math_violation
 		fi
-		unset regex_s
 	done
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
 		local cat_p=$(get_cat_p "${x}")
