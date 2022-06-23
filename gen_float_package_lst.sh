@@ -181,7 +181,7 @@ echo
 	local sp="[${_sp}]*"
 	local op
 	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
-		op="((?!-)[>]|[<=()*/+-])" # Don't match % which implies int context
+		op="("'(?!-)'"[>]|[<=()*/+-])" # Don't match % which implies int context
 	else
 		op="[<>=()*/+-]" # Don't match % which implies int context
 	fi
