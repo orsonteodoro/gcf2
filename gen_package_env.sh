@@ -44,12 +44,12 @@ export SSA_OPT="O1.conf"
 export WOPT=${WOPT:-"20"}
 export WPKG=${WPKG:-"50"}
 
-if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
+if [[ "${MAINTENANCE_MODE}" == "2" ]] ; then
 # Testing only
 export CACHE_DURATION="2592000"
 export ARCHIVES_AUTOFETCH=0
 export SKIP_INTRO_PAUSE=1
-export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-10000000}
+export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=10000000
 fi
 
 show_help() {
