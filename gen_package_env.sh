@@ -5,6 +5,7 @@
 # You may add additional settings as follows FMATH_OPT="march-native.conf O1.conf ffast-math.conf"
 
 # TODO: make gen_float_math_list respect previous generators selection
+# TODO: fix gen_crypto_package_lst.sh confusing paths with division
 
 SCRIPT_NAME=$(basename "$0")
 DIR_SCRIPT=$(dirname "$0")

@@ -127,6 +127,9 @@ exclude_false_search_matches() {
 	echo -e -n "${ARG}" | grep ${grep_arg} -v -e "\[.*(${regex_s})" \
 	| grep ${grep_arg} -v -e "\"[^\"]*(${regex_s})[^\"]*\"" \
 	| grep -E -v -e "(>>|<<)" \
+	| grep -E -v -e ":${sp}\"" \
+	| grep -E -v -e "\.$" \
+	| grep -E -v -e "(U|W)?INT(MAX|PTR|8|16|32|64|_)" \
 	| grep -E -v -e "[a-zA-Z]+[${_sp}]+[a-zA-Z]+" \
 	| grep ${grep_arg} -v -e \
 "("\
@@ -142,7 +145,7 @@ exclude_false_search_matches() {
 "|${sp}f(seek|tell)o"\
 "|${sp}(read|write)_string"\
 "|${sp}[a-z_]*mem(set|cpy|move|chr|mem)"\
-"|${sp}(${sp}const${sp})?${sp}(${sp}unsigned${sp})?${sp}(u)?(bool|char|int|short|short int|long|long int|long long|long long int|off|(s)?size)(_t)?"\
+"|${sp}(${sp}const${sp})?${sp}(${sp}unsigned${sp})?${sp}(u)?(bool|char|int|short|short int|long|long int|long long|long long int|off|(s)?size|time)(_t)?"\
 "|${sp}[a-z0-9_]*(u)?int32[a-z0-9_]*${sp}\("\
 "|${sp}[_]*(u|s)(8|16|32|64|128)"\
 "|${sp}U(32|64)${sp}"\
@@ -181,7 +184,7 @@ echo
 	local sp="[${_sp}]*"
 	local op
 	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
-		op="("'(?!-)'"[>]|[<=()*/+-])" # Don't match % which implies int context
+		op="("'(?<!-)'"[>]|[<=()*/+])" # Don't match % which implies int context
 	else
 		op="[<>=()*/+-]" # Don't match % which implies int context
 	fi
@@ -193,32 +196,41 @@ echo
 	local sdiv="${sp}[/]${sp}"
 	local sadd="${sp}[+]${sp}"
 	local splus="${sp}[+]${sp}"
-	local ssub="${sp}[-]${sp}"
-	local sneg="${sp}[-]${sp}"
-	local ssign="${sp}[+-]${sp}"
+	local ssub
+	local ssign
+	local _ssign
+	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
+		ssub="${sp}[-]"'(?!>)'"${sp}"
+		_ssign="([+]|[-]"'(?!>))'
+		ssign="${sp}${_ssign}${sp}"
+	else
+		ssub="${sp}[-]${sp}"
+		ssign="${sp}[+-]${sp}"
+	fi
+	local sneg="${ssub}"
 	local seq="${sp}==${sp}"
 	local sneq="${sp}!=${sp}"
 	local sfloat="${sp}\(float\)${sp}"
 	local sdouble="${sp}\(double\)${sp}"
 
 	local v
-	local c
+	local C
 	local fz
 	local f1
 	local grep_arg
-	local sreal="${sp}([0-9][.0-9]*e[+-]*[0-9]+[fFlL]?|[0-9]+\.[0-9]+[fFlL]?)${sp}" # ex. 0.0
+	local sreal="${sp}([0-9][.0-9]*e${_ssign}*[0-9]+[fFlL]?|[0-9]+\.[0-9]+[fFlL]?)${sp}" # ex. 0.0
 	local si="${sp}([0-9]*i|[0-9][.0-9]*[fFlL]?if)"
 	local lparen
 	if [[ "${GREP_HAS_PCRE}" == "1" ]] ; then
-		fz="${sp}(0[.0]*"'(?![1-9]+)'"e[+-]*[0]+"'(?![1-9]+)'"[fFlL]?|0\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 0.0
-		f1="${sp}(1[.0]*"'(?![1-9]+)'"e[+-]*[0]+"'(?![1-9]+)'"[fFlL]?|1\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 1.0
+		fz="${sp}(0[.0]*"'(?![1-9]+)'"e${_ssign}*[0]+"'(?![1-9]+)'"[fFlL]?|0\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 0.0
+		f1="${sp}(1[.0]*"'(?![1-9]+)'"e${_ssign}*[0]+"'(?![1-9]+)'"[fFlL]?|1\.[0]+"'(?![1-9]+)'"[fFlL]?)${sp}" # ex. 1.0
 		v="${sp}[a-z_][a-z0-9_]*${sp}" # Variables
-		C="${sp}"'(?<![a-z])*'"[A-Z_][A-Z0-9_]*"'(?![a-z])*'"${sp}" # Constants
+		C="${sp}"'(?<![a-z])*'"[A-Z_][A-Z0-9_]*"'(?![a-z])*'"${sp}"'(?!\()' # Constants
 		grep_arg="-P"
 		lparen='(?<![A-Za-z_])\('
 	else
-		fz="${sp}(0[.0]*e[+-]*[0]+[fFlL]?|0\.[0]+[fFlL]?)${sp}"
-		f1="${sp}(1[.0]*e[+-]*[0]+[fFlL]?|1\.[0]+[fFlL]?)${sp}"
+		fz="${sp}(0[.0]*e${_ssign}*[0]+[fFlL]?|0\.[0]+[fFlL]?)${sp}"
+		f1="${sp}(1[.0]*e${_ssign}*[0]+[fFlL]?|1\.[0]+[fFlL]?)${sp}"
 		v="${sp}[a-z_][a-z0-9_]*${sp}"
 		C="${sp}[A-Z_][A-Z0-9_]*${sp}"
 		grep_arg="-E"
@@ -421,8 +433,6 @@ echo
 		nlines=$(cat "${DIR_SCRIPT}/dump.txt" \
 			| xargs -0 \
 			  grep ${grep_arg} --color=never -n -e "(${regex_s})" \
-			| exclude_false_search_matches \
-			| grep ${grep_arg} --color=always -n -e "(${regex_s})" \
 			| wc -l)
 		if (( ${nlines} > 0 )) ; then
 			found+=( "${x}" )
