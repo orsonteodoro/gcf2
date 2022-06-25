@@ -390,14 +390,14 @@ gen_package_env() {
 	cat package_env-header.txt >> package.env
 
 	gen_loc_list
-#	gen_light_loc_list
-#	gen_linear_math_list
-#	gen_opengl_list
-#	gen_asm_list
-#	gen_simd_list
-#	gen_crypto_list
-#	gen_heavy_loc_list
-#	gen_float_math_list
+	gen_light_loc_list
+	gen_linear_math_list
+	gen_opengl_list
+	gen_asm_list
+	gen_simd_list
+	gen_crypto_list
+	gen_heavy_loc_list
+	gen_float_math_list
 	gen_ccache_list
 
 	cat fixes.lst >> package.env
