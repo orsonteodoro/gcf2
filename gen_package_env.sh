@@ -19,7 +19,7 @@ export CACHE_DURATION="${CACHE_DURATION:-86400}"
 export CCACHE_CFG="${CCACHE_CFG:-ccache.conf}"
 export CCACHE_LARGE_PACKAGES="1" # Cutoff is the same as >= HEAVY_LOC_SIZE
 export CCACHE_LOC_SIZE=${CCACHE_LOC_SIZE:-6235854} # 6.2M ELOC ; Match the number for >= 1 hr builds
-export CODE_PCT="0.3882814715311033" # Average among small sample
+export CODE_TO_TOTAL_RATIO="0.3882814715311033" # Average among small sample.  CODE_TO_TOTAL_RATIO = TOTAL_UNCOMPRESSED_CODE_BYTES / TOTAL_UNCOMPRESSED_ARCHIVE_BYTES
 export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
 export CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
@@ -125,8 +125,8 @@ gen_loc_list() {
 			echo "LOC:  Processing ${cat_p}::${on}"
 			local filesize=$(grep -e "DIST" "${path}" | cut -f 3 -d " " | sort -n | tail -n 1)
 			[[ -z "${filesize}" ]] && continue
-			local loc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_PCT})" | cut -f 1 -d ".")
-			local mloc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_PCT}/1000000)")
+			local loc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_TO_TOTAL_RATIO})" | cut -f 1 -d ".")
+			local mloc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_TO_TOTAL_RATIO}/1000000)")
 
 			if [[ "${CCACHE_LARGE_PACKAGES}" == "1" ]] \
 				&& (( ${loc} >= ${CCACHE_LOC_SIZE} )) ; then
