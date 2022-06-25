@@ -18,7 +18,7 @@ export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000
 export CACHE_DURATION="${CACHE_DURATION:-86400}"
 export CCACHE_CFG="${CCACHE_CFG:-ccache.conf}"
 export CCACHE_LARGE_PACKAGES="1" # Cutoff is the same as >= HEAVY_LOC_SIZE
-export CCACHE_LOC_SIZE=${CCACHE_LOC_SIZE:-10000000} # 10M ELOC Match the number for >= 1 hr builds
+export CCACHE_LOC_SIZE=${CCACHE_LOC_SIZE:-6235854} # 6.2M ELOC ; Match the number for >= 1 hr builds
 export CODE_PCT="0.3882814715311033" # Average among small sample
 export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks, expensive
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
