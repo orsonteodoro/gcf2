@@ -15,6 +15,7 @@ export ASM_OPT="O3.conf"
 export ARCHIVES_AUTOFETCH=${ARCHIVES_AUTOFETCH:-1} # Also called tarballs
 export ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-0}
 export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
+export BACKUP_PACKAGE_ENV=${BACKUP_PACKAGE_ENV:-1}
 export CACHE_DURATION="${CACHE_DURATION:-86400}"
 export CCACHE_CFG="${CCACHE_CFG:-ccache.conf}"
 export CCACHE_LARGE_PACKAGES="1" # Cutoff is the same as >= HEAVY_LOC_SIZE
@@ -24,6 +25,14 @@ export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
 export CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
 export DATA_COMPRESSION_RATIO="6.562980063720293" # average among small sample ; DATA_COMPRESSION_RATIO = UNCOMPRESSED_SIZE / COMPRESSED_SIZE
+export DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-d2s}" # \
+# Valid values:
+#	none
+#	d2s (safer double -> single)
+#	d2f (double -> float, alias for d2s)
+#	catp (apply to select packages typically to artistic packages, can be customized)
+#	any
+# See WHITELISTED_SINGLE_PRECISION_CONST_CATP in gen_float_package_lst.sh to set up whitelist.
 export MAINTENANCE_MODE="1"
 export DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 export FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
@@ -50,6 +59,7 @@ export WPKG=${WPKG:-"50"}
 
 if [[ "${MAINTENANCE_MODE}" == "2" ]] ; then
 # Testing only
+export BACKUP_PACKAGE_ENV=0
 export CACHE_DURATION="2592000"
 export ARCHIVES_AUTOFETCH=0
 export ARCHIVES_SKIP_LARGE=1
@@ -345,12 +355,14 @@ archives_autofetch() {
 header() {
 	echo "ASM_OPT=${ASM_OPT}"
 	echo "ARCHIVES_AUTOFETCH=${ARCHIVES_AUTOFETCH}"
+	echo "BACKUP_PACKAGE_ENV=${BACKUP_PACKAGE_ENV}"
 	echo "CACHE_DURATION=${CACHE_DURATION}"
 	echo "CCACHE_CFG=${CCACHE_CFG}"
 	echo "CCACHE_LARGE_PACKAGES=${CCACHE_LARGE_PACKAGES}"
 	echo "CRYPTO_CHEAP_OPT=${CRYPTO_CHEAP_OPT}"
 	echo "CRYPTO_EXPENSIVE_OPT=${CRYPTO_EXPENSIVE_OPT}"
 	echo "CRYPTO_ASYM_OPT=${CRYPTO_ASYM_OPT}"
+	echo "DOUBLE_TO_SINGLE_CONST_MODE=${DOUBLE_TO_SINGLE_CONST_MODE}"
 	echo "DISTDIR=${DISTDIR}"
 	echo "FMATH_OPT=${FMATH_OPT}"
 	echo "FMATH_UNSAFE_CFG=${FMATH_UNSAFE_CFG}"
@@ -361,7 +373,6 @@ header() {
 	echo "OILEDMACHINE_OVERLAY_DIR=${OILEDMACHINE_OVERLAY_DIR}"
 	echo "OPENGL_OPT=${OPENGL_OPT}"
 	echo "PORTAGE_DIR=${PORTAGE_DIR}"
-	echo "MATH_OPT=${MATH_OPT}"
 	echo "SIMD_OPT=${SIMD_OPT}"
 	echo "ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE}"
 	echo "ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE}"
@@ -384,7 +395,11 @@ gen_package_env() {
 	echo "Generating package.env"
 	echo
 
-	[[ -e "package.env" ]] && mv package.env package-$(date +"%s").env.bak
+	if [[ -e "package.env" && "${BACKUP_PACKAGE_ENV}" == "1" ]] ; then
+		mv package.env package-$(date +"%s").env.bak
+	else
+		rm package.env
+	fi
 	touch package.env
 
 	cat package_env-header.txt >> package.env
@@ -406,6 +421,8 @@ gen_package_env() {
 	cat cfi.lst >> package.env
 	cat makeopts.lst >> package.env
 	cat testing.lst >> package.env
+
+	sed -i -r -e "s|[[:space:]]+$||g" package.env
 }
 
 footer() {
@@ -441,6 +458,7 @@ cleanups() {
 	rm -rf "${DIR_SCRIPT}/package.env.t"*
 	rm -rf "${DIR_SCRIPT}/sandbox"
 	rm -rf "${DIR_SCRIPT}/dump.txt"
+	rm -rf "${DIR_SCRIPT}/d2s-contexts.txt"
 
 	# It still loops even though I told it to stop with CTRL+C
 	killall -9 gen_package_env
