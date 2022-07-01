@@ -8,7 +8,7 @@
 # TODO: fix gen_crypto_package_lst.sh confusing paths with division
 
 SCRIPT_NAME=$(basename "$0")
-DIR_SCRIPT=$(dirname "$0")
+DIR_SCRIPT=$(realpath $(dirname "$0"))
 ARGV="${@}"
 
 export ASM_OPT="O3.conf"
@@ -25,14 +25,18 @@ export CRYPTO_ASYM_OPT="${CRYPTO_ASYM_OPT:-Ofast-ts.conf}" # Based on benchmarks
 export CRYPTO_CHEAP_OPT="${CRYPTO_CHEAP_OPT:-O1.conf}"
 export CRYPTO_EXPENSIVE_OPT="${CRYPTO_EXPENSIVE_OPT:-O3.conf}"
 export DATA_COMPRESSION_RATIO="6.562980063720293" # average among small sample ; DATA_COMPRESSION_RATIO = UNCOMPRESSED_SIZE / COMPRESSED_SIZE
-export DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-d2s}" # \
+export DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-catpn}" # \
 # Valid values:
-#	none
-#	d2s (safer double -> single)
-#	d2f (double -> float, alias for d2s)
-#	catp (apply to select packages typically to artistic packages, can be customized)
 #	any
-# See WHITELISTED_SINGLE_PRECISION_CONST_CATP in gen_float_package_lst.sh to set up whitelist.
+#	catpn (apply to select packages typically to artistic packages, can be customized) ; catpn = ${CATEGORY}/${PN}
+#	none
+# See WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN in gen_float_package_lst.sh to set up whitelist.
+export DOUBLE_TO_SINGLE_SAFER="${DOUBLE_TO_SINGLE_SAFER:-1}" # \
+# Only allow if all literals fit or are within overflow/underflow limits of a single float.
+export DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT="${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT:-2}" # \
+# Vaild values: 1-7 (integer only)
+# You can set to square or cube root of the magnitude of the exponent.
+# Setting to 1 may be dangerous if literal used with pow or fmul.
 export MAINTENANCE_MODE="1"
 export DISTDIR="${DISTDIR:-/var/cache/distfiles}"
 export FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
@@ -49,22 +53,26 @@ export LOCB_RATIO="0.030879526993880038" # average of Python and C/C++ ratios of
 #  C/C++ LOCB ratio:  0.027412625612140498 \
 export OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
 export OPENGL_OPT="O3.conf"
-export PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
+export PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}" # with ebuilds
+export PORTAGE_ETC="${PORTAGE_DIR:-/etc/portage}" # with package.accept_keywords ; can be ${DIR_SCRIPT}
+export T=$(mktemp -d)
 export SIMD_OPT="O3.conf"
 export SKIP_INTRO_PAUSE=0
 export SSA_SIZE=${SSA_SIZE:-1000000} # 1M ELOC (Estimated Lines Of Code)
 export SSA_OPT="O1.conf"
+export VAR_PATH="${VAR_PATH:-/var/cache/gen_crypto_package}" # can be $(realpath $(pwd))
 export WOPT=${WOPT:-"20"}
 export WPKG=${WPKG:-"50"}
 
 if [[ "${MAINTENANCE_MODE}" == "2" ]] ; then
 # Testing only
-export BACKUP_PACKAGE_ENV=0
-export CACHE_DURATION="2592000"
 export ARCHIVES_AUTOFETCH=0
 export ARCHIVES_SKIP_LARGE=1
-export SKIP_INTRO_PAUSE=1
 export ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=10000000
+export BACKUP_PACKAGE_ENV=0
+export CACHE_DURATION="2592000"
+export SKIP_INTRO_PAUSE=1
+export PORTAGE_ETC="${DIR_SCRIPT}"
 fi
 
 show_help() {
@@ -79,8 +87,8 @@ echo
 }
 
 remove_caches() {
-	rm -fv package.env.t
-	rm -fv "${DIR_SCRIPT}/a_to_p.cache"
+	rm -fv "${T}/package.env.t"
+	rm -fv "${VAR_PATH}/a_to_p.cache"
 }
 
 parse_command_line_args() {
@@ -106,14 +114,14 @@ get_path_pkg_idx() {
 }
 
 is_pkg_skippable() {
-	[[ "${cat_p}" =~ "-bin"$ ]] && return 0
-	[[ "${cat_p}" =~ "-data"$ ]] && return 0
-	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
-	[[ "${cat_p}" =~ "firmware" ]] && return 0
-	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
-	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
-	[[ "${cat_p}" =~ "virtual/" ]] && return 0
-	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
+	[[ "${cat_pn}" =~ "-bin"$ ]] && return 0
+	[[ "${cat_pn}" =~ "-data"$ ]] && return 0
+	[[ "${cat_pn}" =~ "acct-"("group"|"user") ]] && return 0
+	[[ "${cat_pn}" =~ "firmware" ]] && return 0
+	[[ "${cat_pn}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_pn}" =~ "sec-"("keys"|"policy") ]] && return 0
+	[[ "${cat_pn}" =~ "virtual/" ]] && return 0
+	[[ "${cat_pn}" =~ "x11-themes" ]] && return 0
 	return 1
 }
 
@@ -121,18 +129,18 @@ gen_loc_list() {
 	echo "Processing LOC checks (SSA, CCACHE)"
 	local path
 
-	echo -n "" > package.env.t.loc
-	echo -n "" > package.env.t.ssa
+	echo -n "" > "${T}/package.env.t.loc"
+	echo -n "" > "${T}/package.env.t.ssa"
 	local op
 	for op in ${OVERLAY_PATHS[@]} ; do
 		for path in $(find "${op}" -type f -name "Manifest") ; do
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			local on=$(basename "${op}")
-			echo "LOC:  Processing ${cat_p}::${on}"
+			echo "LOC:  Processing ${cat_pn}::${on}"
 			local filesize=$(grep -e "DIST" "${path}" | cut -f 3 -d " " | sort -n | tail -n 1)
 			[[ -z "${filesize}" ]] && continue
 			local loc=$(python -c "print(${LOCB_RATIO}*${filesize}*${DATA_COMPRESSION_RATIO}*${CODE_TO_TOTAL_RATIO})" | cut -f 1 -d ".")
@@ -141,13 +149,13 @@ gen_loc_list() {
 			if [[ "${CCACHE_LARGE_PACKAGES}" == "1" ]] \
 				&& (( ${loc} >= ${CCACHE_LOC_SIZE} )) ; then
 				# Only apply to large projects because it may be counter productive in setup or building smaller packages.
-				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CCACHE_CFG}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> package.env.t.ccache
+				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${CCACHE_CFG}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> "${T}/package.env.t.ccache"
 			fi
 
 			if (( ${loc} >= ${HEAVY_LOC_SIZE} )) ; then
-				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${HEAVY_LOC_OPT}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> package.env.t.loc
+				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${HEAVY_LOC_OPT}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> "${T}/package.env.t.loc"
 			elif (( ${loc} >= ${SSA_SIZE} )) ; then
-				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${SSA_OPT}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> package.env.t.ssa
+				printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${SSA_OPT}" "# Archive size: ${filesize} ; Estimated MLOC: ${mloc}" >> "${T}/package.env.t.ssa"
 			fi
 		done
 	done
@@ -155,34 +163,34 @@ gen_loc_list() {
 
 gen_light_loc_list() {
 	echo "Processing light LOC"
-	echo "" >> package.env
-	echo "# Large projects were marked for SSA optimizations" >> package.env
-	echo "# (Heavy LOCs deferred in different section below)" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
-	cat package.env.t.ssa | sort | uniq >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Large projects were marked for SSA optimizations" >> "${PORTAGE_ETC}/package.env"
+	echo "# (Heavy LOCs deferred in different section below)" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	cat "${T}/package.env.t.ssa" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_heavy_loc_list() {
 	echo "Processing heavy LOC"
-	echo "" >> package.env
-	echo "# Reducing build times for large projects" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
-	cat package.env.t.loc | sort | uniq >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Reducing build times for large projects" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	cat "${T}/package.env.t.loc" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_ccache_list() {
 	[[ "${CCACHE_LARGE_PACKAGES}" != "1" ]] && return
 	echo "Processing ccache list"
-	echo "" >> package.env
-	echo "# Enabling CCACHE for large projects" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
-	cat package.env.t.ccache | sort | uniq >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Enabling CCACHE for large projects" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	cat "${T}/package.env.t.ccache" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_crypto_list() {
@@ -191,24 +199,24 @@ gen_crypto_list() {
 	echo "Generating crypto list.  This may take several minutes.  Please wait..."
 	echo
 
-	echo "" >> package.env
-	echo "# Cryptography" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
-	echo -n "" > package.env.t
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Cryptography" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo -n "" > "${T}/package.env.t"
 	./gen_crypto_package_lst.sh
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_opengl_list() {
 	echo "Processing OGL"
-	echo "" >> package.env
-	echo "# 3D (games, apps, ...)" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# 3D (games, apps, ...)" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 
-	echo -n "" > package.env.t
+	echo -n "" > "${T}/package.env.t"
 	local op
 	for op in ${OVERLAY_PATHS[@]} ; do
 		local x
@@ -218,28 +226,28 @@ gen_opengl_list() {
 			local path=$(dirname "${x}/Manifest")
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
-			[[ "${cat_p}" =~ "virtual/" ]] && continue
+			[[ "${cat_pn}" =~ "virtual/" ]] && continue
 			local on=$(basename "${op}")
-			echo "OGL:  Processing ${cat_p}::${on}"
-			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_p}" "${OPENGL_OPT}" >> package.env.t
+			echo "OGL:  Processing ${cat_pn}::${on}"
+			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_pn}" "${OPENGL_OPT}" >> "${T}/package.env.t"
 		done
 	done
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_simd_list() {
 	echo "Processing SIMD"
-	echo "" >> package.env
-	echo "# SIMD (sse, mmx, avx, neon, ...)" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# SIMD (sse, mmx, avx, neon, ...)" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 
-	echo -n "" > package.env.t
+	echo -n "" > "${T}/package.env.t"
 	local op
 	for op in ${OVERLAY_PATHS[@]} ; do
 		local x
@@ -249,28 +257,28 @@ gen_simd_list() {
 			local path=$(dirname "${x}/Manifest")
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
-			[[ "${cat_p}" =~ "virtual/" ]] && continue
+			[[ "${cat_pn}" =~ "virtual/" ]] && continue
 			local on=$(basename "${op}")
-			echo "SIMD:  Processing ${cat_p}::${on}"
-			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_p}" "${SIMD_OPT}" >> package.env.t
+			echo "SIMD:  Processing ${cat_pn}::${on}"
+			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_pn}" "${SIMD_OPT}" >> "${T}/package.env.t"
 		done
 	done
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_asm_list() {
 	echo "Processing ASM"
-	echo "" >> package.env
-	echo "# ASM code but may contain the high level readable version" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# ASM code but may contain the high level readable version" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 
-	echo -n "" > package.env.t
+	echo -n "" > "${T}/package.env.t"
 	local op
 	for op in ${OVERLAY_PATHS[@]} ; do
 		local x
@@ -280,21 +288,21 @@ gen_asm_list() {
 			local path=$(dirname "${x}/Manifest")
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			is_pkg_skippable && continue
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			[[ "${pn}" =~ "-bin"$ ]] && continue
-			[[ "${cat_p}" =~ "virtual/" ]] && continue
+			[[ "${cat_pn}" =~ "virtual/" ]] && continue
 			local on=$(basename "${op}")
-			echo "ASM:  Processing ${cat_p}::${on}"
-			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_p}" "${ASM_OPT}" >> package.env.t
+			echo "ASM:  Processing ${cat_pn}::${on}"
+			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_pn}" "${ASM_OPT}" >> "${T}/package.env.t"
 		done
 	done
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
-get_cat_p() {
+get_cat_pn() {
 	local tarball_path="${@}"
 	local a=$(basename "${tarball_path}")
 	local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
@@ -303,24 +311,24 @@ get_cat_p() {
 
 gen_float_math_list() {
 	echo "Processing FMATH"
-	echo "" >> package.env
-	echo "# Floating point math packages" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
-	echo -n "" > package.env.t
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Floating point math packages" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo -n "" > "${T}/package.env.t"
 	./gen_float_package_lst.sh
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 gen_linear_math_list() {
 	echo "Processing LMATH"
-	echo "" >> package.env
-	echo "# Linear math packages" >> package.env
-	echo "# Autogenerated list" >> package.env
-	echo "" >> package.env
+	echo "" >> "${PORTAGE_ETC}/package.env"
+	echo "# Linear math packages" >> "${PORTAGE_ETC}/package.env"
+	echo "# Autogenerated list" >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 
-	echo -n "" > package.env.t
+	echo -n "" > "${T}/package.env.t"
 	local op
 	for op in ${OVERLAY_PATHS[@]} ; do
 		local x
@@ -333,16 +341,16 @@ gen_linear_math_list() {
 			local path=$(dirname "${x}/Manifest")
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			is_pkg_skippable && continue
 			local on=$(basename "${op}")
-			echo "LMATH:  Processing ${cat_p}::${on}"
-			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_p}" "${LINEAR_MATH_OPT}" >> package.env.t
+			echo "LMATH:  Processing ${cat_pn}::${on}"
+			printf "%-${WPKG}s%-${WOPT}s\n" "${cat_pn}" "${LINEAR_MATH_OPT}" >> "${T}/package.env.t"
 		done
 	done
-	cat package.env.t | sort | uniq >> package.env
-	echo "" >> package.env
+	cat "${T}/package.env.t" | sort | uniq >> "${PORTAGE_ETC}/package.env"
+	echo "" >> "${PORTAGE_ETC}/package.env"
 }
 
 archives_autofetch() {
@@ -355,6 +363,8 @@ archives_autofetch() {
 header() {
 	echo "ASM_OPT=${ASM_OPT}"
 	echo "ARCHIVES_AUTOFETCH=${ARCHIVES_AUTOFETCH}"
+	echo "ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE}"
+	echo "ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE}"
 	echo "BACKUP_PACKAGE_ENV=${BACKUP_PACKAGE_ENV}"
 	echo "CACHE_DURATION=${CACHE_DURATION}"
 	echo "CCACHE_CFG=${CCACHE_CFG}"
@@ -373,11 +383,12 @@ header() {
 	echo "OILEDMACHINE_OVERLAY_DIR=${OILEDMACHINE_OVERLAY_DIR}"
 	echo "OPENGL_OPT=${OPENGL_OPT}"
 	echo "PORTAGE_DIR=${PORTAGE_DIR}"
+	echo "PORTAGE_ETC=${PORTAGE_ETC}"
 	echo "SIMD_OPT=${SIMD_OPT}"
-	echo "ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE}"
-	echo "ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE}"
 	echo "SSA_SIZE=${SSA_SIZE}"
 	echo "SSA_OPT=${SSA_OPT}"
+	echo "T=${T}"
+	echo "VAR_PATH=${VAR_PATH}"
 
 	[[ ! -d "${DISTDIR}" ]] && echo "Missing ${DISTDIR}.  Change DISTDIR in ${SCRIPT_NAME}"
 
@@ -395,14 +406,14 @@ gen_package_env() {
 	echo "Generating package.env"
 	echo
 
-	if [[ -e "package.env" && "${BACKUP_PACKAGE_ENV}" == "1" ]] ; then
-		mv package.env package-$(date +"%s").env.bak
+	if [[ -e "${PORTAGE_ETC}/package.env" && "${BACKUP_PACKAGE_ENV}" == "1" ]] ; then
+		mv "${PORTAGE_ETC}/package.env" "${PORTAGE_ETC}/package-$(date +%s).env.bak"
 	else
-		rm package.env
+		rm "${PORTAGE_ETC}/package.env"
 	fi
-	touch package.env
+	touch "${PORTAGE_ETC}/package.env"
 
-	cat package_env-header.txt >> package.env
+	cat package_env-header.txt >> "${PORTAGE_ETC}/package.env"
 
 	gen_loc_list
 	gen_light_loc_list
@@ -415,14 +426,14 @@ gen_package_env() {
 	gen_float_math_list
 	gen_ccache_list
 
-	cat fixes.lst >> package.env
-	cat static-opts.lst >> package.env
-	cat build-control.lst >> package.env
-	cat cfi.lst >> package.env
-	cat makeopts.lst >> package.env
-	cat testing.lst >> package.env
+	cat fixes.lst >> "${PORTAGE_ETC}/package.env"
+	cat static-opts.lst >> "${PORTAGE_ETC}/package.env"
+	cat build-control.lst >> "${PORTAGE_ETC}/package.env"
+	cat cfi.lst >> "${PORTAGE_ETC}/package.env"
+	cat makeopts.lst >> "${PORTAGE_ETC}/package.env"
+	cat testing.lst >> "${PORTAGE_ETC}/package.env"
 
-	sed -i -r -e "s|[[:space:]]+$||g" package.env
+	sed -i -r -e "s|[[:space:]]+$||g" "${PORTAGE_ETC}/package.env"
 }
 
 footer() {
@@ -455,10 +466,7 @@ echo
 
 cleanups() {
 	echo "cleanup() called"
-	rm -rf "${DIR_SCRIPT}/package.env.t"*
-	rm -rf "${DIR_SCRIPT}/sandbox"
-	rm -rf "${DIR_SCRIPT}/dump.txt"
-	rm -rf "${DIR_SCRIPT}/d2s-contexts.txt"
+	rm -rf "${T}"
 
 	# It still loops even though I told it to stop with CTRL+C
 	killall -9 gen_package_env
@@ -481,7 +489,7 @@ gen_overlay_paths() {
 gen_tarball_to_p_dict() {
 	unset A_TO_P
 	declare -Ag A_TO_P
-	local cache_path="${DIR_SCRIPT}/a_to_p.cache"
+	local cache_path="${VAR_PATH}/a_to_p.cache"
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
 		local now=$(date +"%s")
@@ -503,20 +511,25 @@ gen_tarball_to_p_dict() {
 			echo "Inspecting ${path}"
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			grep -q -e "DIST" "${path}" || continue
 			local line
 			for line in $(grep -e "DIST" "${path}") ; do
 				local a=$(echo "${line}" | cut -f 2 -d " ")
 				local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
-				A_TO_P[${hc}]="${cat_p}"
+				A_TO_P[${hc}]="${cat_pn}"
 			done
 		done
 	done
+
+	mkdir -p "${VAR_PATH}"
+	# TODO: permissions?
+
 	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
 	sed -i -e "s|declare -A |declare -Ag |g" "${cache_path}"
+	chmod 0644 "${cache_path}"
 }
 
 main()

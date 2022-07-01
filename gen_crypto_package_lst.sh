@@ -2,7 +2,7 @@
 
 # This file is a dependency of gen_package_env.sh
 
-DIR_SCRIPT=$(dirname "$0")
+DIR_SCRIPT=$(realpath $(dirname "$0"))
 
 ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-0}
 ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
@@ -28,7 +28,9 @@ EXPENSIVE_ALGS=(
 )
 LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
 OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
-PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
+PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}" # with ebuilds
+PORTAGE_ETC="${PORTAGE_DIR:-/etc/portage}" # with package.accept_keywords ; can be ${DIR_SCRIPT}
+VAR_PATH="${VAR_PATH:-/var/cache/gen_crypto_package}" # can be $(realpath $(pwd))
 WOPT=${WOPT:-"20"}
 WPKG=${WPKG:-"50"}
 
@@ -40,6 +42,7 @@ ASYM_ALGS=(
 	"ec(dsa|dh|rdsa)"
 	"ed[_-]*25519"
 	"elgamal"
+	"sm[_-]*2"
 )
 # Entries maybe commented out if too ambiguous to reduce false positives.
 # Some regexes need to be decomposed in order for EXPENSIVE_ALGS
@@ -118,7 +121,7 @@ gen_overlay_paths() {
 	export OVERLAY_PATHS="${_overlay_paths[@]}"
 }
 
-get_cat_p() {
+get_cat_pn() {
 	local tarball_path="${@}"
 	local a=$(basename "${tarball_path}")
 	local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
@@ -151,7 +154,7 @@ has_expensive_crypto() {
 gen_tarball_to_p_dict() {
 	unset A_TO_P
 	declare -Ag A_TO_P
-	local cache_path="${DIR_SCRIPT}/a_to_p.cache"
+	local cache_path="${VAR_PATH}/a_to_p.cache"
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
 		local now=$(date +"%s")
@@ -173,31 +176,36 @@ gen_tarball_to_p_dict() {
 			echo "Inspecting ${path}"
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			grep -q -e "DIST" "${path}" || continue
 			local line
 			for line in $(grep -e "DIST" "${path}") ; do
 				local a=$(echo "${line}" | cut -f 2 -d " ")
 				local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
-				A_TO_P[${hc}]="${cat_p}"
+				A_TO_P[${hc}]="${cat_pn}"
 			done
 		done
 	done
+
+	mkdir -p "${VAR_PATH}"
+	# TODO: permissions?
+
 	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
 	sed -i -e "s|declare -A |declare -Ag |g" "${cache_path}"
+	chmod 0644 "${cache_path}"
 }
 
 is_pkg_skippable() {
-	[[ "${cat_p}" =~ "-bin"$ ]] && return 0
-	[[ "${cat_p}" =~ "-data"$ ]] && return 0
-	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
-	[[ "${cat_p}" =~ "firmware" ]] && return 0
-	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
-	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
-	[[ "${cat_p}" =~ "virtual/" ]] && return 0
-	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
+	[[ "${cat_pn}" =~ "-bin"$ ]] && return 0
+	[[ "${cat_pn}" =~ "-data"$ ]] && return 0
+	[[ "${cat_pn}" =~ "acct-"("group"|"user") ]] && return 0
+	[[ "${cat_pn}" =~ "firmware" ]] && return 0
+	[[ "${cat_pn}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_pn}" =~ "sec-"("keys"|"policy") ]] && return 0
+	[[ "${cat_pn}" =~ "virtual/" ]] && return 0
+	[[ "${cat_pn}" =~ "x11-themes" ]] && return 0
 	return 1
 }
 
@@ -230,18 +238,18 @@ echo
 	local algs_s=$(echo "${ALL_ALGS[@]}" | tr " " "|")
 	local found=()
 	local x
-	echo -n "" > package.env.t
+	echo -n "" > "${T}/package.env.t"
 	for x in $(find "${DISTDIR}" -maxdepth 1 -type f \( -name "*tar.*" -o -name "*.zip" \)) ; do
 		[[ "${x}" =~ "__download__" ]] && continue
 		[[ "${x}" =~ ".portage_lockfile" ]] && continue
-		local cat_p=$(get_cat_p "${x}")
+		local cat_pn=$(get_cat_pn "${x}")
 		is_pkg_skippable && continue
 		echo "S1: Processing ${x}"
 		if [[ "${ARCHIVES_SKIP_LARGE}" == "1" ]] \
 			&& (( $(stat -c "%s" ${x} ) >= ${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE} )) ; then
 			echo "[warn : search crypto] Skipped large tarball for ${x}"
-			[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
-			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "# skipped" "# Reason: Large tarball" >> package.env.t
+			[[ -z "${cat_pn}" ]] && continue # Likely a removed ebuild
+			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "# skipped" "# Reason: Large tarball" >> "${T}/package.env.t"
 			continue
 		fi
 		local a=$(basename "${x}")
@@ -266,17 +274,17 @@ echo
 	done
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
 		echo "S2: Processing ${x}"
-		local cat_p=$(get_cat_p "${x}")
-		[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
+		local cat_pn=$(get_cat_pn "${x}")
+		[[ -z "${cat_pn}" ]] && continue # Likely a removed ebuild
 		local a=$(basename "${x}")
 		local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
 		local s="${cryptlst[${hc}]}"
 		if (( ${#cryptlst[${hc}]} > 0 )) && has_asym_alg "${s}" ; then
-			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_ASYM_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t
+			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${CRYPTO_ASYM_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> "${T}/package.env.t"
 		elif (( ${#cryptlst[${hc}]} > 0 )) && has_expensive_crypto "${s}" ; then
-			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_EXPENSIVE_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> package.env.t
+			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${CRYPTO_EXPENSIVE_OPT}" "# Contains ${cryptlst[${hc}]} (expensive)${mreason}" >> "${T}/package.env.t"
 		elif (( ${#cryptlst[${hc}]} > 0 )) ; then
-			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${CRYPTO_CHEAP_OPT}" "# Contains ${cryptlst[${hc}]} (cheap)${mreason}" >> package.env.t
+			printf "${mp}%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${CRYPTO_CHEAP_OPT}" "# Contains ${cryptlst[${hc}]} (cheap)${mreason}" >> "${T}/package.env.t"
 		fi
 	done
 }

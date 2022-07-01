@@ -2,26 +2,32 @@
 
 # This file is a dependency of gen_package_env.sh
 
-DIR_SCRIPT=$(dirname "$0")
+DIR_SCRIPT=$(realpath $(dirname "$0"))
 
 ARCHIVES_SKIP_LARGE=${ARCHIVES_SKIP_LARGE:-0}
 ARCHIVES_SKIP_LARGE_CUTOFF_SIZE=${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE:-100000000}
 CACHE_DURATION="${CACHE_DURATION:-86400}"
 DISTDIR="${DISTDIR:-/var/cache/distfiles}"
-DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-d2s}" # \
+DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-catpn}" # \
 # Valid values:
-#	none
-#	d2s (safer double -> single)
-#	d2f (double -> float, alias for d2s)
-#	catp (apply to select packages typically to artistic packages, can be customized)
 #	any
+#	catpn (apply to select packages typically to artistic packages, can be customized) ; catpn = ${CATEGORY}/${PN}
+#	none
+export DOUBLE_TO_SINGLE_SAFER="${DOUBLE_TO_SINGLE_SAFER:-1}" # \
+# Only allow if all literals fit or are within overflow/underflow limits of a single float.
+export DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT="${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT:-2}" # \
+# Vaild values: 1-7 (integer only)
+# You can set to square or cube root of the magnitude of the exponent.
+# Setting to 1 may be dangerous if literal used with pow or fmul.
 FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
 FMATH_UNSAFE_CFG="${FMATH_UNSAFE_CFG:-no-fast-math.conf}"
 LAYMAN_BASEDIR="${LAYMAN_BASEDIR:-/var/lib/layman}"
 OILEDMACHINE_OVERLAY_DIR="${OILEDMACHINE_OVERLAY_DIR:-/usr/local/oiledmachine-overlay}"
-PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}"
+PORTAGE_DIR="${PORTAGE_DIR:-/usr/portage}" # with ebuilds
+PORTAGE_ETC="${PORTAGE_DIR:-/etc/portage}" # with package.accept_keywords ; can be ${DIR_SCRIPT}
 SHORTCUT_D2S="${SHORTCUT_D2S:-1}"
 SKIP_GMPFR=${SKIP_GMPFR:-1}
+VAR_PATH="${VAR_PATH:-/var/cache/gen_crypto_package}" # can be $(realpath $(pwd))
 WOPT=${WOPT:-"20"}
 WPKG=${WPKG:-"50"}
 
@@ -36,14 +42,14 @@ SINGLE_PRECISION_CONST_CFG="enable-single-precision-constant.conf"
 TRAPPING_MATH_ON_CFG="enable-trapping-math.conf"
 UNSAFE_MATH_OPT_OFF_CFG="disable-unsafe-optimizations.conf"
 
-WHITELISTED_SINGLE_PRECISION_CONST_CATP=(
+WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN=(
 	"games-[a-zA-Z0-9_-]+/"
 	"gui-[a-zA-Z0-9_-]+/"
 	"media-[a-zA-Z0-9_-]+/"
 	"x11-[a-zA-Z0-9_-]+/"
-	".*/.*screensaver.*"
+	"[a-zA-Z0-9-]+/.*screensaver.*"
 )
-WHITELISTED_SINGLE_PRECISION_CONST_CATP_S=$(echo "${WHITELISTED_SINGLE_PRECISION_CONST_CATP[@]}"  | tr " " "|")
+WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN_S=$(echo "${WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN[@]}"  | tr " " "|")
 
 # Place anything using asymmetric encryption or large multiplication
 # or serious projects.
@@ -70,7 +76,7 @@ gen_overlay_paths() {
 	export OVERLAY_PATHS="${_overlay_paths[@]}"
 }
 
-get_cat_p() {
+get_cat_pn() {
 	local tarball_path="${@}"
 	local a=$(basename "${tarball_path}")
 	local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
@@ -81,7 +87,7 @@ get_cat_p() {
 gen_tarball_to_p_dict() {
 	unset A_TO_P
 	declare -Ag A_TO_P
-	local cache_path="${DIR_SCRIPT}/a_to_p.cache"
+	local cache_path="${VAR_PATH}/a_to_p.cache"
 	if [[ -e "${cache_path}" ]] ; then
 		local ts=$(stat -c "%W" "${cache_path}")
 		local now=$(date +"%s")
@@ -103,37 +109,37 @@ gen_tarball_to_p_dict() {
 			echo "Inspecting ${path}"
 			local idx_pn=$(get_path_pkg_idx "${path}")
 			local idx_cat=$(( ${idx_pn} - 1 ))
-			local cat_p=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
+			local cat_pn=$(echo "${path}" | cut -f ${idx_cat}-${idx_pn} -d "/")
 			local pn=$(echo "${path}" | cut -f ${idx_pn} -d "/")
 			grep -q -e "DIST" "${path}" || continue
 			local line
 			for line in $(grep -e "DIST" "${path}") ; do
 				local a=$(echo "${line}" | cut -f 2 -d " ")
 				local hc="S"$(echo -n "${a}" | sha1sum | cut -f 1 -d " ")
-				A_TO_P[${hc}]="${cat_p}"
+				A_TO_P[${hc}]="${cat_pn}"
 			done
 		done
 	done
+
+	mkdir -p "${VAR_PATH}"
+	# TODO: permissions?
+
 	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
 	sed -i -e "s|declare -A |declare -Ag |g" "${cache_path}"
+	chmod 0644 "${cache_path}"
 }
 
 is_pkg_skippable() {
-	[[ "${cat_p}" =~ "-bin"$ ]] && return 0
-	[[ "${cat_p}" =~ "-data"$ ]] && return 0
-	[[ "${cat_p}" =~ "acct-"("group"|"user") ]] && return 0
-	[[ "${cat_p}" =~ "firmware" ]] && return 0
-	[[ "${cat_p}" =~ "media-fonts" ]] && return 0
-	[[ "${cat_p}" =~ "sec-"("keys"|"policy") ]] && return 0
-	[[ "${cat_p}" =~ "virtual/" ]] && return 0
-	[[ "${cat_p}" =~ "x11-themes" ]] && return 0
+	[[ "${cat_pn}" =~ "-bin"$ ]] && return 0
+	[[ "${cat_pn}" =~ "-data"$ ]] && return 0
+	[[ "${cat_pn}" =~ "acct-"("group"|"user") ]] && return 0
+	[[ "${cat_pn}" =~ "firmware" ]] && return 0
+	[[ "${cat_pn}" =~ "media-fonts" ]] && return 0
+	[[ "${cat_pn}" =~ "sec-"("keys"|"policy") ]] && return 0
+	[[ "${cat_pn}" =~ "virtual/" ]] && return 0
+	[[ "${cat_pn}" =~ "x11-themes" ]] && return 0
 	return 1
-}
-
-uses_gmpfr() {
-	# assumes in sandbox
-	grep -r -q -E "(mpf_t|mpf_class|mpfr_t)" "${DIR_SCRIPT}/sandbox"
 }
 
 # This function tries to eliminate many non float based contexts (e.g. printing, memory, file access) as possible.
@@ -162,6 +168,7 @@ exclude_false_search_matches() {
 		-e 's|\\".*\\"||g' \
 		-e "s|[[:space:]]+$||g" \
 	| grep -E -v \
+		-e "[0-9]+\.[0-9]+ [a-zA-Z]+" \
 		-e "([${_sp}]+[a-zA-Z]+){3}" \
 		-e "([ a-zA-Z0-9._-]+[/]){3}" \
 		-e "([/][ a-zA-Z0-9._-]+){3}" \
@@ -202,6 +209,142 @@ exclude_false_search_matches() {
 	fi
 }
 
+is_d2f_safe() {
+	local max_sigfigs=0
+	local max_exp=0
+	local min_exp=0
+	IFS=$'\n'
+	local line
+	local contexts=""
+	regex_s="${sreal}"
+	echo -n "" > "${T}/d2s-contexts.txt"
+	local found_shortcut=0
+	while read -r -d $'\n' line ; do
+		local location=$(echo -n "${line}" | cut -f 1-2 -d ":")
+		local code=$(echo -n "${line}" | cut -f 3- -d ":")
+
+		found_shortcut=0
+		local _line=$(echo -n "${code}" \
+			| sed -r -e "s|/[*].*[*]/||g" \
+				-e "s|//.*||g" \
+				-e "s|^[[:space:]]+[*].*||g" \
+				-e "s|^${sp}[*].*||g" \
+				-e "s|\"[^\"]+\"||g" \
+				-e "s#/[*].*([*]/|$)##g" \
+				-e "s#(^|/[*]).*[*]/##g" \
+				-e "s|[[:space:]]+$||g" \
+				-e 's|\\".*\\"||g' \
+		)
+		[[ "${_line}" =~ \.[0-9]+\. ]] && continue # Skip semver versions (ex 3.1.2)
+		[[ "${_line}" =~ 0x ]] && continue # hex
+		[[ "${_line}" =~ ".h>" ]] && continue # header
+		[[ "${line}" =~ version ]] && continue
+
+		# Skip sentences in block comments
+		echo -n "${_line}" | grep -q -E \
+			-e "([${_sp}]+[a-zA-Z]+){3}" && continue
+
+		local val
+		for val in $(echo -n "${_line}" | grep ${grep_arg} -o -e "${sreal}") ; do
+			# Process raw possibly padded real number
+			[[ "${val}" =~ ("float"|"double") ]] && continue
+			[[ "${val}" =~ [fFlL]$ ]] && continue
+			# Only implicit real numbers passes
+			val=$(echo -n "${val}" | grep -o ${grep_arg} -e "${s_imp_double}")
+			val=$(echo -n "${val}" | sed -r -e "s|[[:space:]]+||g")
+
+			# The literal is still implied.
+			#echo -n "${_line}" | grep -q -E -e "\((double|single)\)${sp}${val}" && continue
+
+			# Complex numbers magnitude are determined by template parameters.
+			echo -n "${_line}" | grep -q -E -e "${val}${sp}i" && continue
+
+			[[ -z "${val}" ]] && continue
+			local sigfigs
+			local exp
+			local t_exp=0
+			local base_sigfigs
+			local base
+			if [[ ${val} =~ "e" ]] ; then
+				base=${val%e*}
+				base_sigfigs="${base}"
+				exp=${val#*e}
+				[[ -z "${exp}" ]] && exp=0
+			else
+				base=${val}
+				base_sigfigs="${base}"
+				exp=0
+			fi
+
+			# 2002e10 = 2002 * 10^10
+			# 0.01e2 = 0.01 * 10^2
+			[[ "${base}" =~ \. ]] || base="${base}."
+			local trailing_figs_len=$(echo -n "${base}" | cut -f 2 -d "." | sed -r -e "s|[0]+$||g" | tr "\n" " " | sed -e "s| ||g" | wc -c)
+			local leading_figs_len=$(echo -n "${base}" | cut -f 1 -d "." | sed -r -e "s|^[0]+||g" | tr "\n" " " | sed -e "s| ||g" | wc -c)
+			local zeros_right=$(echo "${base}" | cut -f 2 -d "." | grep -E -o -e "^[0]+" | tr "\n" " " | sed -e "s| ||g" | wc -c)
+			local zeros_left=$(echo "${base}" | cut -f 1 -d "." | grep -E -o -e "[0]+$" | tr "\n" " " | sed -e "s| ||g" | wc -c)
+			if [[ "${base}" =~ \. && ( "${leading_figs_len}" == "0" || "${base}" =~ ^[0]+\. ) ]] ; then
+				# Test cases:
+				# .0123
+				# .0123000
+				# 0.1234
+				# 0.01234
+				# 0.01234000
+				t_exp=$((-${trailing_figs_len}))
+			else
+				# Test cases:
+				# 1.
+				# 101.01
+				# 0
+				# 1
+				# 101
+				# 1000
+				# 0001000
+				if (( ${trailing_figs_len} > 0 )) ; then
+					t_exp=$((-${trailing_figs_len}))
+				elif (( ${zeros_left} > 0 )) ; then
+					t_exp=${zeros_left}
+				else
+					t_exp=0
+				fi
+			fi
+
+#			echo "[debug] val: |${val}| base_sigfigs: |${base_sigfigs}| exp: |${exp}| context: ${location}:${code}"
+			exp=$((${exp} + ${t_exp}))
+
+			base_sigfigs=$(echo "${base_sigfigs}" | sed -r -e "s|\.||g" -e "s|^[0]+([1-9])|\1|g" -e "s|([1-9])[0]+$|\1|g" -e "s|[+-]||g")
+			sigfigs="${#base_sigfigs}"
+
+			(( ${sigfigs} > ${max_sigfigs} )) && max_sigfigs=${sigfigs}
+			(( ${exp} < 0 && ${exp} < ${min_exp} )) && min_exp=${exp}
+			(( ${exp} > 0 && ${exp} > ${max_exp} )) && max_exp=${exp}
+			echo "val: |${val}| base_sigfigs: |${base_sigfigs}| exp: |${exp}| context: ${location}:${code}" >> "${T}/d2s-contexts.txt"
+
+			if [[ "${SHORTCUT_D2S}" == "1" ]] ; then
+				if (( ${max_sigfigs} >= 1 && ${max_sigfigs} <= 7 \
+					&& ( ${min_exp} >= ${MIN_EXP} && ${max_exp} <= ${MAX_EXP} ) )) ; then
+					:;
+				else
+					found_shortcut=1
+					break
+				fi
+			fi
+		done
+		[[ "${SHORTCUT_D2S}" == "1" ]] && (( ${found_shortcut} == 1 )) && break
+	done < <(cat "${T}/dump.txt" \
+		| xargs -0 \
+		  grep ${grep_arg} --color=never -n -e "${regex_s}")
+	IFS=$' \n\t'
+	echo "Max sigfigs:  ${max_sigfigs}"
+	echo "Min exp:  ${min_exp}"
+	echo "Max exp:  ${max_exp}"
+	if (( ${max_sigfigs} >= 0 && ${max_sigfigs} <= 7 \
+		&& ( ${min_exp} >= ${MIN_EXP} && ${max_exp} <= ${MAX_EXP} ) )) ; then
+		add_d2sc "Found safer implied double const in ${cat_pn}"
+		cat "${T}/d2s-contexts.txt"
+	fi
+}
+
 search() {
 	if [[ -n "${GREP_HAS_PCRE}" ]] ; then
 		echo "GREP_HAS_PCRE=${GREP_HAS_PCRE} (from env)"
@@ -218,8 +361,7 @@ echo
 	local found=()
 	local x
 	echo "Scanning..."
-	echo -n "" > package.env.t
-
+	echo -n "" > "${T}/package.env.t"
 
 	local _sp="[:space:]"
 	local sp="[${_sp}]*"
@@ -421,17 +563,14 @@ echo
 		wl_d2sc_s=""
 	elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" == "any" ]] ; then
 		wl_d2sc_s=""
-	elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" == "d2s" ]] ; then
-		wl_d2sc_s=""
-	elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" == "catp" ]] ; then
-		wl_d2sc_s="${WHITELISTED_SINGLE_PRECISION_CONST_CATP_S}"
+	elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" == "catpn" ]] ; then
+		wl_d2sc_s="${WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN_S}"
 	else
 echo
 echo "DOUBLE_TO_SINGLE_CONST_MODE is not set properly"
-echo "Valid values:  none, any, art1, art2, art3"
+echo "Valid values:  none, any, d2s, d2f, catpn"
 echo
 		exit 1
-		wl_d2sc_s=""
 	fi
 
 	unset fprop # Package float properities
@@ -444,14 +583,14 @@ echo
 			echo -n "${line}" \
 				| exclude_false_search_matches \
 				| grep ${grep_arg} --color=always -n -e "(${regex_s})"
-		done < <(cat "${DIR_SCRIPT}/dump.txt" \
+		done < <(cat "${T}/dump.txt" \
 			| xargs -0 \
 			  grep ${grep_arg} --color=never -n -e "(${regex_s})")
 		IFS=$' \n\t'
 	}
 
 	count_regex_lines_fast() {
-		cat "${DIR_SCRIPT}/dump.txt" \
+		cat "${T}/dump.txt" \
 			| xargs -0 \
 			  grep ${grep_arg} --color=never -n -e "(${regex_s})" \
 			| wc -l
@@ -463,7 +602,7 @@ echo
 		local line
 		while read -r -d $'\n' line ; do
 			[[ -n "${line}" ]] && count=$(( ${count} + 1 ))
-		done < <(cat "${DIR_SCRIPT}/dump.txt" \
+		done < <(cat "${T}/dump.txt" \
 			| xargs -0 \
 			  grep ${grep_arg} --color=never -n -e "(${regex_s})" \
 			| exclude_false_search_matches \
@@ -478,7 +617,7 @@ echo
 		local line
 		while read -r -d $'\n' line ; do
 			[[ -n "${line}" ]] && count=$(( ${count} + 1 ))
-		done < <(cat "${DIR_SCRIPT}/dump.txt" \
+		done < <(cat "${T}/dump.txt" \
 			| xargs -0 \
 			  grep ${grep_arg} --color=never -n -e "(${regex_s})" \
 			| cut -f 3 -d ":")
@@ -502,47 +641,52 @@ echo
 echo
 	}
 
-	d2sc_add_msg() {
-		local msg="${1}"
-		echo "${msg}"
-		[[ "${fprop[${cat_p}]}" =~ "${SINGLE_PRECISION_CONST_CFG}" ]] \
-			|| fprop["${cat_p}"]+=" ${SINGLE_PRECISION_CONST_CFG}"
+	add_d2sc() {
+		echo "Found implied double const to single optimization opportunity for ${cat_pn}"
+		[[ "${fprop[${cat_pn}]}" =~ "${SINGLE_PRECISION_CONST_CFG}" ]] \
+			|| fprop["${cat_pn}"]+=" ${SINGLE_PRECISION_CONST_CFG}"
 	}
+
+	local MIN_EXP="-"$(python -c "import math; print(math.floor(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(126)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+	local MAX_EXP=$(python -c "import math; print(math.ceil(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(127)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+
+	echo "MIN_EXP=${MIN_EXP}"
+	echo "MAX_EXP=${MAX_EXP}"
 
 	for x in $(find "${DISTDIR}" -maxdepth 1 -type f \( -name "*tar.*" -o -name "*.zip" \)) ; do
 		[[ "${x}" =~ "__download__" ]] && continue
 		[[ "${x}" =~ ".portage_lockfile" ]] && continue
-		local cat_p=$(get_cat_p "${x}")
-		[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
+		local cat_pn=$(get_cat_pn "${x}")
+		[[ -z "${cat_pn}" ]] && continue # Likely a removed ebuild
 		is_pkg_skippable && continue
 
 		if [[ "${ARCHIVES_SKIP_LARGE}" == "1" ]] \
 			&& (( $(stat -c "%s" ${x} ) >= ${ARCHIVES_SKIP_LARGE_CUTOFF_SIZE} )) ; then
 			echo "[warn : search float] Skipped large tarball for ${x}"
-			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "# skipped" "# Reason: Large tarball" >> package.env.t
+			printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "# skipped" "# Reason: Large tarball" >> "${T}/package.env.t"
 			continue
 			exit 1
 		fi
 		echo "Processing ${x}"
 		if [[ "${x}" =~ "zip"$ ]] ; then
-			rm -rf "${DIR_SCRIPT}/sandbox"
-			mkdir -p "${DIR_SCRIPT}/sandbox"
-			unzip "${x}" -d "${DIR_SCRIPT}/sandbox" 1>/dev/null
+			rm -rf "${T}/sandbox"
+			mkdir -p "${T}/sandbox"
+			unzip "${x}" -d "${T}/sandbox" 1>/dev/null
 		fi
 		if [[ "${x}" =~ "tar" ]] ; then
-			rm -rf "${DIR_SCRIPT}/sandbox"
-			mkdir -p "${DIR_SCRIPT}/sandbox"
-			tar -C "${DIR_SCRIPT}/sandbox" -xf "${x}" 1>/dev/null
+			rm -rf "${T}/sandbox"
+			mkdir -p "${T}/sandbox"
+			tar -C "${T}/sandbox" -xf "${x}" 1>/dev/null
 		fi
 
 		local targets=()
-		find "${DIR_SCRIPT}/sandbox" \
+		find "${T}/sandbox" \
 			-type f \
 			-regextype 'posix-extended' \
 			-regex ".*(\.c|\.cc|\.cpp|\.cxx|\.C|\.c\+\+|\.h|\.hh|\.hpp|\.hxx|\.H|\.h\+\+)$" \
-			-print0 > "${DIR_SCRIPT}/dump.txt"
-		[[ -e "${DIR_SCRIPT}/dump.txt" ]] || continue
-		(( $(wc -c "${DIR_SCRIPT}/dump.txt" | cut -f 1 -d " ") == 0 )) && continue
+			-print0 > "${T}/dump.txt"
+		[[ -e "${T}/dump.txt" ]] || continue
+		(( $(wc -c "${T}/dump.txt" | cut -f 1 -d " ") == 0 )) && continue
 		# Not all -ffast-math patterns will be scanned.  -funsafe-math-optimizations
 		# must be inspected manually.
 		# Reason why is because the properties of the variables is unknown.
@@ -567,32 +711,31 @@ echo
 
 		# ...we now need to inspect every file for floats and delete lines that don't have em.
 
-		echo -n > "${DIR_SCRIPT}/dump2.txt" || exit 1
+		echo -n > "${T}/dump2.txt" || exit 1
 		IFS=
 		local p
 		local line
 		while read -r -d $'' p ; do
 			if grep -q ${grep_arg} -e "(${regex_s})" "${p}" ; then
-				echo -e -n "${p}\0" >> "${DIR_SCRIPT}/dump2.txt" || exit 1
+				echo -e -n "${p}\0" >> "${T}/dump2.txt" || exit 1
 			fi
-		done < <(cat "${DIR_SCRIPT}/dump.txt")
+		done < <(cat "${T}/dump.txt")
 		IFS=$' \n\t'
-		mv "${DIR_SCRIPT}/dump2.txt" "${DIR_SCRIPT}/dump.txt" || exit 1
+		mv "${T}/dump2.txt" "${T}/dump.txt" || exit 1
 
-		local size=$(stat -c "%s" "${DIR_SCRIPT}/dump.txt")
+		local size=$(stat -c "%s" "${T}/dump.txt")
 		size=$((${size} - 1))
 		(( ${size} < 0 )) && size=0
-		truncate -s ${size} "${DIR_SCRIPT}/dump.txt" || exit 1
+		truncate -s ${size} "${T}/dump.txt" || exit 1
 
-if false ; then
 		regex_s="${errno_fns_s}"
 		nlines=$(count_regex_lines_excluded)
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fno-errno-math"
 			solution="-ferrno-math"
 			regex_s="${errno_fns_s}"
-			[[ "${fprop[${cat_p}]}" =~ "${ERRNO_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${ERRNO_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${ERRNO_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${ERRNO_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -601,8 +744,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-ffinite-math-only"
 			solution="-fno-finite-math-only"
-			[[ "${fprop[${cat_p}]}" =~ "${INFINITE_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${INFINITE_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${INFINITE_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${INFINITE_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -611,8 +754,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fno-rounding-math"
 			solution="-frounding-math"
-			[[ "${fprop[${cat_p}]}" =~ "${ROUNDING_MATH_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${ROUNDING_MATH_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${ROUNDING_MATH_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${ROUNDING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -621,8 +764,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fno-signaling-nans"
 			solution="-fsignaling-nans"
-			[[ "${fprop[${cat_p}]}" =~ "${SIGNALING_NANS_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${SIGNALING_NANS_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${SIGNALING_NANS_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${SIGNALING_NANS_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -631,8 +774,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fno-signed-zeros"
 			solution="-fsigned-zeros"
-			[[ "${fprop[${cat_p}]}" =~ "${SIGNED_ZEROS_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${SIGNED_ZEROS_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${SIGNED_ZEROS_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${SIGNED_ZEROS_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -641,8 +784,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fno-trapping-math"
 			solution="-ftrapping-math"
-			[[ "${fprop[${cat_p}]}" =~ "${TRAPPING_MATH_ON_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${TRAPPING_MATH_ON_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${TRAPPING_MATH_ON_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${TRAPPING_MATH_ON_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -651,8 +794,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-funsafe-math-optimizations"
 			solution="-fno-unsafe-math-optimizations"
-			[[ "${fprop[${cat_p}]}" =~ "${UNSAFE_MATH_OPT_OFF_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${UNSAFE_MATH_OPT_OFF_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${UNSAFE_MATH_OPT_OFF_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${UNSAFE_MATH_OPT_OFF_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -661,8 +804,8 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-fcx-limited-range"
 			solution="-fno-cx-limited-range"
-			[[ "${fprop[${cat_p}]}" =~ "${CX_LIMITED_RANGE_OFF_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${CX_LIMITED_RANGE_OFF_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${CX_LIMITED_RANGE_OFF_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${CX_LIMITED_RANGE_OFF_CFG}"
 			msg_fast_math_violation
 		fi
 
@@ -672,165 +815,35 @@ if false ; then
 		if (( ${nlines} > 0 )) ; then
 			assumed_violation="-freciprocal-math"
 			solution="-fno-reciprocal-math"
-			[[ "${fprop[${cat_p}]}" =~ "${RECIPROCAL_MATH_OFF_CFG}" ]] \
-				|| fprop["${cat_p}"]+=" ${RECIPROCAL_MATH_OFF_CFG}"
+			[[ "${fprop[${cat_pn}]}" =~ "${RECIPROCAL_MATH_OFF_CFG}" ]] \
+				|| fprop["${cat_pn}"]+=" ${RECIPROCAL_MATH_OFF_CFG}"
 			msg_fast_math_violation
 		fi
-fi
 
 		regex_s="${s_imp_double}" # Sample if it exists
 		local nlines=$(count_regex_lines_excluded_d2sc)
-		if [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" != "none" ]] && ( echo "${cat_p}" | grep -q -E -e "(${BLACKLISTED_SINGLE_PRECISION_CONST_S})" ) ; then
-			echo "Skipped -fsingle-precision-constant for blacklisted ${cat_p}"
-		elif [[ "${SKIP_GMPFR}" == "1" ]] && uses_gmpfr ; then
-			# Skip over use of possible large multiplications
-			echo "[warn] Skipping ${cat_p} for -fsingle-precision-constant because of possible use of gmp/mpfr"
+		if [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" != "none" ]] && ( echo "${cat_pn}" | grep -q -E -e "(${BLACKLISTED_SINGLE_PRECISION_CONST_S})" ) ; then
+			echo "Skipped -fsingle-precision-constant for blacklisted ${cat_pn}"
 		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ ("any") ]] && (( ${nlines} > 0 )) ; then
-			d2sc_add_msg "Found implied double const in ${cat_p}"
-		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ ("d2s"|"d2f") ]] && (( ${nlines} > 0 )) ; then
-			local max_sigfigs=0
-			local max_exp=0
-			local min_exp=0
-			IFS=$'\n'
-			local line
-			local contexts=""
-			regex_s="${sreal}"
-			echo -n "" > "${DIR_SCRIPT}/d2s-contexts.txt"
-			local found_shortcut=0
-			while read -r -d $'\n' line ; do
-				local location=$(echo -n "${line}" | cut -f 1-2 -d ":")
-				local code=$(echo -n "${line}" | cut -f 3- -d ":")
-
-				found_shortcut=0
-				local _line=$(echo -n "${code}" \
-					| sed -r -e "s|/[*].*[*]/||g" \
-						-e "s|//.*||g" \
-						-e "s|^[[:space:]]+[*].*||g" \
-						-e "s|^${sp}[*].*||g" \
-						-e "s|\"[^\"]+\"||g" \
-						-e "s#/[*].*([*]/|$)##g" \
-						-e "s#(^|/[*]).*[*]/##g" \
-						-e "s|[[:space:]]+$||g" \
-						-e 's|\\".*\\"||g' \
-				)
-				[[ "${_line}" =~ \.[0-9]+\. ]] && continue # Skip semver versions (ex 3.1.2)
-				[[ "${_line}" =~ 0x ]] && continue # hex
-				[[ "${_line}" =~ ".h>" ]] && continue # header
-				[[ "${line}" =~ version ]] && continue
-
-				# Skip sentences in block comments
-				echo -n "${_line}" | grep -q -E \
-					-e "([${_sp}]+[a-zA-Z]+){3}" && continue
-
-				local val
-				for val in $(echo -n "${_line}" | grep ${grep_arg} -o -e "${sreal}") ; do
-					# Process raw possibly padded real number
-					[[ "${val}" =~ ("float"|"double") ]] && continue
-					[[ "${val}" =~ [fFlL]$ ]] && continue
-					# Only implicit real numbers passes
-					val=$(echo -n "${val}" | grep -o ${grep_arg} -e "${s_imp_double}")
-					val=$(echo -n "${val}" | sed -r -e "s|[[:space:]]+||g")
-
-					# The literal is still implied.
-					#echo -n "${_line}" | grep -q -E -e "\((double|single)\)${sp}${val}" && continue
-
-					# Complex numbers magnitude are determined by template parameters.
-					echo -n "${_line}" | grep -q -E -e "${val}${sp}i" && continue
-
-					[[ -z "${val}" ]] && continue
-					local sigfigs
-					local exp
-					local t_exp=0
-					local base_sigfigs
-					local base
-					if [[ ${val} =~ "e" ]] ; then
-						base=${val%e*}
-						base_sigfigs="${base}"
-						exp=${val#*e}
-						[[ -z "${exp}" ]] && exp=0
-					else
-						base=${val}
-						base_sigfigs="${base}"
-						exp=0
-					fi
-
-					# 2002e10 = 2002 * 10^10
-					# 0.01e2 = 0.01 * 10^2
-					[[ "${base}" =~ \. ]] || base="${base}."
-					local trailing_figs_len=$(echo -n "${base}" | cut -f 2 -d "." | sed -r -e "s|[0]+$||g" | tr "\n" " " | sed -e "s| ||g" | wc -c)
-					local leading_figs_len=$(echo -n "${base}" | cut -f 1 -d "." | sed -r -e "s|^[0]+||g" | tr "\n" " " | sed -e "s| ||g" | wc -c)
-					local zeros_right=$(echo "${base}" | cut -f 2 -d "." | grep -E -o -e "^[0]+" | tr "\n" " " | sed -e "s| ||g" | wc -c)
-					local zeros_left=$(echo "${base}" | cut -f 1 -d "." | grep -E -o -e "[0]+$" | tr "\n" " " | sed -e "s| ||g" | wc -c)
-					if [[ "${base}" =~ \. && ( "${leading_figs_len}" == "0" || "${base}" =~ ^[0]+\. ) ]] ; then
-						# Test cases:
-						# .0123
-						# .0123000
-						# 0.1234
-						# 0.01234
-						# 0.01234000
-						t_exp=$((-${trailing_figs_len}))
-					else
-						# Test cases:
-						# 1.
-						# 101.01
-						# 0
-						# 1
-						# 101
-						# 1000
-						# 0001000
-						if (( ${trailing_figs_len} > 0 )) ; then
-							t_exp=$((-${trailing_figs_len}))
-						elif (( ${zeros_left} > 0 )) ; then
-							t_exp=${zeros_left}
-						else
-							t_exp=0
-						fi
-					fi
-
-#					echo "[debug] val: |${val}| base_sigfigs: |${base_sigfigs}| exp: |${exp}| context: ${location}:${code}"
-					exp=$((${exp} + ${t_exp}))
-
-					base_sigfigs=$(echo "${base_sigfigs}" | sed -r -e "s|\.||g" -e "s|^[0]+([1-9])|\1|g" -e "s|([1-9])[0]+$|\1|g" -e "s|[+-]||g")
-					sigfigs="${#base_sigfigs}"
-
-					(( ${sigfigs} > ${max_sigfigs} )) && max_sigfigs=${sigfigs}
-					(( ${exp} < 0 && ${exp} < ${min_exp} )) && min_exp=${exp}
-					(( ${exp} > 0 && ${exp} > ${max_exp} )) && max_exp=${exp}
-					echo "val: |${val}| base_sigfigs: |${base_sigfigs}| exp: |${exp}| context: ${location}:${code}" >> "${DIR_SCRIPT}/d2s-contexts.txt"
-
-					if [[ "${SHORTCUT_D2S}" == "1" ]] ; then
-						if (( ${max_sigfigs} >= 1 && ${max_sigfigs} <= 7 \
-							&& ( ${min_exp} >= -126 && ${max_exp} <= 127 ) )) ; then
-							:;
-						else
-							found_shortcut=1
-							break
-						fi
-					fi
-				done
-				[[ "${SHORTCUT_D2S}" == "1" ]] && (( ${found_shortcut} == 1 )) && break
-			done < <(cat "${DIR_SCRIPT}/dump.txt" \
-				| xargs -0 \
-				  grep ${grep_arg} --color=never -n -e "${regex_s}")
-			IFS=$' \n\t'
-			echo "Max sigfigs:  ${max_sigfigs}"
-			echo "Min exp:  ${min_exp}"
-			echo "Max exp:  ${max_exp}"
-			if (( ${max_sigfigs} >= 0 && ${max_sigfigs} <= 7 \
-				&& ( ${min_exp} >= -126 && ${max_exp} <= 127 ) )) ; then
-				d2sc_add_msg "Found safer implied double const in ${cat_p}"
-				cat "${DIR_SCRIPT}/d2s-contexts.txt"
+			if [[ "${DOUBLE_TO_SINGLE_SAFER}" == "1" ]] ; then
+				is_d2f_safe
+			else
+				add_d2sc
 			fi
-		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ (catp) ]] && (( ${nlines} > 0 )) ; then
-			if [[ -n "${wl_d2sc_s}" ]] && ( echo "${cat_p}" | grep -q -E -e "(${wl_d2sc_s})" ) ; then
-				d2sc_add_msg "Found implied double const in ${cat_p}"
+		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ ("catpn") ]] && (( ${nlines} > 0 )) ; then
+			if [[ -n "${wl_d2sc_s}" ]] && ( echo "${cat_pn}" | grep -q -E -e "(${wl_d2sc_s})" ) ; then
+				if [[ "${DOUBLE_TO_SINGLE_SAFER}" == "1" ]] ; then
+					is_d2f_safe
+				else
+					add_d2sc
+				fi
 			fi
 		fi
 	done
 	for x in $(echo ${found[@]} | tr " " "\n" | sort | uniq) ; do
-		local cat_p=$(get_cat_p "${x}")
-		[[ -z "${cat_p}" ]] && continue # Likely a removed ebuild
-		printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_p}" "${FMATH_OPT} ${fprop[${cat_p}]}" >> package.env.t
+		local cat_pn=$(get_cat_pn "${x}")
+		[[ -z "${cat_pn}" ]] && continue # Likely a removed ebuild
+		printf "%-${WPKG}s%-${WOPT}s %s\n" "${cat_pn}" "${FMATH_OPT} ${fprop[${cat_pn}]}" >> "${T}/package.env.t"
 	done
 }
 
