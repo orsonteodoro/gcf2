@@ -123,7 +123,7 @@ gen_tarball_to_p_dict() {
 	done
 
 	mkdir -p "${VAR_PATH}"
-	# TODO: permissions?
+	chmod 0755 "${VAR_PATH}"
 
 	# Serialized data
 	declare -p A_TO_P > "${cache_path}"
