@@ -209,7 +209,7 @@ exclude_false_search_matches() {
 	fi
 }
 
-is_d2f_safe() {
+add_if_d2f_safe() {
 	local max_sigfigs=0
 	local max_exp=0
 	local min_exp=0
@@ -826,14 +826,14 @@ echo
 			echo "Skipped -fsingle-precision-constant for blacklisted ${cat_pn}"
 		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ ("any") ]] && (( ${nlines} > 0 )) ; then
 			if [[ "${DOUBLE_TO_SINGLE_SAFER}" == "1" ]] ; then
-				is_d2f_safe
+				add_if_d2f_safe
 			else
 				add_d2sc
 			fi
 		elif [[ "${DOUBLE_TO_SINGLE_CONST_MODE}" =~ ("catpn") ]] && (( ${nlines} > 0 )) ; then
 			if [[ -n "${wl_d2sc_s}" ]] && ( echo "${cat_pn}" | grep -q -E -e "(${wl_d2sc_s})" ) ; then
 				if [[ "${DOUBLE_TO_SINGLE_SAFER}" == "1" ]] ; then
-					is_d2f_safe
+					add_if_d2f_safe
 				else
 					add_d2sc
 				fi
