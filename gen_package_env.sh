@@ -32,10 +32,11 @@ export DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-catpn}" # \
 #	none
 # See WHITELISTED_SINGLE_PRECISION_CONST_CAT_PN in gen_float_package_lst.sh to set up whitelist.
 export DOUBLE_TO_SINGLE_SAFER="${DOUBLE_TO_SINGLE_SAFER:-1}" # \
-# Only allow if all literals fit or are within overflow/underflow limits of a single float.
+# Valid values: 0 or 1
+# Only allow if all implicit decimal literals fit and are within overflow/underflow limits of a single float.
 export DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT="${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT:-2}" # \
 # Vaild values: 1-7 (integer only)
-# You can set to square or cube root of the magnitude of the exponent.
+# You can set to n-th root of the magnitude of the exponent.
 # Setting to 1 may be dangerous if literal used with pow or fmul.
 export MAINTENANCE_MODE="1"
 export DISTDIR="${DISTDIR:-/var/cache/distfiles}"

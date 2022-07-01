@@ -14,10 +14,11 @@ DOUBLE_TO_SINGLE_CONST_MODE="${DOUBLE_TO_SINGLE_CONST_MODE:-catpn}" # \
 #	catpn (apply to select packages typically to artistic packages, can be customized) ; catpn = ${CATEGORY}/${PN}
 #	none
 export DOUBLE_TO_SINGLE_SAFER="${DOUBLE_TO_SINGLE_SAFER:-1}" # \
-# Only allow if all literals fit or are within overflow/underflow limits of a single float.
+# Valid values: 0 or 1
+# Only allow if all implicit decimal literals fit and are within overflow/underflow limits of a single float.
 export DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT="${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT:-2}" # \
 # Vaild values: 1-7 (integer only)
-# You can set to square or cube root of the magnitude of the exponent.
+# You can set to n-th root of the magnitude of the exponent.
 # Setting to 1 may be dangerous if literal used with pow or fmul.
 FMATH_OPT="${FMATH_OPT:-Ofast-mt.conf}"
 FMATH_UNSAFE_CFG="${FMATH_UNSAFE_CFG:-no-fast-math.conf}"
