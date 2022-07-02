@@ -339,6 +339,7 @@ add_if_d2f_safe() {
 	echo "Max sigfigs:  ${max_sigfigs}"
 	echo "Min exp:  ${min_exp}"
 	echo "Max exp:  ${max_exp}"
+	# FIXME: add conditional to check max and min significand (9xe38 should not pass)
 	if (( ${max_sigfigs} >= 0 && ${max_sigfigs} <= ${MAX_SIGFIGS} \
 		&& ( ${min_exp} >= ${MIN_EXP} && ${max_exp} <= ${MAX_EXP} ) )) ; then
 		add_d2sc "Found safer implied double const in ${cat_pn}"
@@ -553,6 +554,7 @@ echo
 	)
 	local unsafe_math_s=$(echo "${unsafe_math[@]}" | tr " " "|")
 
+	# TODO: handle/review signs [+-]?${real}
 	local t0="\(${sreal}[*]${sreal}${sadd}${si}*${si}\)"
 	local cx_limited_range=(
 		"${lparen}\(${sp}\(${sreal}${smul}${sreal}${sadd}${si}${smul}${si}\)${sdiv}${t0}\)${sadd}${si}\(${sp}\(${si}${smul}${sreal}${ssub}${sreal}[*]${si}\)${sdiv}${t0}\)"
@@ -648,8 +650,8 @@ echo
 			|| fprop["${cat_pn}"]+=" ${SINGLE_PRECISION_CONST_CFG}"
 	}
 
-	local MIN_EXP="-"$(python -c "import math; print(math.floor(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(38)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
-	local MAX_EXP=$(python -c "import math; print(math.ceil(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(38)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+	local MIN_EXP="-"$(python -c "import math; print(math.floor(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(37)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g") # 37 same as FLT_MIN_10_EXP
+	local MAX_EXP=$(python -c "import math; print(math.ceil(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(38)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g") # 38 same as FLT_MAX_10_EXP
 	local MAX_SIGFIGS="7"
 
 	echo "MIN_EXP=${MIN_EXP}"
