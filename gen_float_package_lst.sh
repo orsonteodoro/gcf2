@@ -322,7 +322,7 @@ add_if_d2f_safe() {
 			echo "val: |${val}| base_sigfigs: |${base_sigfigs}| exp: |${exp}| context: ${location}:${code}" >> "${T}/d2s-contexts.txt"
 
 			if [[ "${SHORTCUT_D2S}" == "1" ]] ; then
-				if (( ${max_sigfigs} >= 1 && ${max_sigfigs} <= 7 \
+				if (( ${max_sigfigs} >= 1 && ${max_sigfigs} <= ${MAX_SIGFIGS} \
 					&& ( ${min_exp} >= ${MIN_EXP} && ${max_exp} <= ${MAX_EXP} ) )) ; then
 					:;
 				else
@@ -339,7 +339,7 @@ add_if_d2f_safe() {
 	echo "Max sigfigs:  ${max_sigfigs}"
 	echo "Min exp:  ${min_exp}"
 	echo "Max exp:  ${max_exp}"
-	if (( ${max_sigfigs} >= 0 && ${max_sigfigs} <= 7 \
+	if (( ${max_sigfigs} >= 0 && ${max_sigfigs} <= ${MAX_SIGFIGS} \
 		&& ( ${min_exp} >= ${MIN_EXP} && ${max_exp} <= ${MAX_EXP} ) )) ; then
 		add_d2sc "Found safer implied double const in ${cat_pn}"
 		cat "${T}/d2s-contexts.txt"
@@ -648,8 +648,9 @@ echo
 			|| fprop["${cat_pn}"]+=" ${SINGLE_PRECISION_CONST_CFG}"
 	}
 
-	local MIN_EXP="-"$(python -c "import math; print(math.floor(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(126)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
-	local MAX_EXP=$(python -c "import math; print(math.ceil(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(127)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+	local MIN_EXP="-"$(python -c "import math; print(math.floor(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(38)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+	local MAX_EXP=$(python -c "import math; print(math.ceil(pow(10,(1/${DOUBLE_TO_SINGLE_CONST_EXP_NTH_ROOT})*(math.log(38)/math.log(10)))))" | tr "\n" " " | sed -e "s| ||g")
+	local MAX_SIGFIGS="7"
 
 	echo "MIN_EXP=${MIN_EXP}"
 	echo "MAX_EXP=${MAX_EXP}"
