@@ -1,0 +1,25 @@
+[cfi-unrelated-cast|cfi-vcall]
+# Ebuild pkg_setup() run-time failures
+#   /usr/lib/gcc/[0-9a-z_]+-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: runtime error: control flow integrity check for type 'storage::secondary::FileStorage' failed during cast to unrelated type (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+#   /usr/lib/gcc/[0-9a-z_]+-pc-linux-gnu/11.2.0/include/g++-v11/ext/aligned_buffer.h:115:16: runtime error: control flow integrity check for type 'storage::secondary::HttpStorage' failed during cast to unrelated type (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+
+type:storage::secondary::FileStorage
+type:storage::secondary::HttpStorage
+
+[cfi-nvcall|cfi-vcall]
+# Ebuild pkg_setup() run-time failures
+#   /var/tmp/portage/dev-util/ccache-4.4.2/work/ccache-4.4.2/src/Config.cpp:388:7: runtime error: control flow integrity check for type 'std::basic_ios<char>' failed during non-virtual call (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+#   /var/tmp/portage/dev-util/ccache-4.4.2/work/ccache-4.4.2/src/Lockfile.cpp:53:3: runtime error: control flow integrity check for type 'std::basic_ostream<char>' failed during non-virtual call (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+#   /var/tmp/portage/dev-util/ccache-4.4.2/work/ccache-4.4.2/src/Lockfile.cpp:55:31: runtime error: control flow integrity check for type 'std::basic_stringstream<char>' failed during non-virtual call (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+#   /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include/g++-v11/sstream:1136:16: runtime error: control flow integrity check for type 'std::basic_stringbuf<char>' failed during non-virtual call (vtable address 0x[a-z0-9]+)
+#   0x[0-9a-c]+: note: invalid vtable
+
+type:std::basic_ios*
+type:std::basic_ostream*
+type:std::basic_stringstream*
+type:std::basic_stringbuf*

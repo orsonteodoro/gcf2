@@ -1,0 +1,7 @@
+[cfi-icall]
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/x11-drivers/xf86-video-dummy-0.3.8/temp/lto-llvm-095eff.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFiP7_ScreenE_align' can not be used when making a shared object
+src:dummy_cursor.c
+src:dummy_driver.c
+
+# The dga USE flag may require the below changes:
+#src:dummy_dga.c

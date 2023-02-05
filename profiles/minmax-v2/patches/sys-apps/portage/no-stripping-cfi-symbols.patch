@@ -1,0 +1,31 @@
+--- a/bin/estrip.orig	2021-12-12 00:05:48.000000000 -0800
++++ b/bin/estrip	2022-01-31 00:53:30.718007745 -0800
+@@ -121,7 +121,7 @@ for t in STRIP:strip OBJCOPY:objcopy REA
+ done
+ 
+ # Figure out what tool set we're using to strip stuff
+-unset SAFE_STRIP_FLAGS DEF_STRIP_FLAGS SPLIT_STRIP_FLAGS
++unset SAFE_STRIP_FLAGS DEF_STRIP_FLAGS SPLIT_STRIP_FLAGS CFI_STRIP_FLAGS
+ case $(${STRIP} --version 2>/dev/null) in
+ *elfutils*) # dev-libs/elfutils
+ 	# elfutils default behavior is always safe, so don't need to specify
+@@ -129,6 +129,7 @@ case $(${STRIP} --version 2>/dev/null) i
+ 	SAFE_STRIP_FLAGS=""
+ 	DEF_STRIP_FLAGS="--remove-comment"
+ 	SPLIT_STRIP_FLAGS="-f"
++	CFI_STRIP_FLAGS=""
+ 	;;
+ *GNU*) # sys-devel/binutils
+ 	# We'll leave out -R .note for now until we can check out the relevance
+@@ -136,9 +137,10 @@ case $(${STRIP} --version 2>/dev/null) i
+ 	SAFE_STRIP_FLAGS="--strip-unneeded -N __gentoo_check_ldflags__"
+ 	DEF_STRIP_FLAGS="-R .comment -R .GCC.command.line -R .note.gnu.gold-version"
+ 	SPLIT_STRIP_FLAGS=
++	CFI_STRIP_FLAGS="-w -K *__cfi* -K *_cfi_*"
+ 	;;
+ esac
+-: ${PORTAGE_STRIP_FLAGS=${SAFE_STRIP_FLAGS} ${DEF_STRIP_FLAGS}}
++: ${PORTAGE_STRIP_FLAGS=${SAFE_STRIP_FLAGS} ${DEF_STRIP_FLAGS} ${CFI_STRIP_FLAGS}}
+ 
+ prepstrip_sources_dir=${EPREFIX}/usr/src/debug/${CATEGORY}/${PF}
+ 

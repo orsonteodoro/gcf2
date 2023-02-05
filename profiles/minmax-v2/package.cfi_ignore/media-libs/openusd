@@ -1,0 +1,18 @@
+[cfi-nvcall|cfi-vcall]
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.h:104:29: runtime error: control flow integrity check for type 'std::type_info' failed during non-virtual call (vtable address 0x7f43cbef9ef0)
+#0x7f43cbef9ef0: note: invalid vtable
+# 43 7f 00 00  00 b2 d1 cb 43 7f 00 00  20 b2 d1 cb 43 7f 00 00  a0 c1 d1 cb 43 7f 00 00  a0 c1 d1 cb
+#              ^ 
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.h:104:29: note: check failed in /usr/lib64/libopenjp2.so.7, vtable located in /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.0/libstdc++.so.6
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.cpp:216:33: runtime error: control flow integrity check for type 'std::type_info' failed during non-virtual call (vtable address 0x7f43cbef9cb8)
+#0x7f43cbef9cb8: note: invalid vtable
+# 43 7f 00 00  20 90 d1 cb 43 7f 00 00  40 90 d1 cb 43 7f 00 00  a0 c1 d1 cb 43 7f 00 00  a0 c1 d1 cb
+#              ^ 
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.cpp:216:33: note: check failed in /usr/lib64/libopenjp2.so.7, vtable located in /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.0/libstdc++.so.6
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.h:104:29: runtime error: control flow integrity check for type 'std::type_info' failed during non-virtual call (vtable address 0x7f43cbef9cb8)
+#0x7f43cbef9cb8: note: invalid vtable
+# 43 7f 00 00  20 90 d1 cb 43 7f 00 00  40 90 d1 cb 43 7f 00 00  a0 c1 d1 cb 43 7f 00 00  a0 c1 d1 cb
+#              ^ 
+#/var/tmp/portage/media-libs/openusd-21.11-r3/work/USD-21.11/pxr/base/arch/demangle.h:104:29: note: check failed in /usr/lib64/libopenjp2.so.7, vtable located in /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.0/libstdc++.so.6
+
+type:std::type_info*

@@ -1,0 +1,128 @@
+#!/bin/bash
+
+PN=$(basename "$0")
+ARGV=($@)
+
+die() {
+echo "${@}"
+	exit 1
+}
+
+print_help() {
+echo ""
+echo "     ▓▓▓       ▓▓▓▓   ▓▓▓▓▓▓▓"
+echo "   ▓▓▓       ▓▓▓      ▓      "
+echo "  ▓▓        ▓▓        ▓    2 "
+echo " ▓▓         ▓▓        ▓      "
+echo " ▓▓   ▓▓▓▓  ▓▓        ▓▓▓▓   "
+echo " ▓▓      ▓  ▓▓        ▓      "
+echo "  ▓▓     ▓   ▓▓       ▓      "
+echo "    ▓▓▓▓▓▓    ▓▓▓▓▓   ▓      "
+echo
+echo "${PN} - gcf2, a manager for env/*, package.env, make.conf"
+echo
+echo "--help, -h                - show this help"
+echo "--list-profiles           - list profiles"
+echo "--restore-profile=<name>  - restore profile"
+echo "--save-profile=<name>     - save profile"
+echo
+echo
+echo "Environment variables:"
+echo
+echo "EROOT - source root"
+echo
+	exit 0
+}
+
+list_profiles() {
+echo
+echo "Profiles available:"
+echo
+	ls -1 profiles
+echo
+echo
+	exit 0
+}
+
+save_profile() {
+	local name=$(echo "${ARGV[@]}" \
+		| grep -e "--save-profile=.*" \
+		| cut -f 2 -d "=")
+	if [[ -z "${name}" ]] ; then
+echo
+echo "name in --save-profile=<name> cannot be empty."
+echo
+		exit 1
+	fi
+echo
+echo "Saving profile as ${name}"
+echo
+	if [[ -e "profiles/${name}" ]] ; then
+echo
+echo "Profile ${name} already exists."
+echo "Choose another name or delete it."
+echo
+		exit 1
+	fi
+	local dest="profiles/${name}"
+	mkdir -p "${dest}"
+	cp -a "${EROOT}/etc/portage/make.conf" "${dest}" 2>/dev/null
+	cp -a "${EROOT}/etc/portage/package.env" "${dest}" 2>/dev/null
+	cp -a "${EROOT}/etc/portage/env" "${dest}" 2>/dev/null
+	exit 0
+}
+
+restore_profile() {
+	local name=$(echo "${ARGV[@]}" \
+		| grep -e "--restore-profile=.*" \
+		| cut -f 2 -d "=")
+	if [[ -z "${name}" ]] ; then
+echo
+echo "name in --restore-profile=<name> cannot be empty."
+echo
+		exit 1
+	fi
+echo
+echo "Restoring the ${name} profile"
+echo
+	pushd "profiles/${name}" 1>/dev/null || die
+		# The install.sh is used for dynamically generated profiles.
+		if [[ -e "install.sh" ]] ; then
+			./install.sh || die
+		else
+echo ""
+			local dest="${EROOT}/etc/portage"
+			rm -rf "${dest}/env"
+			cp -a "make.conf" "${dest}" 2>/dev/null
+			cp -a "package.env" "${dest}" 2>/dev/null
+			cp -a "env" "${dest}" 2>/dev/null
+			chown root:root "${dest}/make.conf"
+			chown root:root "${dest}/package.env"
+			chown -R root:root "${dest}/env"
+			chmod 644 "${dest}/make.conf"
+			chmod 644 "${dest}/package.env"
+			chmod -R 644 "${dest}/env/"*
+			chmod -R 755 "${dest}/env"
+		fi
+	popd 1>/dev/null
+	exit 0
+}
+
+main() {
+	case ${ARGV[@]} in
+		--help|-h)
+			print_help
+			;;
+		--list-profiles)
+			list_profiles
+			;;
+		--restore-profile=*)
+			restore_profile
+			;;
+		--save-profile=*)
+			save_profile
+			;;
+	esac
+}
+
+main

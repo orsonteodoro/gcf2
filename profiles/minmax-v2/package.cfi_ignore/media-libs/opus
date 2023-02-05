@@ -1,0 +1,19 @@
+[cfi-icall]
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/opus-1.3.1-r2/temp/lto-llvm-ef79d5.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFiP18silk_encoder_statePKsE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/opus-1.3.1-r2/temp/lto-llvm-24f6e7.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvPfiPKviiiPvE_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/opus-1.3.1-r2/temp/lto-llvm-c19040.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvPviiPKfiiS_E_align' can not be used when making a shared object
+# /usr/bin/*-pc-linux-gnu-ld: /var/tmp/portage/media-libs/opus-1.3.1-r2/temp/lto-llvm-a037e6.o: relocation R_*_8 against hidden symbol `__typeid__ZTSFvPKvPfiiiiiE_align' can not be used when making a shared object
+
+# For _ZTSFiP18silk_encoder_statePKsE:
+src:*/encode_frame_FLP.c
+src:*/VAD.c
+src:*/VAD_sse4_1.c
+# For _ZTSFvPfiPKviiiPvE:
+src:*/opus_multistream_encoder.c
+src:*/opus_projection_encoder.c
+# For _ZTSFvPviiPKfiiS_E:
+src:*/opus_multistream_decoder.c
+src:*/opus_projection_decoder.c
+# For _ZTSFvPKvPfiiiiiE:
+src:*/analysis.c
+src:*/opus_encoder.c
