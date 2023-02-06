@@ -65,27 +65,28 @@ Take for example 60 FPS with the following penalties:
 ### Solution
 
 The rational solution, -Oflag(s) that are no less than 16.67 performance penalty
-is/are required to achive 25 FPS or more, so find the -Oflag level(s) that fits
-it.  -O3 (Solution by ricers), -O2 (Solution by distro), -Os (best case or by
+is/are required to achieve 25 FPS or more, so find the -Oflag level(s) that
+fits.  -O3 (Solution by ricers), -O2 (Solution by distro), -Os (best case or by
 chance or trial or error).  The side-effect is increased build time.
 
 The intuitive solution, performance bumps are done to get over the 50% drop, so
 keep bumping the -Oflag (through divide and conquer) until it appears to be 25
-FPS.  (Solution used by this repo).  The side-effect is random increased
+FPS.  (Solution used by this repo).  One side-effect is random increased
 runtime cost.  The quirk descriptions for performace degration are listed below.
 
 * No apparent performance penalty stays:  -O0
 * Observed visual studder bump:  -O1
-* Observed visual studder again bump:  -O2
+* Observed visual studder encountered again bump:  -O2
 * A trivial task not completed in 1 minute bump:  -O1
-* A trivial task not completed in 1 minute again bump:  -O2
+* A trivial task not completed in 1 minute encountered again bump:  -O2
 * 1.5+ minute durations with no artifacts:  -Ofast
 * 1.5+ minute durations with artifacts:  -O3
 
-* If the duration is still too long, a backtrack of the dependency chain bumps
-is made.  Once it is found, we restore the -Oflag to -O0 for irrelevant packages.
-If a package is known to be slow (or is the performance bottleneck), no
-backtracking will be done.
+* If the duration is still too long, a backtrack and evaluation of the
+dependency tree is made and -Oflag bumps are made to packages that may relate to
+the issue.  Once it is found, we restore the -Oflag to -O0 for irrelevant
+packages.  If a package is known to be slow (or is the performance bottleneck),
+backtracking will be cut short or end.
 
 ## Performance estimates
 
@@ -100,6 +101,6 @@ backtracking will be done.
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
-* LTO is less than +- 0.3% performance
+* LTO is -15% performance cost to 41% performance benefit ; &lt= ~22% space savings, up to 5x build times
 * CFI is &lt;= 1% performance cost
 * -O0 is preferred to reduce build times by 60%.
