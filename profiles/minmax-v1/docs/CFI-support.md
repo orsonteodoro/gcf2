@@ -445,7 +445,9 @@ missing symbols and CFI violations.  Find the error by doing a search on
 `dmesg` could also be used to find segfaults that may be related to CFI flags.
 The direct package of some segfaults may not be the actual cause.  Using
 `ldd <lib_path or exe_path>` or the ebuilds themselves can be used to traverse
-the dependency tree.
+the dependency tree.  WARNING:  Before running ldd on a binary package, make
+sure to virus scan (aka malware scan) it before running it.  ldd is insecure.
+See `man 1 ldd` for details.
 
 #### Package issues
 
