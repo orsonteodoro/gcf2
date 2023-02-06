@@ -10,7 +10,7 @@ restoring a profile.  This can be done with `--save-profile=name`.
 * It is assumed that you will make additional changes to make.conf to work with
 your personal setup.
 * It is a hard requirement to have a Rescue CD/USB especially with CFI ON.
-([SystemRescue|https://www.system-rescue.org/] can be used.)
+[SystemRescue](https://www.system-rescue.org) can be used.
 
 ## Running
 

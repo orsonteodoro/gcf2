@@ -156,4 +156,4 @@ The bashrc script is also provided to control applying, removing, translating
 script, or place it directly in the bashrc.  Per-package environment variables
 are used to control *FLAG filtering.
 
-See also [Environment-variables.md]
+See also [Environment-variables.md](Environment-variables.md).

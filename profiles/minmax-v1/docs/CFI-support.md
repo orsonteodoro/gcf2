@@ -52,7 +52,7 @@ disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 It also requires the removal of the hard mask for the package's
 experimental USE flag.
-* A sys-apps/portage [patch](https://github.com/orsonteodoro/gentoo-cflags/blob/master/patches/sys-apps/portage/no-stripping-cfi-symbols.patch)
+* A sys-apps/portage [patch](https://raw.githubusercontent.com/orsonteodoro/gcf2/master/profiles/minmax-v1/patches/sys-apps/portage/no-stripping-cfi-symbols.patch)
 to prevent stripping of CFI symbols.  (This is optional, but it's better than
 the alternative of a die after cfi post verify after merging.  You can use
 either this per-package patch or the no-strip.conf.)
@@ -183,7 +183,7 @@ PORTAGE_LOGDIR="/var/log/emerge/build-logs"
 15. Run `./gen_pkg_lists.sh`
 16. `emerge -ve @world`
 17. Run `scan-cfied-broken-binaries`  (For details see that
-[section](https://github.com/orsonteodoro/gentoo-cflags#checking-for-early-cfi-violations-and-missing-symbols))
+[section](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v1/docs/CFI-support.md#checking-for-early-cfi-violations-and-missing-symbols))
 18. Fix all CFI issues.
 19. Set `GCF_CFI_DEBUG=0` in make.conf.
 20. Run `./gen_pkg_lists.sh`
