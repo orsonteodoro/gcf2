@@ -24,7 +24,7 @@ disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 It also requires the removal of the hard mask for the package's
 experimental USE flag.
-* A sys-apps/portage [patch](https://raw.githubusercontent.com/orsonteodoro/gcf2/master/profiles/minmax-v2/patches/sys-apps/portage/no-stripping-cfi-symbols.patch)
+* A sys-apps/portage [patch](../patches/sys-apps/portage/no-stripping-cfi-symbols.patch)
 to prevent stripping of CFI symbols.  (This is optional, but it's better than
 the alternative of a die after cfi post verify after merging.  You can use
 either this per-package patch or the no-strip.conf.)
@@ -748,13 +748,13 @@ disable-clang-cfi.conf exceptions.
 
 This does a simple --help and --version check.  Add any potentially dangerous
 commands in the
-[exclude list](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/scan-cfied-broken-binaries#L68)
+[exclude list](../scan-cfied-broken-binaries#L68)
 inside the script.  This only tests a few code paths at start.  You may still
 encounter CFI violations from event based portions or deeper in the code.
 
 For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
-(in step 3 of the [steps section](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/docs/CFI-support.md#steps)
+(in step 3 of the [steps section](CFI-support.md#steps)
 early on to increase chances of a complete atomic update from beginning to
 end.
 
@@ -762,7 +762,7 @@ IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
 
 The script is called
-[scan-cfied-broken-binaries](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/scan-cfied-broken-binaries).
+[scan-cfied-broken-binaries](../scan-cfied-broken-binaries).
 
 Use `<path> --help`, `<path> --version`, or `<exe_path>` to see the violation or
 missing symbol problem.

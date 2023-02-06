@@ -95,13 +95,13 @@ disable-clang-cfi.conf exceptions.
 
 This does a simple --help and --version check.  Add any potentially dangerous
 commands in the
-[exclude list](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/scan-cfied-broken-binaries#L68)
+[exclude list](../scan-cfied-broken-binaries#L68)
 inside the script.  This only tests a few code paths at start.  You may still
 encounter CFI violations from event based portions or deeper in the code.
 
 For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
-(in step 3 of the [steps section](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/docs/CFI-support.md#steps)
+(in step 3 of the [steps section](CFI-support.md#steps)
 early on to increase chances of a complete atomic update from beginning to
 end.
 
@@ -109,7 +109,7 @@ IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
 
 The script is called
-[scan-cfied-broken-binaries](https://raw.githubusercontent.com/orsonteodoro/gcf2/master/profiles/minmax-v2/scan-cfied-broken-binaries).
+[scan-cfied-broken-binaries](../scan-cfied-broken-binaries).
 
 Use `<path> --help`, `<path> --version`, or `<exe_path>` to see the violation or
 missing symbol problem.
