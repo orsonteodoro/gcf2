@@ -55,10 +55,6 @@ performance.
 * gwp-asan for beta and live ebuilds.
 * Recheck if -Ofast and -ffast-math sub-options are disabled for www-browsers and derivatives, JavaScript engines.
 
-## Notes
-
-* For performance, it recommended to drop LTO.
-
 ## Performance estimates
 
 * -Ofast is +- 2% performance drop or benefit
@@ -77,5 +73,6 @@ performance.
 
 ## Notes
 
+* For performance configs, it recommended to drop LTO.
 * Beginning commit:  9a2df41007c0571ed9b785fdcf0442c097999d4c
 * End commit:  HEAD

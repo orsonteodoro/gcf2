@@ -47,10 +47,6 @@ performance.
 * See also README-detailed.md
 * End of Life (EOL)
 
-## Notes
-
-* For performance, it recommended to drop LTO.
-
 ## Performance estimates
 
 * -Ofast is +- 2% performance drop or benefit
@@ -69,5 +65,6 @@ performance.
 
 ## Notes
 
+* For performance configs, it recommended to drop LTO.
 * Beginning commit:  08798b13569bc7f4577626a7b640bdce0cb81b6b
 * End commit:  0bb5a1dea12235fb521f07e9606da555234d3c62
