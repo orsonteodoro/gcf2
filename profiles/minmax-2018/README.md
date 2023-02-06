@@ -44,8 +44,8 @@ performance.
 * -Ofast is +- 2% performance drop or benefit ; A to A+ grade
 * -O3 is 100% reference ; A grade
 * -O2 is +1% benefit to -3% to -9% performance drop ; A grade
-* -Os is -7% to -25% performance drop ; B to C grade
-* -O1 is -17% to -32% performance drop ; B to D grade ; D grade for newest codecs
+* -Os is -7% to -25% performance drop ; A to C grade
+* -O1 is -17% to -32% performance drop ; B to D grade ; D grade for the newest codecs
 * -Og is -19% to -26% ; B to C grade
 * -O0 is -55% to -90% worst case performance drop ; F grade for	crypto/codecs.  C grade for basic programs.
 * -march=native is a 5% performance benefit
