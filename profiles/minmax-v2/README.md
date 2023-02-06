@@ -46,7 +46,7 @@ performance.
 * Disables -ffast-math sub-options upon keyword or expression matching violations
 to reduce bugs.
 * For performance configs, one may start out with -O0 (as the default {C,CXX}FLAGS), but rely on auto bumps.
-* -O1 auto bumps happen for packages with large estimated MLOCs which typically have sloppy code.
+* -O1 auto bumps happen for packages with large estimated MLOCs which have a greater chance for sloppy code.
 * -O3 auto bumps happen for packages with opengl or linear math keywords.
 * Modders should arrange it so lowest level bumps come first and higher bumps override for dynamic lists.
 * Currently, on ice
