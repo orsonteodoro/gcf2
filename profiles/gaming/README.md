@@ -80,6 +80,11 @@ runtime cost.  The quirk descriptions for performace degration are listed below.
 * 1.5+ minute durations with no artifacts:  -Ofast
 * 1.5+ minute durations with artifacts:  -O3
 
+* If the duration is still too long, a backtrack of the dependency chain bumps
+is made.  Once it is found, we restore the -Oflag to -O0 for irrelevant packages.
+If a package is known to be slow (or is the performance bottleneck), no
+backtracking will be done.
+
 ## Performance estimates
 
 * -Ofast is +- 2% performance drop or benefit ; A to A+ grade
