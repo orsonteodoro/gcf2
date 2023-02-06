@@ -59,8 +59,8 @@ Take for example 60 FPS with the following penalties:
 * 20% reduction is 48 FPS.  (Not acceptable if looking at FPS counter while looking at GL Aquarium.)
 * 16.67% reduction is 50 FPS.  (Meets performance counter.  Tolerable.)
 * 10% reduction is 54 FPS. (Meets performance counter.   Tolerable.)
-* 5% reduction is 57 FPS. (Acceptable for 60 FPS gamer if looking at FPS counter and when the FPS counter is off.)
-* 0% reduction is 60 FPS. (Acceptable for 60 FPS gamer if looking at FPS counter.)
+* 5% reduction is 57 FPS. (Acceptable for a 60 FPS gamer if looking at FPS counter and when the FPS counter is off.)
+* 0% reduction is 60 FPS. (High satisfaction for a 60 FPS gamer if looking at FPS counter.)
 
 ### Solution
 
