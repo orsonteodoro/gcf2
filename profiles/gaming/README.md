@@ -101,6 +101,6 @@ backtracking will be cut short or end.
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
-* LTO is -15% performance cost to 41% performance benefit ; &lt= ~22% space savings, up to 5x build times
+* LTO is &lt; ~5% real world benefit ; outliers/synthetic -15% performance cost to 41% performance benefit ; &lt= ~22% space savings, up to 5x build times
 * CFI is &lt;= 1% performance cost
 * -O0 is preferred to reduce build times by 60%.
