@@ -35,11 +35,12 @@ performance.
 
 ## Specifics
 
-* {C,CXX}FLAGS = -march=native -O1 -freorder-blocks-algorithm=simple -fno-inline -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -flto=thin -fopt-info-vec -pipe
+* {C,CXX}FLAGS = -march=native -O1 -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -flto=thin -fopt-info-vec -pipe
 * LDFLAGS = -flto=thin
 * -Ofast -- 3D gaming, art, float based crypto, music, science, web-browsers (requires patches)
 * -O2 -- 2D gaming, build tools, compression libs, crypto, drivers, net libs, parsers, x11
 * -O1 -- default
+* Reverted performance-cache compromises since no performance regressions.
 * Systemwide -D_FORTIFY_SOURCE=2, Full RELRO, Retpoline, SSP, Stack Clash Protection
 * Control Flow Integrity (CFI) for everything but @system
 * Disables -ffast-math sub-options upon keyword or expression matching violations

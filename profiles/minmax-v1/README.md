@@ -42,10 +42,14 @@ performance.
 * -O3 -- 3D gaming, art, music, science
 * -O2 -- 2D gaming, build tools, crypto
 * -Os -- default
+* -Oz -- The -Os gets converted to -Oz upon clang use.
 * Systemwide Full RELRO, Retpoline, SSP, Stack Clash Protection, -D_FORTIFY_SOURCE=2
 * Control Flow Integrity (CFI) for everything but @system
 * This collection is equivalent to before automated lists.
 * See also README-detailed.md
+* Some compromises on performance (-Os, -Oz, -freorder-blocks-algorithm=simple,
+-fno-inline) to try to improve cache use and possible performance regressions
+at that time.
 * End of Life (EOL)
 
 ## Performance estimates
