@@ -61,6 +61,7 @@ to reduce bugs.
 * Recheck if -Ofast and -ffast-math sub-options are disabled for www-browsers and derivatives, JavaScript engines.
 * Re-evaluate gen_float_math_list placement.  Does it need to go after static lists?
 * Adding hooks/extentions to gen_package_env.sh or bashrc may be considered for ease of updating.
+* Test -D_FORTIFY_SOURCE=3
 
 ## Performance estimates
 
