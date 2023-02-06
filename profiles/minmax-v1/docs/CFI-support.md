@@ -110,7 +110,7 @@ Any package with a 14 or 10 is optional if you don't use packages that depend on
 
 All live llvm toolchain ebuilds should have a fixed commit with exceptions to
 prevent symbol breakage.  Details are covered in the
-[metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L76)
+[metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L151)
 in the oiledmachine-overlay.
 
 2. `emerge --sync`
