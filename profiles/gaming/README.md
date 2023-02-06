@@ -77,6 +77,8 @@ runtime cost.  The quirk descriptions for performace degration are listed below.
 * No apparent performance penalty stays:  -O0
 * Observed visual studder bump:  -O1
 * Observed visual studder again bump:  -O2
+* A trivial task not completed in 1 minute bump:  -O1
+* A trivial task not completed in 1 minute again bump:  -O2
 * 1.5+ minute durations with no artifacts:  -Ofast
 * 1.5+ minute durations with artifacts:  -O3
 
