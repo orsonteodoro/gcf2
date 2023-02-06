@@ -30,7 +30,8 @@ time, but at the same time the gameplay should not be unfair.
 
 ## Details
 
-* {C,CXX}FLAGS = -O0 pipe [implied -march=generic]
+* {C,CXX}FLAGS = -O0 pipe (implied -march=generic)
+* -Oflag bumps based on unacceptable runtime duration, studder, or under FPS minimums.
 * Curated lists
 * No premature optimization
 * Reactive optimization
