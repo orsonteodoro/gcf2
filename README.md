@@ -23,7 +23,7 @@ your personal setup.
 EROOT - The absolute path to the root of an existing installation.
 (It can be unset or be empty if CHOST == CBUILD.)
 
-## Pre-built profiles
+## Prebuilt profiles
 
 ### Production
 
