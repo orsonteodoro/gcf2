@@ -7,10 +7,10 @@ The gaming profile is designed for a basic gaming system.
 ## Requirements
 
 * No visual or auditory studdering
-* >= 25 FPS for video playback with no noticible slow down
-* >= 30 FPS for old school games with lowest settings with no noticible FPS lag
+* &gt;= 25 FPS for video playback with no noticible slow down
+* &gt;= 30 FPS for old school games with lowest settings with no noticible FPS lag
 or annoying glitches that that will produce unfair play.
-* >= 57 FPS for high motion gaming with newer games.
+* &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
 time, but at the same time the gameplay should not be unfair.
 
@@ -90,9 +90,9 @@ runtime cost.  The quirk descriptions for performace degration are listed below.
 * -Og is -19% to -26% ; B to C grade
 * -O0 is -55% to -90% worst case performance drop ; F grade for crypto/codecs.  C grade for basic programs.
 * -march=native is a 5% performance benefit
-* -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or < 1% drop
+* -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
 * LTO is less than +- 0.3% performance
-* CFI is <= 1% performance cost
+* CFI is &lt;= 1% performance cost
 * -O0 is preferred to reduce build times by 60%.

@@ -49,11 +49,11 @@ performance.
 * -Og is -19% to -26% ; B to C grade
 * -O0 is -55% to -90% worst case performance drop ; F grade for	crypto/codecs.  C grade for basic programs.
 * -march=native is a 5% performance benefit
-* -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or < 1% drop
+* -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
 * LTO is less than 1% performance benefit
-* CFI is <= 1% performance cost
+* CFI is &lt;= 1% performance cost
 
 ## Notes
 

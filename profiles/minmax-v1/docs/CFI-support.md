@@ -930,7 +930,7 @@ loader find libgcc_s.so.1.
 This problem is due to an undesireable slotting issue which breaks entire @system
 because it unemerges the minor inadvertantly making it unsafe to emerge
 @system.  It may be considered more safe to update between major gcc versions
-(e.g. 11 -> 12).
+(e.g. 11 -&gt; 12).
 
 If your @system is completely borked because of this, you can replace the whole
 @system with a stage3 tarball with with a backup of /etc, /var/lib/portage/world,
