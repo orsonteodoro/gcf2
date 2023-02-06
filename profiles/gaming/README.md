@@ -82,7 +82,7 @@ runtime cost.  The quirk descriptions for performace degration are listed below.
 
 ## Performance estimates
 
-* -Ofast is +- 2% performance drop or benefit
+* -Ofast is +- 2% performance drop or benefit ; A to A+ grade
 * -O3 is 100% reference ; A grade
 * -O2 is +1% benefit to -3% to -9% performance drop ; A grade
 * -Os is -7% to -25% performance drop ; B to C grade
