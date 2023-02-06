@@ -34,6 +34,9 @@ performance.
 * ~54% may be LTOed
 * ~29% of actual @world may be CFIed
 * Multitasking during build can be very bad
+* Some compromises on performance (-Os, -Oz, -freorder-blocks-algorithm=simple,
+-fno-inline) to try to improve cache use and possible performance regressions
+at that time.
 
 ## Specifics
 
@@ -47,9 +50,6 @@ performance.
 * Control Flow Integrity (CFI) for everything but @system
 * This collection is equivalent to before automated lists.
 * See also README-detailed.md
-* Some compromises on performance (-Os, -Oz, -freorder-blocks-algorithm=simple,
--fno-inline) to try to improve cache use and possible performance regressions
-at that time.
 * End of Life (EOL)
 
 ## Performance estimates
