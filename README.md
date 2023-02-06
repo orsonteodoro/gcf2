@@ -5,8 +5,8 @@ for the portage build system.
 
 ## Precautions
 
-* Backup make.conf, env/* before using gcf2.  These will be clobbered when
-restoring a profile.  This can be done with `--save-profile=name`.
+* Backup make.conf, env/*, bashrc before using gcf2.  These will be clobbered
+when restoring a profile.  This can be done with `--save-profile=name`.
 * It is assumed that you will make additional changes to make.conf to work with
 your personal setup.
 * It is a hard requirement to have a Rescue CD/USB especially with CFI ON.
@@ -50,3 +50,6 @@ Refer to profiles/<name>/README.md or profiles/<name>/docs for more information.
 Initially, it was decided to unify all profiles with minmax-v2 but at the same
 time have the capability to switch between cflag profiles for seasonal reasons
 like summer for gaming and winter for security.  gcf2 is created as a result.
+
+The bashrc maybe moved or copied, and clobbered when restoring.  If you have
+customizations, you need to add them back.
