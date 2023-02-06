@@ -54,7 +54,7 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 * Increase the quality of the build with scan-cfied-broken-binaries with fixes
 * Finalize and polish without debug and test flags
 
-## The gen_pkg_lists.sh generator
+#### The gen_pkg_lists.sh generator
 
 The `gen_pkg_lists.sh` script is provided to generate CFI whitelists and
 blacklists.  Before running the list generator, both `CC_LTO` and `CC_LIBC` in
