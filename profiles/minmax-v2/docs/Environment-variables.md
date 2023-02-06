@@ -41,13 +41,6 @@ BFD LTO (for LTO agnostic only), or no LTO in that order.
 * GCF_BOLT_PREP -- Prepares packages with static-libs for use with the BOLT
 post-link optimizer used to optimize app packages.  (EXPERIMENTAL)
 
-#### Souper
-
-* USE_SOUPER -- Add flags for systemwide Souper for code reduction (EXPERIMENTAL)
-* USE_SOUPER_SIZE -- Add static profile counters in relation to size reduction
-* USE_SOUPER_SPEED -- Add dynamic profile counters in relation to execution
-speed
-
 #### Swap / trashing control
 
 * DISABLE_SWAP_REPORT -- Disables swap reporting recommendations and monitoring
@@ -80,6 +73,13 @@ meeting LTO requirements
 * FORCE_PREFETCH_LOOP_ARRAYS -- Force use of GCC so that -fprefetch-loop-arrays
 is utilized.  It is mutually exclusive with USE_CLANG_CFI which has a higher
 precedence to reduce the attack surface.
+
+#### Deprecated
+
+* USE_SOUPER -- Add flags for systemwide Souper for code reduction (EXPERIMENTAL)
+* USE_SOUPER_SIZE -- Add static profile counters in relation to size reduction
+* USE_SOUPER_SPEED -- Add dynamic profile counters in relation to execution
+speed
 
 
 ### Per-package environment variables config files
@@ -146,12 +146,9 @@ applied to audio/video packages that do decoding playback.)
 
 #### Deprecated
 
+* disable-souper.conf -- Disable Souper
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
-
-##### Souper
-
-* disable-souper.conf -- Disable Souper
 * souper-size.conf -- Adds static profile counters in relation to size reduction
 * souper-speed.conf -- Adds dynamic profile counters in relation to execution speed
 * use-souper.conf -- Turn on Souper
