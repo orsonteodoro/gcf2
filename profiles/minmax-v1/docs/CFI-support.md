@@ -1,31 +1,3 @@
-## The gen_pkg_lists.sh generator
-
-The script exists to allow avoid CFIing packages that do not support it.
-
-The `gen_pkg_lists.sh` script is provided to generate CFI whitelists and
-blacklists.  Before running the list generator, both `CC_LTO` and `CC_LIBC` in
-the generator script should be set to either clang or gcc in make.conf.  The
-list generator can be run by doing `bash gen_pkg_lists.sh`.
-
-The following files are generated for Clang CFI flags:
-
-* /etc/portage/emerge-cfi-no-cfi.lst -- Packages that must not use CFI flags
-* /etc/portage/emerge-cfi-no-data.lst -- Packages that are missing installed files list and cannot be determined if CFI flags applies
-* /etc/portage/emerge-cfi-skip.lst -- Packages that don't require CFI flags because no binaries exists
-* /etc/portage/emerge-cfi-system.lst -- Packages that may use CFI flags.  Only applies if CC_LIBC=clang and CXX_LIBC=clang.  Otherwise, do not apply CFI flags.
-* /etc/portage/emerge-cfi-world.lst -- Packages that may use CFI flags.  Only applies if CC_LTO=clang and CXX_LTO=clang.  Otherwise, do not apply CFI flags.
-
-The bashrc will filter package for viability of Clang CFI support.  It requires
-to regenerate new lists with `gen_pkg_lists.sh` that will scan binaries for
-presence of binaries and dlopen().
-
-If the package is temporarly LTO or CFI blocked or a new install, you may try to
-manually move the package from no-data to lto-agnostic and cfi-world /
-cfi-system in the emerge*.lst files in order to bypass the pre IR compatibility
-check only if static-libs will be not built or will have static-libs disabled or
-will have its LTO disabled.  Disabling LTO will also disable Clang CFI which
-also weakens the security.
-
 ## CFI
 
 You may skip this if you use a hardware based implementation.  This section
@@ -81,6 +53,32 @@ Read everything before continuing.  Some steps may be skipped or be simplified.
 * Rebuild the more dangerously risky CFIed @system then @world
 * Increase the quality of the build with scan-cfied-broken-binaries with fixes
 * Finalize and polish without debug and test flags
+
+## The gen_pkg_lists.sh generator
+
+The `gen_pkg_lists.sh` script is provided to generate CFI whitelists and
+blacklists.  Before running the list generator, both `CC_LTO` and `CC_LIBC` in
+the generator script should be set to either clang or gcc in make.conf.  The
+list generator can be run by doing `bash gen_pkg_lists.sh`.
+
+The following files are generated for Clang CFI flags:
+
+* /etc/portage/emerge-cfi-no-cfi.lst -- Packages that must not use CFI flags
+* /etc/portage/emerge-cfi-no-data.lst -- Packages that are missing installed files list and cannot be determined if CFI flags applies
+* /etc/portage/emerge-cfi-skip.lst -- Packages that don't require CFI flags because no binaries exists
+* /etc/portage/emerge-cfi-system.lst -- Packages that may use CFI flags.  Only applies if CC_LIBC=clang and CXX_LIBC=clang.  Otherwise, do not apply CFI flags.
+* /etc/portage/emerge-cfi-world.lst -- Packages that may use CFI flags.  Only applies if CC_LTO=clang and CXX_LTO=clang.  Otherwise, do not apply CFI flags.
+
+The bashrc will filter package for viability of Clang CFI support.  It requires
+to regenerate new lists with `gen_pkg_lists.sh` that will scan binaries for
+presence of binaries and dlopen().
+
+If the package is temporarly LTO or CFI blocked or a new install, you may try to
+manually move the package from no-data to lto-agnostic and cfi-world /
+cfi-system in the emerge*.lst files in order to bypass the pre IR compatibility
+check only if static-libs will be not built or will have static-libs disabled or
+will have its LTO disabled.  Disabling LTO will also disable Clang CFI which
+also weakens the security.
 
 #### Detailed steps
 
