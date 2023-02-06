@@ -129,13 +129,6 @@ unprotected CFI security holes
 * no-cfi-nvcall.conf -- Turn off Clang CFI nvcall
 * no-cfi-vcall.conf -- Turn off Clang CFI vcall (i.e. Forward Edge CFI, disable as a last resort)
 
-#### Souper
-
-* disable-souper.conf -- Diable Souper
-* souper-size.conf -- Adds static profile counters in relation to size reduction
-* souper-speed.conf -- Adds dynamic profile counters in relation to execution speed
-* use-souper.conf -- Turn on Souper
-
 #### Optimization
 
 * remove-no-inline.conf -- Removes -fno-inline
@@ -155,3 +148,10 @@ applied to audio/video packages that do decoding playback.)
 
 * skip-lib-correctness-check.conf -- Disables static/shared lib correctness
 checking
+
+##### Souper
+
+* disable-souper.conf -- Disable Souper
+* souper-size.conf -- Adds static profile counters in relation to size reduction
+* souper-speed.conf -- Adds dynamic profile counters in relation to execution speed
+* use-souper.conf -- Turn on Souper
