@@ -11,7 +11,7 @@ By default it is MinMax, but it can be edited as Max.
 The build time is expected to exceed the runtime use time.
 
 This profile started around Jan 2018 (same month as Retpoline) and EOLed in 2021
-before the introduction of bashrc version.
+before the introduction of the version with the bashrc assist script.
 
 ## Requirements
 
