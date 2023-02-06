@@ -183,7 +183,7 @@ PORTAGE_LOGDIR="/var/log/emerge/build-logs"
 15. Run `./gen_pkg_lists.sh`
 16. `emerge -ve @world`
 17. Run `scan-cfied-broken-binaries`  (For details see that
-[section](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/docs/CFI-support.md#checking-for-early-cfi-violations-and-missing-symbols))
+[section](CFI-support.md#checking-for-early-cfi-violations-and-missing-symbols))
 18. Fix all CFI issues.
 19. Set `GCF_CFI_DEBUG=0` in make.conf.
 20. Run `./gen_pkg_lists.sh`
@@ -244,14 +244,14 @@ The reasons for emerging @world CFIed 2 times (in steps 12 and 16) with 1 CFIed
 @system emerge (corresponding to step 14) is for CFI violation or init
 problem(s) discovery.  The CFI volation is not really isolated in the @system
 set but can affect the @world set like with zlib.  To fix the violation(s) see
-the [fixing CFI violations](https://github.com/orsonteodoro/gentoo-cflags#fixing-cfi-violations)
+the [fixing CFI violations](CFI-support.md#fixing-cfi-violations)
 section.  This discovery is done in the startup portions in step 17 in mostly
 all executables in the system.  See also the
-[Troubleshooting](https://github.com/orsonteodoro/gentoo-cflags#troubleshooting)
+[Troubleshooting](CFI-support.md#troubleshooting)
 section.
 
 In steps 12-18, it is recommended to use a personal
-[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list)
+[resume list](CFI-support.md#resume-list)
 not the one managed by emerge when testing packages or applying CFI an ignore
 list or exclusions.  The entries can be changed if one decides to use a
 different ebuild revision with fixes, or can be rearraged so that unmergables
@@ -276,7 +276,7 @@ In step 13, if one decides to continue CFIing @system, one needs to hardmask
 newer versions of gcc but unmask selectively newer major versions so both old
 and new versions exist simultaneously.  Umasking patch versions of gcc may be
 safe.  For details about why the issue exists, see
-[Updating minor versions of gcc with USE_CLANG_CFI_AT_SYSTEM](https://github.com/orsonteodoro/gentoo-cflags#updating-minor-versions-of-gcc-with-use_clang_cfi_at_system)
+[Updating minor versions of gcc with USE_CLANG_CFI_AT_SYSTEM](CFI-support.md#updating-minor-versions-of-gcc-with-use_clang_cfi_at_system)
 
 Steps 15 and 20 are optional if no new packages were added.  It is a good
 idea to run `gen_pkg_lists.sh` before each `emerge -ve @world` or after a full
@@ -486,7 +486,7 @@ emerge -1vO isl
 #### Depenency rollback(s) without CFI
 
 Before rolling back, please create a
-[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list) first.
+[resume list](CFI-support.md#resume-list) first.
 
 Currently there are no automated ways to avoid the above problem, but some cases
 the wrapper technique does not work because the executable is being forced to
@@ -512,7 +512,7 @@ problem corresponding to [Err 7] and [Err 13] in package.env, disable CFI in
 each named dependency temporary until this package is emerged then re-emerge
 back the dependencies with CFI.   When you rollback, this may cause CFI missing
 symbols.  Resolution is also discussed in
-[the next section below](https://github.com/orsonteodoro/gentoo-cflags#resolving-the-case-6-error).
+[the next section below](CFI-support.md#resolving-the-case-6-error).
 
 For case 6 use \`equery b libfile\` to determine the package
 and \`emerge -1vO depend_pkg_name\` to revert with package.env
@@ -541,7 +541,7 @@ hours to be restored back in minutes.  Details are covered in the
 ##### Resolving the case 6 error
 
 Before rolling back, please create a
-[resume list](https://github.com/orsonteodoro/gentoo-cflags#resume-list) first.
+[resume list](CFI-support.md#resume-list) first.
 
 Sometimes disabling all CFI schemes will not work.  If the following message is
 encountered with a list of shared libraries:
@@ -748,13 +748,13 @@ disable-clang-cfi.conf exceptions.
 
 This does a simple --help and --version check.  Add any potentially dangerous
 commands in the
-[exclude list](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries#L57)
+[exclude list](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/scan-cfied-broken-binaries#L68)
 inside the script.  This only tests a few code paths at start.  You may still
 encounter CFI violations from event based portions or deeper in the code.
 
 For testing some deeper code paths, add test to systemwide USE flags and systemwide
 FEATURES in make.conf.  Preparation for the test USE flag should be done
-(in step 3 of the [steps section](https://github.com/orsonteodoro/gentoo-cflags#steps)
+(in step 3 of the [steps section](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/docs/CFI-support.md#steps)
 early on to increase chances of a complete atomic update from beginning to
 end.
 
@@ -762,7 +762,7 @@ IMPORTANT:  Before running the script, save your work.  You may need to run
 this outside of X to prevent crash with X.
 
 The script is called
-[scan-cfied-broken-binaries](https://github.com/orsonteodoro/gentoo-cflags/blob/master/scan-cfied-broken-binaries).
+[scan-cfied-broken-binaries](https://github.com/orsonteodoro/gcf2/blob/master/profiles/minmax-v2/scan-cfied-broken-binaries).
 
 Use `<path> --help`, `<path> --version`, or `<exe_path>` to see the violation or
 missing symbol problem.
