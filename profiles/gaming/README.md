@@ -46,14 +46,14 @@ Take for example 30 FPS with the following penalties:
 * 25% reduction is 22.5 FPS. (Unacceptable)
 * 20% reduction is 24 FPS.  (Barely meets)
 * 16.67% reduction is 25 FPS.  (Meets)
-* 10% reduction is 27 FPS. (Meets 25 FPS for movies)
+* 10% reduction is 27 FPS. (Meets 25 FPS like in the movies)
 
 * A newer codec's age adds -10% penalty for newer while older will be 0%.
 * If the lib/app is already optimized, add +10% benefit.
 
 Take for example 60 FPS with the following penalties:
 
-* 41.6% reduction is 24.9 FPS.  (Unacceptable at high motion.)
+* 41.6% reduction is 24.9 FPS.  (Unacceptable at high motion.  Maybe acceptable for a high poly raid event but not in competition.)
 * 50% reduction is 30 FPS. (Acceptable at high motion.  Acceptable if FPS counter hidden for old school gaming.)
 * 25% reduction is 45 FPS. (Not acceptable if looking at FPS counter while looking at GL Aquarium.)
 * 20% reduction is 48 FPS.  (Not acceptable if looking at FPS counter while looking at GL Aquarium.)
