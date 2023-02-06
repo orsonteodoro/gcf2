@@ -18,7 +18,6 @@ time, but at the same time the gameplay should not be unfair.
 
 * Modest runtime performance (or perceived B+ grade) is top priority
 * Build time is secondary.
-* Performance bumps for observed dips in performance.
 * No security
 * Fastest install time
 * Fastest updates
