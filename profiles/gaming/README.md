@@ -64,12 +64,12 @@ Take for example 60 FPS with the following penalties:
 
 ### Solution
 
-The Rational solution, -Oflag(s) that are no less than 16.67 performance penalty
+The rational solution, -Oflag(s) that are no less than 16.67 performance penalty
 is/are required to achive 25 FPS or more, so find the -Oflag level(s) that fits
 it.  -O3 (Solution by ricers), -O2 (Solution by distro), -Os (best case or by
 chance or trial or error).  The side-effect is increased build time.
 
-The Intuitive solution, performance bumps are done to get over the 50% drop, so
+The intuitive solution, performance bumps are done to get over the 50% drop, so
 keep bumping the -Oflag (through divide and conquer) until it appears to be 25
 FPS.  (Solution used by this repo).  The side-effect is random increased
 runtime cost.  The quirk descriptions for performace degration are listed below.
