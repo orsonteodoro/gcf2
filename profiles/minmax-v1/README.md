@@ -24,6 +24,7 @@ It improves upon previous LTO attempts.
 * Systemwide LTO but optional for performance configs.
 * Build times are no more than 2 days per package but installing all required
 dependencies may take several days for using a large package.
+* Lower satisfaction since time to build is a major issue.
 * Implied SIMD optimized.
 * Curated lists
 * Heavy bashrc time cost

@@ -8,7 +8,7 @@ Min because security lowers performance.  Max because of -O3.
 
 By default it is Max, but it can be configured as MinMax.
 
-The build time is expected to be in balance with the runtime use time.
+The build time is expected to improve and be in balance with the runtime use time.
 
 ## Requirements
 
@@ -44,7 +44,7 @@ performance.
 * Control Flow Integrity (CFI) for everything but @system
 * Disables -ffast-math sub-options upon keyword or expression matching violations
 to reduce bugs.
-* For performance configs, one may start out with -O0, but rely on auto bumps.
+* For performance configs, one may start out with -O0 (as the default {C,CXX}FLAGS), but rely on auto bumps.
 * -O1 auto bumps happen for packages with large estimated MLOCs which typically have sloppy code.
 * -O3 auto bumps happen for packages with opengl or linear math keywords.
 * Modders should arrange it so lowest level bumps come first and higher bumps override for dynamic lists.
