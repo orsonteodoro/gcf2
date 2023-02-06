@@ -12,7 +12,7 @@ The build time is expected to be in balance with the runtime use time.
 
 ## Requirements
 
-* CFI has LTO as mandatory requirement.
+* CFI has LTO as a mandatory requirement.
 * Security requires both Hardened GCC and Hardened Clang (Not available in distro but on oiledmachine-overlay)
 * Security requires -O1 and above for -D_FORTIFY_SOURCE=2
 
@@ -37,23 +37,30 @@ performance.
 
 * {C,CXX}FLAGS = -march=native -O1 -freorder-blocks-algorithm=simple -fno-inline -fomit-frame-pointer -frename-registers -fno-plt -mindirect-branch=thunk -mindirect-branch-register -flto=thin -fopt-info-vec -pipe
 * LDFLAGS = -flto=thin
-* -Ofast -- 3D gaming, art, crypto, music, science, web-browsers (requires patches)
-* -O2 -- 2D gaming, build tools
+* -Ofast -- 3D gaming, art, float based crypto, music, science, web-browsers (requires patches)
+* -O2 -- 2D gaming, build tools, compression libs, crypto, drivers, net libs, parsers, x11
 * -O1 -- default
 * Systemwide -D_FORTIFY_SOURCE=2, Full RELRO, Retpoline, SSP, Stack Clash Protection
 * Control Flow Integrity (CFI) for everything but @system
-* Disables -fast-math sub-options upon code matching violations to reduce bugs.
-* Currently, on-ice
+* Disables -ffast-math sub-options upon keyword or expression matching violations
+to reduce bugs.
+* For performance configs, one may start out with -O0, but rely on auto bumps.
+* -O1 auto bumps happen for packages with large estimated MLOCs which typically have sloppy code.
+* -O3 auto bumps happen for packages with opengl or linear math keywords.
+* Modders should arrange it so lowest level bumps come first and higher bumps override for dynamic lists.
+* Currently, on ice
 
 ## Wishlist
 
 * Shrink or delete bashrc
 
-## In planning
+## In planning or dev ideas
 
-* Scudo
+* Scudo for heap/malloc protection.
 * gwp-asan for beta and live ebuilds.
 * Recheck if -Ofast and -ffast-math sub-options are disabled for www-browsers and derivatives, JavaScript engines.
+* Re-evaluate gen_float_math_list placement.  Does it need to go after static lists?
+* Adding hooks/extentions to gen_package_env.sh or bashrc may be considered for ease of updating.
 
 ## Performance estimates
 

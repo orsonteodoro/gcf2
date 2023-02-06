@@ -12,7 +12,7 @@ It improves upon previous LTO attempts.
 
 ## Requirements
 
-* CFI has LTO as mandatory requirement.
+* CFI has LTO as a mandatory requirement.
 * Security requires both Hardened GCC and Hardened Clang (Not available in distro but on oiledmachine-overlay)
 * Security requires -O1 and above for -D_FORTIFY_SOURCE=2
 
