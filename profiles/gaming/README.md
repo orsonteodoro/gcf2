@@ -8,8 +8,8 @@ The gaming profile is designed for a basic gaming system.
 
 * No visual or auditory studdering
 * &gt;= 25 FPS for video playback with no noticible slow down
-* &gt;= 30 FPS for old school games with lowest settings with no noticible FPS lag
-or annoying glitches that that will produce unfair play.
+* &gt;= 30 FPS for old school games with lowest settings with no noticible FPS
+lag or annoying glitches that that will produce unfair play.
 * &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
 time, but at the same time the gameplay should not be unfair.
@@ -30,7 +30,10 @@ time, but at the same time the gameplay should not be unfair.
 ## Details
 
 * {C,CXX}FLAGS = -O0 pipe (implied -march=generic)
-* -Oflag bumps based on unacceptable runtime duration, studder, or under FPS minimums.
+* -Oflag bumps based on unacceptable runtime duration, studder, or under FPS
+minimums.
+* The PGO USE flag is disabled by default, but enabled for select small
+packages (2 MLOC) or packages with severe long run (3+ min) performance
 * Curated lists
 * No premature optimization
 * Reactive optimization
