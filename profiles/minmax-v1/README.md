@@ -63,6 +63,7 @@ at that time.
 * -O0 is -55% to -95% worst case performance drop ; F grade for	crypto/codecs/security.  C to F grade for basic programs.
 * -march=native is &lt; 2% drop to &lt;= 12% performance benefit
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
+* -ffast-math is 10% benefit or possibly 40% processing time reduction (outlier), based on -Ofast stats.
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
 * LTO is -15% cost to +5% benefit for real world ; 41% performance benefit for outliers/synthetic ; +17% mode avg for space savings ; up to 5x the normal build times
