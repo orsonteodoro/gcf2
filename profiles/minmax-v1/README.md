@@ -61,7 +61,7 @@ at that time.
 * -O1 is -17% to -32% performance drop ; B to D grade ; D grade for the newest codecs
 * -Og is -19% to -26% ; B to C grade
 * -O0 is -55% to -95% worst case performance drop ; F grade for	crypto/codecs/security.  C to F grade for basic programs.
-* -march=native is a 5% performance benefit
+* -march=native is &lt; 2% drop to &lt;= 12% performance benefit
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * PGO is 10% performance benefit with 40% benefit outliers
 * BOLT is 10-15% performance benefit
