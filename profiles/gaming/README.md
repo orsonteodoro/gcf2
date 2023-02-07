@@ -67,7 +67,7 @@ Take for example 60 FPS with the following penalties:
 
 ### Solution
 
-The rational solution, -Oflag(s) that are no less than 16.67 performance penalty
+The rational solution, -Oflag(s) that are no less than 16.67% performance penalty
 is/are required to achieve 25 FPS or more, so find the -Oflag level(s) that
 fits.  -O3 (Solution by ricers), -O2 (Solution by distro), -Os (best case or by
 chance or trial or error).  The side-effect is increased build time.
@@ -110,7 +110,7 @@ backtracking will be cut short or end.
 * BOLT is 10-15% performance benefit
 * LTO is -15% cost to +5% benefit for real world ; 41% performance benefit for outliers/synthetic ; +17% mode avg for space savings ; up to 5x the normal build times
 * CFI is &lt;= 1% performance cost
-* -O0 is preferred to reduce build times by 60%.
+* -O0 is preferred to reduce build times by 60-70%.
 
 -Oflags percents are measured relative to -O3.
 
