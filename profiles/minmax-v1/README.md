@@ -54,13 +54,13 @@ at that time.
 
 ## Performance estimates
 
-* -Ofast is +- 3% performance drop or benefit, +10% for outliers ; A to A+ grade
+* -Ofast is +- 3% performance drop or benefit, +10% benefit for outliers ; A to A+ grade
 * -O3 is 100% reference ; A grade
 * -O2 is +1% benefit to -3% to -9% performance drop ; A grade
 * -Os is -7% to -25% performance drop ; A to C grade
 * -O1 is -17% to -32% performance drop ; B to D grade ; D grade for the newest codecs
 * -Og is -19% to -26% ; B to C grade
-* -O0 is -55% to -95% worst case performance drop ; F grade for	crypto/codecs/security.  C to F grade for basic programs.
+* -O0 is -55% to -95% worst case performance drop, possibly +3x execution time ; F grade for crypto/codecs/security.  C to F grade for basic programs.
 * -march=native is &lt; 2% drop to &lt;= 12% performance benefit
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * -ffast-math is 10% benefit or possibly 40% processing time reduction (outlier), based on -Ofast stats.

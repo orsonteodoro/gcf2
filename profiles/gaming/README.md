@@ -80,8 +80,8 @@ runtime cost.  The quirk descriptions for performace degration are listed below.
 * No apparent performance penalty stays:  -O0
 * Observed visual studder bump:  -O1
 * Observed visual studder encountered again bump:  -O2
-* A trivial task not completed in 1 minute bump:  -O1
-* A trivial task not completed in 1 minute encountered again bump:  -O2
+* An easy trivial task not completed in 1 minute bump:  -O1
+* An easy trivial task not completed in 1 minute encountered again bump:  -O2
 * 1.5+ minute durations with no problems:  -Ofast
 * 1.5+ minute durations with problems:  -O3
 
@@ -102,7 +102,7 @@ backtracking will be cut short or end.
 * -Os is -7% to -25% performance drop ; A to C grade
 * -O1 is -17% to -32% performance drop ; B to D grade ; D grade for the newest codecs
 * -Og is -19% to -26% ; B to C grade
-* -O0 is -55% to -95% worst case performance drop ; F grade for crypto/codecs/security.  C to F grade for basic programs.
+* -O0 is -55% to -95% worst case performance drop, possibly +3x execution time ; F grade for crypto/codecs/security.  C to F grade for basic programs.
 * -march=native is &lt; 2% drop to &lt;= 12% performance benefit
 * -fomit-frame-pointer is a 4% to 85% benefit (default ON in -O1) or &lt; 1% drop
 * -ffast-math is 10% benefit or possibly 40% processing time reduction (outlier), based on -Ofast stats.
