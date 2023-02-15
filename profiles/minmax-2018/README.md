@@ -28,8 +28,7 @@ before the introduction of the version with the bashrc assist script.
 * Assumes use of the hardened compilers, but users may use non-hardened for max
 performance.
 * No bashrc time overhead
-* No thrash control.  You must configure it yourself.
-* Multitasking during build may stall or OOM if no thrash control or not enough swap.
+* Rebuilds are fast. (ccache is ON by default.)
 
 ## Specifics
 
