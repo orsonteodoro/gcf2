@@ -54,6 +54,7 @@ performance.
 * BOLT is 10-15% performance benefit
 * LTO is -15% cost to +5% benefit for real world ; 41% performance benefit for outliers/synthetic ; +17% mode avg for space savings ; up to 5x the normal build times
 * CFI is &lt;= 1% performance cost
+* _FORITIFY_SOURCE=2 is &lt;= 1% performance cost
 
 -Oflags percents are measured relative to -O3.
 
