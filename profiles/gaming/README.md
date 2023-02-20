@@ -38,7 +38,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * No premature optimization
 * Reactive optimization
 * Development is active at this time
-* Use of the mold linker for code bases that are &ge; 20 MLOC or &ge; 1 hr link time. (WIP)
+* Use of the mold linker for codebases that are &ge; 20 MLOC or &ge; 1 hr link time. (WIP)
 
 ## Performance bump policy
 
