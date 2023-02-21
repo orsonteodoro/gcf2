@@ -13,7 +13,7 @@ lag or annoying glitches that that will produce unfair play.
 * &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
 time, but at the same time the gameplay should not be unfair.
-* GCC &ge; 12 for mold, or GCC 11 with [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).[^1]
+* GCC &ge; 12 for mold<a href="#footnote-1">[1]</a>, or GCC 11 with [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).
 * Stable profile, stable keywords, stable release branches are preferred
 
 ## Tradeoffs / performance
@@ -124,4 +124,4 @@ The other flags percents are relative to the same -Oflag.
 
 ## Footnotes
 
-[^1] The mold linker can only be used in non-commercial purposes.  See that project for details.
+<a name="footnote-1">1.</a> The mold linker can only be used in non-commercial purposes.  See that project for details.
