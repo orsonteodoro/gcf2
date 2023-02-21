@@ -14,7 +14,7 @@ lag or annoying glitches that that will produce unfair play.
 * The fast install is a necessary requirement to maximize play time over build
 time, but at the same time the gameplay should not be unfair.
 * GCC &ge; 12 for mold, or GCC 11 with [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).
-* Stable profile and stable keywords is preferred
+* Stable profile and stable keywords are preferred
 
 ## Tradeoffs / performance
 
