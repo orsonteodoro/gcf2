@@ -114,6 +114,7 @@ backtracking will be cut short or end.
 * LTO is -15% cost to +5% benefit for real world ; 41% performance benefit for outliers/synthetic ; +17% mode avg for space savings ; up to 5x the normal build times
 * CFI is &lt;= 1% performance cost
 * -O0 is preferred to reduce build times by 60-70%.
+* lld link times are ~2-5x longer than mold; gold link times are ~22-24x longer than mold
 
 -Oflags percents are measured relative to -O3.
 
