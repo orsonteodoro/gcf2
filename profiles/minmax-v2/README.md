@@ -82,8 +82,11 @@ to reduce bugs.
 * LTO is -15% cost to +5% benefit for real world ; 41% performance benefit for outliers/synthetic ; +17% mode avg for space savings ; up to 5x the normal build times
 * CFI is &lt;= 1% performance cost
 * _FORITIFY_SOURCE=2 is &lt;= 1% performance cost
+* gold link times can be up to 11x longer than lld; bfd link times can be up to 5.1x longer than gold; bfd link times can be up to 56x longer than lld.  All multithreaded.
+* gold link times can be up to ~2 longer than lld with single thread linking.
 
 -Oflags percents are measured relative to -O3.
+-Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
 
 The other flags percents are relative to the same -Oflag.
 
