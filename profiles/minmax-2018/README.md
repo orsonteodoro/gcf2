@@ -59,10 +59,9 @@ performance.
 * gold link times can be up to 11x longer than lld; bfd link times can be up to 5.1x longer than gold; bfd link times can be up to 56x longer than lld.  All multithreaded.
 * gold link times can be up to ~2 longer than lld with single thread linking.
 
--Oflags percents are measured relative to -O3.
--Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
-
-The other flags are relative to the same -Oflag.
+* -Oflags percents are measured relative to -O3.
+* Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
+* The other flags are relative to the same -Oflag.
 
 ## Notes
 
