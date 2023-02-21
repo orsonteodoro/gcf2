@@ -59,7 +59,7 @@ to reduce bugs.
 ## In planning or dev ideas
 
 * Scudo for heap/malloc protection.
-* gwp-asan for beta and live ebuilds.
+* gwp-asan and -ftrapv for dev branches, beta, and live ebuilds.  (For developers and testers only.)
 * Recheck if -Ofast and -ffast-math sub-options are disabled for www-browsers and derivatives, JavaScript engines.
 * Re-evaluate gen_float_math_list placement.  Does it need to go after static lists?
 * Adding hooks/extentions to gen_package_env.sh or bashrc may be considered for ease of updating.
