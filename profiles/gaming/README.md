@@ -13,6 +13,8 @@ lag or annoying glitches that that will produce unfair play.
 * &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
 time, but at the same time the gameplay should not be unfair.
+* &gt; GCC 12 for mold, or GCC 11 with [mold patch](https://wiki.gentoo.org/wiki/Mold#GCC_11).
+* Stable profile and stable keywords is preferred
 
 ## Tradeoffs / performance
 

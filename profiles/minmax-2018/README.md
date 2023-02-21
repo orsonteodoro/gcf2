@@ -16,6 +16,7 @@ before the introduction of the version with the bashrc assist script.
 ## Requirements
 
 * Hardened GCC
+* Stable profile and stable keywords is preferred
 
 ## Tradeoffs / benefits
 
