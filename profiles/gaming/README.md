@@ -117,9 +117,11 @@ backtracking will be cut short or end.
 * lld link times can be up to ~2-5x longer than mold; gold link times can be up to ~22-24x longer than mold; bfd link times can be up to ~88-120x longer than mold.  All multithreaded.
 * gold link times can be up to ~2 longer than lld with single thread linking.
 
-* -Oflags percents are measured relative to -O3.
-* Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
-* The other flags percents are relative to the same -Oflag.
+#### Section footnotes
+
+1. -Oflags percents are measured relative to -O3.
+2. Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
+3. The other flags percents are relative to the same -Oflag.
 
 ## Footnotes
 
