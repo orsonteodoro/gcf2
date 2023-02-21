@@ -1,0 +1,101 @@
+Updated for =sys-devel/gcc-11.3.1_p20230120-r1
+
+Based on:
+https://github.com/gcc-mirror/gcc/commit/ad964f7eaef9c03ce68a01cfdd7fde9d56524868
+
+--- a/gcc/collect2.c.orig	2023-01-20 14:32:10.000000000 -0800
++++ b/gcc/collect2.c	2023-02-20 17:25:03.628288122 -0800
+@@ -785,6 +785,7 @@ main (int argc, char **argv)
+       USE_GOLD_LD,
+       USE_BFD_LD,
+       USE_LLD_LD,
++      USE_MOLD_LD,
+       USE_LD_MAX
+     } selected_linker = USE_DEFAULT_LD;
+   static const char *const ld_suffixes[USE_LD_MAX] =
+@@ -793,7 +794,8 @@ main (int argc, char **argv)
+       PLUGIN_LD_SUFFIX,
+       "ld.gold",
+       "ld.bfd",
+-      "ld.lld"
++      "ld.lld",
++      "ld.mold"
+     };
+   static const char *const real_ld_suffix = "real-ld";
+   static const char *const collect_ld_suffix = "collect-ld";
+@@ -970,6 +972,8 @@ main (int argc, char **argv)
+ 	  selected_linker = USE_GOLD_LD;
+ 	else if (strcmp (argv[i], "-fuse-ld=lld") == 0)
+ 	  selected_linker = USE_LLD_LD;
++	else if (strcmp (argv[i], "-fuse-ld=mold") == 0)
++	  selected_linker = USE_MOLD_LD;
+ 	else if (strncmp (argv[i], "-o", 2) == 0)
+ 	  {
+ 	    /* Parse the output filename if it's given so that we can make
+@@ -1082,7 +1086,7 @@ main (int argc, char **argv)
+   ld_file_name = 0;
+ #ifdef DEFAULT_LINKER
+   if (selected_linker == USE_BFD_LD || selected_linker == USE_GOLD_LD ||
+-      selected_linker == USE_LLD_LD)
++      selected_linker == USE_LLD_LD || selected_linker == USE_MOLD_LD)
+     {
+       char *linker_name;
+ # ifdef HOST_EXECUTABLE_SUFFIX
+@@ -1317,7 +1321,7 @@ main (int argc, char **argv)
+ 	      else if (!use_collect_ld
+ 		       && strncmp (arg, "-fuse-ld=", 9) == 0)
+ 		{
+-		  /* Do not pass -fuse-ld={bfd|gold|lld} to the linker. */
++		  /* Do not pass -fuse-ld={bfd|gold|lld|mold} to the linker. */
+ 		  ld1--;
+ 		  ld2--;
+ 		}
+--- a/gcc/common.opt.orig	2023-02-20 17:19:55.092277955 -0800
++++ b/gcc/common.opt	2023-02-20 17:24:06.024286223 -0800
+@@ -2967,6 +2967,10 @@ fuse-ld=lld
+ Common Driver Negative(fuse-ld=lld)
+ Use the lld LLVM linker instead of the default linker.
+ 
++fuse-ld=mold
++Common Driver Negative(fuse-ld=mold)
++Use the Modern linker (MOLD) linker instead of the default linker.
++
+ fuse-linker-plugin
+ Common Undocumented Var(flag_use_linker_plugin)
+ 
+--- a/gcc/doc/invoke.texi.orig	2023-01-20 14:32:11.000000000 -0800
++++ b/gcc/doc/invoke.texi	2023-02-20 17:24:06.152286228 -0800
+@@ -15606,6 +15606,10 @@ Use the @command{gold} linker instead of
+ @opindex fuse-ld=lld
+ Use the LLVM @command{lld} linker instead of the default linker.
+ 
++@item -fuse-ld=mold
++@opindex fuse-ld=mold
++Use the Modern Linker (@command{mold}) instead of the default linker.
++
+ @cindex Libraries
+ @item -l@var{library}
+ @itemx -l @var{library}
+--- a/gcc/gcc.c.orig	2023-02-20 17:19:55.872277980 -0800
++++ b/gcc/gcc.c	2023-02-20 17:24:06.208286229 -0800
+@@ -4208,6 +4208,10 @@ driver_handle_option (struct gcc_options
+        use_ld = ".gold";
+        break;
+ 
++    case OPT_fuse_ld_mold:
++       use_ld = ".mold";
++       break;
++
+     case OPT_fcompare_debug_second:
+       compare_debug_second = 1;
+       break;
+--- a/gcc/opts.c.orig	2023-01-20 14:32:11.000000000 -0800
++++ b/gcc/opts.c	2023-02-20 17:24:06.208286229 -0800
+@@ -2875,6 +2875,7 @@ common_handle_option (struct gcc_options
+     case OPT_fuse_ld_bfd:
+     case OPT_fuse_ld_gold:
+     case OPT_fuse_ld_lld:
++    case OPT_fuse_ld_mold:
+     case OPT_fuse_linker_plugin:
+       /* No-op. Used by the driver and passed to us because it starts with f.*/
+       break;
