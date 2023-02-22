@@ -88,7 +88,7 @@ to reduce bugs.
 #### Section footnotes
 
 1. -Oflags percents are measured relative to -O3.
-2. Link times can be about the same between different compilers in some cases in short link times, but disparity increases with longer link times.
+2. Link times can be about the same between different linkers in some cases with short link times, but disparity increases with longer link times.
 3. The other flags percents are relative to the same -Oflag.
 
 ## Notes
