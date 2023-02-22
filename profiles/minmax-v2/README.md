@@ -83,7 +83,7 @@ to reduce bugs.
 * CFI is &lt;= 1% performance cost
 * _FORITIFY_SOURCE=2 is &lt;= 1% performance cost
 * gold link times can be up to 11x longer than lld; bfd link times can be up to 5.1x longer than gold; bfd link times can be up to 56x longer than lld.  All multithreaded.
-* gold link times can be up to ~2 longer than lld with single thread linking.
+* gold link times can be up to ~2x longer than lld with single thread linking.
 
 #### Section footnotes
 
