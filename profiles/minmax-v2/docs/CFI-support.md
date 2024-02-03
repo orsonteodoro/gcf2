@@ -812,7 +812,7 @@ If any of the undefined symbols is encountered, it requires a rebuild:
 
 The following is required if using systemwide CFI at and before Jan 6, 2022.
 
-Update: In Jan 23, 2022, x11-libs/libva should be re-emerged since 
+Update: In Jan 23, 2022, media-libs/libva should be re-emerged since 
 scan-cfied-broken-binaries will not detect __ubsan_handle_cfi_check_fail_abort
 missing symbol but stall with vainfo instead.
 
@@ -860,7 +860,7 @@ emerge -1vO \
 	net-libs/libasyncns \
 	net-libs/libndp \
 	net-libs/libsoup \
-	x11-libs/libva \
+	media-libs/libva \
 	x11-libs/gtk+ \
 	x11-libs/gtksourceview \
 	x11-libs/pango \
