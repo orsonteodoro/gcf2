@@ -9,6 +9,7 @@ app-portage/portage-utils remove-no-inline.conf # Build time failure
 app-text/opensp remove-lto.conf # Build uses strip-flags
 dev-haskell/aeson use-gcc.conf remove-lto.conf # Configure time tests use gcc, disable IR warning
 dev-haskell/diff use-gcc.conf remove-lto.conf # Configure time tests use gcc, disable IR warning
+dev-debug/gdb use-gcc.conf # Build time failure
 dev-lang/ghc use-gcc.conf # Configure time test use gcc
 dev-lang/lua use-gcc.conf # gcc: error: unrecognized argument to '-fsanitize=' option: 'cfi'
 dev-lang/mono remove-lto.conf # Breaks with clang lto
@@ -44,7 +45,6 @@ sys-auth/pam-python use-clang.conf # Apply only if Python is built with clang.  
 sys-block/parted use-gcc.conf remove-lto.conf # lto-llvm-411b91.o: relocation R_X86_64_8 against hidden symbol `__typeid__ZTSFP14_PedFileSystemP12_PedGeometryE_align' can not be used when making a shared object
 sys-boot/grub use-gcc.conf grub.conf # Configure time problems
 sys-devel/clang use-gcc.conf # Build time breakage. FAILED: lib/Tooling/ASTNodeAPI.json ; segfaults with clang-ast-dump reported from dmesg
-sys-devel/gdb use-gcc.conf # Build time failure
 sys-devel/lld remove-lto.conf # Configure time problem because it expects lld for lto when none exists.
 sys-devel/llvm split-lto-unit.conf # Build time failure in clang package
 sys-devel/llvm remove-lto.conf remove-split-lto-unit.conf # \
