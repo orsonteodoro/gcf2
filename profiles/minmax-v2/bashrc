@@ -275,7 +275,7 @@ gcf_use_clang() {
 	gcf_info "Switching to clang"
 	export CC=clang
 	export CXX=clang++
-	export CPP=clang-cpp
+	export CPP="${CC} -E"
 	export AR=llvm-ar
 	export AS=llvm-as
 	export NM=llvm-nm
@@ -1355,8 +1355,8 @@ gcf_use_slotted_compiler() {
 	# In both toolchains, use the basenames name in /usr/lib/ccache/bin/ to take advantage of CCACHE.
 	if [[ -n "${USE_GCC_SLOT}" ]] && gcf_is_gcc_slot_ready "${USE_GCC_SLOT}" ; then
 		export CC=$(basename /usr/bin/gcc-${USE_GCC_SLOT}*)
-		export CPP=$(basename /usr/bin/cpp-${USE_GCC_SLOT}*)
 		export CXX=$(basename /usr/bin/g++-${USE_GCC_SLOT}*)
+		export CPP="${CC} -E"
 		gcf_info "Switched to gcc:${USE_GCC_SLOT}"
 	elif [[ -n "${USE_GCC_SLOT}" ]] && ! gcf_is_gcc_slot_ready "${USE_GCC_SLOT}" ; then
 		gcf_error "Failed to switch to gcc:${USE_GCC_SLOT} because is is missing or broken."
@@ -1373,15 +1373,15 @@ gcf_use_slotted_compiler() {
 		s_lld=$(ver_cut 1 "${s_lld}")
 		export PATH+=":/usr/lib/llvm/${s_lld}/bin"
 		export CC=clang-${USE_CLANG_SLOT}
-		export CPP=clang-cpp
 		export CXX=clang++-${USE_CLANG_SLOT}
+		export CPP="${CC} -E"
 	elif [[ -n "${USE_CLANG_SLOT}" ]] && ! gcf_is_clang_slot_ready "${USE_CLANG_SLOT}" ; then
 		gcf_error "Failed to switch to clang:${USE_CLANG_SLOT} because it is missing or broken."
 		die
 	fi
 	gcf_info "CC=${CC}"
-	gcf_info "CPP=${CPP}"
 	gcf_info "CXX=${CXX}"
+	gcf_info "CPP=${CPP}"
 }
 
 gcf_disable_integrated_as() {
