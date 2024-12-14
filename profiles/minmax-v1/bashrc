@@ -166,13 +166,13 @@ gcf_strip_z_retpolineplt() {
 
 gcf_met_clang_thinlto_requirement() {
 	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
-	has_version "sys-devel/llvm" || return 1
+	has_version "llvm-core/llvm" || return 1
 
 	local found=1
 	for s in ${llvm_slots[@]} ; do
-		if ( has_version "sys-devel/llvm:${s}" \
-			&& has_version "sys-devel/clang:${s}" \
-			&& has_version ">=sys-devel/lld-${s}" ) ; then
+		if ( has_version "llvm-core/llvm:${s}" \
+			&& has_version "llvm-core/clang:${s}" \
+			&& has_version ">=llvm-core/lld-${s}" ) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
@@ -181,13 +181,13 @@ gcf_met_clang_thinlto_requirement() {
 
 gcf_met_clang_goldlto_requirement() {
 	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
-	has_version "sys-devel/llvm" || return 1
+	has_version "llvm-core/llvm" || return 1
 
 	local found=1
 	for s in ${llvm_slots[@]} ; do
-		if ( ( has_version "sys-devel/llvm:${s}[gold]" || has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
+		if ( ( has_version "llvm-core/llvm:${s}[gold]" || has_version "llvm-core/llvm:${s}[binutils-plugin]" ) \
 			&& has_version "sys-devel/binutils[plugins,gold]" \
-			&& has_version ">=sys-devel/llvmgold-${s}" ) ; then
+			&& has_version ">=llvm-core/llvmgold-${s}" ) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
 		fi
 	done
@@ -204,7 +204,7 @@ gcf_met_gcc_bfdlto_requirement() {
 }
 
 gcf_met_clang_bfdlto_requirement() {
-	has_version "sys-devel/clang" || return 1
+	has_version "llvm-core/clang" || return 1
 
 	if has_version "sys-devel/binutils[plugins]" ; then
 		return 0
@@ -521,7 +521,7 @@ get_cfi_flags_system() {
 
 gcf_is_clang_cfi_ready() {
 	local llvm_slots=($(seq ${GCF_LLVM_MAX} -1 ${GCF_LLVM_MIN}))
-	has_version "sys-devel/llvm" || return 1
+	has_version "llvm-core/llvm" || return 1
 
 	if [[ "${CC_LTO}" == "clang" && "${CXX_LTO}" == "clang++" ]] ; then
 		:;
@@ -533,19 +533,19 @@ gcf_error "Disabling Clang CFI support."
 
 	local found=1
 	for s in ${llvm_slots[@]} ; do
-		if (       has_version "sys-devel/clang:${s}" \
-			&& has_version "=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]" \
-			&& has_version "=sys-libs/compiler-rt-${s}*" \
+		if (       has_version "llvm-core/clang:${s}" \
+			&& has_version "=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]" \
+			&& has_version "=llvm-runtimes/compiler-rt-${s}*" \
 			&& ( \
-				( has_version ">=sys-devel/lld-${s}" ) \
+				( has_version ">=llvm-core/lld-${s}" ) \
 					|| \
-				( ( has_version "sys-devel/llvm:${s}[gold]" \
-					|| has_version "sys-devel/llvm:${s}[binutils-plugin]" ) \
+				( ( has_version "llvm-core/llvm:${s}[gold]" \
+					|| has_version "llvm-core/llvm:${s}[binutils-plugin]" ) \
 		                        && has_version "sys-devel/binutils[plugins,gold]" \
-                		        && has_version ">=sys-devel/llvmgold-${s}" ) \
+                		        && has_version ">=llvm-core/llvmgold-${s}" ) \
 			) \
-			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
-			&& has_version "sys-devel/llvm:${s}" \
+			&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi,ubsan]" \
+			&& has_version "llvm-core/llvm:${s}" \
 			&& gcf_is_clang_slot_ready "${s}" \
 		) ; then
 			(( ${s} <= ${LLVM_MAX_SLOT:-${GCF_LLVM_MAX}} )) && found=0
@@ -1154,7 +1154,7 @@ gcf_add_clang_cfi() {
 	fi
 	local llvm_v=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
 
-	if ! has_version "=sys-libs/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
+	if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${llvm_v}*[cfi,ubsan]" ; then
 		gcf_error "Skipping CFI because missing toolchain support."
 		return
 	fi
@@ -1173,7 +1173,7 @@ gcf_catch_errors() {
 		if grep -q -F -e "Assertion \`(cfi_check & (kShadowAlign - 1)) == 0' failed" "${PWD}/config.log" ; then
 			# Test package: app-editors/leafpad
 			# This is a bug in the config test.
-gcf_error "Detected a Clang CFI bug.  Use the sys-libs/compiler-rt-sanitizers"
+gcf_error "Detected a Clang CFI bug.  Use the llvm-runtimes/compiler-rt-sanitizers"
 gcf_error "package from oiledmachine-overlay that disables this assert."
 			# Portage will terminate after showing this.
 		fi
@@ -1259,7 +1259,7 @@ gcf_use_ubsan() {
 	local has_ubsan=0
 	gcf_is_clang_ready || return
 	local s=$(clang --version | grep "clang version" | cut -f 3 -d " " | cut -f 1 -d ".")
-	has_version "=sys-libs/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
+	has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[ubsan]" && has_ubsan=1
 
 	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]] \
 		&& (( ${has_ubsan} == 1 )) ; then
@@ -1369,7 +1369,7 @@ gcf_use_slotted_compiler() {
 		[[ -z "${CC}" ]] && gcf_use_clang
 		gcf_info "Switched to clang:${USE_CLANG_SLOT}"
 		# Add lld path
-		local s_lld=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
+		local s_lld=$(ver_cut 1 $(best_version "llvm-core/lld" | sed -e "s|llvm-core/lld-||"))
 		s_lld=$(ver_cut 1 "${s_lld}")
 		export PATH+=":/usr/lib/llvm/${s_lld}/bin"
 		export CC=clang-${USE_CLANG_SLOT}
@@ -1619,7 +1619,7 @@ gcf_warn "Skipping the Souper optimization pass."
 			return
 		fi
 		if has_version "sys-devel/souper" \
-			&& has_version "sys-devel/llvm[souper]" ; then
+			&& has_version "llvm-core/llvm[souper]" ; then
 			:;
 		else
 			gcf_warn "Souper requirements not met.  Skipping."

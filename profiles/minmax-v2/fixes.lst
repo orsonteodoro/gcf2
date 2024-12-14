@@ -32,6 +32,10 @@ dev-util/bazel no-ccache.conf # sandbox violation
 dev-util/dialog use-gcc.conf # Uses both clang and gcc.
 dev-util/shellcheck use-gcc.conf remove-lto.conf # Build time breakage with clang
 gnome-base/librsvg remove-lto.conf link-ubsan.conf # TODO: Apply lto to both rust and c.  error: LLVM gold plugin: inconsistent LTO Unit splitting (recompile with -fsplit-lto-unit)
+llvm-core/clang use-gcc.conf # Build time breakage. FAILED: lib/Tooling/ASTNodeAPI.json ; segfaults with clang-ast-dump reported from dmesg
+llvm-core/lld remove-lto.conf # Configure time problem because it expects lld for lto when none exists.
+llvm-core/llvm split-lto-unit.conf # Build time failure in clang package
+llvm-core/llvm remove-lto.conf remove-split-lto-unit.conf # \
 media-libs/alsa-lib use-gcc.conf # Errors: \
 # Build time failure (with ldd thinlto): ld.lld: error: <inline asm>:1:1: default version symbol snd_dlopen@@ALSA_1.1.6 must be defined; \
 # Build time failure (with goldlto): function __cfi_check_fail: error: undefined reference to '__ubsan_handle_cfi_check_fail_abort'
@@ -44,10 +48,6 @@ sys-apps/sandbox remove-lto.conf # Stripped by ebuild
 sys-auth/pam-python use-clang.conf # Apply only if Python is built with clang.  Python embeds *FLAGS for distfiles packages.
 sys-block/parted use-gcc.conf remove-lto.conf # lto-llvm-411b91.o: relocation R_X86_64_8 against hidden symbol `__typeid__ZTSFP14_PedFileSystemP12_PedGeometryE_align' can not be used when making a shared object
 sys-boot/grub use-gcc.conf grub.conf # Configure time problems
-sys-devel/clang use-gcc.conf # Build time breakage. FAILED: lib/Tooling/ASTNodeAPI.json ; segfaults with clang-ast-dump reported from dmesg
-sys-devel/lld remove-lto.conf # Configure time problem because it expects lld for lto when none exists.
-sys-devel/llvm split-lto-unit.conf # Build time failure in clang package
-sys-devel/llvm remove-lto.conf remove-split-lto-unit.conf # \
 # Build time failure using llvm:13 static-libs that have been Clang LTOed, and \
 # static-libs linked with a clang built with the gcc compiler: \
 # /usr/lib/llvm/13/lib/libLLVMSupport.a: error adding symbols: file format not recognized
@@ -82,4 +82,4 @@ net-misc/curl use-bfd.conf
 # -O2 broken with both gcc 10.3.0, 11.2.0 when building clang
 # Using -fno-schedule-insns will not help
 # -O1 or -Os works
-sys-devel/clang Os.conf # Build time breakage.
+llvm-core/clang Os.conf # Build time breakage.

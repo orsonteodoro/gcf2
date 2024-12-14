@@ -1,6 +1,10 @@
 # Clang built
 dev-lang/spidermonkey clang-retpoline.conf remove-gcc-flags.conf
 dev-libs/icu clang-retpoline.conf remove-gcc-flags.conf
+llvm-runtimes/compiler-rt clang-retpoline.conf remove-gcc-flags.conf
+llvm-runtimes/compiler-rt-sanitizers clang-retpoline.conf remove-gcc-flags.conf
+llvm-runtimes/libcxx clang-retpoline.conf remove-gcc-flags.conf
+llvm-runtimes/libcxxabi clang-retpoline.conf remove-gcc-flags.conf
 sys-libs/zlib clang-retpoline.conf remove-gcc-flags.conf
 media-libs/libaom clang-retpoline.conf remove-gcc-flags.conf
 media-libs/libjpeg-turbo clang-retpoline.conf remove-gcc-flags.conf
@@ -8,10 +12,6 @@ media-libs/libvpx clang-retpoline.conf remove-gcc-flags.conf
 media-libs/flac clang-retpoline.conf remove-gcc-flags.conf
 media-libs/mesa clang-retpoline.conf remove-gcc-flags.conf
 media-video/ffmpeg clang-retpoline.conf remove-gcc-flags.conf
-sys-libs/compiler-rt clang-retpoline.conf remove-gcc-flags.conf
-sys-libs/compiler-rt-sanitizers clang-retpoline.conf remove-gcc-flags.conf
-sys-libs/libcxx clang-retpoline.conf remove-gcc-flags.conf
-sys-libs/libcxxabi clang-retpoline.conf remove-gcc-flags.conf
 
 # The two sets below are mutually exclusive.  Choose and uncomment only one set below.
 
@@ -29,15 +29,15 @@ sys-kernel/vanilla-kernel disable-gcf-lto.conf
 
 # TODO: This list is currently under construction
 dev-libs/libaio remove-gcc-lto.conf
+llvm-core/clang remove-gcc-lto.conf # long linking times
+llvm-core/llvm remove-gcc-lto.conf # it takes unusally a long time to complete a .c file
+llvm-runtimes/compiler-rt remove-gcc-lto.conf
+llvm-runtimes/compiler-rt-sanitizers remove-gcc-lto.conf
+llvm-runtimes/openmp remove-gcc-lto.conf
 media-libs/alsa-lib remove-gcc-lto.conf
 media-libs/x264 remove-gcc-lto.conf
-sys-devel/clang remove-gcc-lto.conf # long linking times
-sys-devel/llvm remove-gcc-lto.conf # it takes unusally a long time to complete a .c file
-sys-libs/compiler-rt remove-gcc-lto.conf
-sys-libs/compiler-rt-sanitizers remove-gcc-lto.conf
 sys-libs/glibc remove-gcc-lto.conf
 sys-libs/libapparmor remove-gcc-lto.conf
-sys-libs/libomp remove-gcc-lto.conf
 
 net-libs/libtorrent disable-thinlto.conf use-gold.conf
 
@@ -46,24 +46,24 @@ dev-games/enigma disable-override-compiler-check.conf # Uses libstdc++
 dev-lang/rust-bin disable-override-compiler-check.conf # Binary only
 dev-libs/boost disable-override-compiler-check.conf # From build script side
 dev-qt/qtgui disable-override-compiler-check.conf # Searches headers with gcc in the path
+llvm-runtimes/compiler-rt disable-override-compiler-check.conf # Contains files named gcc
+llvm-runtimes/compiler-rt-sanitizers disable-override-compiler-check.conf # Packages linked with non-LTOed -lgcc_s
+llvm-runtimes/libcxxabi disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
+llvm-runtimes/libcxx disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
+llvm-runtimes/libunwind disable-override-compiler-check.conf # links to -lgcc_s and filenames containing gcc
 media-libs/flac disable-override-compiler-check.conf # Links to non-LTO from gcc .o file from a path string containing gcc
 media-libs/libaom disable-override-compiler-check.conf # Filename
 media-libs/libvpx disable-override-compiler-check.conf # From build script side
 media-video/ffmpeg disable-override-compiler-check.conf # only enable this if you are not using static-libs for this package
-sys-libs/compiler-rt disable-override-compiler-check.conf # Contains files named gcc
-sys-libs/compiler-rt-sanitizers disable-override-compiler-check.conf # Packages linked with non-LTOed -lgcc_s
-sys-libs/libcxxabi disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
-sys-libs/libcxx disable-override-compiler-check.conf # Uncomment if building with clang.  Stays commented when CC_LTO != CC_LIBC.
-sys-libs/llvm-libunwind disable-override-compiler-check.conf # links to -lgcc_s and filenames containing gcc
 
-#sys-devel/lld use-gcc.conf # Use this to rebuild without CFI when running into CFI cast check bugs.  Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
-sys-devel/lld no-cfi-cast.conf # Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
+#llvm-core/lld use-gcc.conf # Use this to rebuild without CFI when running into CFI cast check bugs.  Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
+llvm-core/lld no-cfi-cast.conf # Build time failures: [Err 5] when building sys-process/audit and rebuilding itself
 
 # Do not strip CFI in .so files
+llvm-runtimes/libcxxabi no-strip.conf
 media-libs/libaom no-strip.conf
 media-libs/libvpx no-strip.conf
 media-libs/openxr no-strip.conf
-sys-libs/libcxxabi no-strip.conf
 
 # Optional
 # The below line should be commented (prefixed with #) if clang is not built yet.

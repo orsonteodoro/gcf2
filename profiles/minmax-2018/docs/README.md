@@ -53,7 +53,7 @@ Mitigation: Full AMD retpoline
 </pre>
 
 This test was performed circa Mar 2018 with sys-devel/gcc-7.3.0-r1,  
-sys-devel/clang-6.0.9999, sys-devel/llvm-6.0.9999, sys-devel/binutils-2.30.  
+llvm-core/clang-6.0.9999, llvm-core/llvm-6.0.9999, sys-devel/binutils-2.30.  
 It used sys-kernel/zen-sources-4.15.9999 from cynede's overlay and enabled   
 -O3 (Compiler optimization level: Optimize harder), -march=native (Processor  
 family (Native optimizations autodetected by GCC)).  The native optimization  

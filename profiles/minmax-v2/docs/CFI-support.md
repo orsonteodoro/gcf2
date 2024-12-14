@@ -19,7 +19,7 @@ with that Rescue CD/USB.
 to minimize temporary blocks.  The USE_CLANG_CFI=0 should be set or commented
 with a # in from of the line in make.conf when doing just LTO without CFI.
 The temporary blocks may result in unwanted manual rollbacks discussed later.
-* Modified `sys-devel/clang` and `sys-libs/compiler-rt-sanitizers` for
+* Modified `llvm-core/clang` and `llvm-runtimes/compiler-rt-sanitizers` for
 disabling assert for autoconf and Cross-DSO linking changes.  See the
 [oiledmachine-overlay](http://github.com/orsonteodoro/oiledmachine-overlay).
 It also requires the removal of the hard mask for the package's
@@ -34,7 +34,7 @@ Changes required for modded clang ebuild:
 ```Shell
 # Edit /etc/portage/profile/package.use.mask
 # to remove hard USE mask
-sys-devel/clang -experimental
+llvm-core/clang -experimental
 ```
 
 ### Steps
@@ -85,30 +85,30 @@ also weakens the security.
 1. Do the following edits:
 ```Shell
 # Contents of /etc/portage/package.use/clang
+llvm-core/clang hardened
+llvm-core/llvm binutils-plugin gold
+llvm-runtimes/compiler-rt-sanitizers cfi ubsan
 sys-devel/binutils plugins gold
-sys-devel/clang hardened
-sys-devel/llvm binutils-plugin gold
-sys-libs/compiler-rt-sanitizers cfi ubsan
 ```
 ```Shell
 # Contents of /etc/portage/profile/package.use.mask
-sys-devel/clang -experimental
+llvm-core/clang -experimental
 ```
 ```Shell
 # Appended contents of /var/lib/portage/world
-sys-devel/clang:14
-sys-devel/clang:13
-sys-devel/clang:10
-sys-devel/llvm:14
-sys-devel/llvm:13
-sys-devel/llvm:10
-sys-devel/lld
+llvm-core/clang:14
+llvm-core/clang:13
+llvm-core/clang:10
+llvm-core/lld
+llvm-core/llvm:14
+llvm-core/llvm:13
+llvm-core/llvm:10
 ```
 Any package with a 14 or 10 is optional if you don't use packages that depend on them.
 
 All live llvm toolchain ebuilds should have a fixed commit with exceptions to
 prevent symbol breakage.  Details are covered in the
-[metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-devel/clang/metadata.xml#L151)
+[metadata.xml](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/llvm-core/clang/metadata.xml#L151)
 in the oiledmachine-overlay.
 
 2. `emerge --sync`
@@ -132,17 +132,17 @@ AND
 ```Shell
 # Rebuild the highest installed slot replacing or keeping 14
 emerge -1v \
-	sys-devel/llvm:14 \
-	sys-devel/clang:14 \
-	=sys-devel/lld-14* \
-	=sys-devel/clang-common-14* \
-	=sys-devel/clang-runtime-14* \
-	=sys-libs/compiler-rt-14* \
-	=sys-libs/compiler-rt-sanitizers-14* \
-	=sys-libs/libomp-14* \
-	=sys-devel/llvmgold-14* \
-	=sys-libs/libcxxabi-14* \
-	=sys-libs/libcxx-14*
+	llvm-core/llvm:14 \
+	llvm-core/clang:14 \
+	=llvm-core/lld-14* \
+	=llvm-core/clang-common-14* \
+	=llvm-core/clang-runtime-14* \
+	=llvm-runtimes/compiler-rt-14* \
+	=llvm-runtimes/compiler-rt-sanitizers-14* \
+	=llvm-runtimes/openmp-14* \
+	=llvm-core/llvmgold-14* \
+	=llvm-runtimes/libcxxabi-14* \
+	=llvm-runtimes/libcxx-14*
 # Also any slotted use-clang-*.conf overrides in package.env should be re-emerged
 ```
 

@@ -55,6 +55,8 @@ gnome-base/gnome-desktop no-cfi-icall.conf # Build time failures: [Err 6, Err 4 
 gnome-base/gnome-keyring no-cfi-icall.conf # Build time failures: [Err 1]
 gnome-base/libgnome-keyring no-cfi-icall.conf # Build time failures: [Err 1]
 gui-libs/libhandy no-cfi-icall.conf # Runtime failure [Err 6] with starting gnome-calculator
+llvm-core/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
+llvm-runtimes/libcxx no-cfi-icall.conf # Build time failures: Illegal instruction in icu package
 media-libs/audiofile no-cfi-nvcall.conf no-cfi-cast.conf no-cfi-vcall.conf no-cfi-icall.conf # Build time failure
 media-libs/flac no-cfi-icall.conf  # undefined symbol: __cfi_slowpath with pulseaudio -k, Breaks CEF
 media-libs/freetype no-cfi-icall.conf # Build time failures: [Err 1]
@@ -93,11 +95,9 @@ sys-apps/pciutils no-cfi-icall.conf # Build time failure error: unable to execut
 sys-apps/systemd-tmpfiles no-cfi-icall.conf # Non-fatal [Err 6] after installing sys-apps/man-db
 sys-apps/util-linux no-cfi-icall.conf # Build time failures: [Err 1]
 sys-devel/bison no-cfi-icall.conf # Build time error [Err 6] when building libxkbcommon
-sys-devel/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
 sys-devel/gettext no-cfi-icall.conf # Build time failures: [Err 1]
 sys-libs/db no-cfi-icall.conf # Build time failures: [Err 1]
 sys-libs/gdbm no-cfi-icall.conf # [Err 9] when building python
-sys-libs/libcxx no-cfi-icall.conf # Build time failures: Illegal instruction in icu package
 sys-libs/libseccomp no-cfi-icall.conf # Build time failures: [Err 1]
 sys-libs/libxcrypt no-cfi-icall.conf # Build time failure
 sys-libs/ncurses no-cfi-icall.conf # Non-fatal run time failure [Err 6] when pressing ctrl+c in less
@@ -201,6 +201,7 @@ dev-qt/qtwidgets disable-clang-cfi.conf # Breaks keepassxc [Err 7]
 dev-qt/qtxml disable-clang-cfi.conf # Runtime error [Err 7] with obs-studio
 dev-util/vulkan-tools disable-clang-cfi.conf # Runtime error [Err 13] with *-pc-linux-gnu-vulkaninfo
 gnome-base/gvfs disable-clang-cfi.conf # [Err 7] with gvfsd-dav --help
+llvm-runtimes/openmp disable-clang-cfi.conf # Build time failure
 media-gfx/eog disable-clang-cfi.conf # Build time error [Err 7, Err 4]
 media-gfx/graphite2 disable-clang-cfi.conf # Build time failure when building harfbuzz [Err 7].  Line removal conditioned on the existence of media-libs/harfbuzz line
 media-libs/gst-plugins-bad disable-clang-cfi.conf # Build time failure [Err 7]
@@ -230,7 +231,6 @@ sys-fs/e2fsprogs disable-clang-cfi.conf # [Err 7] with /sbin/debugfs
 sys-libs/e2fsprogs-libs disable-clang-cfi.conf # [Err 7] with ktutil --help
 sys-libs/efivar disable-clang-cfi.conf # [Err 7] with authvar (from pesign)
 sys-libs/libcap disable-clang-cfi.conf # [Err 7] with starting pulseaudio without args
-sys-libs/libomp disable-clang-cfi.conf # Build time failure
 sys-libs/libutempter disable-clang-cfi.conf # Runtime error [Err 7] when starting xterm
 sys-libs/ncurses disable-clang-cfi.conf # Breaks when starting top [Err 7]
 sys-libs/readline disable-clang-cfi.conf # [Err 7] with gdb --help
