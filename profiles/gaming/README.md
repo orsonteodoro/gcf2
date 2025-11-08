@@ -62,15 +62,15 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       overlay default.
     - For competitive gaming, you can
 
-      set CFLAGS_HARDENED_DISABLED=1
+      set CFLAGS_HARDENED_DISABLED=1 and RUSTFLAGS_HARDENED_TOLERANCE_USER=1 to disable userland hardening
 
       or
 
-      set CFLAGS_HARDENED_TOLERANCE_USER="1.01" at 60 FPS
+      set CFLAGS_HARDENED_TOLERANCE_USER="1.01" and RUSTFLAGS_HARDENED_TOLERANCE_USER="1.01" at 60 FPS
 
       or
 
-      set CFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
+      set CFLAGS_HARDENED_TOLERANCE_USER="1.03" and RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
 
       to limit to 1 FPS drop and to avoid the unstable 3 FPS drop possibility.
 
