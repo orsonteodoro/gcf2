@@ -60,7 +60,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
   - General kernel configuration policy
 
-    - Gaming kernel config:  SSP on, _FORTIFY_SOURCE on, KFENCE off, ASan off,
+    - Gaming kernel config:  SSP on, _FORTIFY_SOURCE on, KFENCE off, KFENCE off,
       UBSan off, swap off, CPU frequency set to performance, 1000 HZ, power
       management off.
 
@@ -103,9 +103,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For competitive gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (3x worst case
-      performance) and KASAN (2x worst case performance) enabled by default.
+      performance) and KFENCE (1% performance penalty) are enabled by default.
       It will studder gameplay or cause the computer to reset on false positive
       on nightmare mode during aggro.
+
+    - For the hardened kernel to protect against memory corruption, it is a
+      user choice.  The trade-off is speed versus comprehensive check.  The
+      choices are between KFENCE (1% worst case penalty), Generic KASAN (4x
+      worst case penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS
+      KASAN (~1.8x worst case penalty).  Most proper hardened kernels will
+      enable a flavor of ASan.  The distro kernel will enable KASAN but
+      it should be disabled for competitive gaming to avoid false positive
+      unintended consequence scenario that leads to premature permadeath.
 
 
 ## Performance bump policy
