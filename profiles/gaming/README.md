@@ -79,9 +79,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       partition and one kernel.
 
     - If competitive gaming, availability comes first but performance-critical
-      preferences are prioritized second.  For grinding or tournament play, we
-      want to focus on actual gaming rather than wasting time fixing and
-      finding the cause of availability loss.
+      preferences are prioritized second.  For grinding, live tournament play,
+      or live game streaming, we want to focus on actual gaming rather than
+      wasting time fixing and finding the cause of availability loss.
 
     - For competative gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (3x worst case
