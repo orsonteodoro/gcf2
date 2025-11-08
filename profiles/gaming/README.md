@@ -68,7 +68,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
       ```
       CFLAGS_HARDENED_DISABLED=1
-      RUSTFLAGS_HARDENED_TOLERANCE_USER=1
+      RUSTFLAGS_HARDENED_DISABLED=1
       ```
 
       to disable userland hardening, or set
