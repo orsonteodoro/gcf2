@@ -19,7 +19,7 @@ time, but at the same time the gameplay should not be unfair.
 ## Tradeoffs / performance
 
 * Modest runtime performance (or perceived B+ grade) is top priority
-* Security is optional but deferred to oiledmachine-overlay for eclasses and hardened ebuilds on the security perimeter
+* Security is optional but deferred to the oiledmachine-overlay for eclasses and hardened ebuilds on the security perimeter
 * Decent install time
 * Stable
 * High uptime for nightmare mode or ginding competition
