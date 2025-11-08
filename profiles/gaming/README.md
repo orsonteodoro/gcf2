@@ -73,7 +73,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     will studder gameplay or cause the computer to reset on false positive on
     nightmare mode during aggro.  We prioritize availability over integrity
     for gaming kernels.  We prioritize integrity over availability for
-    hardened kernels.
+    hardened kernels.  We change or disable performance options that hurt
+    availability which can cause premature permadeath.
 
 ## Performance bump policy
 
