@@ -109,7 +109,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For the hardened kernel to protect against memory corruption, it is a
       user choice.  The trade-off is speed versus comprehensive check.  The
-      choices are between KFENCE (1% worst case penalty), Generic KASAN (4x
+      choices are between KFENCE (1.08x worst case penalty), Generic KASAN (4x
       worst case penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS
       KASAN (~1.8x worst case penalty).  Most proper hardened kernels will
       enable a flavor of ASan.  The distro kernel will enable KASAN but
