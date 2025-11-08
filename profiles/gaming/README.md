@@ -20,7 +20,7 @@ time, but at the same time the gameplay should not be unfair.
 
 * Modest runtime performance (or perceived B+ grade) is top priority
 * Build time is secondary.
-* No security, but can use oiledmachine-overlay for hardened ebuilds
+* Security is optional but deferred to oiledmachine-overlay for hardened ebuilds and eclasses
 * Decent install time
 * Stable
 * High uptime for nightmare mode or ginding competition
