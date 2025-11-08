@@ -9,17 +9,19 @@ The gaming profile is designed for a basic gaming system.
 * No visual or auditory studdering
 * &gt;= 25 FPS for video playback with no noticible slow down
 * &gt;= 30 FPS for old school games with lowest settings with no noticible FPS
-lag or annoying glitches that that will produce unfair play.
+  lag or annoying glitches that that will produce unfair play.
 * &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
-time, but at the same time the gameplay should not be unfair.
-* GCC &ge; 12 for mold<a href="#footnote-1">[1]</a>, or GCC 11 with [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).
+  time, but at the same time the gameplay should not be unfair.
+* GCC &ge; 12 for mold<a href="#footnote-1">[1]</a>, or GCC 11 with
+  [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).
 * Stable profile, stable keywords, stable release branches are preferred
 
 ## Tradeoffs / performance
 
 * Modest runtime performance (or perceived B+ grade) is top priority
-* Security is optional but deferred to the oiledmachine-overlay for eclasses and hardened ebuilds on the security perimeter
+* Security is optional but deferred to the oiledmachine-overlay for eclasses and
+  hardened ebuilds on the security perimeter
 * Decent install time
 * Stable
 * High uptime for nightmare mode or grinding competition
@@ -40,17 +42,21 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * No premature optimization
 * Reactive optimization
 * Development is active at this time
-* Use of the mold linker for codebases that are &ge; 20 MLOC or &ge; 1 hr link time. (WIP)
-* For competative gaming, hardening is not recommended, but it is manageable in several ways.
-  Possibilities:
+* Use of the mold linker for codebases that are &ge; 20 MLOC or &ge; 1 hr link
+  time. (WIP)
+* For competative gaming, hardening is not recommended, but it is manageable in
+  several ways.  Possibilities:
+
   - Two partitions and two kernels - 1 partition for gaming without userland
     hardening and without kernel hardening, 1 partition for general use with
     userland hardening and with kernel hardening.  This is uncommon.
+
   - Unhardened whole drive for gaming, hardened USB stick for general use.  This
     is uncommon.
-  - Harden the whole disk and keep 2 kernels but limit the worst case penalty at
-    -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
-    /etc/portage/make.conf.
+
+  - Harden the whole disk and keep 2 kernels but limit the worst case penalty for
+    hardening at -10% with oiledmachine-overlay and set
+    CFLAGS_HARDENED_TOLERANCE_USER="1.10" in /etc/portage/make.conf.
 
   - General kernel configuration policy
 
