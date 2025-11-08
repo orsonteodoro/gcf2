@@ -19,12 +19,11 @@ time, but at the same time the gameplay should not be unfair.
 ## Tradeoffs / performance
 
 * Modest runtime performance (or perceived B+ grade) is top priority
-* Build time is secondary.
 * Security is optional but deferred to oiledmachine-overlay for hardened ebuilds and eclasses
 * Decent install time
 * Stable
 * High uptime for nightmare mode or ginding competition
-* ~90% performance systemwide
+* ~90% runtime performance systemwide
 * No LTO
 * No bashrc time cost
 * Multitasking during build is smooth
