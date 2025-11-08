@@ -93,12 +93,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - General kernel configuration policy
 
     - Gaming kernel config:  SSP on, _FORTIFY_SOURCE on, KFENCE off,
-      UBSan off, swap off, CPU frequency set to performance, 1000 HZ, power
+      UBSan off, KCFI off, swap off, CPU frequency set to performance, 1000 HZ, power
       management off.
 
     - General use kernel and builder kernel with full hardening config:  SSP on,
-      _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on, CPU frequency schedutil
-      or ondemand, 250 HZ for throughput in builder kernel.
+      _FORTIFY_SOURCE on, KFENCE on, UBSan on, KCFI on, swap on, CPU frequency
+      schedutil or ondemand, 250 HZ for throughput in builder kernel.
 
     - For both types of kernel, security defaults should be mostly default because
       too much hardening overheats or touches untested buggy code.  Too little
@@ -150,6 +150,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       scenario that leads to premature permadeath.  For casual gaming, KFENCE
       has acceptable performance tolerance.  For competitive gaming, the
       performance is unacceptable.  KASAN may cause a 2-4 FPS drop.
+
+    - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
+      case performance penalty which may go over the 1 FPS drop for 60 FPS
+      systems.
 
 
 ## Performance bump policy
