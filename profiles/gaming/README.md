@@ -57,7 +57,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     - General use kernel and builder kernel with full hardening:  SSP on,
       _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on, CPU frequency schedutil
       or ondemand.
-      Security defaults should be mostly default because too much hardening
+
+    - Security defaults should be mostly default because too much hardening
       overheats or touches untested buggy code.  Too little hardening can run
       into untested buggy code.  So closer to defaults is preferred for
       stability and uptime.  Disruptive options like power management or
