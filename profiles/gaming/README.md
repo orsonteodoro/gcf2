@@ -60,33 +60,30 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
     - 1.35 keep enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
       overlay default.
-    - For competitive gaming, you can
+    - For competitive gaming, you can set
 
       ```
-      set CFLAGS_HARDENED_DISABLED=1 and
-      set RUSTFLAGS_HARDENED_TOLERANCE_USER=1
-      to disable userland hardening
+      CFLAGS_HARDENED_DISABLED=1
+      RUSTFLAGS_HARDENED_TOLERANCE_USER=1
       ```
 
-      or
+      to disable userland hardening, or set
 
       ```
-      set CFLAGS_HARDENED_TOLERANCE_USER="1.01" and
-      set RUSTFLAGS_HARDENED_TOLERANCE_USER="1.01"
-      for a 60 FPS system
+      CFLAGS_HARDENED_TOLERANCE_USER="1.01"
+      RUSTFLAGS_HARDENED_TOLERANCE_USER="1.01"
       ```
 
-      or
+      for a 60 FPS system, or set
 
       ```
-      set CFLAGS_HARDENED_TOLERANCE_USER="1.03" and
-      set RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03"
-      for a 30 FPS system
+      CFLAGS_HARDENED_TOLERANCE_USER="1.03"
+      RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03"
       ```
 
-      to limit to 1 FPS drop and to avoid the unstable 3 FPS drop possibility.
-      You can also apply it per-package with per-package env files (aka .conf
-      files).
+      for a 30 FPS system.  To limit to 1 FPS drop and to avoid the unstable 3
+      FPS drop possibility.  You can also apply it per-package with per-package
+      env files (aka .conf files).
 
   - General kernel configuration policy
 
