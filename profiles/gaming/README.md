@@ -103,7 +103,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For competitive gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (3x worst case
-      performance) and KFENCE (1% performance penalty) are enabled by default.
+      performance) and KFENCE (1.08x performance penalty) are enabled by default.
       It will studder gameplay or cause the computer to reset on false positive
       on nightmare mode during aggro.
 
