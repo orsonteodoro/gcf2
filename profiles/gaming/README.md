@@ -23,7 +23,7 @@ time, but at the same time the gameplay should not be unfair.
 * Decent install time
 * Stable
 * High uptime for nightmare mode or grinding competition
-* ~90% runtime performance systemwide
+* ~90% runtime performance systemwide without hardening
 * No LTO
 * No bashrc time cost
 * Multitasking during build is smooth
@@ -116,6 +116,10 @@ backtracking will be cut short or end.
 * -O0 is preferred to reduce build times by 60-70%.
 * lld link times can be up to ~2-5x longer than mold; gold link times can be up to ~22-24x longer than mold; bfd link times can be up to ~88-120x longer than mold.  All multithreaded.
 * gold link times can be up to ~2x longer than lld with single thread linking.
+* For hardening
+  - Retpoline - 1.30x worst case performance 
+  - ASan - 4.00x worst case performance
+  - UBSan - 2.00x worst case performance
 
 #### Section footnotes
 
