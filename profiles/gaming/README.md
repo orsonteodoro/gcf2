@@ -80,7 +80,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - 1.10 keeps SSP on, _FORITIFY_SOURCE (a poor man's ASan) on, Retpoline off.
     - 1.35 keeps SSP on, _FORITIFY_SOURCE on, Retpoline on and is the overlay
-      default.  Prioritizes confidentiality mitigation over performance benefit.
+      default.  Prioritizes confidentiality protection and neutralization of a
+      vulnerability over the performance benefit.
     - For performance-critical competitive gaming, you can set
 
       ```
