@@ -97,8 +97,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       management off.
 
     - General use kernel and builder kernel with full hardening config:  SSP on,
-      _FORTIFY_SOURCE on, KFENCE on, UBSan on, KCFI on, swap on, CPU frequency
-      schedutil or ondemand, 250 HZ for throughput in builder kernel.
+      _FORTIFY_SOURCE on, KFENCE on, UBSan on, KCFI on, swap on, CPU frequency set
+      to schedutil or ondemand, 250 HZ for throughput in builder kernel.
 
     - For both types of kernel, security defaults should be mostly default because
       too much hardening overheats or touches untested buggy code.  Too little
