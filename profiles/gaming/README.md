@@ -24,7 +24,7 @@ The gaming profile is designed for a basic gaming system.
   hardened ebuilds on the security perimeter
 * Decent install time
 * Stable
-* High uptime for nightmare mode or grinding competition
+* High uptime for hardcore mode or grinding competition
 * ~90% runtime performance systemwide without hardening
 * No LTO
 * No bashrc time cost
@@ -137,7 +137,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       performance drop with Retpoline and the kernel has UBSan (~3x worst case
       performance) and KFENCE (~1.08x performance penalty) are enabled by default.
       It will studder gameplay or cause the computer to reset on false positive
-      on nightmare mode during aggro.
+      on hardcore mode during aggro.
 
     - For the hardened kernel to perform live memory corruption detection, it is
       a user choice that must be enabled.  Virtually all proper hardened kernels
