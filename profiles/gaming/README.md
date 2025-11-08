@@ -70,8 +70,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For both types of kernel, security defaults should be mostly default because
       too much hardening overheats or touches untested buggy code.  Too little
-      hardening can run into untested buggy code.  So closer to defaults is
-      preferred for stability and uptime.
+      hardening can run into untested buggy code.  Settings closer to defaults
+      are preferred for stability and uptime since the heavy lifting for testing
+      has already been done.
 
     - For the gaming kernel, disruptive options like power management or
       allow for studder like swap should be disabled.  Options that degrade
