@@ -153,9 +153,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
-      systems.  It is acceptable for casual gaming but not for hardcore mode
-      and competitive gaming.  The KCFI may contribute to the possibility of
-      premature permadeath.
+      systems.  For 30 FPS systems, 2 FPS drop. For 60 FPS systems, 5 FPS drop.
+      For 180 FPS systems, 10 FPS drop.  It is acceptable for casual gaming but
+      not for hardcore mode and competitive gaming.  The KCFI may contribute to
+      the possibility of premature permadeath.
 
 
 ## Performance bump policy
