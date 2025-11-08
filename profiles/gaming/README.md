@@ -58,7 +58,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     based on needs.  For example, one may set hardening at -10% with
     oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
     /etc/portage/make.conf for borderline A- or B+ grade performance.  The
-    tolerance limits and manages the worst case performance penalty for
+    tolerance manages and limits the worst case performance penalty for
     hardening.
 
     - 1.10 keeps SSP on, _FORITIFY_SOURCE (a poor man's ASan) on, Retpoline off.
