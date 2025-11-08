@@ -44,7 +44,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * Development is active at this time
 * Use of the mold linker for codebases that are &ge; 20 MLOC or &ge; 1 hr link
   time. (WIP)
-* For competative gaming, hardening is not recommended, but it is manageable in
+* For competitive gaming, hardening is not recommended, but it is manageable in
   several ways.  Possibilities:
 
   - Two partitions and two kernels - 1 partition for gaming without userland
@@ -100,7 +100,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       or live game streaming, we want to focus on actual gaming rather than
       wasting time fixing and finding the cause of availability loss.
 
-    - For competative gaming, hardening is not acceptable because of the -30%
+    - For competitive gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (3x worst case
       performance) and KASAN (2x worst case performance) enabled by default.
       It will studder gameplay or cause the computer to reset on false positive
