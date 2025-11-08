@@ -78,11 +78,22 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       availability should be disabled or changed to the higher availability
       alternative.
 
+    - If just casual gaming, then full hardening is acceptable so only one
+      partition and one kernel.
+
     - For the hardened kernel, options that improve CIA - Confidentiality,
       Integrity, Availability - should all be increased or enabled.
 
-    - If just casual gaming, then full hardening is acceptable so only one
-      partition and one kernel.
+    - Sometimes the choice between integrity improvement and availability
+      improvement is mutually exclusive.
+
+    - We prioritize availability over integrity for gaming kernels.
+
+    - We prioritize integrity over availability for hardened kernels.
+
+    - We change or disable performance options that hurt uptime and hurt
+      availability which can cause premature permadeath in the gaming
+      kernel.
 
     - If competitive gaming, availability comes first but performance-critical
       preferences are prioritized second.  For grinding, live tournament play,
@@ -95,13 +106,6 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       It will studder gameplay or cause the computer to reset on false positive
       on nightmare mode during aggro.
 
-    - We prioritize availability over integrity for gaming kernels.
-
-    - We prioritize integrity over availability for hardened kernels.
-
-    - We change or disable performance options that hurt uptime and hurt
-      availability which can cause premature permadeath in the gaming
-      kernel.
 
 ## Performance bump policy
 
