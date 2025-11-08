@@ -51,30 +51,50 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Harden the whole disk and keep 2 kernels but limit the worst case penalty at
     -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
     /etc/portage/make.conf.
-    Some of the security/performance configuration:
-    - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, KFENCE off, ASan off, UBSan
-      off, swap off, CPU frequency set to performance, power management off.
-    - General use kernel and builder kernel with full hardening:  SSP on,
-      _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on, CPU frequency schedutil
-      or ondemand.
 
-    - Security defaults should be mostly default because too much hardening
-      overheats or touches untested buggy code.  Too little hardening can run
-      into untested buggy code.  So closer to defaults is preferred for
-      stability and uptime.  Disruptive options like power management or
+  - General kernel configuration policy
+
+    - Gaming kernel config:  SSP on, _FORTIFY_SOURCE on, KFENCE off, ASan off,
+      UBSan off, swap off, CPU frequency set to performance, 1000 HZ, power
+      management off.
+
+    - General use kernel and builder kernel with full hardening config:  SSP on,
+      _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on, CPU frequency schedutil
+      or ondemand, 250 HZ for throughput builder kernel.
+
+    - For both types of kernel, security defaults should be mostly default because
+      too much hardening overheats or touches untested buggy code.  Too little
+      hardening can run into untested buggy code.  So closer to defaults is
+      preferred for stability and uptime.
+
+    - For the gaming kernel, disruptive options like power management or
       allow for studder like swap should be disabled.  Options that degrade
       availability should be disabled or changed to the higher availability
       alternative.
-  - If just casual gaming, then full hardening is acceptable so only one
-    partition and one kernel.
-  - If competative gaming, hardening is not acceptable because of the -30%
-    performance drop with Retpoline and the kernel has UBSan (3x worst case
-    performance) and KASAN (2x worst case performance) enabled by default.  It
-    will studder gameplay or cause the computer to reset on false positive on
-    nightmare mode during aggro.  We prioritize availability over integrity
-    for gaming kernels.  We prioritize integrity over availability for
-    hardened kernels.  We change or disable performance options that hurt
-    availability which can cause premature permadeath.
+
+    - For the hardened kernel, options that improve CIA - Confidentiality,
+      Integrity, Availability - should all be increased or enabled.
+
+    - If just casual gaming, then full hardening is acceptable so only one
+      partition and one kernel.
+
+    - If competitive gaming, availability comes first but performance-critical
+      preferences are prioritized second.  For grinding or tournament play, we
+      want to focus on actual gaming rather than wasting time fixing and
+      finding the cause of availability loss.
+
+    - For competative gaming, hardening is not acceptable because of the -30%
+      performance drop with Retpoline and the kernel has UBSan (3x worst case
+      performance) and KASAN (2x worst case performance) enabled by default.
+      It will studder gameplay or cause the computer to reset on false positive
+      on nightmare mode during aggro.
+
+    - We prioritize availability over integrity for gaming kernels.
+
+    - We prioritize integrity over availability for hardened kernels.
+
+    - We change or disable performance options that hurt availability which can
+      cause premature permadeath.
 
 ## Performance bump policy
 
