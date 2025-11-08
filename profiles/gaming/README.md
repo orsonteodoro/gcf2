@@ -57,6 +57,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Harden the whole disk and keep 2 kernels but limit the worst case penalty for
     hardening at -10% with oiledmachine-overlay and set
     CFLAGS_HARDENED_TOLERANCE_USER="1.10" in /etc/portage/make.conf.
+    - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
+    - 1.35 keep enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
+      overlay default.
+    - For competitive gaming, you can set CFLAGS_HARDENED_DISABLED=1 or set
+
+      CFLAGS_HARDENED_TOLERANCE_USER="1.01" at 60 FPS
+
+      or
+
+      CFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
+
+      to limit to 1 FPS drop and to avoid the unstable 3 FPS drop possibility.
 
   - General kernel configuration policy
 
@@ -117,7 +129,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       avoid a false positive unintended consequence scenario that leads to
       premature permadeath.  For casual gaming, KFENCE has acceptable
       performance tolerance.  For competitive gaming, the performance is
-      unacceptable.  KASAN may cause a 1-3 FPS drop.
+      unacceptable.  KASAN may cause a 2-4 FPS drop.
 
 
 ## Performance bump policy
