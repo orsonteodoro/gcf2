@@ -73,6 +73,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       set CFLAGS_HARDENED_TOLERANCE_USER="1.03" and RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
 
       to limit to 1 FPS drop and to avoid the unstable 3 FPS drop possibility.
+      You can also apply it per-package with per-package env files (aka .conf
+      files).
 
   - General kernel configuration policy
 
