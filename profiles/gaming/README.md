@@ -20,18 +20,19 @@ time, but at the same time the gameplay should not be unfair.
 
 * Modest runtime performance (or perceived B+ grade) is top priority
 * Build time is secondary.
-* No security
-* Fastest install time
-* Fastest updates
+* No security, but can use oiledmachine-overlay for hardened ebuilds
+* Decent install time
+* Stable
+* High uptime for nightmare mode or ginding competition
+* ~90% performance systemwide
 * No LTO
-* Energy inefficient
 * No bashrc time cost
 * Multitasking during build is smooth
 * GCC first policy
 
 ## Details
 
-* {C,CXX}FLAGS = -O0 pipe (implied -march=generic)
+* {C,CXX}FLAGS = -O2 pipe (implied -march=generic)
 * -Oflag bumps based on unacceptable runtime duration, studder, or under FPS
 minimums.
 * The PGO USE flag is disabled by default, but enabled for select small
