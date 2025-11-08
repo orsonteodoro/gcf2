@@ -57,13 +57,30 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Harden the whole disk and keep 2 kernels but limit the worst case penalty
     based on needs.  For example, one may set hardening at -10% with
     oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
-    /etc/portage/make.conf for borderline A- or B+ grade performance.  The
-    tolerance manages and limits the worst case performance penalty for
-    hardening.
+    /etc/portage/make.conf.  The tolerance manages and limits the worst case
+    performance penalty for hardening.
+
+    In layman's terms this means the following:
+
+    - 0.97 - is equivalent to -Ofast or -O3 + -march=native.
+    - 1.00 - is equivalent to -O3.
+    - 1.09 - is equivalent to -O2 worst case
+    - 1.25 - is equivalent to -Os worst case
+    - 1.32 - is equivalent to -O1 worst case
+    - 1.55 - is equivalent to -O0 best case
+    - 1.95 - is equivalent to -O0 worst case
+    - 0.90 - 1.10 is A grade performance.
+    - 1.11 - 1.20 is B grade performance.
+    - 1.21 - 1.30 is C grade performance.
+    - 1.31 - 1.40 is D grade performance.
+    - 1.41 - infinity is F grade performance.
+
+    What this means is that if the task is 24 hours unhardened at -O3, the task
+    will take 48 hours if the performance impact is 2.00.
 
     - 1.10 keeps SSP on, _FORITIFY_SOURCE (a poor man's ASan) on, Retpoline off.
     - 1.35 keeps SSP on, _FORITIFY_SOURCE on, Retpoline on and is the overlay
-      default.
+      default.  Prioritizes confidentiality loss over performance benefit.
     - For performance-critical competitive gaming, you can set
 
       ```
