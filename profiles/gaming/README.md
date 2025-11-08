@@ -54,9 +54,13 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Unhardened whole drive for gaming, hardened USB stick for general use.  This
     is uncommon.
 
-  - Harden the whole disk and keep 2 kernels but limit the worst case penalty for
-    hardening at -10% with oiledmachine-overlay and set
-    CFLAGS_HARDENED_TOLERANCE_USER="1.10" in /etc/portage/make.conf.
+  - Harden the whole disk and keep 2 kernels but limit the worst case penalty
+    based on needs.  For example, one may set hardening at -10% with
+    oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
+    /etc/portage/make.conf for borderline A- or B+ grade performance.  The
+    tolerance limits and manages the worst case performance penalty for
+    hardening.
+
     - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
     - 1.35 keeps enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
       overlay default.
