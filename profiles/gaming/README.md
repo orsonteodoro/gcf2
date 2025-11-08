@@ -22,7 +22,7 @@ time, but at the same time the gameplay should not be unfair.
 * Security is optional but deferred to the oiledmachine-overlay for eclasses and hardened ebuilds on the security perimeter
 * Decent install time
 * Stable
-* High uptime for nightmare mode or ginding competition
+* High uptime for nightmare mode or grinding competition
 * ~90% runtime performance systemwide
 * No LTO
 * No bashrc time cost
