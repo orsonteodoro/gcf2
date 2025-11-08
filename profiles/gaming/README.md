@@ -61,9 +61,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     tolerance limits and manages the worst case performance penalty for
     hardening.
 
-    - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
-    - 1.35 keeps enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
-      overlay default.
+    - 1.10 keeps SSP on, _FORITIFY_SOURCE (a poor man's ASan) on, Retpoline off.
+    - 1.35 keeps SSP on, _FORITIFY_SOURCE on, Retpoline off and is the overlay
+      default.
     - For competitive gaming, you can set
 
       ```
