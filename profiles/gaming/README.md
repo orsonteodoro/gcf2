@@ -71,7 +71,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     performance drop with Retpoline and the kernel has UBSan (3x worst case
     performance) and KASAN (2x worst case performance) enabled by default.  It
     will studder gameplay or cause the computer to reset on false positive on
-    nightmare mode during aggro.  We prioritize availability over integrity.
+    nightmare mode during aggro.  We prioritize availability over integrity
+    for gaming kernels.  We prioritize integrity over availability for
+    hardened kernels.
 
 ## Performance bump policy
 
