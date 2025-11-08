@@ -81,7 +81,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03"
       ```
 
-      for a 30 FPS system.  To limit to 1 FPS drop and to avoid the unstable 3
+      for a 30 FPS system to limit to 1 FPS drop and to avoid the unstable 3
       FPS drop possibility.  You can also apply it per-package with per-package
       env files (aka .conf files).
 
