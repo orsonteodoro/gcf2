@@ -52,8 +52,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE="1.10" in
     /etc/portage/make.conf.
     For the kernel keep 2 kernels:
-    - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, swap off, KFENCE off, ASan
-      off, UBSan off.  The reason why is because too much hardening overheats or
+    - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, KFENCE off, ASan off, UBSan
+      off, swap off.  The reason why is because too much hardening overheats or
       touches untested buggy code.  Too little hardening can run into untested
       buggy code.  So closer to defaults is preferred for stability and uptime.
     - General use kernel and builder kernel with full hardening:  SSP on,
