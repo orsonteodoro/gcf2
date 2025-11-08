@@ -136,15 +136,15 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For the hardened kernel to perform live memory corruption detection, it is
       a user choice that must be enabled.  Virtually all proper hardened kernels
-      will enable a flavor of ASan.  The trade-off is speed versus comprehensive
-      check.  The choices are between KFENCE (~1.08x worst case penalty),
-      Generic KASAN (4x worst case penalty), HW_TAGS KASAN (~1.2x worst case
-      penalty), SW_TAGS KASAN (~1.8x worst case penalty).  The distro kernel
-      will enable KASAN but it should be disabled for competitive gaming to
-      avoid a false positive unintended consequence scenario that leads to
-      premature permadeath.  For casual gaming, KFENCE has acceptable
-      performance tolerance.  For competitive gaming, the performance is
-      unacceptable.  KASAN may cause a 2-4 FPS drop.
+      will enable a flavor of ASan.  The trade-off is a speed versus
+      comprehensive check or comprehensive security.  The choices are between
+      KFENCE (~1.08x worst case penalty), Generic KASAN (4x worst case penalty),
+      HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x worst case
+      penalty).  The distro kernel will enable KASAN but it should be disabled
+      for competitive gaming to avoid a false positive unintended consequence
+      scenario that leads to premature permadeath.  For casual gaming, KFENCE
+      has acceptable performance tolerance.  For competitive gaming, the
+      performance is unacceptable.  KASAN may cause a 2-4 FPS drop.
 
 
 ## Performance bump policy
