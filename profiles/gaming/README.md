@@ -44,7 +44,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * For competative gaming, hardening is not recommended, but it is manageable in several ways.
   Possibilities:
   - Two partitions - 1 partition for gaming without userland hardening and without kernel hardening, 1 partition for general use with userland hardening and with kernel hardening.  This is uncommon.
-  - Full partition for gaming, hardened USB stick for general use.  This is uncommon.
+  - Unhardened whole drive for gaming, hardened USB stick for general use.  This is uncommon.
   - One partition but limit the worst case penalty at -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE="1.10" in /etc/portage/make.conf.
     For the kernel keep 2 kernels:
     - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, swap off, KFENCE off, ASan off, UBSan off.  The reason why is because too much hardening overheats or touches untested buggy code.  Too little hardening can run into untested buggy code.  So closer to defaults is preferred for stability and uptime.
