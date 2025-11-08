@@ -60,13 +60,17 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
     - 1.35 keep enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
       overlay default.
-    - For competitive gaming, you can set CFLAGS_HARDENED_DISABLED=1 or set
+    - For competitive gaming, you can
 
-      CFLAGS_HARDENED_TOLERANCE_USER="1.01" at 60 FPS
+      set CFLAGS_HARDENED_DISABLED=1
 
       or
 
-      CFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
+      set CFLAGS_HARDENED_TOLERANCE_USER="1.01" at 60 FPS
+
+      or
+
+      set CFLAGS_HARDENED_TOLERANCE_USER="1.03" at 30 FPS
 
       to limit to 1 FPS drop and to avoid the unstable 3 FPS drop possibility.
 
