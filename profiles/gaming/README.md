@@ -63,12 +63,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     In layman's terms this means the following:
 
     - 0.97 - is equivalent to -Ofast or -O3 + -march=native.
-    - 1.00 - is equivalent to -O3.
-    - 1.09 - is equivalent to -O2 worst case
-    - 1.25 - is equivalent to -Os worst case
-    - 1.32 - is equivalent to -O1 worst case
-    - 1.55 - is equivalent to -O0 best case
-    - 1.95 - is equivalent to -O0 worst case
+    - 1.00 - is equivalent to -O3 baseline performance.
+    - 1.09 - is equivalent to -O2 worst case.
+    - 1.25 - is equivalent to -Os worst case.
+    - 1.32 - is equivalent to -O1 worst case.
+    - 1.55 - is equivalent to -O0 best case.
+    - 1.95 - is equivalent to -O0 worst case.
     - 0.90 - 1.10 is A grade performance.
     - 1.11 - 1.20 is B grade performance.
     - 1.21 - 1.30 is C grade performance.
