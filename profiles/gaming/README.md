@@ -92,19 +92,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       to disable userland hardening, or set
 
       ```
-      CFLAGS_HARDENED_TOLERANCE_USER="1.01"
-      RUSTFLAGS_HARDENED_TOLERANCE_USER="1.01"
+      CFLAGS_HARDENED_TOLERANCE_USER="1.09"
+      RUSTFLAGS_HARDENED_TOLERANCE_USER="1.09"
       ```
 
-      for a 60 FPS system, or set
-
-      ```
-      CFLAGS_HARDENED_TOLERANCE_USER="1.03"
-      RUSTFLAGS_HARDENED_TOLERANCE_USER="1.03"
-      ```
-
-      for a 30 FPS system to limit to 1 FPS drop and to avoid the unstable 3
-      FPS drop possibility.  You can also apply it per-package with per-package
+      to limit dropping frames and to avoid affecting gameplay outcome
+      possibility.  You can also apply it per-package with per-package
       env files (aka .conf files).  The hardened eclasses has the details of
       which hardening flags are activiated based on the tolerance level.
 
@@ -178,8 +171,19 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       not for hardcore mode and competitive gaming.  The KCFI may contribute to
       the possibility of premature permadeath.
 
+### FPS tolerance for competitive play
 
-## Performance bump policy
+* For 30 FPS, 1 FPS is 33.33 ms.  3 frames is 0.1 seconds.  5 frames is 0.16 seconds.
+* For 60 FPS, 1 FPS is 16.66 ms.  6 frames is 0.1 seconds.  9 frames is 0.15 seconds.
+* For 240 FPS, 1 FPS is 4.166ms.  24 frame is 0.1 seconds.  36 frames is 0.15 seconds.
+* Formula:  t total ms = 1000 ms / x frames
+* Object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
+* The recommended esports policy in this profile is too keep the FPS loss below 0.1
+  total seconds to prevent affecting gameplay outcome.
+* 60 FPS is the mainstream gamer standard and assumed in this profile.
+* 240 FPS is the esports standard.
+
+## Performance bump policy and FPS tolerance for casual play
 
 ### Hypothetical / theorycraft
 
