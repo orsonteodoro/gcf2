@@ -113,7 +113,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       worst case penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS
       KASAN (~1.8x worst case penalty).  Most proper hardened kernels will
       enable a flavor of ASan.  The distro kernel will enable KASAN but
-      it should be disabled for competitive gaming to avoid false positive
+      it should be disabled for competitive gaming to avoid a false positive
       unintended consequence scenario that leads to premature permadeath.
 
 
