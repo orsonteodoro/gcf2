@@ -43,7 +43,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * Use of the mold linker for codebases that are &ge; 20 MLOC or &ge; 1 hr link time. (WIP)
 * For competative gaming, hardening is not recommended, but it is manageable in several ways.
   Possibilities:
-  - Two partitions - 1 partition for gaming without hardening, 1 partition for hardened for general use.
+  - Two partitions - 1 partition for gaming without userland hardening and without kernel hardening, 1 partition for for general use with userland hardening and with kernel hardening.  This is uncommon.
   - One partition but limit the worst case penalty at -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE="1.10" in /etc/portage/make.conf.
   - If just casual gaming, then full hardening is acceptable.
   - If competative gaming, hardening is not acceptable because drop -30% with Retpoline and the kernel has UBSan (3x penalty worst case) and KASAN (2x penalty worst case) enabled by default.
