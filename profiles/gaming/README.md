@@ -149,7 +149,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     - If competitive gaming, availability comes first but performance-critical
       preferences are prioritized second.  For grinding, live tournament play,
       or live game streaming, we want to focus on actual gaming rather than
-      wasting time fixing and finding the cause of availability loss.
+      wasting time fixing and finding the cause of availability loss.  A
+      properly run live game stream has no technical difficulties, lag, or
+      crashes caused by our flag selections.
 
     - For competitive gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (~3x worst case
