@@ -45,7 +45,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   Possibilities:
   - Two partitions - 1 partition for gaming without userland hardening and without kernel hardening, 1 partition for general use with userland hardening and with kernel hardening.  This is uncommon.
   - Full partition for gaming, hardened USB stick for general use.  This is uncommon.
-  - One partition but limit the worst case penalty at -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE="1.10" in /etc/portage/make.conf.  For the kernel keep SSP, _FORTIFY_SOURCE, but drop expensive security options such as KFENCE, ASan, UBSan.
+  - One partition but limit the worst case penalty at -10% with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE="1.10" in /etc/portage/make.conf.
+    For the kernel keep 2 kernels:
+    - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, swap off, KFENCE off, ASan off, UBSan off.  The reason why is because too much hardening overheats or touches untested buggy code.  Too little hardening can run into untested buggy code.  So closer to defaults is preferred for stability and uptime.
+    - General use kernel and builder kernel with full hardening:  SSP on, _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on.
   - If just casual gaming, then full hardening is acceptable.
   - If competative gaming, hardening is not acceptable because of the -30% performance drop with Retpoline and the kernel has UBSan (3x worst case performance) and KASAN (2x worst case performance) enabled by default.
 
