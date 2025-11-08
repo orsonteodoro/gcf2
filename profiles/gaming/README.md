@@ -58,7 +58,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     hardening at -10% with oiledmachine-overlay and set
     CFLAGS_HARDENED_TOLERANCE_USER="1.10" in /etc/portage/make.conf.
     - 1.10 keeps SSP, _FORITIFY_SOURCE (a poor man's ASan), drops Retpoline.
-    - 1.35 keep enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
+    - 1.35 keeps enable SSP, _FORITIFY_SOURCE, enables Retpoline and is the
       overlay default.
     - For competitive gaming, you can set
 
@@ -83,7 +83,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
       for a 30 FPS system to limit to 1 FPS drop and to avoid the unstable 3
       FPS drop possibility.  You can also apply it per-package with per-package
-      env files (aka .conf files).
+      env files (aka .conf files).  The hardened eclasses has the details of
+      which hardening flags are activiated based on the tolerance level.
 
   - General kernel configuration policy
 
