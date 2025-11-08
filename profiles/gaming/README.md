@@ -93,8 +93,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - We prioritize integrity over availability for hardened kernels.
 
-    - We change or disable performance options that hurt availability which can
-      cause premature permadeath in the gaming kernel.
+    - We change or disable performance options that hurt availability and
+      uptime which can cause premature permadeath in the gaming kernel.
 
 ## Performance bump policy
 
