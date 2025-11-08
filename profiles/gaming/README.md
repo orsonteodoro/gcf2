@@ -49,7 +49,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     For the kernel keep 2 kernels:
     - Gaming kernel:  SSP on, _FORTIFY_SOURCE on, swap off, KFENCE off, ASan off, UBSan off.  The reason why is because too much hardening overheats or touches untested buggy code.  Too little hardening can run into untested buggy code.  So closer to defaults is preferred for stability and uptime.
     - General use kernel and builder kernel with full hardening:  SSP on, _FORTIFY_SOURCE on, KFENCE on, UBSan on, swap on.
-  - If just casual gaming, then full hardening is acceptable.
+  - If just casual gaming, then full hardening is acceptable so only one partition and one kernel.
   - If competative gaming, hardening is not acceptable because of the -30% performance drop with Retpoline and the kernel has UBSan (3x worst case performance) and KASAN (2x worst case performance) enabled by default.
 
 ## Performance bump policy
