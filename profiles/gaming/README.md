@@ -237,7 +237,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    per-package with the .conf files or by the modified ebuilds in the
    oiledmachine-overlay.  The idea for these .conf files is to either maintain
    theoretical or practical coverage of _FORTIFY_SOURCE checks that -O3 and
-   LTO undo.
+   LTO undo.  Some projects had been observed already applying some of these
+   flags, but not all project security teams are aware about it.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models with indeterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
