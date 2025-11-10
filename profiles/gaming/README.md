@@ -55,7 +55,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     is uncommon, but helps isolation, but doesn't secure if firmware has
     vulnerabilities or is compromised.
 
-  - Unhardened everything.  This was a common practice in 1990s to 2000s decade.
+  - Unhardened mostly everything.  This was a common practice in 1990s to 2000s decade.
 
   - Selective per-package hardening.  This was a common practice in 2010s decade.
 
