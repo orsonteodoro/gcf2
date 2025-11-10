@@ -165,7 +165,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       performance is unacceptable because both the use of -O2 (10% penalty) and
       the hardening may stack or be additive so maybe nearly 20% performance
       impact penalty combined.   We start out with the 90% performance as the
-      new baseline then drop it down again 8%.
+      new baseline then drop it down again 8% in a near best case scenario
+      though.  If the scene is content heavy in a worst case cenario, the
+      performance impact can increase chances of loss.  We want a safety buffer
+      or winning gaurantees.  The hardening just reduces it.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
