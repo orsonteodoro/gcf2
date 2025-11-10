@@ -219,9 +219,9 @@ performance, the corresponding safe zone would be F.  In both instances D and
 F performance, it is not a passing grade for casual gameplay performance.  To
 increase the safety buffer, one may also consider enabling the vanilla USE
 flag or disabling default hardening patches in the gcc ebuild for use in the
-gaming partition, but it comes with the trade-off of double build time of
-for performant and secure partitions and lowered security in the performant
-partition.
+gaming partition, but it comes with the trade-off of double build time for
+both the performant and secure partitions and lowered security in the
+performant partition.
 
  There are cases were the security and performance are mutually exclusive:
 
