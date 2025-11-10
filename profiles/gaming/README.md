@@ -172,7 +172,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     - For the hardened kernel runtime memory corruption detection, it is a user
       choice that must be enabled in order to neutralize unseen or overlooked
       critical severity vulnerabilities.  Virtually all proper hardened kernels
-      will enable a flavor of ASan.  The trade-off is a speed versus
+      will enable a flavor of ASan.  The trade-off is speed versus
       comprehensive check or comprehensive security.  The choices are between
       KFENCE (~1.08x worst case penalty), Generic KASAN (~4x worst case
       penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x
