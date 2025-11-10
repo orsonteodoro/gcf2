@@ -232,7 +232,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    set `fortify-fix-<LEVEL>-<COMPILER>.conf` to disable optimizations that
    compromise _FORTIFY_SOURCE integrity if not using the oiledmachine-overlay
    for both security-critical packages and packages that handle untrusted data
-   when _FORTIFY_SOURCE is default on or enabled explicitly.
+   when _FORTIFY_SOURCE is default on or enabled explicitly.  The hardened
+   compilers don't do this automatically and has to be done manually
+   per-packagewise with the .conf files or by the modified ebuilds in the
+   oiledmachine-overlay.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models with indeterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
