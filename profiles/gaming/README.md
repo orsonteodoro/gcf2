@@ -54,7 +54,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Unhardened whole drive for gaming, hardened USB stick for general use.  This
     is uncommon.
 
-  - Unhardened everything.  This was the common practice in 1990s to 2000s decade.
+  - Unhardened everything.  This was a common practice in 1990s to 2000s decade.
 
   - Selective per-package hardening.  This was a common practice in 2010s decade.
 
