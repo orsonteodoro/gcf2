@@ -224,7 +224,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  - Using -O3 may optimize away or eliminate _FORTIFY_SOURCE checks lowering
    security.  It is recommended to just keep it at -O2 for security marked
    packages so that also availability is not reduced and that _FORTIFY_SOURCE
-   integrity is not reduced.
+   integrity is not reduced significantly to unacceptable levels.
  - When using _FORTIFY_SOURCE, it is also recommended to apply additional flag
    set `fortify-fix-<LEVEL>-<COMPILER>.conf` to disable optimizations that
    compromise _FORTIFY_SOURCE integrity if not using the oiledmachine-overlay
