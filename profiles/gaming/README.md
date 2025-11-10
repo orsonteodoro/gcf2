@@ -229,9 +229,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    compromise _FORTIFY_SOURCE integrity if not using the oiledmachine-overlay
    for both security critical packages and packages that handle untrusted data
    when _FORTIFY_SOURCE is default on or enabled explicitly.
- - Using -Ofast may compromise the integrity of mathematical models.  -Ofast
-   should be disabled when real world losses are possible like use of finance
-   mathematical models (spread sheets) or safety-critical packages.
+ - Using -Ofast or -ffast-math may compromise the integrity of mathematical
+   models.  -Ofast should be disabled when real world losses are possible like
+   use of finance mathematical models (spread sheets, JavaScript based
+   finance calculators, etc) or safety-critical packages.
 
 ## FPS tolerance for competitive play
 
