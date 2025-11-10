@@ -228,8 +228,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    security.  It is recommended to just keep it at -O2 for security marked
    packages so that also availability is not reduced and that _FORTIFY_SOURCE
    integrity is not reduced significantly to unacceptable levels.
- - When using _FORTIFY_SOURCE, it is also recommended to apply additional flag
-   set `fortify-fix-<LEVEL>-<COMPILER>.conf` to disable optimizations that
+ - When using _FORTIFY_SOURCE, it is also recommended to apply an additional
+   flag set `fortify-fix-<LEVEL>-<COMPILER>.conf` to disable optimizations that
    compromise _FORTIFY_SOURCE integrity if not using the oiledmachine-overlay
    for both security-critical packages and packages that handle untrusted data
    when _FORTIFY_SOURCE is default on or enabled explicitly.  The hardened
