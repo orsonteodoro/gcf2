@@ -183,7 +183,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * For 60 FPS, 1 FPS is 16.66 ms.  6 frames is 0.1 seconds.  9 frames is 0.15 seconds.
 * For 240 FPS, 1 FPS is 4.166ms.  24 frame is 0.1 seconds.  36 frames is 0.15 seconds.
 * Formula:  t total ms = 1000 ms / x frames
-* Object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
+* Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
 * The recommended esports policy in this profile is too keep the FPS loss below 0.1
   total seconds to prevent affecting gameplay outcome.
 * 60 FPS is the mainstream gamer standard and assumed in this profile.
