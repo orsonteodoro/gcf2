@@ -208,12 +208,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  competitive A grade consistency is B grade performance.  The safe zone for
  casual B grade consistency is grade C grade performance.  The safe zone allows
  for resilient results for the player to bounce back from B grade back to A
- grade performance.  If the casual performance were downgraded to D performance,
- the corresponding safe zone would be F.  In both instances D and F performance,
- it is not a passing grade for casual gameplay performance.  To increase the
- safety buffer, one may also consider using the vanilla USE flag in the gcc
- ebuild for use in the gaming partition, but it comes with the trade-off of
- double build time and lowered security.
+ grade performance.  If the casual performance baseline were downgraded to D
+ performance, the corresponding safe zone would be F.  In both instances D and
+ F performance, it is not a passing grade for casual gameplay performance.  To
+ increase the safety buffer, one may also consider enabling the vanilla USE
+ flag in the gcc ebuild for use in the gaming partition, but it comes with the
+ trade-off of double build time and lowered security.
 
 ## FPS tolerance for competitive play
 
