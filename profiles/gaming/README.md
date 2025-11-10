@@ -193,7 +193,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
 * The recommended esports policy in this profile is too render
   at least 90% frames render chance, which translates to A grade
-  average FPS, within 0.1 total seconds to prevent affecting gameplay
+  average FPS, within 0.15 total seconds to prevent affecting gameplay
   outcome.  It is assumed that the object will appear visually long
   enough.  Competitive is A grade consistency.  Casual is B to C grade
   consistency.
