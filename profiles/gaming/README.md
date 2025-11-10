@@ -183,8 +183,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       new baseline then drop it down again 8% in a near best case scenario
       though.  If the scene is content heavy in a worst case scenario, the
       performance impact can increase chances of loss.  KFENCE is like the
-      analog of sheep skin condom.  Generic KASAN is like the analog of a latex
-      condom.
+      analog of a sheep skin condom.  Generic KASAN is like the analog of a
+      latex condom.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
