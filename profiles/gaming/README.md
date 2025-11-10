@@ -232,8 +232,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    when _FORTIFY_SOURCE is default on or enabled explicitly.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models.  -Ofast should be disabled when real world losses are possible like
-   use of finance mathematical models (spread sheets, JavaScript based
-   finance calculators, etc) or safety-critical packages.
+   use of finance mathematical models (spreadsheets, JavaScript based
+   finance calculators, POS systems, etc) or safety-critical packages.
 
 ## FPS tolerance for competitive play
 
