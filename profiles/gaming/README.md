@@ -60,7 +60,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
   - Harden everything on by default.  This is the distro default today and
     common practice in rolling distros, but it then as we discuss later
-    eliminates competitive play performance possibility.
+    eliminates competitive play performance possibility.  It also creates a
+    false sense of security or a facade of security because there are security
+    holes that are left open because the performance is unacceptable or vendors
+    are unwilling to fix them and also because of Godel's Incompleteness
+    Theorem implications/metaphors.
 
   - Harden the whole disk and keep 2 kernels but limit the worst case penalty
     based on needs.  For example, one may set hardening at -10% with
