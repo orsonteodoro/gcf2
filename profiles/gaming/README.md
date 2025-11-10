@@ -192,8 +192,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * Formula:  t total ms = 1000 ms / x frames
 * Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
 * The recommended esports policy in this profile is too render
-  at least 83.3% frames render chance, which translates to 25 FPS
-  equivalent, within 0.1 total seconds to prevent affecting gameplay
+  at least 90% frames render chance, which translates to A grade
+  average FPS, within 0.1 total seconds to prevent affecting gameplay
   outcome.  It is assumed that the object will appear visually long
   enough.
 * 60 FPS is the mainstream gamer standard and assumed in this profile.
