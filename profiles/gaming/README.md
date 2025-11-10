@@ -173,8 +173,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       reduces to 25 FPS (or motion picture movie FPS).  If KFENCE proc'ed, it
       would dip to less than movie FPS, it can affect outcome with 3 FPS
       reduction or annoy/distract others who notice that something is off or not
-      right.  If KFENCE were disabled then there would be no unintended
-      consequences from any KFENCE proc's, it would be in a safe condition.  25
+      right.  If KFENCE were disabled, then there would be no unintended
+      consequences from any KFENCE proc's.  It would be in a safe condition.  25
       FPS is 83% or grade B performance.  22 FPS is 73% or grade C performance.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
