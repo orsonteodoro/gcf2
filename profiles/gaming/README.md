@@ -229,10 +229,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   at least 90% frames render chance, which translates to A grade
   average FPS, within 0.15 total seconds to prevent affecting gameplay
   outcome.  Simply put, the average FPS should not dip below 27 FPS in
-  30 FPS games, 54 FPS in 60 FPS, 216 FPS in 240 FPS games in high poly
-  count or high content scenario in competitive play.  It is assumed
-  that the object will appear visually long enough.  Competitive is A
-  grade consistency.  Casual is B to C grade consistency.
+  30 FPS games, 54 FPS in 60 FPS games, 216 FPS in 240 FPS games in
+  high poly count or high content scenario in competitive play.  It is
+  assumed that the object will appear visually long enough.
+  Competitive is A grade consistency.  Casual is B to C grade
+  consistency.
 * 60 FPS is the mainstream gamer standard and assumed in this profile.
 * 240 FPS is the esports standard.
 
