@@ -241,7 +241,12 @@ partition.
    oiledmachine-overlay.  The idea for these .conf files is to either maintain
    theoretical or practical coverage of _FORTIFY_SOURCE checks that -O3 and
    LTO undo.  Some projects had been observed already applying some of these
-   flags, but not all project security teams are aware about it.
+   flags, but not all project security teams are aware about it.  A simple
+   example would be like a military base where there are checkpoints on the
+   entry, at the store, at the armory.  Applying -O3 optimization or LTO would
+   be like deleting the guards randomly or completely at the checkpoints, or
+   placing the guard at these permanently improperly placing the guard at the
+   bathroom while the armory is being looted.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models with non-deterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
