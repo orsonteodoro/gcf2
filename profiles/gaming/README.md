@@ -167,15 +167,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       impact penalty combined.   We start out with the 90% performance as the
       new baseline then drop it down again 8% in a near best case scenario
       though.  If the scene is content heavy in a worst case scenario, the
-      performance impact can increase chances of loss.  We want a safety buffer
-      or winning guarantees.  The hardening just reduces it.  Hypothetically
-      speaking, a 30 FPS game has heavy content or high poly count scene that
-      reduces to 25 FPS (or motion picture movie FPS).  If KFENCE proc'ed, it
-      would dip to less than movie FPS, it can affect outcome with 3 FPS
-      reduction or annoy/distract others who notice that something is off or not
-      right.  If KFENCE were disabled, then there would be no unintended
-      consequences from any KFENCE proc's.  It would be in a safe condition.  25
-      FPS is 83% or grade B performance.  22 FPS is 73% or grade C performance.
+      performance impact can increase chances of loss.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
@@ -183,6 +175,27 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       For 180 FPS systems, 10 FPS drop.  It is acceptable for casual gaming but
       not for hardcore mode and competitive gaming.  The KCFI may contribute to
       the possibility of premature permadeath.
+
+### Performance consistency and the mutual exclusitivity of security and performance
+
+ We want a safety buffer or winning guarantees.  The hardening just reduces it.
+ Hypothetically speaking, a 30 FPS game has heavy content or high poly count
+ scene that reduces to 25 FPS (or motion picture movie FPS).  KFENCE has a worst
+ case performance at 8%.  SSP has possibly 20%.  Stack clash at 10%.  The
+ approximation is closer to additive when stacked.  If KFENCE or even SSP
+ proc'ed, it would dip to less than movie FPS, it can affect outcome with 3 FPS
+ reduction or annoy/distract others who notice that something is off or not
+ right.  If KFENCE were disabled, then there would be no unintended consequences
+ from any KFENCE proc's.  It would be in a safe condition.  25 FPS is 83% or
+ grade B performance.  22 FPS is 73% or grade C performance.  The safe zone for
+ competitive A grade consistency is B grade performance.  The safe zone for
+ casual B grade consistency is grade C grade performance.  The safe zone allows
+ for resilient results for the player to bounce back from B grade back to A
+ grade performance.  If the casual performance were downgraded to D performance,
+ the corresponding safe zone would be F.  In both instances D and F performance,
+ it is not a passing grade for casual gameplay performance.  To increase the
+ safety buffer, one may also consider using the vanilla USE flag in the gcc
+ ebuild for use in the gaming partition.
 
 ### FPS tolerance for competitive play
 
