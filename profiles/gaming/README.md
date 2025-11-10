@@ -59,7 +59,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
   - Selective per-package hardening.  This was a common practice in 2010s decade.
 
-  - Harden everything on by default.  This is the distro default today and
+  - Harden everything on by default.  This is the distro default today (2020s) and
     common practice in rolling distros, but it then as we discuss later
     eliminates competitive play performance possibility.  It also creates a
     false sense of security or a fake facade of comprehensive security because
