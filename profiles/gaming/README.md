@@ -186,9 +186,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
 ### FPS tolerance for competitive play
 
-* For 30 FPS, 1 FPS is 33.33 ms.  3 frames is 0.1 seconds.  5 frames is 0.16 seconds.
-* For 60 FPS, 1 FPS is 16.66 ms.  6 frames is 0.1 seconds.  9 frames is 0.15 seconds.
-* For 240 FPS, 1 FPS is 4.166ms.  24 frame is 0.1 seconds.  36 frames is 0.15 seconds.
+* For 30 FPS, 1 FPS is 33.33 ms.  3 frames rendered in 0.1 seconds.  5 frames rendered in 0.16 seconds.
+* For 60 FPS, 1 FPS is 16.66 ms.  6 frames rendered in 0.1 seconds.  9 frames rendered in 0.15 seconds.
+* For 240 FPS, 1 FPS is 4.166ms.  24 frames rendered in 0.1 seconds.  36 frames rendered in 0.15 seconds.
 * Formula:  t total ms = 1000 ms / x frames
 * Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
 * The recommended esports policy in this profile is too keep the FPS loss below 0.1
