@@ -256,7 +256,7 @@ partition.
 * Formula:  t total ms = 1000 ms / x frames
 * Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
 * The recommended esports policy in this profile is too render
-  at least 90% frames render chance, which translates to A grade
+  at least 90% frames render chance or above, which translates to A grade
   average FPS, within 0.15 total seconds to prevent affecting gameplay
   outcome.  Simply put, the average FPS should not dip below 27 FPS in
   30 FPS games, 54 FPS in 60 FPS games, 216 FPS in 240 FPS games in
