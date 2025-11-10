@@ -235,7 +235,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
    when _FORTIFY_SOURCE is default on or enabled explicitly.  The hardened
    compilers don't do this automatically and has to be done manually
    per-package with the .conf files or by the modified ebuilds in the
-   oiledmachine-overlay.
+   oiledmachine-overlay.  The idea for these .conf files is to either maintain
+   theoretical or practical coverage of _FORTIFY_SOURCE checks that -O3 and
+   LTO undo.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models with indeterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
