@@ -201,7 +201,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  to additive when stacked.  If KFENCE or even SSP proc'ed, it would dip to less
  than movie FPS, it can affect outcome with 3 FPS reduction or annoy/distract
  others who notice that something is off or not right.  Licensed car drivers
- know that distracted driving can lead to crashes (bad user performance).  If
+ know that distracted driving can lead to crashes as in bad user performance.  If
  KFENCE were disabled, then there would be no unintended consequences from any
  KFENCE proc's.  It would be in a safe condition.  25 FPS is 83% or grade B
  performance.  22 FPS is 73% or grade C performance.  The safe zone for
