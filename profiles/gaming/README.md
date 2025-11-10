@@ -245,8 +245,8 @@ partition.
    example would be like a military base where there are checkpoints on the
    entry, at the store, at the armory.  Applying -O3 optimization or LTO would
    be like deleting the guards randomly or completely at the checkpoints, or
-   placing the guard improperly at the bathroom while the armory is being
-   looted.
+   placing the guard's post improperly at the bathroom while the armory is
+   being looted.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models with non-deterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
