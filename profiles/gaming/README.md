@@ -171,9 +171,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       or winning guarantees.  The hardening just reduces it.  Hypothetically
       speaking, a 30 FPS game has heavy content or high poly count scene that
       reduces to 25 FPS (or motion picture FPS).  If KFENCE proc'ed, it would
-      dip to less than movie FPS, it can affect outcome with 3 FPS reduction.
-      If KFENCE were disabled then there would be no unintended consequences
-      from any KFENCE proc's, it would be in a safe condition.
+      dip to less than movie FPS, it can affect outcome with 3 FPS reduction or
+      annoy/distract others who notice that something is off or not right.  If
+      KFENCE were disabled then there would be no unintended consequences from
+      any KFENCE proc's, it would be in a safe condition.  25 FPS is 83% or
+      grade B.  22 FPS is 73% or grade C performance.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
