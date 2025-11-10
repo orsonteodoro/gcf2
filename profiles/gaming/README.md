@@ -220,7 +220,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
  There are cases were the security and performance are mutually exclusive.
  - Using -O0 will increase build speed but disable _FORTIFY_SOURCE mitigation.
-   _FORTIFY_SOURCE acts like the cheap or demo version of ASan.
+   _FORTIFY_SOURCE acts like the inferior or demo version of ASan.
  - Using -O3 may optimize away or eliminate _FORTIFY_SOURCE checks lowering
    security.  It is recommended to just keep it at -O2 for security marked
    packages so that also availability is not reduced and that _FORTIFY_SOURCE
