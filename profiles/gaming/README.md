@@ -236,8 +236,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
    models.  Both -Ofast and -ffast-math should be disabled when real world
    losses are possible like use of finance mathematical models (spreadsheets,
-   the JavaScript package(s) itself if it used as a finance calculator, POS
-   systems, etc) or safety-critical packages.
+   the JavaScript or PHP package(s) itself if it used as a finance calculator,
+   POS systems, etc) or safety-critical packages.
 
 ## FPS tolerance for competitive play
 
