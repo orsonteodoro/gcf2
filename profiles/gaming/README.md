@@ -218,6 +218,21 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  flag in the gcc ebuild for use in the gaming partition, but it comes with the
  trade-off of double build time and lowered security.
 
+ There are cases were the security and performance are mutually exclusive.
+ - Using -O0 will increase build speed but disable _FORTIFY_SOURCE mitigation.
+ - Using -O3 may optimize away or eliminate _FORTIFY_SOURCE checks lowering
+   security.  It is recommended to just keep it at -O2 for security marked
+   packages so that also availability is not reduced and that _FORTIFY_SOURCE
+   integrity is not reduced.
+ - When using _FORTIFY_SOURCE, it is also recommended to apply additional flag
+   set `fortify-fix-<LEVEL>-<COMPILER>.conf` to disable optimizations that
+   compromise _FORTIFY_SOURCE integrity if not using the oiledmachine-overlay
+   for both security critical packages and packages that handle untrusted data
+   when _FORTIFY_SOURCE is default on or enabled explicitly.
+ - Using -Ofast may compromise the integrity of mathematical models.  -Ofast
+   should be disabled when real world losses are possible like use of finance
+   mathematical models (spread sheets) or safety-critical packages.
+
 ## FPS tolerance for competitive play
 
 * For 30 FPS, 1 FPS is 33.33 ms.  3 frames render chances within 0.1 seconds inclusive.  4 frames render chances within 0.15 seconds inclusive.
