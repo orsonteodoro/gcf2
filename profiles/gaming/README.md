@@ -169,24 +169,25 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       It will studder gameplay or cause the computer to reset on false positive
       on hardcore mode during aggro.
 
-    - For the hardened kernel to perform live memory corruption detection, it is
-      a user choice that must be enabled.  Virtually all proper hardened kernels
+    - For the hardened kernel runtime memory corruption detection, it is a user
+      choice that must be enabled in order to neutralize unseen or overlooked
+      critical severity vulnerabilities.  Virtually all proper hardened kernels
       will enable a flavor of ASan.  The trade-off is a speed versus
       comprehensive check or comprehensive security.  The choices are between
-      KFENCE (~1.08x worst case penalty), Generic KASAN (~4x worst case penalty),
-      HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x worst case
-      penalty).  The distro kernel will enable KFENCE but it should be disabled
-      for competitive gaming to avoid a false positive unintended consequence
-      scenario that leads to premature permadeath.  For casual gaming, KFENCE
-      has acceptable performance tolerance.  For competitive gaming, the
-      performance is unacceptable because both the use of -O2 (10% penalty) and
-      the hardening may stack or be additive so maybe nearly 20% performance
-      impact penalty combined.   We start out with the 90% performance as the
-      new baseline then drop it down again 8% in a near best case scenario
-      though.  If the scene is content heavy in a worst case scenario, the
-      performance impact can increase chances of loss.  KFENCE is like the
-      analog of a sheep skin condom.  Generic KASAN is like the analog of a
-      latex condom.
+      KFENCE (~1.08x worst case penalty), Generic KASAN (~4x worst case
+      penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x
+      worst case penalty).  The distro kernel will enable KFENCE but it should
+      be disabled for competitive gaming to avoid a false positive unintended
+      consequence scenario that leads to premature permadeath.  For casual
+      gaming, KFENCE has acceptable performance tolerance.  For competitive
+      gaming, the performance is unacceptable because both the use of -O2 (10%
+      penalty) and the hardening may stack or be additive so maybe nearly 20%
+      performance impact penalty combined.   We start out with the 90%
+      performance as the new baseline then drop it down again 8% in a near best
+      case scenario though.  If the scene is content heavy in a worst case
+      scenario, the performance impact can increase chances of loss.  KFENCE is
+      like the analog of a sheep skin condom.  Generic KASAN is like the analog
+      of a latex condom.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
