@@ -55,7 +55,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     for general use and paying bills.  This is uncommon, but helps isolation,
     but doesn't secure if firmware has vulnerabilities or is compromised.
 
-  - Unhardened desktop for gaming.  Separate device like a smartphone to pay bills or shopping.
+  - Unhardened desktop for gaming.  A separate device like a smartphone to pay bills or shopping.
 
   - Unhardened mostly everything.  This was a common practice in 1990s to 2000s decade.
 
