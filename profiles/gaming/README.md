@@ -173,7 +173,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       a user choice that must be enabled.  Virtually all proper hardened kernels
       will enable a flavor of ASan.  The trade-off is a speed versus
       comprehensive check or comprehensive security.  The choices are between
-      KFENCE (~1.08x worst case penalty), Generic KASAN (4x worst case penalty),
+      KFENCE (~1.08x worst case penalty), Generic KASAN (~4x worst case penalty),
       HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x worst case
       penalty).  The distro kernel will enable KFENCE but it should be disabled
       for competitive gaming to avoid a false positive unintended consequence
