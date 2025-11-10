@@ -166,7 +166,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       the hardening may stack or be additive so maybe nearly 20% performance
       impact penalty combined.   We start out with the 90% performance as the
       new baseline then drop it down again 8% in a near best case scenario
-      though.  If the scene is content heavy in a worst case cenario, the
+      though.  If the scene is content heavy in a worst case scenario, the
       performance impact can increase chances of loss.  We want a safety buffer
       or winning gaurantees.  The hardening just reduces it.
 
