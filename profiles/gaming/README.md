@@ -51,9 +51,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     hardening and without kernel hardening, 1 partition for general use with
     userland hardening and with kernel hardening.  This is uncommon.
 
-  - Unhardened whole drive for gaming, hardened USB stick for general use.  This
-    is uncommon, but helps isolation, but doesn't secure if firmware has
-    vulnerabilities or is compromised.
+  - Unhardened whole drive for gaming, hardened USB stick or separate drive
+    for general use and paying bills.  This is uncommon, but helps isolation,
+    but doesn't secure if firmware has vulnerabilities or is compromised.
 
   - Unhardened mostly everything.  This was a common practice in 1990s to 2000s decade.
 
