@@ -242,7 +242,7 @@ partition.
    LTO undo.  Some projects had been observed already applying some of these
    flags, but not all project security teams are aware about it.
  - Using -Ofast or -ffast-math may compromise the integrity of mathematical
-   models with indeterministic fmul or float optimizations.  Both -Ofast
+   models with non-deterministic fmul or float optimizations.  Both -Ofast
    and -ffast-math should be disabled when real world losses are possible like
    use of finance mathematical models (spreadsheets, the JavaScript or PHP
    package(s) itself if it used as a finance calculator, POS systems, etc) or
