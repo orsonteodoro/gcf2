@@ -56,9 +56,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
   - Unhardened everything.  This was the common practice in 1990s to 2000s decade.
 
-  - Selective per-package hardening.  This is common practice in 2010s decade.
+  - Selective per-package hardening.  This was a common practice in 2010s decade.
 
-  - Harden everything on by default.  This is common practice in this distro
+  - Harden everything on by default.  This is a common practice in this distro
     today and in rolling distros, but it then as we discuss later eliminates
     competitive play performance possibility.
 
