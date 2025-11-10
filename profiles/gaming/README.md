@@ -217,8 +217,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  performance, the corresponding safe zone would be F.  In both instances D and
  F performance, it is not a passing grade for casual gameplay performance.  To
  increase the safety buffer, one may also consider enabling the vanilla USE
- flag in the gcc ebuild for use in the gaming partition, but it comes with the
- trade-off of double build time and lowered security.
+ flag or disabling default hardening patches in the gcc ebuild for use in the
+ gaming partition, but it comes with the trade-off of double build time of
+ for performant and secure partitions and lowered security.
 
  There are cases were the security and performance are mutually exclusive.
  - Using -O0 will increase build speed but disable _FORTIFY_SOURCE mitigation.
