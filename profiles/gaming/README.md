@@ -191,9 +191,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 * For 240 FPS, 1 FPS is 4.166ms.  24 frames render chances within 0.1 seconds inclusive.  36 frames render chances within 0.15 seconds inclusive.
 * Formula:  t total ms = 1000 ms / x frames
 * Human object recognition is 100 - 150 ms or 0.1 - 0.15 seconds.
-* The recommended esports policy in this profile is too render no less than
-  1 frame chances below 0.1 total seconds to prevent affecting gameplay
-  outcome.  It is assumed that the object will appear visually long enough.
+* The recommended esports policy in this profile is too render a
+  at least 83.3% frames render chance, which translates to 25 FPS
+  equivalent, within 0.1 total seconds to prevent affecting gameplay
+  outcome.  It is assumed that the object will appear visually long
+  enough.
 * 60 FPS is the mainstream gamer standard and assumed in this profile.
 * 240 FPS is the esports standard.
 
