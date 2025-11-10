@@ -176,7 +176,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       not for hardcore mode and competitive gaming.  The KCFI may contribute to
       the possibility of premature permadeath.
 
-### Performance consistency and the mutual exclusitivity of security and performance
+## Performance consistency and the mutual exclusitivity of security and performance
 
  We want a safety buffer or winning guarantees.  The hardening just reduces it.
  Hypothetically speaking, a 30 FPS game has heavy content or high poly count
@@ -197,7 +197,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
  safety buffer, one may also consider using the vanilla USE flag in the gcc
  ebuild for use in the gaming partition.
 
-### FPS tolerance for competitive play
+## FPS tolerance for competitive play
 
 * For 30 FPS, 1 FPS is 33.33 ms.  3 frames render chances within 0.1 seconds inclusive.  4 frames render chances within 0.15 seconds inclusive.
 * For 60 FPS, 1 FPS is 16.66 ms.  6 frames render chances within 0.1 seconds inclusive.  9 frames render chances within 0.15 seconds inclusive.
