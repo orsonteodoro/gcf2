@@ -214,7 +214,7 @@ ASan and look-alike estimates
 | _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Full               | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
 | KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Partial, 1 in 1000 | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Partial, 1 in 100  | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| KFENCE (1 ms) [7 ]     | 8.5                | 8.8                   | 1.12 / 1.25            | Partial, 1 in 10   | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE (1 ms) [7]      | 8.5                | 8.8                   | 1.12 / 1.25            | Partial, 1 in 10   | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Full               | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Full               | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Full               | Y       | Y       | Y        | N       | N       | Y      | Y      |
