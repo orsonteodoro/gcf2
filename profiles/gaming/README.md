@@ -227,9 +227,9 @@ ASan and look-alike estimates
 * [4] Userspace flavor only
 * [5] Higher score means more secure
 * [6] Higher score means faster system or faster completion
-* [7] It was suggested in the ot-kernel to use KFENCE for the builder kernel,
-      and Generic KASAN or HW_TAGS KASAN for hardened or critical-security
-      scenarios.
+* [7] It is recommended to use KFENCE for the builder kernel or general use, and
+      Generic KASAN or HW_TAGS KASAN for hardened or short lived
+      critical-security scenarios.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
