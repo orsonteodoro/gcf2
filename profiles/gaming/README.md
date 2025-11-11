@@ -165,29 +165,27 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     - For competitive gaming, hardening is not acceptable because of the -30%
       performance drop with Retpoline and the kernel has UBSan (~3x worst case
-      performance) and KFENCE (~1.08x performance penalty) are enabled by default.
-      It will studder gameplay or cause the computer to reset on false positive
-      on hardcore mode during aggro.
+      performance) and KFENCE (~1.08x performance penalty) are enabled by
+      default.  It will studder gameplay or cause the computer to reset on
+      false positive on hardcore mode during aggro.
 
     - For the hardened kernel runtime memory corruption detection, it is a user
       choice that must be enabled in order to neutralize unseen or overlooked
       critical severity vulnerabilities.  Virtually all proper hardened kernels
       will enable a flavor of ASan.  The trade-off is speed versus
-      comprehensive check or comprehensive security.  The choices are between
-      KFENCE (~1.08x worst case penalty), Generic KASAN (~4x worst case
-      penalty), HW_TAGS KASAN (~1.2x worst case penalty), SW_TAGS KASAN (~1.8x
-      worst case penalty).  The distro kernel will enable KFENCE but it should
-      be disabled for competitive gaming to avoid a false positive unintended
-      consequence scenario that leads to premature permadeath.  For casual
-      gaming, KFENCE has acceptable performance tolerance.  For competitive
-      gaming, the performance is unacceptable because both the use of -O2 (10%
-      penalty) and the hardening may stack or be additive so maybe nearly 20%
-      performance impact penalty combined.   We start out with the 90%
-      performance as the new baseline then drop it down again 8% in a near best
-      case scenario though.  If the scene is content heavy in a worst case
-      scenario, the performance impact can increase chances of loss.  KFENCE is
-      like the analog of a sheep skin condom.  Generic KASAN is like the analog
-      of a latex condom.
+      comprehensive check or comprehensive security.  The distro kernel will
+      enable KFENCE but it should be disabled for competitive gaming to avoid a
+      false positive unintended consequence scenario that leads to premature
+      permadeath.  For casual gaming, KFENCE has acceptable performance
+      tolerance.  For competitive gaming, the performance is unacceptable
+      because both the use of -O2 (10% penalty) and the hardening may stack or
+      be additive so maybe nearly 20% performance impact penalty combined if
+      using the 10 ms security-critical config of KFENCE.   We start out with
+      the 90% performance as the new baseline then drop it down again 8% in a
+      near best case scenario though.  If the scene is content heavy in a worst
+      case scenario, the performance impact can increase chances of loss.  KFENCE
+      is like the analog of a sheep skin condom.  Generic KASAN is like the
+      analog of a latex condom.
 
     - For trusted code integrity on both kernels, KCFI may have a 1.08x worst
       case performance penalty which may go over the 1 FPS drop for 60 FPS
@@ -210,17 +208,17 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 ASan and look-alike estimates
 
-| Flavor                 | Security score [5] | Performance score [6] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
-| ---                    | ---                | ---                   | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
-| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| Generic KASAN          | 9.2                | 4.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| HW_TAGS KASAN          | 9.5                | 8.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| SW_TAGS KASAN          | 9.0                | 6.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| ASan [4]               | 9.8                | 3.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| HWSan [4]              | 9.7                | 8.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
+| ---                    | ---                | ---                   | ---                    | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
+| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| ASan [4]               | 9.8                | 3.5                   | 2.00 / 3.00            | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| HWSan [4]              | 9.7                | 8.5                   | 1.20 / 1.40            | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
@@ -233,7 +231,9 @@ ASan and look-alike estimates
       critical-security scenarios.  You can also change the sampling rate to be
       more agressive with KFENCE with `kfence_sample_interval` added to bootloader
       or built in the kernel command line instead of using KASAN.
-* [8] Kernel default
+* [8] Kernel default.  It may be tolerable for scenarios where the loss is
+      not catastrophic.
+* [9] Typical / worst case
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
