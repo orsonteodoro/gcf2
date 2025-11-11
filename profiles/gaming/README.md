@@ -275,7 +275,8 @@ distro's kernel doesn't enable UBSan.
 
 If using a custom kernel, for the sanitizers to act like club
 bouncers and not chihuahuas, the `panic_on_warn=1` must be set in the
-bootloader or CONFIG_CMDLINE to make the warnings fatal errors.
+bootloader or CONFIG_CMDLINE to make the warnings fatal errors or the
+kernel modded in the way that sanitizers make them fatal.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
