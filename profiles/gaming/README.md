@@ -67,8 +67,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     there are security holes that are left open because the performance of the
     fix is unacceptable, insecure design flaws in silicon, vendors are
     unwilling to fix vulnerabilities because of greed or technical limitations,
-    because of Godel's Incompleteness Theorem implications/metaphors, and many
-    more.
+    because of Godel's Incompleteness Theorem implications/metaphors, 
+    misconfiguration, and many more.
 
   - Harden the whole disk and keep 2-3 kernels but limit the worst case
     penalty based on needs.
