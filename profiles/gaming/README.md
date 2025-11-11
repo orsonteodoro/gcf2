@@ -208,17 +208,19 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 ASan and look-alike estimates
 
-| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
+| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Coverage      | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
 | ---                    | ---                | ---                   | ---                    | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
-| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| ASan [4]               | 9.8                | 3.5                   | 2.00 / 3.00            | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| HWSan [4]              | 9.7                | 8.5                   | 1.20 / 1.40            | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Full          | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Full          | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Partial       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Partial       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE (1 ms) [7 ]     | 8.5                | 8.8                   | 1.12 / 1.25            | Partial       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Full          | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Full          | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Full          | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| ASan [4]               | 9.8                | 3.5                   | 2.00 / 3.00            | Full          | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| HWSan [4]              | 9.7                | 8.5                   | 1.20 / 1.40            | Full          | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| None                   | 0.0                | 10.0                  | 1.00 / 1.00            | None          | N       | N       | N        | N       | N       | N      | N      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
