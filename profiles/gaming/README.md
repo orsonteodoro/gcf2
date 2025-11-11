@@ -208,7 +208,7 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 ASan and look-alike estimates
 
-| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Coverage           | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
+| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Coverage [10]      | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
 | ---                    | ---                | ---                   | ---                    | ---                | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
 | _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Full               | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
 | _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Full               | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
@@ -240,6 +240,7 @@ ASan and look-alike estimates
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
+* [10] The amount of allocation and deallocation checked
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
