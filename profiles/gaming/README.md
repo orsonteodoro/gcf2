@@ -269,12 +269,12 @@ Serious severities caught by UBSan before being exploited
 
 * [1] Remote Code Execution (RCE) possible
 * [2] Privilege Escalation possible
-* [3] There are two versions UBSAN_BOUNDS for local, global, dynamic scope
-      and UBSAN_LOCAL_BOUNDS for local scope.  Both only provide partial
-      AIOOB coverage in the kernel.  For full AIOOB coverage you need to
-      use it with KASAN.  For unknown size pointer indexing, it is
-      considered part of AIOOB.  KASAN and ASan can catch it but KFENCE
-      cannot catch it.
+* [3] There are two versions -- the more secure UBSAN_BOUNDS for local, global,
+      dynamic scope and the performant UBSAN_LOCAL_BOUNDS for local scope.  Both
+      only provide partial AIOOB coverage in the kernel.  For full AIOOB
+      coverage you need to use it with KASAN.  For unknown size pointer
+      indexing, it is considered part of AIOOB.  KASAN and ASan can catch it but
+      KFENCE cannot catch it.
 
 Typically hardened kernels do not enable UBSan, but it is recommended to block
 the some of the top 25 or top 50 classes of vulnerabilities.  Even the
