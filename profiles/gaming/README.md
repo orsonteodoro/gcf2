@@ -74,7 +74,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Harden the whole disk and keep 2-3 kernels but limit the worst case
     penalty based on needs.
 
-    | Kernel flavor   | Security posture     | Use case examples                                                            |
+    | Kernel flavor   | Criticality          | Use case examples                                                            |
     | ---             | ---                  | ---                                                                          |
     | Gaming          | Performance-critical | Competitive gaming, esports commentor, live streaming, game music production |
     | Builder         | Balanced             | System upgrade, social media                                                 |
