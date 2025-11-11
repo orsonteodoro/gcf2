@@ -240,7 +240,7 @@ ASan and look-alike estimates
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
-* [10] The amount of allocation and deallocation checked
+* [10] The amount of allocations and deallocations checked
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
