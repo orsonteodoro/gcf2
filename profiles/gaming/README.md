@@ -256,15 +256,15 @@ ASan and look-alike estimates
 
 Serious severities caught by UBSan before being exploited
 
-| Vulnerability                           | Estimated severity range  | Typically announced in security reports |
-| ---                                     | ---                       | ---                                     |
-| (Signed) Integer Overflow (SIO, IO) [1] | High - Critical           | Yes                                     |
-| Shift Out Of Bounds (SOOB) [1]          | High - Critical           | Yes                                     |
-| Null Pointer Dereference (NPD)          | Medium - High             | Yes                                     |
-| Bool Overflow / Truncation BOF [2]      | High                      | No                                      |
-| Enum Value Overflow EVO                 | High                      | No                                      |
-| Misaligned Access MA                    | Medium - High             | No                                      |
-| VLA Bound Overflow                      | High                      | No                                      |
+| Vulnerability                           | Estimated severity range  | Typically announced in security advisories |
+| ---                                     | ---                       | ---                                        |
+| (Signed) Integer Overflow (SIO, IO) [1] | High - Critical           | Yes                                        |
+| Shift Out Of Bounds (SOOB) [1]          | High - Critical           | Yes                                        |
+| Null Pointer Dereference (NPD)          | Medium - High             | Yes                                        |
+| Bool Overflow / Truncation BOF [2]      | High                      | No                                         |
+| Enum Value Overflow EVO                 | High                      | No                                         |
+| Misaligned Access MA                    | Medium - High             | No                                         |
+| VLA Bound Overflow                      | High                      | No                                         |
 
 * [1] Remote Code Execution (RCE) possible
 * [2] Privilege Escalation possible
