@@ -196,6 +196,27 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       not for hardcore mode and competitive gaming.  The KCFI may contribute to
       the possibility of premature permadeath.
 
+ASan and look-alike estimates
+
+| Flavor             | Security score | Performance score | Check type    | Stack protection | Heap protection | UAF [1] | DF [1]  | OOBA [1] | UAR [1] | UAS [1] |
+| ---                | ---            | ---               | ---           | ---              | ---             | ---     | ---     | ---      | ---     | ---     |
+| _FORTIFY_SOURCE=2  | 7.5            | 9.8               | Comprehensive | Y                | Y               | N       | N       | Y        | N       | N       |
+| _FORTIFY_SOURCE=3  | 8.0            | 9.4               | Comprehensive | Y                | Y               | N       | N       | Y        | N       | N       |
+| KFENCE             | 6.5            | 9.9               | Sampled       | Y                | Y               | Y       | Y       | Y        | N       | N       |
+| Generic KASAN      | 9.2            | 4.0               | Comprehensive | Y                | Y               | Y       | Y       | Y        | N       | N       |
+| HW_TAGS KASAN      | 9.5            | 8.0               | Comprehensive | Y                | Y               | Y       | Y       | Y        | N       | N       |
+| SW_TAGS KASAN      | 9.0            | 6.0               | Comprehensive | Y                | Y               | Y       | Y       | Y        | N       | N       |
+
+[1] Implies mitigation
+
+Glossary:
+
+* UAF - Use after free
+* DF - Double free
+* OOBA - Out of Bounds Access
+* UAR - Use after return
+* UAS - Use after scope
+
 ## Performance consistency and the mutual exclusitivity of security and performance
 
 We want a safety buffer or winning guarantees.  The hardening just reduces it.
