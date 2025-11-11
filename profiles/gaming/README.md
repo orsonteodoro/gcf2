@@ -264,7 +264,7 @@ Serious severities caught by UBSan before being exploited
 | Bool Overflow / Conversion [2]          | High                      | No                                         |
 | Enum Value Overflow EVO                 | High                      | No                                         |
 | Misaligned Access MA                    | Medium - High             | No                                         |
-| VLA Bound Overflow                      | High                      | No                                         |
+| VLA Bound Overflow [2]                  | High                      | No                                         |
 
 * [1] Remote Code Execution (RCE) possible
 * [2] Privilege Escalation possible
