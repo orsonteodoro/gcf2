@@ -210,21 +210,23 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 ASan and look-alike estimates
 
-| Flavor                | Security score | Performance score | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
-| ---                   | ---            | ---               | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
-| _FORTIFY_SOURCE=2 [2] | 7.5            | 9.8               | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| _FORTIFY_SOURCE=3 [2] | 8.0            | 9.4               | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE                | 6.5            | 9.9               | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| Generic KASAN         | 9.2            | 4.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| HW_TAGS KASAN         | 9.5            | 8.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| SW_TAGS KASAN         | 9.0            | 6.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| ASan [4]              | 9.8            | 3.5               | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| HWSan [4]             | 9.7            | 8.5               | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| Flavor                | Security score [5] | Performance score [6] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
+| ---                   | ---                | ---                   | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
+| _FORTIFY_SOURCE=2 [2] | 7.5                | 9.8                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| _FORTIFY_SOURCE=3 [2] | 8.0                | 9.4                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| KFENCE                | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| Generic KASAN         | 9.2                | 4.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| HW_TAGS KASAN         | 9.5                | 8.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| SW_TAGS KASAN         | 9.0                | 6.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| ASan [4]              | 9.8                | 3.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| HWSan [4]             | 9.7                | 8.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
 * [3] Fortified (mem*, str*) function only
 * [4] Userspace flavor only
+* [5] Higher score means more secure
+* [6] Higher score means faster system or faster completion
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
