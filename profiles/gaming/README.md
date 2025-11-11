@@ -207,8 +207,8 @@ ASan and look-alike estimates
 | HW_TAGS KASAN         | 9.5            | 8.0               | Comprehensive | Y                | Y               | Y       | Y       | Y        | N       | N       |
 | SW_TAGS KASAN         | 9.0            | 6.0               | Comprehensive | Y                | Y               | Y       | Y       | Y        | N       | N       |
 
-[1] Implies mitigation
-[2] Only available for user space libs/programs built with glibc
+* [1] Implies mitigation
+* [2] Only available for user space libs/programs built with glibc
 
 Glossary:
 
