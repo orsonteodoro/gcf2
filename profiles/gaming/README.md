@@ -236,8 +236,8 @@ ASan and look-alike estimates
       not secure-criticial.  90% is considered security-critical.
       For comparison, a condom has 87% typical use and 98% perfect use.  This
       is relevant to coverage.  The AI says that KFENCE does not meet
-      security-critical coverage.  KFENCE is recommended for balanced security
-      but not critical security.
+      security-critical coverage for any kfence_sample_interval.  KFENCE is
+      recommended for balanced security but not critical security.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
