@@ -13,8 +13,7 @@ The gaming profile is designed for a basic gaming system.
 * &gt;= 57 FPS for high motion gaming with newer games.
 * The fast install is a necessary requirement to maximize play time over build
   time, but at the same time the gameplay should not be unfair.
-* GCC &ge; 12 for mold<a href="#footnote-1">[1]</a>, or GCC 11 with
-  [mold patch](../patches/sys-devel/gcc:11/0000-gcc-11.3.1_p20230120-r1-ld.mold-support.patch).
+* Mold linker for heavy packages like web browsers
 * Stable profile, stable keywords, stable release branches are preferred
 
 ## Tradeoffs / performance
