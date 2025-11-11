@@ -224,6 +224,17 @@ Glossary:
 * HO - Heap Overflow
 * SO - Stack Overflow
 
+| Vulnerability | Typical severity |
+| ---           | ---              |
+| UAF           | High - Critical  |
+| DF            | High             |
+| OOB           | Medium - High    |
+| UAR           | High             |
+| UAS           | Medium - High    |
+| HO            | High - Critical  |
+| SO            | High             |
+
+
 ## Performance consistency and the mutual exclusitivity of security and performance
 
 We want a safety buffer or winning guarantees.  The hardening just reduces it.
