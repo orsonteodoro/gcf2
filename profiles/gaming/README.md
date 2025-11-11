@@ -196,6 +196,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       not for hardcore mode and competitive gaming.  The KCFI may contribute to
       the possibility of premature permadeath.
 
+Memory corruption vulnerabilities and their estimated CVSS severity range
+
+| Vulnerability          | Typical severity |
+| ---                    | ---              |
+| Use After Free (UAF)   | High - Critical  |
+| Double Free (DF)       | High             |
+| Out Of Bounds (OOB)    | Medium - High    |
+| Use After Return (UAR) | High             |
+| Use After Scope (UAS)  | Medium - High    |
+| Heap Overflow (HO)     | High - Critical  |
+| Stack Overflow (SO)    | High             |
+
 ASan and look-alike estimates
 
 | Flavor                | Security score | Performance score | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
@@ -213,27 +225,6 @@ ASan and look-alike estimates
 * [2] Only available for user space libs/programs built with glibc
 * [3] Fortified (mem*, str*) function only
 * [4] Userspace flavor only
-
-Glossary:
-
-* UAF - Use After Free
-* DF - Double Free
-* OOB - Out Of Bounds
-* UAR - Use After Return
-* UAS - Use After Scope
-* HO - Heap Overflow
-* SO - Stack Overflow
-
-| Vulnerability | Typical severity |
-| ---           | ---              |
-| UAF           | High - Critical  |
-| DF            | High             |
-| OOB           | Medium - High    |
-| UAR           | High             |
-| UAS           | Medium - High    |
-| HO            | High - Critical  |
-| SO            | High             |
-
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
