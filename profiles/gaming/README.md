@@ -76,9 +76,13 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     | Kernel flavor   | Criticality          | Use case examples                                                                 |
     | ---             | ---                  | ---                                                                               |
-    | Gaming          | Performance-critical | Esports/competitive gaming, live streamer, music production                       |
+    | Gaming [1]      | Performance-critical | Esports/competitive gaming, live streamer, music production                       |
     | Builder         | Balanced             | System upgrade, social media, casual messaging                                    |
     | Hardened        | Secure-critical      | Online banking, jury duty affidavit, legal documents, shopping, secure messaging  |
+
+    [1] While this profile focuses on gaming, it can be recontexutalized or
+        modded for other performance sensitive scenarios like for example
+        HFT (High Frequency Trading).
 
   - For example, one may set hardening at -10%
     with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
