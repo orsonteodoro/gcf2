@@ -254,7 +254,7 @@ ASan and look-alike estimates
 * [9] Typical / worst case
 * [10] The amount of allocations and deallocations checked
 
-Serious severities neutralized by UBSan
+Serious severities caught by UBSan before being exploited
 
 | Vulnerability                           | Severity range  | Typically announced in security reports |
 | ---                                     | ---             | ---                                     |
