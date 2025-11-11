@@ -206,10 +206,13 @@ ASan and look-alike estimates
 | Generic KASAN         | 9.2            | 4.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | HW_TAGS KASAN         | 9.5            | 8.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | SW_TAGS KASAN         | 9.0            | 6.0               | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| ASan [4]              | 9.8            | 3.5               | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| HWSan [4]             | 9.7            | 8.5               | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
 * [3] Fortified (mem*, str*) function only
+* [4] Userspace flavor only
 
 Glossary:
 
