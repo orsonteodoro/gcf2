@@ -230,7 +230,7 @@ ASan and look-alike estimates
 * [7] It is recommended to use KFENCE for the builder kernel or general use, and
       Generic KASAN or HW_TAGS KASAN for hardened or short lived
       critical-security scenarios.  You can also change the sampling rate to be
-      more agressive with KASAN with `kfence_sample_interval` instead of using
+      more agressive with KFENCE with `kfence_sample_interval` instead of using
       KASAN.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
