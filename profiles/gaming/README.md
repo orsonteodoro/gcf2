@@ -273,7 +273,7 @@ Serious severities caught by UBSan before being exploited
       and UBSAN_LOCAL_BOUNDS for local scope.  Both only provide partial
       AIOOB coverage in the kernel.  For full AIOOB coverage you need to
       use it with KASAN.  For unknown size pointer indexing, it is
-      considered part of AIOOB.  KASAN and Scudo can catch it but KFENCE
+      considered part of AIOOB.  KASAN and ASan can catch it but KFENCE
       cannot catch it.
 
 Typically hardened kernels do not enable UBSan, but it is recommended to block
