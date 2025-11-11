@@ -211,11 +211,11 @@ ASan and look-alike estimates
 
 Glossary:
 
-* UAF - Use after free
-* DF - Double free
-* OOBA - Out of Bounds Access
-* UAR - Use after return
-* UAS - Use after scope
+* UAF - Use After Free
+* DF - Double Free
+* OOBA - Out Of Bounds Access
+* UAR - Use After Return
+* UAS - Use After Scope
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
