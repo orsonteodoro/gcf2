@@ -233,7 +233,7 @@ ASan and look-alike estimates
       more agressive with KFENCE with `kfence_sample_interval=10` added to the
       bootloader or built into the kernel command line (CONFIG_CMDLINE) instead
       of using KASAN.  The 10 ms and 1 ms are considered hardened versions but
-      not secure-criticial.  90% is considered security-critical typical use.
+      not secure-criticial.  90% is considered security-critical.
       For comparison, a condom has 87% typical use and 98% perfect use.  This
       is relevant to coverage.  The AI says that KFENCE does not meet
       security-critical coverage.  KFENCE is recommended for balanced security
