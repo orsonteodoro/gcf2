@@ -198,7 +198,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
 ASan and look-alike estimates
 
-| Flavor                | Security score | Performance score | Check type    | Stack protection | Heap protection | UAF [1] | DF [1]  | OOBA [1] | UAR [1] | UAS [1] |
+| Flavor                | Security score | Performance score | Check type    | Stack protection | Heap protection | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] |
 | ---                   | ---            | ---               | ---           | ---              | ---             | ---     | ---     | ---      | ---     | ---     |
 | _FORTIFY_SOURCE=2 [2] | 7.5            | 9.8               | Comprehensive | Y                | Y               | N       | N       | Y        | N       | N       |
 | _FORTIFY_SOURCE=3 [2] | 8.0            | 9.4               | Comprehensive | Y                | Y               | N       | N       | Y        | N       | N       |
@@ -214,7 +214,7 @@ Glossary:
 
 * UAF - Use After Free
 * DF - Double Free
-* OOBA - Out Of Bounds Access
+* OOB - Out Of Bounds
 * UAR - Use After Return
 * UAS - Use After Scope
 
