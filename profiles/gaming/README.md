@@ -232,7 +232,10 @@ ASan and look-alike estimates
       critical-security scenarios.  You can also change the sampling rate to be
       more agressive with KFENCE with `kfence_sample_interval=10` added to the
       bootloader or built into the kernel command line (CONFIG_CMDLINE) instead
-      of using KASAN.
+      of using KASAN.  The 10 ms and 1 ms are considered hardened versions but
+      not secure-criticial.  90% is considered security-critical typical use.
+      For comparison, a condom has 87% typical use and 98% perfect use.  This
+      is relevant to coverage.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
