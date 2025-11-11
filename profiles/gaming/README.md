@@ -231,7 +231,9 @@ ASan and look-alike estimates
       critical-security scenarios.  You can also change the sampling rate to be
       more agressive with KFENCE with `kfence_sample_interval=10` added to the
       bootloader or built into the kernel command line (CONFIG_CMDLINE) instead
-      of using KASAN.
+      of using KASAN.  KFENCE is non-deterministic because of it's random sample
+      property.  KASAN is deterministic.  Usually non-deterministic is
+      associated with unstable or anti-availability.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
