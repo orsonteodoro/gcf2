@@ -214,7 +214,7 @@ ASan and look-alike estimates
 | ---                   | ---                | ---                   | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
 | _FORTIFY_SOURCE=2 [2] | 7.5                | 9.8                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
 | _FORTIFY_SOURCE=3 [2] | 8.0                | 9.4                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE                | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE [7]            | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | Generic KASAN         | 9.2                | 4.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | HW_TAGS KASAN         | 9.5                | 8.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
 | SW_TAGS KASAN         | 9.0                | 6.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
@@ -227,6 +227,9 @@ ASan and look-alike estimates
 * [4] Userspace flavor only
 * [5] Higher score means more secure
 * [6] Higher score means faster system or faster completion
+* [7] It was suggested in the ot-kernel to use KFENCE for the builder kernel,
+      and Generic KASAN or HW_TAGS KASAN for hardened or critical-security
+      scenarios.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
