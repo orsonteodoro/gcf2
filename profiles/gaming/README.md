@@ -234,7 +234,7 @@ ASan and look-alike estimates
       of using KASAN.  KFENCE is non-deterministic because of it's random sample
       property.  KASAN is deterministic.  Usually non-deterministic is
       associated with unstable or anti-availability or has a chance of changing
-      output/result even though the initial state stays the same.
+      output/result/ordering even though the initial state stays the same.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
