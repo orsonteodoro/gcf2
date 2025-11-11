@@ -233,7 +233,8 @@ ASan and look-alike estimates
       bootloader or built into the kernel command line (CONFIG_CMDLINE) instead
       of using KASAN.  KFENCE is non-deterministic because of it's random sample
       property.  KASAN is deterministic.  Usually non-deterministic is
-      associated with unstable or anti-availability.
+      associated with unstable or anti-availability or has a chance of changing
+      output/result even though the initial state stays the same.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
