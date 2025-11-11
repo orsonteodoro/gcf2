@@ -262,8 +262,8 @@ Serious severities caught by UBSan before being exploited
 | Shift Out Of Bounds (SOOB) [1]          | High - Critical           | Yes                                        |
 | Null Pointer Dereference (NPD)          | Medium - High             | Yes                                        |
 | Bool Overflow / Conversion [2]          | High                      | No                                         |
-| Enum Value Overflow EVO                 | High                      | No                                         |
-| Misaligned Access MA                    | Medium - High             | No                                         |
+| Enum Value Overflow                     | High                      | No                                         |
+| Misaligned Access                       | Medium - High             | No                                         |
 | VLA Bound Overflow [1]                  | High                      | No                                         |
 
 * [1] Remote Code Execution (RCE) possible
