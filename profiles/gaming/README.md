@@ -76,7 +76,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     | Kernel flavor   | Criticality          | Use case examples                                                                 |
     | ---             | ---                  | ---                                                                               |
-    | Gaming          | Performance-critical | Competitive gaming, esports commentor, live streaming, game music production      |
+    | Gaming          | Performance-critical | Esports/competitive gaming, live streamer, music production                       |
     | Builder         | Balanced             | System upgrade, social media, casual messaging                                    |
     | Hardened        | Secure-critical      | Online banking, jury duty affidavit, legal documents, shopping, secure messaging  |
 
