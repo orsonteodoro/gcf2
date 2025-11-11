@@ -206,15 +206,15 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
 Memory corruption vulnerabilities and their estimated CVSS severity range
 
-| Vulnerability          | Typical severity |
-| ---                    | ---              |
-| Use After Free (UAF)   | High - Critical  |
-| Double Free (DF)       | High             |
-| Out Of Bounds (OOB)    | Medium - High    |
-| Use After Return (UAR) | High             |
-| Use After Scope (UAS)  | Medium - High    |
-| Heap Overflow (HO)     | High - Critical  |
-| Stack Overflow (SO)    | High             |
+| Vulnerability          | Typical severity | Typically announced in security advisories |
+| ---                    | ---              | ---                                        |
+| Use After Free (UAF)   | High - Critical  | Yes                                        |
+| Double Free (DF)       | High             | Yes                                        |
+| Out Of Bounds (OOB)    | Medium - High    | Yes                                        |
+| Use After Return (UAR) | High             | Rarely                                     |
+| Use After Scope (UAS)  | Medium - High    | No                                         |
+| Heap Overflow (HO)     | High - Critical  | Yes                                        |
+| Stack Overflow (SO)    | High             | Yes                                        |
 
 ASan and look-alike estimates
 
