@@ -266,12 +266,16 @@ Serious severities caught by UBSan before being exploited
 | Misaligned Access (MA)                  | Medium - High             | No                                      |
 | VLA Bound Overflow                      | High                      | No                                      |
 
-[1] Remote Code Execution (RCE) possible
-[2] Privilege Escalation possible
+* [1] Remote Code Execution (RCE) possible
+* [2] Privilege Escalation possible
 
 Typically hardened kernels do not enable UBSan, but it is recommended to block
 the some of the top 25 classes of vulnerabilities.  Even the distro's kernel
 doesn't enable UBSan.
+
+If using a custom kernel, for the sanitizers to act like club
+bouncers and not chihuahuas, the `panic_on_warn=1` must be set in the
+bootloader or CONFIG_CMDLINE to make the warnings fatal errors.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
