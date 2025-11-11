@@ -256,19 +256,20 @@ ASan and look-alike estimates
 
 Serious severities caught by UBSan before being exploited
 
-| Vulnerability                           | Estimated severity range  | Typically announced in security advisories |
-| ---                                     | ---                       | ---                                        |
-| (Signed) Integer Overflow (SIO, IO) [1] | High - Critical           | Yes                                        |
-| Shift Out Of Bounds (SOOB) [1]          | High - Critical           | Yes                                        |
-| Null Pointer Dereference (NPD)          | Medium - High             | Yes                                        |
-| Array Index Out Of Bounds (AIOOB) [1]   | High                      | Yes                                        |
-| Bool Overflow / Conversion [2]          | High                      | No                                         |
-| Enum Value Overflow                     | High                      | No                                         |
-| Misaligned Access                       | Medium - High             | No                                         |
-| VLA Bound Overflow [1]                  | High                      | No                                         |
+| Vulnerability                             | Estimated severity range  | Typically announced in security advisories |
+| ---                                       | ---                       | ---                                        |
+| (Signed) Integer Overflow (SIO, IO) [1]   | High - Critical           | Yes                                        |
+| Shift Out Of Bounds (SOOB) [1]            | High - Critical           | Yes                                        |
+| Null Pointer Dereference (NPD)            | Medium - High             | Yes                                        |
+| Array Index Out Of Bounds (AIOOB) [1][3]  | High                      | Yes                                        |
+| Bool Overflow / Conversion [2]            | High                      | No                                         |
+| Enum Value Overflow                       | High                      | No                                         |
+| Misaligned Access                         | Medium - High             | No                                         |
+| VLA Bound Overflow [1]                    | High                      | No                                         |
 
 * [1] Remote Code Execution (RCE) possible
 * [2] Privilege Escalation possible
+* [3] Only partial mitigation for performance reasons
 
 Typically hardened kernels do not enable UBSan, but it is recommended to block
 the some of the top 25 or top 50 classes of vulnerabilities.  Even the
