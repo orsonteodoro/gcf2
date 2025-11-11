@@ -261,6 +261,7 @@ Serious severities caught by UBSan before being exploited
 | (Signed) Integer Overflow (SIO, IO) [1] | High - Critical           | Yes                                        |
 | Shift Out Of Bounds (SOOB) [1]          | High - Critical           | Yes                                        |
 | Null Pointer Dereference (NPD)          | Medium - High             | Yes                                        |
+| Array Index Out Of Bounds (AIOOB) [1]   | High                      | Yes                                        |
 | Bool Overflow / Conversion [2]          | High                      | No                                         |
 | Enum Value Overflow                     | High                      | No                                         |
 | Misaligned Access                       | Medium - High             | No                                         |
