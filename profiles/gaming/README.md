@@ -71,9 +71,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     because of Godel's Incompleteness Theorem implications/metaphors, and many
     more.
 
-  - Harden the whole disk and keep 2 kernels but limit the worst case penalty
-    based on needs.  For example, one may set hardening at -10% with
-    oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
+  - Harden the whole disk and keep 2-3 kernels (gaming kernel, builder and
+    general use kernel, critical-secure kernel) but limit the worst
+    case penalty based on needs.  For example, one may set hardening at -10%
+    with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
     /etc/portage/make.conf.  The tolerance manages and limits the worst case
     performance penalty for hardening.
 
