@@ -235,7 +235,8 @@ ASan and look-alike estimates
       of using KASAN.  The 10 ms and 1 ms are considered hardened versions but
       not secure-criticial.  90% is considered security-critical typical use.
       For comparison, a condom has 87% typical use and 98% perfect use.  This
-      is relevant to coverage.
+      is relevant to coverage.  The AI says that it KFENCE does not meet
+      security-critical coverage.
 * [8] Kernel default.  It may be tolerable for scenarios where the loss is
       not catastrophic.
 * [9] Typical / worst case
