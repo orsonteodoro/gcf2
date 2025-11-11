@@ -254,6 +254,25 @@ ASan and look-alike estimates
 * [9] Typical / worst case
 * [10] The amount of allocations and deallocations checked
 
+Serious severities neutralized by UBSan
+
+| Vulnerability                           | Severity range  | Typically announced in security reports |
+| ---                                     | ---             | ---                                     |
+| (Signed) Integer Overflow (SIO, IO) [1] | High - Critical | Yes                                     |
+| Shift Out Of Bounds (SOOB) [1]          | High - Critical | Yes                                     |
+| Null Pointer Dereference (NPD)          | Medium - High   | Yes                                     |
+| Bool Overflow / Truncation (BOF) [2]    | High            | No                                      |
+| Enum Value Overflow (EVO)               | High            | No                                      |
+| Misaligned Access (MA)                  | Medium - High   | No                                      |
+| VLA Bound Overflow                      | High            | No                                      |
+
+[1] Remote Code Execution (RCE) possible
+[2] Privilege Escalation possible
+
+Typically hardened kernels do not enable UBSan, but it is recommended to block
+the some of the top 25 classes of vulnerabilities.  Even the distro's kernel
+doesn't enable UBSan.
+
 ## Performance consistency and the mutual exclusitivity of security and performance
 
 We want a safety buffer or winning guarantees.  The hardening just reduces it.
