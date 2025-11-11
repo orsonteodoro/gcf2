@@ -270,8 +270,8 @@ Serious severities caught by UBSan before being exploited
 * [2] Privilege Escalation possible
 
 Typically hardened kernels do not enable UBSan, but it is recommended to block
-the some of the top 25 classes of vulnerabilities.  Even the distro's kernel
-doesn't enable UBSan.
+the some of the top 25 or top 50 classes of vulnerabilities.  Even the
+distro's kernel doesn't enable UBSan.
 
 If using a custom kernel, for the sanitizers to act like club
 bouncers and not chihuahuas, the `panic_on_warn=1` must be set in the
