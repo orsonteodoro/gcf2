@@ -210,16 +210,17 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 ASan and look-alike estimates
 
-| Flavor                | Security score [5] | Performance score [6] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
-| ---                   | ---                | ---                   | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
-| _FORTIFY_SOURCE=2 [2] | 7.5                | 9.8                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| _FORTIFY_SOURCE=3 [2] | 8.0                | 9.4                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE [7]            | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| Generic KASAN         | 9.2                | 4.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| HW_TAGS KASAN         | 9.5                | 8.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| SW_TAGS KASAN         | 9.0                | 6.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| ASan [4]              | 9.8                | 3.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| HWSan [4]             | 9.7                | 8.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| Flavor                 | Security score [5] | Performance score [6] | Check type    | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
+| ---                    | ---                | ---                   | ---           | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
+| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | Comprehensive | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
+| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| KFENCE (10 ms)[7]      | 8.0                | 9.4                   | Sampled       | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| Generic KASAN          | 9.2                | 4.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| HW_TAGS KASAN          | 9.5                | 8.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| SW_TAGS KASAN          | 9.0                | 6.0                   | Comprehensive | Y       | Y       | Y        | N       | N       | Y      | Y      |
+| ASan [4]               | 9.8                | 3.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
+| HWSan [4]              | 9.7                | 8.5                   | Comprehensive | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
@@ -230,8 +231,9 @@ ASan and look-alike estimates
 * [7] It is recommended to use KFENCE for the builder kernel or general use, and
       Generic KASAN or HW_TAGS KASAN for hardened or short lived
       critical-security scenarios.  You can also change the sampling rate to be
-      more agressive with KFENCE with `kfence_sample_interval` instead of using
-      KASAN.
+      more agressive with KFENCE with `kfence_sample_interval` added to bootloader
+      or built in the kernel command line instead of using KASAN.
+* [8] Kernel default
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
