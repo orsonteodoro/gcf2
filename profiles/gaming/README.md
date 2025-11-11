@@ -74,11 +74,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
   - Harden the whole disk and keep 2-3 kernels but limit the worst case
     penalty based on needs.
 
-    | Kernel flavor   | Criticality          | Use case examples                                                            |
-    | ---             | ---                  | ---                                                                          |
-    | Gaming          | Performance-critical | Competitive gaming, esports commentor, live streaming, game music production |
-    | Builder         | Balanced             | System upgrade, social media                                                 |
-    | Hardened        | Secure-critical      | Online banking, jury duty affidavit, legal documents, shopping               |
+    | Kernel flavor   | Criticality          | Use case examples                                                                 |
+    | ---             | ---                  | ---                                                                               |
+    | Gaming          | Performance-critical | Competitive gaming, esports commentor, live streaming, game music production      |
+    | Builder         | Balanced             | System upgrade, social media, casual messaging                                    |
+    | Hardened        | Secure-critical      | Online banking, jury duty affidavit, legal documents, shopping, secure messaging  |
 
   - For example, one may set hardening at -10%
     with oiledmachine-overlay and set CFLAGS_HARDENED_TOLERANCE_USER="1.10" in
