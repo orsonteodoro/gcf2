@@ -77,7 +77,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     | ---             | ---                  | ---                                                                               |
     | Gaming [1]      | Performance-critical | Esports/competitive gaming, live streamer, music production                       |
     | Builder         | Balanced             | System upgrade, social media, casual messaging                                    |
-    | Hardened        | Secure-critical      | Online banking, jury duty affidavit, legal documents, shopping, secure messaging  |
+    | Hardened        | Security-critical    | Online banking, jury duty affidavit, legal documents, shopping, secure messaging  |
 
     [1] While this profile focuses on gaming, it can be recontexutalized or
         modded for other performance sensitive scenarios like for example
