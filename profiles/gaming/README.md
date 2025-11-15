@@ -163,7 +163,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         integration testing before adding the next sanitized package to minimize
         the length of hidden runtime failure backtracking.  There is also the
         possiblity that the person that wrote the integrated test did not do
-        a through job, and it still fails on the live system.  The standard
+        a thorough job, and it still fails on the live system.  The standard
         is that there should be no problems on the live system.  If the problem
         caused by sanitizers is not a problem for core package set but is a
         problem with the optional set, the sanitizer should still be disabled.
