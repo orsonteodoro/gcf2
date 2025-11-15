@@ -181,7 +181,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     [4] Cap the worst case penalty at 10% for resilient performance and gameplay.
         Keep the best case B grade and worst case C grade.  If 20%, then the
-        best case is C grade and worst case is D grade.
+        best case is C grade and worst case is D grade.  Avoid F grade best case
+        and F grade worst case.  Avoid D grade best case and F grade worst case.
 
   - General kernel configuration policy
 
