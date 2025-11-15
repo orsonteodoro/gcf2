@@ -160,17 +160,17 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         applying it systemwide, it is preferred to apply it per-package and
         importantly have and prepare plan B and plan C backup plans to undo the
         damage, then do manual integration testing.  If no integration testing
-        in the test suite, it has to be performed on the live system.  It should
-        pass both unit testing and integration testing before adding the next
-        sanitized package to minimize the distance of hidden runtime failure
-        backtracking and to reduce the amount/time of guessing.  There is also
-        the possiblity that the person that wrote the integrated test
-        did not do a thorough job, and it still fails on the live system.  The
-        standard is that there should be no problems on the live system.  If the
-        problem caused by sanitizers is not a problem for the needed package set
-        but is a problem with the unused package set, the sanitizer should still
-        be disabled.  The problem can manifest in an overlooked or unrevisited
-        use case.
+        in the test suite, testing has to be performed on the live system.  The
+        sanitized package should pass both unit testing and integration testing
+        before adding the next sanitized package to minimize the distance of
+        hidden runtime failure backtracking and to reduce the amount/time of
+        guessing.  There is also the possiblity that the person that wrote the
+        integrated test did not do a thorough job, and it still fails on the
+        live system.  The quality standards or user experience should have no
+        problems on the live system.  If the problem caused by sanitizers is
+        not a problem for the needed package set but is a problem with the
+        unused package set, the sanitizer should still be disabled.  The
+        problem can manifest in an overlooked or unrevisited use case.
 
     [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
         RUSTFLAGS_HARDENED_DISABLED=1 instead.
