@@ -143,7 +143,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     | ---            | ---                                            | ---                                     | ---                                   |
     | Gaming         | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
     | Gaming         | 1.09 for casual gaming [4]                     | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
-    | Builder        | 1.35                                           | Yes                                     | Yes                                   |
+    | Builder [5]    | 1.35 [5]                                       | Yes [5]                                 | Yes [5]                               |
     | Hardening      | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
@@ -183,6 +183,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         Keep the best case B grade and worst case C grade.  If 20%, then the
         best case is C grade and worst case is D grade.  Avoid F grade best case
         and F grade worst case.  Avoid D grade best case and F grade worst case.
+
+    [5] Under real world testing the builder row has acceptable performance for
+        some web games.  Some web games have unstable FPS at 24 FPS and above
+        others are smooth at near 30 FPS.  Testing done at 1.35 tolerance,
+        UBSAN, KFENCE, KCFI.
 
   - General kernel configuration policy
 
