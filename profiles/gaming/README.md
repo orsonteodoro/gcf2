@@ -129,6 +129,41 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       env files (aka .conf files).  The hardened eclasses has the details of
       which hardening flags are activiated based on the tolerance level.
 
+  - Pairing consistency
+
+    In computer performance, the slowest component is the bottleneck and the
+    reason why the performance system is slow.  The bottleneck interaction
+    should be avoided or the component replaced/removed in performance-critical
+    configs.
+
+    In computer security, consistency is sometimes sacrificed for stability and
+    progress.
+
+    | Kernel flavor  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3] | Userland hardening production readiness | Kernel hardening production readiness |
+    | ---            | ---                                            | ---                                     | ---                                   |
+    | Gaming         | 1.00 [2]                                       | Yes                                     | Yes                                   |
+    | Builder        | 1.35                                           | Yes                                     | Yes                                   |
+    | Hardening      | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
+
+    [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
+        still need integration testing for systemwide sanitizing.  It is not
+        ready yet at 2.00 or 4.00.  Integration testing is used to determine if
+        two or more packages do not break when combined.  There is a high chance
+        that integration testing fails.  Any attempt to force merge an failed
+        integration test package with sanitizers can result in breaking of the
+        compiler toolchains, irreversal damage or undoing because of broken
+        @system, or hidden runtime failures.   It is recommended to leave it at
+        1.35 at this time because of the high likelihood of runtime failure.
+        The 4.00 tolerance represents the idealistic value but currently not
+        easily attainable.   Instead of applying it systemwide, it is preferred
+        to apply it per-package and importantly do manual integration testing.
+    [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
+        RUSTFLAGS_HARDENED_DISABLED=1 instead.
+    [3] The values that do not trigger sanitizers enablement is recommended
+        systemwide.  The 2.00 or above values should only be applied on a
+        per-package basis.
+
+
   - General kernel configuration policy
 
     - Gaming kernel config:  SSP on, _FORTIFY_SOURCE on, KFENCE off,
