@@ -179,7 +179,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         systemwide.  The 2.00 or above values should only be applied on a
         per-package basis.
 
-    [4] Cap it 10% for resilient performance and gameplay.
+    [4] Cap it 10% performance penalty for resilient performance and gameplay.
 
   - General kernel configuration policy
 
