@@ -189,7 +189,11 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         Other games are smooth at near 30 FPS.  Testing done at 1.35 tolerance,
         UBSAN, KFENCE, KCFI, Retpoline.  You can set CET with
         CFLAGS_HARDENED_CF_PROTECTION_USER=1 systemwide or per-package.  CET
-        is default off in the oiledmachine-overlay.
+        is default off in the oiledmachine-overlay.  Variables are marked
+        @USER_VARIABLE in the
+        [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or
+        [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
+        which allow users to control microarchitecture specific hardening.
 
   - General kernel configuration policy
 
