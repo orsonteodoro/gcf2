@@ -149,7 +149,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         still need integration testing for systemwide sanitizing.  It is not
         ready yet at 2.00 or 4.00.  Integration testing is used to determine if
         two or more packages do not break when combined.  There is a high chance
-        that integration testing fails with sanitized build.  Any attempt to
+        that integration testing fails with a sanitized build.  Any attempt to
         force merge a failed integration test package with sanitizers can result
         in breaking of compiler toolchains, irreversal damage or undoing because
         of broken @system, or hidden runtime failures.   It is recommended to
