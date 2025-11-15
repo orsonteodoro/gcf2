@@ -149,19 +149,24 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         still need integration testing for systemwide sanitizing.  It is not
         ready yet at 2.00 or 4.00.  Integration testing is used to determine if
         two or more packages do not break when combined.  There is a high chance
-        that integration testing fails.  Any attempt to force merge a failed
-        integration test package with sanitizers can result in breaking of
-        compiler toolchains, irreversal damage or undoing because of broken
-        @system, or hidden runtime failures.   It is recommended to leave it at
-        1.35 at this time because of the high likelihood of runtime failure.
-        The 4.00 tolerance represents the idealistic value but currently not
-        easily attainable.   Instead of applying it systemwide, it is preferred
-        to apply it per-package and importantly have a plan B and plan C backup
-        plans to undo the damage, then do manual integration testing.  If no
-        integration testing in the test suite, it has to be performed on the
-        live system.  It should pass both unit testing and integration testing
-        before adding the next sanitized package to minimize the length of
-        hidden runtime failure backtracking.
+        that integration testing fails with sanitized build.  Any attempt to
+        force merge a failed integration test package with sanitizers can result
+        in breaking of compiler toolchains, irreversal damage or undoing because
+        of broken @system, or hidden runtime failures.   It is recommended to
+        leave it at 1.35 at this time because of the high likelihood of runtime
+        failure.  The 4.00 tolerance represents the idealistic value but
+        currently not easily attainable.   Instead of applying it systemwide, it
+        is preferred to apply it per-package and importantly have a plan B and
+        plan C backup plans to undo the damage, then do manual integration
+        testing.  If no integration testing in the test suite, it has to be
+        performed on the live system.  It should pass both unit testing and
+        integration testing before adding the next sanitized package to minimize
+        the length of hidden runtime failure backtracking.  There is also the
+        possiblity that the person that wrote the integrated test did not do
+        a through job, and it still fails on the live system.  The standard
+        is that there should be no problems on the live system.  If the problem
+        caused by sanitizers is not a problem for core package set but is a
+        problem with the optional set, the sanitizer should still be disabled.
 
     [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
         RUSTFLAGS_HARDENED_DISABLED=1 instead.
