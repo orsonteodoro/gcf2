@@ -152,17 +152,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         that integration testing fails with a sanitized build.  Any attempt to
         force merge a failed integration test package with sanitizers can result
         in breaking of compiler toolchains, irreversal damage or undoing because
-        of broken @system, or hidden runtime failures.   It is recommended to
-        leave it at 1.35 at this time because of the high likelihood of runtime
-        failure.  The 4.00 tolerance represents the idealistic value but
-        currently not easily attainable.   Instead of applying it systemwide, it
-        is preferred to apply it per-package and importantly have and prepare
-        plan B and plan C backup plans to undo the damage, then do manual
-        integration testing.  If no integration testing in the test suite, it
-        has to be performed on the live system.  It should pass both unit
-        testing and integration testing before adding the next sanitized package
-        to minimize the distance of hidden runtime failure backtracking.  There
-        is also the possiblity that the person that wrote the integrated test
+        of broken @system, hidden runtime failures, broken login.   It is
+        recommended to leave it at 1.35 at this time because of the high
+        likelihood of runtime failure.  The 4.00 tolerance represents the
+        idealistic value but currently not easily attainable.   Instead of
+        applying it systemwide, it is preferred to apply it per-package and
+        importantly have and prepare plan B and plan C backup plans to undo the
+        damage, then do manual integration testing.  If no integration testing
+        in the test suite, it has to be performed on the live system.  It should
+        pass both unit testing and integration testing before adding the next
+        sanitized package to minimize the distance of hidden runtime failure
+        backtracking and to reduce the amount/time of guessing.  There is also
+        the possiblity that the person that wrote the integrated test
         did not do a thorough job, and it still fails on the live system.  The
         standard is that there should be no problems on the live system.  If the
         problem caused by sanitizers is not a problem for the needed package set
