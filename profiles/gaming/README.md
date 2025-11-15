@@ -156,9 +156,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         1.35 at this time because of the high likelihood of runtime failure.
         The 4.00 tolerance represents the idealistic value but currently not
         easily attainable.   Instead of applying it systemwide, it is preferred
-        to apply it per-package and importantly do manual integration testing.
+        to apply it per-package and importantly do manual integration testing
+        while having prepared backup plans to undo the damage.
+
     [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
         RUSTFLAGS_HARDENED_DISABLED=1 instead.
+
     [3] The values that do not trigger sanitizers enablement is recommended
         systemwide.  The 2.00 or above values should only be applied on a
         per-package basis.
