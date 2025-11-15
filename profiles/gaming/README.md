@@ -187,7 +187,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     [5] Under real world testing the builder row has acceptable performance for
         some web games.  Some web games have unstable FPS at 24 FPS and above.
         Other games are smooth at near 30 FPS.  Testing done at 1.35 tolerance,
-        UBSAN, KFENCE, KCFI.
+        UBSAN, KFENCE, KCFI, Retpoline.  You can set CET with
+        CFLAGS_HARDENED_CF_PROTECTION_USER=1 systemwide or per-package.  CET
+        is default off in the oiledmachine-overlay.
 
   - General kernel configuration policy
 
