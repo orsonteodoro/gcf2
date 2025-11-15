@@ -180,7 +180,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         per-package basis.
 
     [4] Cap it 10% performance penalty for resilient performance and gameplay.
-        Keep the best case B and worst case C.  If 20% then the best case is C
+        Keep the best case B and worst case C.  If 20%, then the best case is C
         and worst case is D.
 
   - General kernel configuration policy
