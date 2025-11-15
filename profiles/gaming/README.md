@@ -151,9 +151,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         two or more packages do not break when combined.  There is a high chance
         that integration testing fails with a sanitized build.  Any attempt to
         force merge a failed integration test package with sanitizers can result
-        in breaking of compiler toolchains, irreversal damage or undoing because
-        of broken @system, hidden runtime failures, broken login.   It is
-        recommended to leave it at 1.35 at this time because of the high
+        in breaking of compiler toolchains, irreversal damage or broken undoing
+        because of broken @system, hidden runtime failures, broken login.   It
+        is recommended to leave it at 1.35 at this time because of the high
         likelihood of runtime failure.  The 4.00 tolerance represents the
         idealistic value but currently not easily attainable.   Instead of
         applying it systemwide, it is preferred to apply it per-package and
