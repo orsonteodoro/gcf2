@@ -141,7 +141,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
     | Kernel flavor  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3] | Userland hardening production readiness | Kernel hardening production readiness |
     | ---            | ---                                            | ---                                     | ---                                   |
-    | Gaming         | 1.00 [2]                                       | Yes but preferred off                   | Yes but preferred off                 |
+    | Gaming         | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
+    | Gaming         | 1.09 for casual gaming [2][4]                  | Yes but cap it 10% [4]                  | Yes but cap it at 10% [4]             |
     | Builder        | 1.35                                           | Yes                                     | Yes                                   |
     | Hardening      | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
 
@@ -177,6 +178,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     [3] The values that do not trigger sanitizers enablement is recommended
         systemwide.  The 2.00 or above values should only be applied on a
         per-package basis.
+
+    [4] Cap it 10% for resilient performance and gameplay.
 
   - General kernel configuration policy
 
