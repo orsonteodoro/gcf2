@@ -167,7 +167,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         standard is that there should be no problems on the live system.  If the
         problem caused by sanitizers is not a problem for core package set but
         is a problem with the optional set, the sanitizer should still be
-        disabled.
+        disabled.  The problem can manifest in an overlooked or unrevisited
+        use case.
 
     [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
         RUSTFLAGS_HARDENED_DISABLED=1 instead.
