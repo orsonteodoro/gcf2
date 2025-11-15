@@ -165,9 +165,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         is also the possiblity that the person that wrote the integrated test
         did not do a thorough job, and it still fails on the live system.  The
         standard is that there should be no problems on the live system.  If the
-        problem caused by sanitizers is not a problem for core package set but
-        is a problem with the optional set, the sanitizer should still be
-        disabled.  The problem can manifest in an overlooked or unrevisited
+        problem caused by sanitizers is not a problem for the needed package set
+        but is a problem with the unused package set, the sanitizer should still
+        be disabled.  The problem can manifest in an overlooked or unrevisited
         use case.
 
     [2] It is recommended to set CFLAGS_HARDENED_DISABLED=1 and
