@@ -414,8 +414,8 @@ An open ended list of the top zero-click attacks
 
 | Vulnerability                                       | Sanitizers                                        | CFLAGS_HARDENED_TOLERANCE_USER required for mitigation | CFLAGS_HARDENED_AUTO_SANITIZE_USER |
 | ---                                                 | ---                                               | ---                                                    | ---                                |
-| [Signed] Integer Overflow (SIO, IO)                 | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
-| Use After Free (UAF)                                | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
+| (Signed) Integer Overflow                           | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
+| Use After Free                                      | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | General heap overflow [4]                           | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | Heap out-of-bounds write (large, negative, wrapped) | HWASan [3]                                        | 1.50 (arm64)                                           | hwasan                             |
 | Logic bug + partial/overlapping OOB write           | HWASan, MTE, -fbounds-safety [1]                  | 1.50                                                   | hwasan                             |
