@@ -144,7 +144,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     | Gaming             | 1.00 for competitive gaming [2]                   | Yes but preferred off                   | Yes but preferred off                 |
     | Gaming             | 1.09 for casual gaming [4]                        | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
     | Builder [5]        | 1.35 [5]                                          | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
-    | Hardened           | 1.35 (actual) / 4.00 (ideal) [1]                  | Yes (actual) / No (ideal)               | Yes                                   |
+    | Hardened           | 1.35 (actual) / 4.00 (ideal) [1]                  | Yes (actual) / No (ideal) [10]          | Yes [11]                              |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
         still need integration testing for systemwide sanitizing.  It is not
@@ -227,6 +227,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan" on a per-package
         basis.  The @USER_VARIABLE has some flags that are considered whitelist
         flags.
+
+    [10] The recommended ideal level is architecture dependent.
+         - arm64 - 2.00 - UBSan, HWASan, pac+bti
+         - amd64 - 4.00 - UBSan, ASan, either CFI or CET
+         - others - 4.00 - UBSan, ASan
+         - assumes sanitizers fatal on violation but requires explicitly silent sanitizer logging
+
+    [11] The recommended ideal level is architecture dependent.
+         - arm64 - 2.00 - UBSAN and HW_TAGS KASAN
+         - amd64 - 4.00 - UBSAN, KASAN, either KCFI or CET
+         - others - 4.00 - UBSAN and KASAN
+         - assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
 
   - General kernel configuration policy
 
