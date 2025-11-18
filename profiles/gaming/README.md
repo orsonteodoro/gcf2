@@ -242,7 +242,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       * Assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
 
     [12] KFENCE is recommended.  In the real world testing, using 2.00 has
-         acceptable performance with KFENCE, UBSAN.
+         acceptable performance with KFENCE, UBSAN, KCFI.
 
   - General kernel configuration policy
 
