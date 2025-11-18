@@ -416,6 +416,7 @@ An open ended list of the top zero-click attacks
 | ---                                                 | ---                                               | ---                                                    | ---                                |
 | [Signed] Integer Overflow (SIO, IO)                 | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
 | Use After Free (UAF)                                | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
+| General heap overflow [4]                           | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | Heap out-of-bounds write (large, negative, wrapped) | HWASan [3]                                        | 1.50 (arm64)                                           | hwasan                             |
 | Logic bug + partial/overlapping OOB write           | HWASan, MTE, -fbounds-safety [1]                  | 1.50                                                   | hwasan                             |
 | Type Confusion                                      | TySan                                             | 20.00                                                  | tysan                              |
@@ -432,6 +433,9 @@ An open ended list of the top zero-click attacks
 * [2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
       The kernel support of UBSAN uses less than half of the userspace version.
 * [3] Only fully mitigated in arm64.  Non arm64 are vulnerable to this class of vulnerability.
+* [4] Only fully mitigated in arm64.  The other implementations do partial mitigation.
+
+Arm64 based smartphones has better security currently.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
