@@ -429,7 +429,7 @@ An open ended list of the top zero-click attacks
 | Use after scope                                     | ASan                                              | 4.00                                                   | asan                               |
 | VLA bounds overflow                                 | UBSan                                             | 2.00                                                   | ubsan                              |
 
-The top most is the estimated most common type of zero click attack sorted from
+The top most is the estimated most common type of zero-click attacks sorted from
 high to low rank.
 
 * [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on
