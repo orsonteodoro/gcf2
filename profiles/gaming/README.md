@@ -429,6 +429,8 @@ An open ended list of the top zero-click attacks
 | Use after scope                                     | ASan                                              | 4.00                                                   | asan                               |
 | VLA bounds overflow                                 | UBSan                                             | 2.00                                                   | ubsan                              |
 
+The top most is the estimated most common type of zero click attack.
+
 * [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on non arm64.
 * [2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
       The kernel support of UBSAN uses less than half of the userspace version.
