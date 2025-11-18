@@ -211,8 +211,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         availability.  The ot-kernel makes it easy to have and build
         different kernel flavors per release.  For other kernel
         source ebuilds, you need to copy and paste the folder source,
-        change the flavor suffix, and build each kernel manually or
-        build each through custom scripting.
+        change the flavor suffix and EXTRAVERSION, and build each
+        kernel manually or build each through custom scripting.
 
   - General kernel configuration policy
 
