@@ -305,15 +305,21 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
 
 Memory corruption vulnerabilities and their estimated CVSS severity range
 
-| Vulnerability          | Typical severity | Typically announced in security advisories |
-| ---                    | ---              | ---                                        |
-| Use After Free (UAF)   | High - Critical  | Yes                                        |
-| Double Free (DF)       | High             | Yes                                        |
-| Out Of Bounds (OOB)    | Medium - High    | Yes                                        |
-| Use After Return (UAR) | High             | Rarely                                     |
-| Use After Scope (UAS)  | Medium - High    | No                                         |
-| Heap Overflow (HO)     | High - Critical  | Yes                                        |
-| Stack Overflow (SO)    | High             | Yes                                        |
+| Vulnerability            | Typical severity | Typically announced in security advisories |
+| ---                      | ---              | ---                                        |
+| Use After Free (UAF) [1] | High - Critical  | Yes                                        |
+| Double Free (DF) [1]     | High             | Yes                                        |
+| Out Of Bounds (OOB) [1]  | Medium - High    | Yes                                        |
+| Use After Return (UAR)   | High             | Rarely                                     |
+| Use After Scope (UAS)    | Medium - High    | No                                         |
+| Heap Overflow (HO) [1]   | High - Critical  | Yes                                        |
+| Stack Overflow (SO)      | High             | Yes                                        |
+
+For the list above, if unmitigated can lead to either Remote Code Execution (RCE) or
+Privilege Escalation (PE).
+
+* [1] Even with sanitizers enabled, there is a chance to completely or partially
+  bypass mitigation.  Mitigation implies imperfect security.
 
 ASan and look-alike estimates
 
