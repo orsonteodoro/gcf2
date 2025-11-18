@@ -431,7 +431,7 @@ An open ended list of the top zero-click attacks
 * [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on non arm64.
 * [2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
       The kernel support of UBSAN uses less than half of the userspace version.
-* [3] Only fully mitigated in arm64.
+* [3] Only fully mitigated in arm64.  Non arm64 are vulnerable to this class of vulnerability.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
