@@ -232,7 +232,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       * arm64 - 2.00 - UBSan, HWASan, PAC+BTI
       * amd64 - 4.00 - UBSan, ASan, either CFI or CET
       * others - 4.00 - UBSan, ASan
-      * Assumes sanitizers fatal on violation
+      * Assumes sanitizers do fatal error on violation
       * Requires explicitly silent sanitizer logging to mitigate critical vulnerability
 
     [11] The recommended ideal level is architecture dependent.
