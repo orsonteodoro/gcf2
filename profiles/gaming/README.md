@@ -143,7 +143,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     | ---            | ---                                            | ---                                     | ---                                   |
     | Gaming         | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
     | Gaming         | 1.09 for casual gaming [4]                     | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
-    | Builder [5]    | 1.35 [5]                                       | Yes [5]                                 | Yes [5]                               |
+    | Builder [5]    | 1.35 [5]                                       | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
     | Hardening      | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
@@ -194,6 +194,13 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or
         [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
         which allow users to control microarchitecture specific hardening.
+
+    [6] The builder profile was designed to increase throughput.  
+        The 40% maximum allows us to have non detrimental throughput.
+
+    [7] In some kernel options, low latency is mutually exclusive with
+        throughput.  Hardening also increases overhead and increases
+        completion time.
 
   - General kernel configuration policy
 
