@@ -236,7 +236,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       * Requires explicitly silent sanitizer logging to mitigate critical vulnerability
 
     [11] The recommended ideal level is architecture dependent.
-      * arm64 - 2.00 - UBSAN and HW_TAGS KASAN
+      * arm64 - 2.00 - UBSAN, HW_TAGS KASAN, PTR_AUTH, BTI
       * amd64 - 4.00 - UBSAN, Generic KASAN, either KCFI or CET
       * others - 4.00 - UBSAN and Generic KASAN
       * Assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
