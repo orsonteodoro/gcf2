@@ -239,7 +239,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       * arm64 - 2.00 - UBSAN, HW_TAGS KASAN, PTR_AUTH, BTI
       * amd64 - 4.00 - UBSAN, Generic KASAN, either KCFI or CET
       * others - 4.00 - UBSAN and Generic KASAN
-      * Assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
+      * Assumes explicit add of panic_on_warn=1 or equivalent custom sanitizers panic only patch
 
     [12] KFENCE is recommended.  In real world testing, using 2.00 has
          acceptable performance with KFENCE, UBSAN, KCFI.
