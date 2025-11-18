@@ -241,8 +241,9 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
       * others - 4.00 - UBSAN and Generic KASAN
       * Assumes explicit add of panic_on_warn=1 or equivalent custom sanitizers panic only patch
 
-    [12] KFENCE is recommended.  In real world testing, using 2.00 has
-         acceptable performance with KFENCE, UBSAN, KCFI.
+    [12] KFENCE is recommended as mitigation against zero-click UAF.  In real
+         world testing, using 2.00 has acceptable performance with KFENCE,
+         UBSAN, KCFI.
 
   - General kernel configuration policy
 
