@@ -219,7 +219,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or
         [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
         under the comments of tolerance section, you will see a list of hardened
-        flags.  The second column of numbers has the worst case performance
+        flags.  The second right column of numbers has the worst case performance
         impact.  If the CFLAGS_HARDENED_TOLERANCE_USER is set to >= of that
         number then that particular hardening flag gets applied.  For some
         hardening flags that introduce instability or have unknown availability
