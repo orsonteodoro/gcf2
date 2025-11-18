@@ -390,6 +390,8 @@ Serious severities caught by UBSan before being exploited
 | Misaligned Access                                | Medium - High             | No                                         |
 | Variable Length Array (VLA) Bound Overflow [1]   | High                      | No                                         |
 
+A zero-click attack is possible with all rows above.
+
 * [1] Remote Code Execution (RCE) possible
 * [2] Privilege Escalation possible
 * [3] There are two versions -- the more secure UBSAN_BOUNDS for local, global,
