@@ -414,8 +414,8 @@ An open ended list of the top zero-click attacks
 
 | Vulnerability                                       | Sanitizers                                        | CFLAGS_HARDENED_TOLERANCE_USER required for mitigation | CFLAGS_HARDENED_AUTO_SANITIZE_USER |
 | ---                                                 | ---                                               | ---                                                    | ---                                |
-| (Signed) Integer Overflow                           | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
-| Use After Free                                      | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
+| (Signed) Integer overflow                           | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
+| Use after free                                      | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | General heap overflow [4]                           | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | Heap out-of-bounds write (large, negative, wrapped) | HWASan [3]                                        | 1.50 (arm64)                                           | hwasan                             |
 | Logic bug + partial/overlapping OOB write           | HWASan, MTE, -fbounds-safety [1]                  | 1.50                                                   | hwasan                             |
@@ -423,7 +423,7 @@ An open ended list of the top zero-click attacks
 | Shift exponent out-of-bounds                        | UBSan, UBSAN                                      | 2.00                                                   | ubsan                              |
 | Bad vptr                                            | UBSan                                             | 2.00                                                   | ubsan                              |
 | Double free                                         | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
-| Uninitalized Memory                                 | MSan, KMSAN                                       | 11.00                                                  | msan                               |
+| Uninitalized memory                                 | MSan, KMSAN                                       | 11.00                                                  | msan                               |
 | Stack overflow                                      | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE, SSP | 1.10 (SSP)                                             | asan or hwasan                     |
 | Use after return                                    | ASan, HWASan                                      | 4.00                                                   | asan or hwasan                     |
 | Use after scope                                     | ASan                                              | 4.00                                                   | asan                               |
