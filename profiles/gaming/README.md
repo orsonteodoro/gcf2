@@ -318,8 +318,8 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 For the list above, if unmitigated can lead to either Remote Code Execution (RCE) or
 Privilege Escalation (PE).
 
-* [1] Even with sanitizers enabled, there is a chance to completely or partially
-  bypass mitigation.  Mitigation implies imperfect security.
+[1] Even with sanitizers enabled, there is a chance to completely or partially
+    bypass mitigation.  Mitigation implies imperfect security.
 
 ASan and look-alike estimates
 
