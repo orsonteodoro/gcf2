@@ -320,16 +320,18 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 | Vulnerability            | Typical severity | Typically announced in security advisories |
 | ---                      | ---              | ---                                        |
-| Use After Free (UAF)     | High - Critical  | Yes                                        |
-| Double Free (DF)         | High             | Yes                                        |
-| Out Of Bounds (OOB)      | Medium - High    | Yes                                        |
+| Use After Free (UAF) [1] | High - Critical  | Yes                                        |
+| Double Free (DF) [1]     | High             | Yes                                        |
+| Out Of Bounds (OOB) [1]  | Medium - High    | Yes                                        |
 | Use After Return (UAR)   | High             | Rarely                                     |
 | Use After Scope (UAS)    | Medium - High    | No                                         |
-| Heap Overflow (HO)       | High - Critical  | Yes                                        |
+| Heap Overflow (HO) [1]   | High - Critical  | Yes                                        |
 | Stack Overflow (SO)      | High             | Yes                                        |
 
 For all the rows above, if unmitigated can lead to Remote Code Execution (RCE) and/or
 Privilege Escalation (PE).
+
+[1] Can be exploited in a zero-click attack.
 
 ASan and look-alike estimates
 
