@@ -195,8 +195,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
         which allow users to control microarchitecture specific hardening.
 
-    [6] The builder profile was designed to increase throughput.  
-        The 40% maximum allows us to have non detrimental throughput.
+    [6] The builder profile was designed to increase throughput.  The 40%
+        maximum allows us to have non detrimental throughput.
 
     [7] In some kernel options, low latency is mutually exclusive with
         throughput.  Hardening also increases overhead and increases
