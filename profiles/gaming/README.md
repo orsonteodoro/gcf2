@@ -414,12 +414,12 @@ An open ended list of the top zero-click attacks
 
 | Vulnerability                                 | Sanitizers                                        | CFLAGS_HARDENED_TOLERANCE_USER required for mitigation | CFLAGS_HARDENED_AUTO_SANITIZE_USER |
 | ---                                           | ---                                               | ---                                                    | ---                                |
-| [Signed] Integer Overflow (SIO, IO)           | UBSan, UBSAN                                      | 2.00                                                   | ubsan                              |
+| [Signed] Integer Overflow (SIO, IO)           | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
 | Use After Free (UAF)                          | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (amd64)                             | asan or hwasan                     |
 | Heap out-of-bounds write (OOBW)               | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (amd64)                             | asan or hwasan                     |
 | Logic bug + partial/overlapping OOB write     | HWASan, MTE, -fbounds-safety [1]                  | 1.50                                                   | hwasan                             |
 | Type Confusion                                | TySan                                             | 20.00                                                  | tysan                              |
-| Shift exponent out-of-bounds                  | UBSan                                             | 2.00                                                   | ubsan                              |
+| Shift exponent out-of-bounds                  | UBSan, UBSAN                                      | 2.00                                                   | ubsan                              |
 | Bad vptr                                      | UBSan                                             | 2.00                                                   | ubsan                              |
 | Double free                                   | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (amd64)                             | asan or hwasan                     |
 | Uninitalized Memory                           | MSan                                              | 11.00                                                  | msan                               |
@@ -429,6 +429,7 @@ An open ended list of the top zero-click attacks
 | VLA bounds overflow                           | UBSan                                             | 2.00                                                   | ubsan                              |
 
 [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on non arm64.
+[2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
