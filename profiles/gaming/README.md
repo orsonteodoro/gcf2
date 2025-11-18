@@ -139,12 +139,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     In computer security, consistency is sometimes sacrificed for stability and
     progress.
 
-    | Kernel flavor [8]  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3] | Userland hardening production readiness | Kernel hardening production readiness |
-    | ---                | ---                                            | ---                                     | ---                                   |
-    | Gaming             | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
-    | Gaming             | 1.09 for casual gaming [4]                     | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
-    | Builder [5]        | 1.35 [5]                                       | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
-    | Hardened           | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
+    | Kernel flavor [8]  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3][9] | Userland hardening production readiness | Kernel hardening production readiness |
+    | ---                | ---                                               | ---                                     | ---                                   |
+    | Gaming             | 1.00 for competitive gaming [2]                   | Yes but preferred off                   | Yes but preferred off                 |
+    | Gaming             | 1.09 for casual gaming [4]                        | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
+    | Builder [5]        | 1.35 [5]                                          | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
+    | Hardened           | 1.35 (actual) / 4.00 (ideal) [1]                  | Yes (actual) / No (ideal)               | Yes                                   |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
         still need integration testing for systemwide sanitizing.  It is not
@@ -178,6 +178,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     [3] The values that do not trigger sanitizers enablement is recommended
         systemwide.  The 2.00 or above values should only be applied on a
         per-package basis.
+
 
     [4] Cap the worst case penalty at 10% for resilient performance and gameplay.
         Keep the best case B grade and worst case C grade.  If 20%, then the
@@ -213,6 +214,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         source ebuilds, you need to copy and paste the folder source,
         change the flavor suffix and EXTRAVERSION, and build each
         kernel manually or build each through custom scripting.
+
+    [9] In the
+        [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or
+        [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
+        under the comments of tolerance section, you will see a list of hardened
+        flags.  The second column of numbers has the worst case performance
+        impact.  If the CFLAGS_HARDENED_TOLERANCE_USER is set to >= of that
+        number then that particular hardening flag gets applied.  For some
+        hardening flags that introduce instability or have unknown availability
+        quality, you need to whitelist the flag.  For example, one may apply
+        CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan" on a per-package
+        basis.
 
   - General kernel configuration policy
 
