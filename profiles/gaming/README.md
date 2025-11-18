@@ -425,7 +425,7 @@ An open ended list of the top zero-click attacks
 | Double free                                         | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | Uninitalized Memory                                 | MSan                                              | 11.00                                                  | msan                               |
 | Stack overflow                                      | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE, SSP | 1.10 (SSP)                                             | asan or hwasan                     |
-| Use after return                                    | ASan, HWASan,                                     | 4.00                                                   | asan or hwasan                     |
+| Use after return                                    | ASan, HWASan                                      | 4.00                                                   | asan or hwasan                     |
 | Use after scope                                     | ASan                                              | 4.00                                                   | asan                               |
 | VLA bounds overflow                                 | UBSan                                             | 2.00                                                   | ubsan                              |
 
