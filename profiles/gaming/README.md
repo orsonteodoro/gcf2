@@ -428,8 +428,8 @@ An open ended list of the top zero-click attacks
 | Use after scope                               | ASan                                              | 4.00                                                   | asan                               |
 | VLA bounds overflow                           | UBSan                                             | 2.00                                                   | ubsan                              |
 
-[1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on non arm64.
-[2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
+* [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on non arm64.
+* [2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
 
 ## Performance consistency and the mutual exclusitivity of security and performance
 
