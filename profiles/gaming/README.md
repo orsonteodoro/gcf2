@@ -433,7 +433,7 @@ An open ended list of the top zero-click attacks
 * [2] The userspace version is in camelcase.  The Linux kernel support is in all caps.
       The kernel support of UBSAN uses less than half of the userspace version.
 * [3] Only fully mitigated in arm64.  Non arm64 are vulnerable to this class of vulnerability.
-* [4] Only fully mitigated in arm64.  The other implementations do partial mitigation.
+* [4] Only fully mitigated in arm64 with HWASan or HW_TAGS KASAN.  The other implementations do partial mitigation.
 
 Arm64 based smartphones has better security currently.
 
