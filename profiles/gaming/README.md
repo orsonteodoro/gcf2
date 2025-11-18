@@ -229,7 +229,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         flags.
 
     [10] The recommended ideal level is architecture dependent.
-      * arm64 - 2.00 - UBSan, HWASan, pac+bti
+      * arm64 - 2.00 - UBSan, HWASan, PAC+BTI
       * amd64 - 4.00 - UBSan, ASan, either CFI or CET
       * others - 4.00 - UBSan, ASan
       * Assumes sanitizers fatal on violation
