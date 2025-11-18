@@ -225,7 +225,8 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         hardening flags that introduce instability or have unknown availability
         quality, you need to whitelist the flag.  For example, one may apply
         CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan" on a per-package
-        basis.
+        basis.  The @USER_VARIABLE has some flags that are considered whitelist
+        flags.
 
   - General kernel configuration policy
 
