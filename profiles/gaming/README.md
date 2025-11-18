@@ -229,16 +229,17 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         flags.
 
     [10] The recommended ideal level is architecture dependent.
-         - arm64 - 2.00 - UBSan, HWASan, pac+bti
-         - amd64 - 4.00 - UBSan, ASan, either CFI or CET
-         - others - 4.00 - UBSan, ASan
-         - assumes sanitizers fatal on violation but requires explicitly silent sanitizer logging
+        * arm64 - 2.00 - UBSan, HWASan, pac+bti
+        * amd64 - 4.00 - UBSan, ASan, either CFI or CET
+        * others - 4.00 - UBSan, ASan
+        * Assumes sanitizers fatal on violation
+        * Requires explicitly silent sanitizer logging
 
     [11] The recommended ideal level is architecture dependent.
-         - arm64 - 2.00 - UBSAN and HW_TAGS KASAN
-         - amd64 - 4.00 - UBSAN, KASAN, either KCFI or CET
-         - others - 4.00 - UBSAN and KASAN
-         - assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
+         * arm64 - 2.00 - UBSAN and HW_TAGS KASAN
+         * amd64 - 4.00 - UBSAN, KASAN, either KCFI or CET
+         * others - 4.00 - UBSAN and KASAN
+         * Assumes panic_on_warn=1 or equivalent custom sanitizers panic only patch
 
   - General kernel configuration policy
 
