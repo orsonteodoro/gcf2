@@ -315,7 +315,7 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 | Heap Overflow (HO)       | High - Critical  | Yes                                        |
 | Stack Overflow (SO)      | High             | Yes                                        |
 
-For the list above, if unmitigated can lead to either Remote Code Execution (RCE) or
+For all the rows above, if unmitigated can lead to either Remote Code Execution (RCE) or
 Privilege Escalation (PE).
 
 ASan and look-alike estimates
