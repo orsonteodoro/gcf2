@@ -307,35 +307,32 @@ Memory corruption vulnerabilities and their estimated CVSS severity range
 
 | Vulnerability            | Typical severity | Typically announced in security advisories |
 | ---                      | ---              | ---                                        |
-| Use After Free (UAF) [1] | High - Critical  | Yes                                        |
-| Double Free (DF) [1]     | High             | Yes                                        |
-| Out Of Bounds (OOB) [1]  | Medium - High    | Yes                                        |
+| Use After Free (UAF)     | High - Critical  | Yes                                        |
+| Double Free (DF)         | High             | Yes                                        |
+| Out Of Bounds (OOB)      | Medium - High    | Yes                                        |
 | Use After Return (UAR)   | High             | Rarely                                     |
 | Use After Scope (UAS)    | Medium - High    | No                                         |
-| Heap Overflow (HO) [1]   | High - Critical  | Yes                                        |
+| Heap Overflow (HO)       | High - Critical  | Yes                                        |
 | Stack Overflow (SO)      | High             | Yes                                        |
 
 For the list above, if unmitigated can lead to either Remote Code Execution (RCE) or
 Privilege Escalation (PE).
 
-[1] Even with sanitizers enabled, there is a chance to completely or partially
-    bypass mitigation.  Mitigation implies imperfect security.
-
 ASan and look-alike estimates
 
-| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Coverage [10]             | UAF [1] | DF [1]  | OOB [1]  | UAR [1] | UAS [1] | HO [1] | SO [1] |
-| ---                    | ---                | ---                   | ---                    | ---                       | ---     | ---     | ---      | ---     | ---     | ---    | ---    |
-| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Full                      | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Full                      | N       | N       | Y        | N       | N       | P [3]  | P [3]  |
-| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Partial, approx 1 in 1000 | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Partial, approx 1 in 100  | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| KFENCE (1 ms) [7]      | 8.5                | 8.8                   | 1.12 / 1.25            | Partial, approx 1 in 10   | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Full                      | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Full                      | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Full                      | Y       | Y       | Y        | N       | N       | Y      | Y      |
-| ASan [4]               | 9.8                | 3.5                   | 2.00 / 3.00            | Full                      | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| HWSan [4]              | 9.7                | 8.5                   | 1.20 / 1.40            | Full                      | Y       | Y       | Y        | Y       | Y       | Y      | Y      |
-| None                   | 0.0                | 10.0                  | 1.00 / 1.00            | None                      | N       | N       | N        | N       | N       | N      | N      |
+| Flavor                 | Security score [5] | Performance score [6] | Performance impact [9] | Coverage [10]             | UAF [1][11] | DF [1][11]  | OOB [1][11]  | UAR [1] | UAS [1] | HO [1][11] | SO [1] |
+| ---                    | ---                | ---                   | ---                    | ---                       | ---         | ---         | ---          | ---     | ---     | ---        | ---    |
+| _FORTIFY_SOURCE=2 [2]  | 7.5                | 9.8                   | 1.02 / 1.05            | Full                      | N           | N           | Y            | N       | N       | P [3]      | P [3]  |
+| _FORTIFY_SOURCE=3 [2]  | 8.0                | 9.4                   | 1.04 / 1.08            | Full                      | N           | N           | Y            | N       | N       | P [3]      | P [3]  |
+| KFENCE (100 ms) [7][8] | 6.5                | 9.9                   | 1.0003 / 1.01          | Partial, approx 1 in 1000 | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| KFENCE (10 ms) [7]     | 8.0                | 9.4                   | 1.04 / 1.08            | Partial, approx 1 in 100  | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| KFENCE (1 ms) [7]      | 8.5                | 8.8                   | 1.12 / 1.25            | Partial, approx 1 in 10   | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| Generic KASAN          | 9.2                | 4.0                   | 1.75 / 2.50            | Full                      | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| HW_TAGS KASAN          | 9.5                | 8.0                   | 1.15 / 1.30            | Full                      | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| SW_TAGS KASAN          | 9.0                | 6.0                   | 1.40 / 1.60            | Full                      | Y           | Y           | Y            | N       | N       | Y          | Y      |
+| ASan [4]               | 9.8                | 3.5                   | 2.00 / 3.00            | Full                      | Y           | Y           | Y            | Y       | Y       | Y          | Y      |
+| HWSan [4]              | 9.7                | 8.5                   | 1.20 / 1.40            | Full                      | Y           | Y           | Y            | Y       | Y       | Y          | Y      |
+| None                   | 0.0                | 10.0                  | 1.00 / 1.00            | None                      | N           | N           | N            | N       | N       | N          | N      |
 
 * [1] Implies mitigation
 * [2] Only available for user space libs/programs built with glibc
@@ -358,6 +355,8 @@ ASan and look-alike estimates
       not catastrophic.
 * [9] Typical / worst case
 * [10] The amount of allocations and deallocations checked
+* [11] Even with sanitizers enabled, there is a chance to completely or partially
+       bypass mitigation.  Mitigation implies imperfect security.
 
 Serious severities caught by UBSan before being exploited
 
