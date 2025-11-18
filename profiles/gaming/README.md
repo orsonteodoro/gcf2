@@ -139,12 +139,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     In computer security, consistency is sometimes sacrificed for stability and
     progress.
 
-    | Kernel flavor  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3] | Userland hardening production readiness | Kernel hardening production readiness |
-    | ---            | ---                                            | ---                                     | ---                                   |
-    | Gaming         | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
-    | Gaming         | 1.09 for casual gaming [4]                     | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
-    | Builder [5]    | 1.35 [5]                                       | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
-    | Hardening      | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
+    | Kernel flavor [8]  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3] | Userland hardening production readiness | Kernel hardening production readiness |
+    | ---                | ---                                            | ---                                     | ---                                   |
+    | Gaming             | 1.00 for competitive gaming [2]                | Yes but preferred off                   | Yes but preferred off                 |
+    | Gaming             | 1.09 for casual gaming [4]                     | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
+    | Builder [5]        | 1.35 [5]                                       | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7]       |
+    | Hardening          | 1.35 (actual) / 4.00 (ideal) [1]               | Yes (actual) / No (ideal)               | Yes                                   |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
         still need integration testing for systemwide sanitizing.  It is not
@@ -201,6 +201,18 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     [7] In some kernel options, low latency is mutually exclusive with
         throughput.  Hardening also increases overhead and increases
         completion time.
+
+    [8] The kernel flavor is set with the EXTRAVERSION variable in
+        /usr/src/linux/Makefile and a different kernel sources folder
+        name per release to isolate patching.  The hardened kernel
+        flavor has patching restriction on custom patches because of
+        auditors, patch/developer trust.  The gaming has patching
+        restrictions on patches that decrease performance or decrease
+        availability.  The ot-kernel makes it easy to have and build
+        different kernel flavors per release.  For other kernel
+        source ebuilds, you need to copy and paste the folder source,
+        change the flavor suffix, and build each kernel manually or
+        build each through custom scripting.
 
   - General kernel configuration policy
 
