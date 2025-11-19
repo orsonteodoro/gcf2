@@ -418,7 +418,7 @@ An open ended list of the top zero-click attacks
 | Use after free                                          | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | General heap overflow [4]                               | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
 | Heap out-of-bounds write (large, negative, wrapped) [3] | HWASan                                            | 1.50 (arm64)                                           | hwasan                             |
-| Logic bug + partial/overlapping OOB write               | HWASan, MTE, -fbounds-safety [1]                  | 1.50                                                   | hwasan                             |
+| Logic bug + partial/overlapping OOB write [1]           | HWASan, MTE, -fbounds-safety                      | 1.50                                                   | hwasan                             |
 | Type confusion                                          | TySan                                             | 20.00                                                  | tysan                              |
 | Shift exponent out-of-bounds                            | UBSan, UBSAN                                      | 2.00                                                   | ubsan                              |
 | Bad vptr                                                | UBSan                                             | 2.00                                                   | ubsan                              |
@@ -432,15 +432,15 @@ An open ended list of the top zero-click attacks
 The top most is the estimated most common type of zero-click attacks sorted from
 high to low rank.
 
-* [1] -fbounds-safety is not released yet.  Unpatched class of vulnerability on
-      non arm64.
+* [1] -fbounds-safety is not released yet.  This vulnerability is an unpatched
+      class of vulnerability on non arm64.
 * [2] The userspace version is in camelcase.  The Linux kernel support is in all
       caps.  The kernel support of UBSAN uses less than half of the userspace
       version.
-* [3] Only fully mitigated in arm64.  Non arm64 are vulnerable to this class of
-      vulnerability.
-* [4] Only fully mitigated in arm64 with HWASan or HW_TAGS KASAN.  The other
-      implementations do partial mitigation.
+* [3] The vulnerability is only fully mitigated on arm64.  Non arm64 are
+      vulnerable to this class of vulnerability.
+* [4] The vulnerability is only fully mitigated in arm64 with HWASan or HW_TAGS
+      KASAN.  The other implementations do partial mitigation.
 
 Arm64 based smartphones has better security currently.
 
