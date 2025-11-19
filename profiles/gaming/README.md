@@ -207,7 +207,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         /usr/src/linux/Makefile and a different kernel sources folder
         name per release to isolate patching.  The hardened kernel
         flavor has patching restriction on custom patches because of
-        auditors, patch/developer trust.  The gaming has patching
+        auditors, patch/developer trust.  The gaming kernel has patching
         restrictions on patches that decrease performance or decrease
         availability.  The ot-kernel makes it easy to have and build
         different kernel flavors per release.  For other kernel
