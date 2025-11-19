@@ -144,7 +144,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     | Gaming             | 1.00 for competitive gaming [2]                   | Yes but preferred off                   | Yes but preferred off                 |
     | Gaming             | 1.09 for casual gaming [4]                        | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
     | Builder [5]        | 1.35 [5]                                          | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7][12]   |
-    | Hardened           | 1.35 (actual) / 4.00 (ideal) [1]                  | Yes (actual) / No (ideal) [10]          | Yes [11]                              |
+    | Hardened           | 1.35 (practical) / 4.00 (ideal) [1]               | Yes (practical) / No (ideal) [10]       | Yes [11]                              |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
         still need integration testing for systemwide sanitizing.  It is not
