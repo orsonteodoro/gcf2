@@ -416,7 +416,7 @@ An open ended list of the top zero-click attacks
 | ---                                                     | ---                                               | ---                                                    | ---                                |
 | (Signed) Integer overflow                               | UBSan, UBSAN [2]                                  | 2.00                                                   | ubsan                              |
 | Use after free                                          | ASan, HWASan, KASAN, KFENCE                       | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
-| General heap overflow [4]                               | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.50 (arm64), 4.00 (non arm64)                         | asan or hwasan                     |
+| General heap overflow [4]                               | ASan, HWASan, KASAN, KFENCE, _FORTIFY_SOURCE      | 1.02 (_FORTIFY_SOURCE), 1.50 (arm64), 4.00 (non arm64) | asan or hwasan                     |
 | Heap out-of-bounds write (large, negative, wrapped) [3] | HWASan                                            | 1.50 (arm64)                                           | hwasan                             |
 | Logic bug + partial/overlapping OOB write [1]           | HWASan, MTE, -fbounds-safety                      | 1.50                                                   | hwasan                             |
 | Type confusion                                          | TySan                                             | 20.00                                                  | tysan                              |
