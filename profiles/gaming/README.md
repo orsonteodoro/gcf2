@@ -194,7 +194,7 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
         @USER_VARIABLE in the
         [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or
         [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
-        which allow users to control microarchitecture specific hardening.
+        allow users to control microarchitecture specific hardening.
 
     [6] The builder profile was designed to increase throughput.  The 40%
         maximum allows us to have non detrimental throughput.
