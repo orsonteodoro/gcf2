@@ -139,12 +139,12 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     In computer security, consistency is sometimes sacrificed for stability and
     progress.
 
-    | Kernel flavor [8]  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3][9] | Userland hardening production readiness | Kernel hardening production readiness |
-    | ---                | ---                                               | ---                                     | ---                                   |
-    | Gaming             | 1.00 for competitive gaming [2]                   | Yes but preferred off                   | Yes but preferred off                 |
-    | Gaming             | 1.09 for casual gaming [4]                        | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
-    | Builder [5]        | 1.35 [5]                                          | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7][12]   |
-    | Hardened           | 1.35 (practical) / 4.00 (ideal) [1]               | Yes (practical) / No (ideal) [10]       | Yes [11]                              |
+    | Kernel flavor [8]  | Recommended CFLAGS_HARDENED_TOLERANCE_USER [3][9][13] | Userland hardening production readiness | Kernel hardening production readiness |
+    | ---                | ---                                                   | ---                                     | ---                                   |
+    | Gaming             | 1.00 for competitive gaming [2]                       | Yes but preferred off                   | Yes but preferred off                 |
+    | Gaming             | 1.09 for casual gaming [4]                            | Yes but cap it at 10% [4]               | Yes but cap it at 10% [4]             |
+    | Builder [5]        | 1.35 [5]                                              | Yes but cap it at 40% [5][6]            | Yes but cap it at 40% [5][6][7][12]   |
+    | Hardened           | 1.35 (practical) / 4.00 (ideal) [1]                   | Yes (practical) / No (ideal) [10]       | Yes [11]                              |
 
     [1] UBsan gets activated at 2.00.  ASan gets activated at 4.00, but ebuilds
         still need integration testing for systemwide sanitizing.  It is not
@@ -244,6 +244,10 @@ packages (&lt; 2 MLOC) with severe long run (3+ min) performance
     [12] KFENCE is recommended as mitigation against zero-click UAF.  In real
          world testing, using 2.00 has acceptable performance with KFENCE,
          UBSAN, KCFI.
+
+    [13] For realtime safety-critical, it is recommended not to exceed 1.05 and to
+         disable default ON hardening for compilers which may have worst case
+         performance impacts in the 1.10 or more.
 
   - General kernel configuration policy
 
